@@ -46,40 +46,42 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const createMenuItem = () => {
 		const menuItems = [];
 
-		menuItems.push(
-			<SubMenu
-				key="evolucionEnfermeria"
-				popupClassName={getNavStyleSubMenuClass(navStyle)}
-				title={
-					<span>
-						{' '}
-						<i className="icon icon-icon" />
-						<span>Evolución de Enfermería</span>
-					</span>
-				}>
-					<Menu.Item key="ingresoEvolucionEnfermeria">
-						<Link to="/ingresoEvolucionEnfermeria">
-							<i className="icon icon-icon" />
-							<span>Agregar Evolución de Enfermería</span>
-						</Link>
-					</Menu.Item>
-					<Menu.Item key="historialEvolucionEnfermeria">
-						<Link to="/historialEvolucionEnfermeria">
-							<i className="icon icon-icon" />
-							<span>Historial Evolución de Enfermería</span>
-						</Link>
-					</Menu.Item>
-			</SubMenu>
-		);
+		// menuItems.push(
+		// 	<SubMenu
+		// 		key="evolucionEnfermeria"
+		// 		popupClassName={getNavStyleSubMenuClass(navStyle)}
+		// 		title={
+		// 			<span>
+		// 				{' '}
+		// 				<i className="icon icon-icon" />
+		// 				<span>Evolución de Enfermería</span>
+		// 			</span>
+		// 		}>
+		// 			<Menu.Item key="ingresoEvolucionEnfermeria">
+		// 				<Link to="/ingresoEvolucionEnfermeria">
+		// 					<i className="icon icon-icon" />
+		// 					<span>Agregar Evolución de Enfermería</span>
+		// 				</Link>
+		// 			</Menu.Item>
+		// 			<Menu.Item key="historialEvolucionEnfermeria">
+		// 				<Link to="/historialEvolucionEnfermeria">
+		// 					<i className="icon icon-icon" />
+		// 					<span>Historial Evolución de Enfermería</span>
+		// 				</Link>
+		// 			</Menu.Item>
+		// 	</SubMenu>
+		// );
 
-		menuItems.push(
-			<Menu.Item key="registroPaciente">
-				<Link to="/registroPaciente">
-					<i className="icon icon-auth-screen" />
-					<span>Registro de Pacientes</span>
-				</Link>
-			</Menu.Item>
-		);
+		if (token.modulos.includes('14')) {
+			menuItems.push(
+				<Menu.Item key="registroPaciente">
+					<Link to="/registroPaciente">
+						<i className="icon icon-auth-screen" />
+						<span>Registro de Pacientes</span>
+					</Link>
+				</Menu.Item>
+			);
+		}
 		
 		if (token.modulos.includes('1')) {
 			menuItems.push(

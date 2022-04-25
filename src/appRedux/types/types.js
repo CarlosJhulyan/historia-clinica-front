@@ -241,16 +241,4 @@ export const types = {
 	setSugerenciaInterProcedimiento: '[SET] Sugerir InterProcedimiento',
 	setSugerenciaImagenes: '[SET] Sugerir Imagenes',
 	setSugerenciaLaboratorio: '[SET] Sugerir Laboratorio',
-
-	// KARDEX - tratamiento
-	setTratamientoCabeceraDetalleKardex: '[SET] Tratamiento Cabecera Detalle Kardex',
-	limpiarTratamientoCabeceraDetalleKardex: '[CLEAR] Limpiar Tratamiento Cabecera Detalle Kardex',
-	setTratamientoKardex: '[SET] Tratamiento Kardex',
-	limpiarTratamientoReducerKardex: '[CLEAR] Limpiar Tratamiento Kardex',
-	setCabeceraRecetaKardex: '[SET] Cabecera Receta Kardex',
-	limpiarCabeceraRecetaKardex: '[CLEAR] Limpiar Cabecera Receta Kardex',
-
-	// KARDEX - diagnostico
-	setDiagnosticoActionKardex: '[SET] Diagnostico Action Kardex',
-	limpiarDiagnosticoActionKardex: '[CLEAR] Limpiar Diagnostico Action Kardex',
 };

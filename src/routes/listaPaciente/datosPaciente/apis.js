@@ -193,7 +193,7 @@ export const examenFisico = dataGlobal => {
 	const stateRedux = store.getState();
 
 	traerFuncionesVitales(dataGlobal).then(async fvital => {
-		console.log('HV:', fvital);
+		console.log('REEEESp:', fvital);
 
 		if (fvital !== undefined) {
 			const triaje = {
@@ -214,11 +214,11 @@ export const examenFisico = dataGlobal => {
 				tiempoEnfermedad: fvital[0].TIEMPO_ENFERMEDAD === null ? '' : fvital[0].TIEMPO_ENFERMEDAD,
 				relatoCronologico:
 					fvital[0].RELATO_CRONOLOGICO === null ? '' : fvital[0].RELATO_CRONOLOGICO,
-				apetito: fvital[0].APETITO === null ? '' : fvital[0].APETITO,
-				sueno: fvital[0].SUENIO === null ? '' : fvital[0].SUENIO,
-				deposicion: fvital[0].DEPOSICION === null ? '' : fvital[0].DEPOSICION,
-				sed: fvital[0].SED === null ? '' : fvital[0].SED,
-				orina: fvital[0].ORINA === null ? '' : fvital[0].ORINA,
+				apetito: fvital[0].APETITO === null ? 'N' : fvital[0].APETITO,
+				sueno: fvital[0].SUENIO === null ? 'N' : fvital[0].SUENIO,
+				deposicion: fvital[0].DEPOSICION === null ? 'N' : fvital[0].DEPOSICION,
+				sed: fvital[0].SED === null ? 'N' : fvital[0].SED,
+				orina: fvital[0].ORINA === null ? 'N' : fvital[0].ORINA,
 			};
 
 			const estadoFisico = {
@@ -293,9 +293,6 @@ export const examenFisico = dataGlobal => {
 			};
 
 			obtenerTratamientoArr(filtros).then(data => {
-				console.log('dARRAY TRATAMIENTO 1: ', data);
-				console.log('dARRAY TRATAMIENTO 2: ', filtros);
-
 				store.dispatch(setTratamientoCabeceraDetalle(data));
 			});
 
@@ -796,7 +793,7 @@ const traerTratamientos = async dataGlobal => {
 // };
 
 const traerFuncionesVitales = async dataGlobal => {
-	console.log('DATAAAAAAA FUNCION VITALES GLOBAL: ', dataGlobal);
+	console.log('data global: ', dataGlobal);
 	const resp = await httpClient.post(`/antecedentes/funcionesvitales`, {
 		codGrupoCia: dataGlobal.codGrupoCia,
 		codLocal: dataGlobal.codLocal,

@@ -1,40 +1,20 @@
 import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Input, notification, Space } from 'antd';
+import { notification, Input, Space, Button } from 'antd';
 import { toast } from 'react-toastify';
 import { limpiarAnexo } from '../appRedux/actions/menu/anexos';
-import {
-	limpiarAntecedentesFisiologicos,
-	limpiarAntecedentesGenerales,
-	limpiarAntecedentesGineco,
-	limpiarAntecedentesPatologicos,
-	limpiarAntecedentesPatologicosFamiliares,
-	limpiarOtros,
-} from '../appRedux/actions/menu/antecedentes';
+import { limpiarAntecedentesFisiologicos, limpiarAntecedentesGenerales, limpiarAntecedentesGineco, limpiarAntecedentesPatologicos, limpiarAntecedentesPatologicosFamiliares, limpiarOtros } from '../appRedux/actions/menu/antecedentes';
 import { limpiarDesarrolloAction } from '../appRedux/actions/menu/desarrollo';
 import { limpiarDiagnosticoAction } from '../appRedux/actions/menu/diagnostico';
 import { limpiarEnfermedadActual } from '../appRedux/actions/menu/enfermedadActual';
-import {
-	limpiarEvolucionTratamiento,
-	limpiarRegistrosEvolucion,
-} from '../appRedux/actions/menu/evolucionTratamiento';
+import { limpiarEvolucionTratamiento, limpiarRegistrosEvolucion } from '../appRedux/actions/menu/evolucionTratamiento';
 import { limpiarExamenClinico } from '../appRedux/actions/menu/examenClinico';
-import {
-	limpiarEstadoFisico,
-	limpiarFuncionesVitales,
-} from '../appRedux/actions/menu/examenFisico';
+import { limpiarEstadoFisico, limpiarFuncionesVitales } from '../appRedux/actions/menu/examenFisico';
 import { setLimpiarHistoriaClinica, setLimpiarVisualizar } from '../appRedux/actions/menu/helpers';
 import { limpiarImagenes } from '../appRedux/actions/menu/imagenes';
 import { limpiarLaboratorio } from '../appRedux/actions/menu/laboratorio';
 import { limpiarPestañas } from '../appRedux/actions/menu/pestañas';
-import {
-	limpiarProcedimientoInterconsultaReducer,
-	limpiarProcedimientoReducer,
-} from '../appRedux/actions/menu/procedimiento';
-import {
-	limpiarCabeceraReceta,
-	limpiarTratamientoCabeceraDetalle,
-	limpiarTratamientoReducer,
-} from '../appRedux/actions/menu/tratamiento';
+import { limpiarProcedimientoInterconsultaReducer, limpiarProcedimientoReducer } from '../appRedux/actions/menu/procedimiento';
+import { limpiarCabeceraReceta, limpiarTratamientoCabeceraDetalle, limpiarTratamientoReducer } from '../appRedux/actions/menu/tratamiento';
 import { limpiarOpacity } from '../appRedux/actions/Opacity';
 import { setClearUI } from '../appRedux/actions/ui';
 import store from '../appRedux/store';
@@ -86,6 +66,9 @@ export const notificaciones = (texto, tipo, objeto) => {
 			break;
 	}
 };
+
+
+
 
 export const onClickRetroceder = () => {
 	//Limpiar Data

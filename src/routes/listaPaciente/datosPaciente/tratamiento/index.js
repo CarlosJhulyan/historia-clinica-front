@@ -24,24 +24,27 @@ const SeptimaParte = ({ datosModal }) => {
 
 	const { historiaClinica, visualizar } = useSelector(state => state.helpers);
 
+
+
 	//Combos
-	const dataTratamiento = useSelector(state => state.combosReducer.dataTratamiento);
-	const viaAdministracion = useSelector(state => state.combosReducer.viaAdministracion);
+	const dataTratamiento = useSelector((state) => state.combosReducer.dataTratamiento);
+	const viaAdministracion = useSelector((state) => state.combosReducer.viaAdministracion);
 
 	//obsTratamiento
 	//const obsTratamiento = useSelector((state) => state.tratamiento.indicacionesgen);
 
 	//REDUX TRATAMIENTO
-	const dataSource = useSelector(state => state.tratamientoDetalle);
-	const tratamientoCabeceraReceta = useSelector(state => state.tratamientoCabeceraReceta);
-	const tratamiento = useSelector(state => state.tratamiento);
+	const dataSource = useSelector((state) => state.tratamientoDetalle);
+	const tratamientoCabeceraReceta = useSelector((state) => state.tratamientoCabeceraReceta);
+	const tratamiento = useSelector((state) => state.tratamiento);
 
-	console.log('TRATAMIENTOOOOOOOOOOOOOOO:', dataSource);
+
+	console.log("TRATAMIENTOOOOOOOOOOOOOOO:", dataSource);
 	//estado tipo via admin
 	const [tipoVia, setTipoVia] = useState([]);
 
 	//estado de la tabla
-	const setDataSource = data => {
+	const setDataSource = (data) => {
 		dispatch(setTratamientoCabeceraDetalle(data));
 	};
 
@@ -55,7 +58,7 @@ const SeptimaParte = ({ datosModal }) => {
 		indicacionesgen: '',
 	});
 
-	const editar = record => {
+	const editar = (record) => {
 		setModalEditar(true);
 		setDataEditar(record);
 	};
@@ -72,10 +75,12 @@ const SeptimaParte = ({ datosModal }) => {
 		});
 	}
 
-	const quitarItem = record => {
-		const filtredData = dataSource.filter(item => item.codprod !== record.codprod);
+
+	const quitarItem = (record) => {
+		const filtredData = dataSource.filter((item) => item.codprod !== record.codprod);
 		setDataSource(filtredData);
-	};
+	}
+
 
 	const columns = [
 		{
@@ -112,52 +117,35 @@ const SeptimaParte = ({ datosModal }) => {
 			align: 'center',
 			render: (text, record) => (
 				<span>
-					<span
-						className="gx-link"
-						style={{ display: historiaClinica || visualizar ? 'none' : 'inline' }}
-					>
-						<i
-							onClick={() => editar(record)}
-							className="icon icon-edit"
-							style={{ fontSize: 20, color: 'green' }}
-						/>
+					<span className="gx-link" style={{ display: historiaClinica || visualizar ? 'none' : 'inline' }}>
+						<i onClick={() => editar(record)} className="icon icon-edit" style={{ fontSize: 20, color: 'green' }} />
 					</span>
 					<Divider type="vertical" />
-					<span
-						className="gx-link"
-						style={{ display: historiaClinica || visualizar ? 'none' : 'inline' }}
-					>
-						<i
-							onClick={() => confirm(record)}
-							className="icon icon-trash"
-							style={{ fontSize: 20, color: 'red' }}
-						/>
+					<span className="gx-link" style={{ display: historiaClinica || visualizar ? 'none' : 'inline' }}>
+						<i onClick={() => confirm(record)} className="icon icon-trash" style={{ fontSize: 20, color: 'red' }} />
 					</span>
 				</span>
 			),
 		},
 	];
 
-	console.log(
-		'DATA TRATAMIENTOOOO:',
-		dataTratamiento.filter(item => item.IND_CALCULO_TRAT_HC === 'N')
-	);
+	console.log("DATA TRATAMIENTOOOO:", dataTratamiento.filter((item) => item.IND_CALCULO_TRAT_HC === "N"));
 
 	/****************************FORM 1 *********************************/
 	const buscarTratamiento = () => setAbrirModal(true);
 
-	const handleDatos = value => {
+	const handleDatos = (value) => {
 		setAbrirModal(false);
 
-		dataTratamiento.map(element => {
+		dataTratamiento.map((element) => {
 			if (element.key == value.estado) {
-				console.log('TRATAMIENTO SELECCIONADO:', element);
+				console.log("TRATAMIENTO SELECCIONADO:", element);
 				handleChangeTratamiento(element);
 			}
 		});
 	};
 
-	const handleChangeTratamiento = value => {
+	const handleChangeTratamiento = (value) => {
 		formRef.current.setFieldsValue({ producto: value.DESC_PROD });
 
 		setEstadoCabecera({
@@ -172,22 +160,22 @@ const SeptimaParte = ({ datosModal }) => {
 		});
 	};
 
-	const onChangeFrecuencia = value => {
+	const onChangeFrecuencia = (value) => {
 		formRef.current.setFieldsValue({ frecuencia: value.target.value });
 		//setEstado({ ...estado, frecuencia: value.target.value });
 		setEstadoCabecera({ ...estadoCabecera, frecuencia: value.target.value });
 	};
 
-	const onChangeDuracion = value => {
+	const onChangeDuracion = (value) => {
 		formRef.current.setFieldsValue({ duracion: value.target.value });
 		//setEstado({ ...estado, duracion: value.target.value });
 		setEstadoCabecera({ ...estadoCabecera, duracion: value.target.value });
 	};
 
-	const onChangeTipoVia = value => {
+	const onChangeTipoVia = (value) => {
 		/* console.log("VALUE VIA:,", value); */
 		/* setEstadoVia(false); */
-		const result = viaAdministracion.filter(via => via.CODIGO === value);
+		const result = viaAdministracion.filter((via) => via.CODIGO === value);
 		const etiquetaVia = result[0].ETIQUETA;
 		/* if (etiquetaVia === 'VIA ORAL' || etiquetaVia === 'VIA OPTICA') {
 			setEstadoVia(true);
@@ -204,19 +192,19 @@ const SeptimaParte = ({ datosModal }) => {
 		});
 	};
 
-	const onChangeDosis = value => {
+	const onChangeDosis = (value) => {
 		formRef.current.setFieldsValue({ dosis: value.target.value });
 		//setEstado({ ...estado, dosis: value.target.value });
 		setEstadoCabecera({ ...estadoCabecera, dosis: value.target.value });
 	};
 
-	const onChangeCantidad = value => {
+	const onChangeCantidad = (value) => {
 		formRef.current.setFieldsValue({ cantidad: value.target.value });
 		//setEstado({ ...estado, cantidad: value.target.value });
 		setEstadoCabecera({ ...estadoCabecera, cantidad: value.target.value });
 	};
 
-	const onChangeRecomendacionAplicar = value => {
+	const onChangeRecomendacionAplicar = (value) => {
 		formRef.current.setFieldsValue({ recomendacionAplicar: value.target.value });
 		setEstadoCabecera({ ...estadoCabecera, recomendacionAplicar: value.target.value });
 	};
@@ -233,12 +221,11 @@ const SeptimaParte = ({ datosModal }) => {
 	//Agregando form 1 a la tabla
 	const onClickAgregar = () => {
 		let tratamiento;
-		console.log('AAAAA:', estadoCabecera);
+		console.log("AAAAA:", estadoCabecera);
 
 		if (estadoCabecera) {
 			if (estadoCabecera.frecuencia && estadoCabecera.duracion) {
-				tratamiento =
-					estadoCabecera.frecuencia + ' veces al dia x ' + estadoCabecera.duracion + ' Dias';
+				tratamiento = estadoCabecera.frecuencia + ' veces al dia x ' + estadoCabecera.duracion + ' Dias';
 			} else {
 				tratamiento = '';
 			}
@@ -266,25 +253,25 @@ const SeptimaParte = ({ datosModal }) => {
 
 	/****************************FORM 2 *********************************/
 
-	const onChangeReceta = value => {
+	const onChangeReceta = (value) => {
+
+
 		let fechaActual = moment().add('days', value.target.value);
 		setDataForm2({ ...dataForm2, validez: value.target.value });
 
 		const fecha = fechaActual.format('DD/MM/YYYY');
 
-		dispatch(
-			setTratamiento({
-				...tratamiento,
-				validezreceta: fecha,
-			})
-		);
+		dispatch(setTratamiento({
+			...tratamiento,
+			validezreceta: fecha
+		}));
 
 		onChangeFecha(fechaActual);
 		formRef2.current.setFieldsValue({ validez: value.target.value });
 	};
 
-	const onChangeFecha = e => {
-		console.log('VER FECHA:', e);
+	const onChangeFecha = (e) => {
+		console.log("VER FECHA:", e);
 		const fecha = e.format('DD/MM/YYYY');
 		setDataForm2({ ...dataForm2, validezreceta: fecha });
 
@@ -298,14 +285,12 @@ const SeptimaParte = ({ datosModal }) => {
 		formRef2.current.setFieldsValue({ validezreceta: e });
 	};
 
-	const onChangeRecomendacion = value => {
+	const onChangeRecomendacion = (value) => {
 		setDataForm2({ ...dataForm2, indicacionesgen: value.target.value });
-		dispatch(
-			setTratamiento({
-				...tratamiento,
-				indicacionesgen: value.target.value,
-			})
-		);
+		dispatch(setTratamiento({
+			...tratamiento,
+			indicacionesgen: value.target.value
+		}));
 		formRef2.current.setFieldsValue({ indicacionesgen: value.target.value });
 	};
 
@@ -313,7 +298,7 @@ const SeptimaParte = ({ datosModal }) => {
 
 	useEffect(() => {
 		if (dataActualizada !== null) {
-			const map = dataSource.filter(data => data.codprod !== dataActualizada.codprod);
+			const map = dataSource.filter((data) => data.codprod !== dataActualizada.codprod);
 			map.push(dataActualizada);
 			setDataSource(map);
 		} else {
@@ -337,7 +322,7 @@ const SeptimaParte = ({ datosModal }) => {
 	useEffect(() => {
 		if (viaAdministracion) {
 			const opc = [];
-			viaAdministracion.forEach(element => {
+			viaAdministracion.forEach((element) => {
 				opc.push(
 					<Select.Option key={element.CODIGO} value={element.CODIGO}>
 						{element.ETIQUETA}
@@ -354,16 +339,16 @@ const SeptimaParte = ({ datosModal }) => {
 			estadoCabecera.frecuencia &&
 			estadoCabecera.duracion &&
 			estadoCabecera.viaadministracion &&
-			estadoCabecera.dosis &&
-			estadoCabecera.recomendacionAplicar
+			estadoCabecera.dosis //&&
+			//estadoCabecera.recomendacionAplicar
 		) {
 			setEstadoBtn(false);
 		} else if (
 			estadoCabecera.codprod &&
 			estadoCabecera.viaadministracion &&
 			estadoCabecera.dosis &&
-			estadoCabecera.cantidad &&
-			estadoCabecera.recomendacionAplicar
+			estadoCabecera.cantidad// &&
+			//estadoCabecera.recomendacionAplicar
 		) {
 			setEstadoBtn(false);
 		} else {
@@ -376,7 +361,7 @@ const SeptimaParte = ({ datosModal }) => {
 		estadoCabecera.viaadministracion,
 		estadoCabecera.dosis,
 		estadoCabecera.cantidad,
-		estadoCabecera.recomendacionAplicar,
+		//estadoCabecera.recomendacionAplicar,
 	]);
 
 	/* useEffect(() => {
@@ -392,22 +377,17 @@ const SeptimaParte = ({ datosModal }) => {
 	}, [estadoVia, estadoCabecera.duracion, estadoCabecera.frecuencia]); */
 
 	useEffect(() => {
-		if (estadoCabecera.calculo === 'S') {
+		if (estadoCabecera.calculo === "S") {
 			if (estadoCabecera.duracion && estadoCabecera.frecuencia) {
-				setEstadoCabecera({
-					...estadoCabecera,
-					cantidad: estadoCabecera.duracion * estadoCabecera.frecuencia,
-				});
-				formRef.current.setFieldsValue({
-					cantidad: estadoCabecera.duracion * estadoCabecera.frecuencia,
-				});
+				setEstadoCabecera({ ...estadoCabecera, cantidad: estadoCabecera.duracion * estadoCabecera.frecuencia });
+				formRef.current.setFieldsValue({ cantidad: estadoCabecera.duracion * estadoCabecera.frecuencia });
 			} else {
 				setEstadoCabecera({ ...estadoCabecera, cantidad: null });
 				formRef.current.setFieldsValue({ cantidad: 0 });
 			}
 		}
 
-		if (estadoCabecera.calculo === 'N') {
+		if (estadoCabecera.calculo === "N") {
 			formRef.current.setFieldsValue({ cantidad: 1 });
 			setEstadoCabecera({ ...estadoCabecera, cantidad: 1 });
 			/* if (estadoCabecera.duracion && estadoCabecera.frecuencia) {
@@ -417,7 +397,9 @@ const SeptimaParte = ({ datosModal }) => {
 				formRef.current.setFieldsValue({ cantidad: 0 });
 				setEstadoCabecera({ ...estadoCabecera, cantidad: null });
 			}  */
+
 		}
+
 	}, [estadoCabecera.calculo, estadoCabecera.duracion, estadoCabecera.frecuencia]);
 
 	/* useEffect(() => {
@@ -458,7 +440,7 @@ const SeptimaParte = ({ datosModal }) => {
 								disabled={historiaClinica | visualizar}
 								placeholder="Seleccione"
 								//defaultValue={tipoVia}
-								onChange={e => onChangeTipoVia(e)}
+								onChange={(e) => onChangeTipoVia(e)}
 							>
 								{tipoVia}
 							</Select>
@@ -466,43 +448,23 @@ const SeptimaParte = ({ datosModal }) => {
 					</Col>
 					<Col lg={4} md={6} sm={8} xs={24}>
 						<Form.Item name="frecuencia" label="Frecuencia (x día)">
-							<Input
-								disabled={historiaClinica | visualizar}
-								onChange={e => onChangeFrecuencia(e)}
-								type="number"
-								style={{ width: '100% ' }}
-							/>
+							<Input disabled={historiaClinica | visualizar} onChange={(e) => onChangeFrecuencia(e)} type="number" style={{ width: '100% ' }} />
 						</Form.Item>
 					</Col>
 					<Col lg={4} md={6} sm={8} xs={24}>
 						<Form.Item name="duracion" label="Duración (días)">
-							<Input
-								disabled={historiaClinica | visualizar}
-								onChange={e => onChangeDuracion(e)}
-								type="number"
-								style={{ width: '100% ' }}
-							/>
+							<Input disabled={historiaClinica | visualizar} onChange={(e) => onChangeDuracion(e)} type="number" style={{ width: '100% ' }} />
 						</Form.Item>
 					</Col>
 
 					<Col lg={6} md={6} sm={8} xs={24}>
 						<Form.Item name="dosis" label="Dosis">
-							<Input
-								disabled={historiaClinica | visualizar}
-								onChange={e => onChangeDosis(e)}
-								type="text"
-								style={{ width: '100% ' }}
-							/>
+							<Input disabled={historiaClinica | visualizar} onChange={(e) => onChangeDosis(e)} type="text" style={{ width: '100% ' }} />
 						</Form.Item>
 					</Col>
 					<Col lg={4} md={6} sm={8} xs={24}>
 						<Form.Item name="cantidad" label="Cantidad">
-							<Input
-								disabled={historiaClinica | visualizar}
-								onChange={e => onChangeCantidad(e)}
-								type="number"
-								style={{ width: '100% ' }}
-							/>
+							<Input disabled={historiaClinica | visualizar} onChange={(e) => onChangeCantidad(e)} type="number" style={{ width: '100% ' }} />
 						</Form.Item>
 					</Col>
 
@@ -510,7 +472,7 @@ const SeptimaParte = ({ datosModal }) => {
 						<Form.Item name="recomendacionAplicar" label="Recomendación a Aplicar">
 							<Input.TextArea
 								disabled={historiaClinica | visualizar}
-								onChange={e => onChangeRecomendacionAplicar(e)}
+								onChange={(e) => onChangeRecomendacionAplicar(e)}
 								type="text"
 								style={{ width: '100% ' }}
 							/>
@@ -554,12 +516,7 @@ const SeptimaParte = ({ datosModal }) => {
 								},
 							]}
 						>
-							<Input
-								disabled={historiaClinica | visualizar}
-								type="number"
-								onChange={e => onChangeReceta(e)}
-								style={{ width: '100% ' }}
-							/>
+							<Input disabled={historiaClinica | visualizar} type="number" onChange={(e) => onChangeReceta(e)} style={{ width: '100% ' }} />
 						</Form.Item>
 					</Col>
 					<Col lg={5} md={12} sm={12} xs={24}>
@@ -575,7 +532,7 @@ const SeptimaParte = ({ datosModal }) => {
 						>
 							<DatePicker
 								disabled
-								onChange={e => onChangeFecha(e)}
+								onChange={(e) => onChangeFecha(e)}
 								placeholder="Ingrese la fecha"
 								className="gx-mb-3 gx-w-100"
 							/>
@@ -592,11 +549,7 @@ const SeptimaParte = ({ datosModal }) => {
 								},
 							]}
 						>
-							<Input.TextArea
-								disabled={historiaClinica | visualizar}
-								onChange={onChangeRecomendacion}
-								rows={4}
-							/>
+							<Input.TextArea disabled={historiaClinica | visualizar} onChange={onChangeRecomendacion} rows={4} />
 						</Form.Item>
 					</Col>
 				</Row>

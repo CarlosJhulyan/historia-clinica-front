@@ -30,7 +30,6 @@ const App = ({ match }) => {
 
 		items.push(<Route path={`${match.url}historialEvolucionEnfermeria`} component={Historial} />)
 		items.push(<Route path={`${match.url}ingresoEvolucionEnfermeria`} component={Ingreso} />)
-		items.push(<Route path={`${match.url}registroPaciente`} component={registroPaciente} />);
 
 		if (token.modulos.length > 0) {
 			if (token.modulos.includes('1')) {
@@ -85,11 +84,18 @@ const App = ({ match }) => {
 				);
 			}
 			if (token.modulos.includes('12')) {
-				items.push(<Route path={`${match.url}tratamientoKardex`} component={TratamientoKardex} />);
+				items.push(
+					<Route path={`${match.url}tratamientoKardex`} component={TratamientoKardex} />
+				);
 			}
 			if (token.modulos.includes('13')) {
 				items.push(
 					<Route path={`${match.url}reportes/especialidad`} component={ReporteEspecialidad} />
+				);
+			}
+			if (token.modulos.includes('14')) {
+				items.push(
+					<Route path={`${match.url}registroPaciente`} component={registroPaciente} />
 				);
 			}
 		} else {

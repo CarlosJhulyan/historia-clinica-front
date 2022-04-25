@@ -6,15 +6,16 @@ const enfermedadActual = {
 	tipoInformante: '',
 	tiempoEnfermedad: '',
 	relatoCronologico: '',
-	apetito: '',
-	sueno: '',
-	deposicion: '',
-	sed: '',
-	orina: '',
+	apetito: 'N',
+	sueno: 'N',
+	deposicion: 'N',
+	sed: 'N',
+	orina: 'N',
 };
 
 export const enfermedadActualReducer = (state = enfermedadActual, action) => {
 	switch (action.type) {
+
 		case types.setEnfermedadActual:
 			return action.payload;
 
@@ -25,12 +26,13 @@ export const enfermedadActualReducer = (state = enfermedadActual, action) => {
 				tipoInformante: '',
 				tiempoEnfermedad: '',
 				relatoCronologico: '',
-				apetito: '',
-				sueno: '',
-				deposicion: '',
-				sed: '',
-				orina: '',
+				apetito: 'N',
+				sueno: 'N',
+				deposicion: 'N',
+				sed: 'N',
+				orina: 'N',
 			};
+
 
 		default:
 			return state;

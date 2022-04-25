@@ -8,10 +8,7 @@ import { anexoReducer } from './menu/anexos';
 import { desarrolloReducer } from './menu/desarrollo';
 import { diagnosticoReducer } from './menu/diagnostico';
 import { enfermedadActualReducer } from './menu/enfermedadActual';
-import {
-	evolucionTratamientoReducer,
-	registrosEvolucionReducer,
-} from './menu/evolucionTratamiento';
+import { evolucionTratamientoReducer, registrosEvolucionReducer } from './menu/evolucionTratamiento';
 import { examenClinicoReducer } from './menu/examenClinico';
 import { estadoFisicoReducer, funcionVitalReducer } from './menu/examenFisico';
 import { imagenesReducer } from './menu/imagenes';
@@ -30,23 +27,13 @@ import {
 import { pestañasReducer } from './menu/pestañas';
 import { opacityReducer } from './Opacity';
 import { fisiologicosReducer } from './menu/fisiologicos';
-import {
-	evolucionTratamientoOdontoReducer,
-	registrosEvolucionOdontoReducer,
-} from './menu/evolucionTratamientoOdonto';
+import { evolucionTratamientoOdontoReducer, registrosEvolucionOdontoReducer } from './menu/evolucionTratamientoOdonto';
 import { sugerenciaReducer } from './menu/sugerencias';
 import { dataGlobalReducer } from './dataGlobal';
 import { HelpersReducer } from './menu/helpers';
 import UiReducer from './ui';
 
-import {
-	cabeceraKardexReducer,
-	cabeceraRecetaKardexReducer,
-	tratamientoKardexReducer,
-} from './kardex/TratamientoKardex';
-import { diagnosticoKardexReducer } from './kardex/DiagnosticoKardex';
-
-const createRootReducer = history =>
+const createRootReducer = (history) =>
 	combineReducers({
 		router: connectRouter(history),
 		settings: Settings,
@@ -93,13 +80,7 @@ const createRootReducer = history =>
 		helpers: HelpersReducer,
 
 		//
-		ui: UiReducer,
-		//Kardex
-
-		kardexTratamientoDetalle: cabeceraKardexReducer,
-		kardexTratamientoCabeceraReceta: cabeceraRecetaKardexReducer,
-		kardexTratamiento: tratamientoKardexReducer,
-		kardexDiagnostico: diagnosticoKardexReducer,
+		ui: UiReducer
 	});
 
 export default createRootReducer;

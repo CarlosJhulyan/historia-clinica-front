@@ -68,7 +68,7 @@ export const ModalImpresionReceta = ({ modalImpresionReceta, setModalImpresionRe
                     ]
                     : []
             }
-            title="Imprimir recetas"
+            title="Imprimir receta"
             maskClosable={false}>
 
             {imagenes.dataProcedimiento.length < 1 &&

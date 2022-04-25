@@ -48,7 +48,7 @@ export const SignInScreen = ({ anexo, logo, logo2, onFinish, onFinishFailed, isL
 							<Form.Item
 								/* initialValue="demo@example.com" */
 								label="CMP"
-								// initialValue="45627"
+								initialValue=""
 								rules={[{ required: true, message: 'El N° Colegio es requerido!' }]}
 								name="nroCMP"
 							>
@@ -58,7 +58,7 @@ export const SignInScreen = ({ anexo, logo, logo2, onFinish, onFinishFailed, isL
 							<Form.Item
 								/*  initialValue="demo#123" */
 								label="DNI"
-								// initialValue="40687356"
+								initialValue=""
 								rules={[{ required: true, message: 'El DNI es requerido!' }]}
 								name="nroDoc"
 							>

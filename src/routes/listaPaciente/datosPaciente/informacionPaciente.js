@@ -99,7 +99,7 @@ const InformacionPaciente = ({
 		}
 	}, []);
 
-	console.log('DATOS INFORMACION PACIENTE:', datosModal);
+	console.log("DATOS INFORMACION PACIENTE:", datosModal)
 
 	//LIMPIANDO
 
@@ -158,9 +158,6 @@ const InformacionPaciente = ({
 		const interconsulta = estadoRedux.procedimientoInterconsulta;
 
 		const data = {
-			nomMedico: (token.des_ape_medico.trim() + ', ' + token.des_nom_medico).trim(),
-			nomPaciente: estado.APE_PATERNO + ' ' + estado.APE_MATERNO + ',' + estado.NOMBRE,
-			// historiaClinica: estado.NRO_HC_ACTUAL,
 			codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
 			codCia: datosModal.estado.COD_CIA,
 			codMedico: localS.cod_medico,
@@ -527,21 +524,21 @@ const InformacionPaciente = ({
 					footer={
 						estadoImprimir !== 0
 							? [
-									<ReactToPrint
-										pageStyle={pageStyle}
-										trigger={() => <Button type="primary">Imprimir</Button>}
-										content={() => impresionRef.current}
-									/>,
-							  ]
+								<ReactToPrint
+									pageStyle={pageStyle}
+									trigger={() => <Button type="primary">Imprimir</Button>}
+									content={() => impresionRef.current}
+								/>,
+							]
 							: []
 					}
 					title="Imprimir recetas"
 					maskClosable={false}
 				>
 					{imagenes.dataProcedimiento.length < 1 &&
-					laboratorio.dataProcedimiento.length < 1 &&
-					procedimientoReducer.dataProcedimiento.length < 1 &&
-					tratamientoDetalle.length < 1 ? (
+						laboratorio.dataProcedimiento.length < 1 &&
+						procedimientoReducer.dataProcedimiento.length < 1 &&
+						tratamientoDetalle.length < 1 ? (
 						<div>No hay recetas para imprimir</div>
 					) : null}
 					{imagenes.dataProcedimiento.length > 0 ? (

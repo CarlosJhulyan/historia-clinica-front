@@ -159,7 +159,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 						</Row>
 						<Row style={{ marginTop: espacios - 10 }}>
 							<Col xs={4}>
-								<strong>DNI :</strong> 47813783
+								<strong>DNI :</strong> {datosModal.estado.NUM_DOCUMENTO}
 							</Col>
 							<Col xs={7}>
 								<strong>FECHA NACIMIENTO :</strong> {datosModal.estado.FEC_NAC_CLI}

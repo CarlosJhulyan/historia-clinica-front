@@ -9,11 +9,11 @@ const EnfermedadActual = () => {
 	const dispatch = useDispatch();
 	const { historiaClinica, visualizar } = useSelector(state => state.helpers);
 
-	const enfermedadActual = useSelector(state => state.enfermedadActual);
+
+	const enfermedadActual = useSelector((state) => state.enfermedadActual);
 	const { inputRequired } = useSelector(state => state.ui);
 
 	useEffect(() => {
-		console.log('HV',enfermedadActual);
 		formRef.current.setFieldsValue({
 			motivoConsulta: enfermedadActual.motivoConsulta,
 			curso: enfermedadActual.curso,
@@ -28,17 +28,18 @@ const EnfermedadActual = () => {
 		});
 	}, [enfermedadActual]);
 
+
 	//Redux
-	const curso = useSelector(state => state.combosReducer.curso);
-	const tipoInformante = useSelector(state => state.combosReducer.tipoInformante);
-	const apetito = useSelector(state => state.combosReducer.apetito);
-	const sueno = useSelector(state => state.combosReducer.sueno);
-	const deposiciones = useSelector(state => state.combosReducer.deposicion);
-	const sed = useSelector(state => state.combosReducer.sed);
-	const orina = useSelector(state => state.combosReducer.orina);
+	const curso = useSelector((state) => state.combosReducer.curso);
+	const tipoInformante = useSelector((state) => state.combosReducer.tipoInformante);
+	const apetito = useSelector((state) => state.combosReducer.apetito);
+	const sueno = useSelector((state) => state.combosReducer.sueno);
+	const deposiciones = useSelector((state) => state.combosReducer.deposicion);
+	const sed = useSelector((state) => state.combosReducer.sed);
+	const orina = useSelector((state) => state.combosReducer.orina);
 
 	//Setteos
-	const handleChangeMotivoConsulta = e => {
+	const handleChangeMotivoConsulta = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
@@ -46,9 +47,10 @@ const EnfermedadActual = () => {
 			})
 		);
 		formRef.current.setFieldsValue({ motivoConsulta: e.target.value });
+
 	};
 
-	const handleChangeCurso = e => {
+	const handleChangeCurso = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
@@ -56,9 +58,10 @@ const EnfermedadActual = () => {
 			})
 		);
 		formRef.current.setFieldsValue({ curso: e });
+
 	};
 
-	const handleChangetipoInformante = e => {
+	const handleChangetipoInformante = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
@@ -66,76 +69,84 @@ const EnfermedadActual = () => {
 			})
 		);
 		formRef.current.setFieldsValue({ tiempoEnfermedad: e });
+
 	};
 
-	const handleChangeTiempoEnfermedad = e => {
+	const handleChangeTiempoEnfermedad = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
 				tiempoEnfermedad: e.target.value,
 			})
 		);
-		formRef.current.setFieldsValue({ tipoInformante: e.target.value });
+		formRef.current.setFieldsValue({ tipoInformante: e.target.value, });
+
 	};
 
-	const handleChangeRelatoCronologico = e => {
+	const handleChangeRelatoCronologico = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
 				relatoCronologico: e.target.value,
 			})
 		);
-		formRef.current.setFieldsValue({ relatoCronologico: e.target.value });
+		formRef.current.setFieldsValue({ relatoCronologico: e.target.value, });
+
 	};
 
-	const handleChangeApetito = e => {
+	const handleChangeApetito = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
 				apetito: e,
 			})
 		);
-		formRef.current.setFieldsValue({ apetito: e });
+		formRef.current.setFieldsValue({ apetito: e, });
+
 	};
 
-	const handleChangeSueno = e => {
+	const handleChangeSueno = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
 				sueno: e,
 			})
 		);
-		formRef.current.setFieldsValue({ sueno: e });
+		formRef.current.setFieldsValue({ sueno: e, });
+
 	};
 
-	const handleChangeDeposicion = e => {
+	const handleChangeDeposicion = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
 				deposicion: e,
 			})
 		);
-		formRef.current.setFieldsValue({ deposicion: e });
+		formRef.current.setFieldsValue({ deposicion: e, });
+
 	};
 
-	const handleChangeSed = e => {
+	const handleChangeSed = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
 				sed: e,
 			})
 		);
-		formRef.current.setFieldsValue({ sed: e });
+		formRef.current.setFieldsValue({ sed: e, });
+
 	};
 
-	const handleChangeOrina = e => {
+	const handleChangeOrina = (e) => {
 		dispatch(
 			setEnfermedadActual({
 				...enfermedadActual,
 				orina: e,
 			})
 		);
-		formRef.current.setFieldsValue({ orina: e });
+		formRef.current.setFieldsValue({ orina: e, });
+
 	};
 
 	return (
@@ -145,38 +156,29 @@ const EnfermedadActual = () => {
 					<Form.Item
 						name="motivoConsulta"
 						label="Motivo Consulta"
-						/* rules={[
+					/* rules={[
 						{
 							required: true,
 							message: 'Ingrese un motivo de consulta válido',
 						},
 					]} */
 					>
-						<Input
-							disabled={historiaClinica | visualizar}
-							type="text"
-							placeholder="Ingrese el motivo de consulta"
-							onChange={handleChangeMotivoConsulta}
-						/>
+						<Input disabled={historiaClinica | visualizar} type="text" placeholder="Ingrese el motivo de consulta" onChange={handleChangeMotivoConsulta} />
 					</Form.Item>
 				</Col>
 				<Col lg={8} md={8} sm={10} xs={24}>
 					<Form.Item
 						name="curso"
 						label="Curso"
-						/* rules={[
+					/* rules={[
 						{
 							required: true,
 							message: 'Ingrese un curso',
 						},
 					]} */
 					>
-						<Select
-							disabled={historiaClinica | visualizar}
-							placeholder="Seleccione"
-							onChange={handleChangeCurso}
-						>
-							{curso?.map(element => {
+						<Select disabled={historiaClinica | visualizar} placeholder="Seleccione" onChange={handleChangeCurso}>
+							{curso?.map((element) => {
 								return (
 									<Option key={element.CODIGO} value={element.CODIGO}>
 										{element.ETIQUETA}
@@ -189,7 +191,7 @@ const EnfermedadActual = () => {
 				<Col lg={16} md={16} sm={14} xs={24}>
 					<Form.Item
 						name="tiempoEnfermedad"
-						label="Tiempo Enfermedad" /*
+						label="Tiempo Enfermedad"/* 
 						validateStatus="error"
 						help="Campo requerido" */
 						rules={[
@@ -218,19 +220,15 @@ const EnfermedadActual = () => {
 							},
 						]}
 					>
-						<Select
-							disabled={historiaClinica | visualizar}
-							placeholder="Seleccione"
-							onChange={handleChangetipoInformante}
-						>
+						<Select disabled={historiaClinica | visualizar} placeholder="Seleccione" onChange={handleChangetipoInformante}>
 							{tipoInformante
-								? tipoInformante.map(element => {
-										return (
-											<Option key={element.CODIGO} value={element.CODIGO}>
-												{element.ETIQUETA}
-											</Option>
-										);
-								  })
+								? tipoInformante.map((element) => {
+									return (
+										<Option key={element.CODIGO} value={element.CODIGO}>
+											{element.ETIQUETA}
+										</Option>
+									);
+								})
 								: null}
 						</Select>
 					</Form.Item>
@@ -259,26 +257,22 @@ const EnfermedadActual = () => {
 					<Form.Item
 						name="apetito"
 						label="Apetito"
-						/* rules={[
+					/* rules={[
 						{
 							required: true,
 							message: 'Ingrese un Tipo de apetito',
 						},
 					]} */
 					>
-						<Select
-							disabled={historiaClinica | visualizar}
-							placeholder="Seleccione"
-							onChange={handleChangeApetito}
-						>
+						<Select disabled={historiaClinica | visualizar} placeholder="Seleccione" onChange={handleChangeApetito}>
 							{apetito
-								? apetito.map(element => {
-										return (
-											<Option key={element.CODIGO} value={element.CODIGO}>
-												{element.ETIQUETA}
-											</Option>
-										);
-								  })
+								? apetito.map((element) => {
+									return (
+										<Option key={element.CODIGO} value={element.CODIGO}>
+											{element.ETIQUETA}
+										</Option>
+									);
+								})
 								: null}
 						</Select>
 					</Form.Item>
@@ -288,26 +282,22 @@ const EnfermedadActual = () => {
 					<Form.Item
 						name="sueno"
 						label="Sueño"
-						/* rules={[
+					/* rules={[
 						{
 							required: true,
 							message: 'Ingrese un Tipo de sueño',
 						},
 					]} */
 					>
-						<Select
-							disabled={historiaClinica | visualizar}
-							placeholder="Seleccione"
-							onChange={handleChangeSueno}
-						>
+						<Select disabled={historiaClinica | visualizar} placeholder="Seleccione" onChange={handleChangeSueno}>
 							{sueno
-								? sueno.map(element => {
-										return (
-											<Option key={element.CODIGO} value={element.CODIGO}>
-												{element.ETIQUETA}
-											</Option>
-										);
-								  })
+								? sueno.map((element) => {
+									return (
+										<Option key={element.CODIGO} value={element.CODIGO}>
+											{element.ETIQUETA}
+										</Option>
+									);
+								})
 								: null}
 						</Select>
 					</Form.Item>
@@ -316,26 +306,22 @@ const EnfermedadActual = () => {
 					<Form.Item
 						name="deposicion"
 						label="Deposiciones"
-						/* rules={[
+					/* rules={[
 						{
 							required: true,
 							message: 'Ingrese un Tipo de deposicion',
 						},
 					]} */
 					>
-						<Select
-							disabled={historiaClinica | visualizar}
-							placeholder="Seleccione"
-							onChange={handleChangeDeposicion}
-						>
+						<Select disabled={historiaClinica | visualizar} placeholder="Seleccione" onChange={handleChangeDeposicion}>
 							{deposiciones
-								? deposiciones.map(element => {
-										return (
-											<Option key={element.CODIGO} value={element.CODIGO}>
-												{element.ETIQUETA}
-											</Option>
-										);
-								  })
+								? deposiciones.map((element) => {
+									return (
+										<Option key={element.CODIGO} value={element.CODIGO}>
+											{element.ETIQUETA}
+										</Option>
+									);
+								})
 								: null}
 						</Select>
 					</Form.Item>
@@ -344,26 +330,22 @@ const EnfermedadActual = () => {
 					<Form.Item
 						name="sed"
 						label="Sed"
-						/* rules={[
+					/* rules={[
 						{
 							required: true,
 							message: 'Ingrese un Tipo de sed',
 						},
 					]} */
 					>
-						<Select
-							disabled={historiaClinica | visualizar}
-							placeholder="Seleccione"
-							onChange={handleChangeSed}
-						>
+						<Select disabled={historiaClinica | visualizar} placeholder="Seleccione" onChange={handleChangeSed}>
 							{sed
-								? sed.map(element => {
-										return (
-											<Option key={element.CODIGO} value={element.CODIGO}>
-												{element.ETIQUETA}
-											</Option>
-										);
-								  })
+								? sed.map((element) => {
+									return (
+										<Option key={element.CODIGO} value={element.CODIGO}>
+											{element.ETIQUETA}
+										</Option>
+									);
+								})
 								: null}
 						</Select>
 					</Form.Item>
@@ -372,37 +354,32 @@ const EnfermedadActual = () => {
 					<Form.Item
 						name="orina"
 						label="Orina"
-						/* rules={[
+					/* rules={[
 						{
 							required: true,
 							message: 'Ingrese un Tipo de orina',
 						},
 					]} */
 					>
-						<Select
-							disabled={historiaClinica | visualizar}
-							placeholder="Seleccione"
-							onChange={handleChangeOrina}
-						>
+						<Select disabled={historiaClinica | visualizar} placeholder="Seleccione" onChange={handleChangeOrina}>
 							{orina
-								? orina.map(element => {
-										return (
-											<Option key={element.CODIGO} value={element.CODIGO}>
-												{element.ETIQUETA}
-											</Option>
-										);
-								  })
+								? orina.map((element) => {
+									return (
+										<Option key={element.CODIGO} value={element.CODIGO}>
+											{element.ETIQUETA}
+										</Option>
+									);
+								})
 								: null}
 						</Select>
 					</Form.Item>
 				</Col>
-				{inputRequired && (
-					<Col lg={24}>
-						<span style={{ color: 'red' }}>
-							(*) Los datos indicados deben ingresarse de forma obligatoria
-						</span>
+				{
+					inputRequired && <Col lg={24}>
+						<span style={{ color: 'red' }}>(*) Los datos indicados deben ingresarse de forma obligatoria</span>
 					</Col>
-				)}
+				}
+
 			</Row>
 		</Form>
 	);
