@@ -1,0 +1,768 @@
+.ant-col-lg-18 {}
+
+.contenedor-odontograma {
+  display: flex;
+  justify-content: center;
+  /*max-width: 990px;*/
+  /*min-width: 990px;*/
+}
+
+.width-odontograma {
+  max-width: 990px;
+  min-width: 990px;
+}
+
+.escala{
+  transform: scale(0.7);
+}
+
+.row-odontograma {
+  /*overflow: hidden;*/
+  /*overflow-x: scroll;*/
+}
+
+.ant-card-body {
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*width: 100%;*/
+}
+
+:root {
+  --buen-estado-color: blue;
+  --mal-estado-color: red;
+  --width-diente: 50px;
+  --height-diente: 74px;
+  --transition: 0.5s;
+  --border-width: 2px;
+  --margin: 3px;
+}
+
+.absolute {
+  top: 0;
+  position: absolute;
+}
+
+.componente-invertido {
+  transform: rotate(180deg);
+}
+
+.size-diente {
+  position: relative;
+  width: var(--width-diente);
+  height: var(--height-diente);
+  margin: var(--margin);
+}
+
+.color-diente {
+  position: absolute;
+  z-index: 1000;
+  width: var(--width-diente);
+  height: var(--height-diente);
+  transition: var(--transition);
+  /*alinear al centro*/
+  text-align: center;
+  line-height: var(--height-diente);
+}
+
+.contenedor-diente {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  width: var(--width-diente);
+  height: var(--height-diente);
+}
+
+.color-diente:hover {
+  background-color: rgba(16, 151, 84, 0.98);
+  border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
+  position: absolute;
+  z-index: 1000;
+}
+
+.desc-action {
+  opacity: 0;
+  transition: var(--transition);
+  color: #fff;
+}
+
+.color-diente-seleccion {
+  position: absolute;
+  z-index: 1000;
+  width: var(--width-diente);
+  height: var(--height-diente);
+  transition: var(--transition);
+  /*alinear al centro*/
+  text-align: center;
+  line-height: var(--height-diente);
+  background-color: rgba(16, 151, 84, 0.98);
+  border-radius: 5px 5px 5px 5px;
+  cursor: pointer;
+}
+
+.desc-seleccion {
+  color: #fff;
+}
+
+.desc-fin {
+  color: #fff;
+}
+
+.color-diente:hover>.desc-action {
+  opacity: 1;
+}
+
+.parent {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  grid-template-rows: 1fr;
+  grid-column-gap: 0;
+  grid-row-gap: 0;
+  position: relative;
+}
+
+.container-border {
+  border: 1px solid #000;
+  min-height: 20px;
+  max-height: 20px;
+  max-width: 100%;
+  font-size: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  line-height: 10px;
+}
+
+.container-figuras {
+  width: 100%;
+  height: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.protesis-removible {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 20px;
+  top: 0;
+  clip-path: polygon( 0 15%, 0 30%, 100% 30%, 100% 70%, 0 70%, 0 85%, 100% 85%, 100% 15%);
+  background-color: var(--buen-estado-color);
+}
+
+.protesis-removible-mal {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+  height: 20px;
+  top: 0;
+  clip-path: polygon( 0 15%, 0 30%, 100% 30%, 100% 70%, 0 70%, 0 85%, 100% 85%, 100% 15%);
+  background-color: var(--mal-estado-color);
+}
+
+.orto-removible {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 20px;
+  clip-path: polygon( 0 100%, 25% 15%, 50% 100%, 75% 15%, 100% 100%, 100% 85%, 75% 0, 50% 85%, 25% 0, 0 85%);
+  background-color: var(--buen-estado-color);
+}
+
+.orto-removible-mal {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 20px;
+  clip-path: polygon( 0 100%, 25% 15%, 50% 100%, 75% 15%, 100% 100%, 100% 85%, 75% 0, 50% 85%, 25% 0, 0 85%);
+  background-color: var(--mal-estado-color);
+}
+
+.transposicion {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  left: 52%;
+  width: 100%;
+  height: 20px;
+  background-size: 100%;
+  background-image: url(../../assets/images/odonto/transposicion.svg);
+  background-repeat: no-repeat;
+}
+
+.container-figuras-inicio-fin {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.orto-fijo-cuadrado {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--buen-estado-color);
+}
+
+.orto-fijo-cuadrado-mal {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  border-style: solid;
+  border-width: 2px;
+  border-color: var(--mal-estado-color);
+}
+
+.orto-fijo-inicio-raya {
+  width: 100%;
+  height: 20px;
+  clip-path: polygon(50% 40%, 100% 40%, 100% 60%, 50% 60%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.orto-fijo-inicio-raya-mal {
+  width: 100%;
+  height: 20px;
+  clip-path: polygon(50% 40%, 100% 40%, 100% 60%, 50% 60%);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+.orto-fijo-final-raya {
+  width: 100%;
+  height: 20px;
+  clip-path: polygon(0 40%, 50% 40%, 50% 60%, 0 60%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.orto-fijo-final-raya-mal {
+  width: 100%;
+  height: 20px;
+  clip-path: polygon(0 40%, 50% 40%, 50% 60%, 0 60%);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+.orto-fijo-puente {
+  width: 100%;
+  height: 20px;
+  clip-path: polygon(0% 40%, 100% 40%, 100% 60%, 0% 60%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.orto-fijo-puente-mal {
+  width: 100%;
+  height: 20px;
+  clip-path: polygon(0% 40%, 100% 40%, 100% 60%, 0% 60%);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+.orto-fijo-grid {
+  border-style: solid;
+  border-width: 1.5px;
+  border-color: var(--buen-estado-color);
+}
+
+.orto-fijo-grid-mal {
+  border-style: solid;
+  border-width: 1.5px;
+  border-color: var(--mal-estado-color);
+}
+
+.edentulo {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  left: -12%;
+  width: 125%;
+  height: 100%;
+  clip-path: polygon(0 75%, 100% 75%, 100% 80%, 0 80%);
+  background-color: var(--buen-estado-color);
+}
+
+.protesis-total {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 60%;
+  width: 125%;
+  height: 25px;
+  left: -12%;
+  clip-path: polygon( 0 15%, 0 30%, 100% 30%, 100% 70%, 0 70%, 0 85%, 100% 85%, 100% 15%);
+  background-color: var(--buen-estado-color);
+}
+
+.protesis-total-mal {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 60%;
+  width: 125%;
+  height: 25px;
+  left: -12%;
+  clip-path: polygon( 0 15%, 0 30%, 100% 30%, 100% 70%, 0 70%, 0 85%, 100% 85%, 100% 15%);
+  background-color: var(--mal-estado-color);
+}
+
+.protesis-total-invertido {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 60%;
+  width: 125%;
+  height: 25px;
+  left: -12%;
+  clip-path: polygon( 0 15%, 0 30%, 100% 30%, 100% 70%, 0 70%, 0 85%, 100% 85%, 100% 15%);
+  background-color: var(--buen-estado-color);
+}
+
+.protesis-total-invertido-mal {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 60%;
+  width: 125%;
+  height: 25px;
+  left: -12%;
+  clip-path: polygon( 0 15%, 0 30%, 100% 30%, 100% 70%, 0 70%, 0 85%, 100% 85%, 100% 15%);
+  background-color: var(--mal-estado-color);
+}
+
+.dentaria-ausente {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: var(--buen-estado-color);
+  clip-path: polygon( 25% 0, 21% 0, 45% 49%, 18% 100%, 24% 100%, 49% 54%, 73% 100%, 78% 100%, 53% 50%, 80% 0, 75% 0, 50% 46%);
+}
+
+.espigon-munon {
+  width: 100%;
+  height: 100%;
+  background-color: var(--mal-estado-color);
+  position: absolute;
+  margin-top: 10%;
+  clip-path: polygon( 34% 73%, 34% 50%, 40% 50%, 40% 10%, 60% 10%, 60% 50%, 67% 50%, 67% 73%, 34% 73%, 41% 68%, 59% 68%, 59% 57%, 42% 57%, 42% 68%);
+}
+
+.mal-estado {
+  background-color: var(--mal-estado-color) !important;
+}
+
+.mal-estado-text {
+  color: var(--mal-estado-color) !important;
+}
+
+.buen-estado {
+  background-color: var(--buen-estado-color) !important;
+}
+
+.buen-estado-text {
+  color: var(--buen-estado-color) !important;
+}
+
+.protesis-fija-inicio {
+  display: flex;
+  justify-content: center;
+  position: absolute;  
+  width: 100%;
+  height: 35px;
+  margin-top: -7.5px;
+  clip-path: polygon(100% 45%, 49% 45%, 49% 100%, 52% 100%, 52% 55%, 100% 55%);
+  background-color: var(--buen-estado-color);
+}
+
+.protesis-fija-inicio-mal {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 35px;
+  margin-top: -7.5px; 
+  clip-path: polygon(100% 45%, 49% 45%, 49% 100%, 52% 100%, 52% 55%, 100% 55%);
+  background-color: var(--mal-estado-color);
+}
+
+.protesis-fija-fin {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 35px;
+  margin-top: -7.5px;
+  clip-path: polygon(0 45%, 52% 45%, 52% 100%, 49% 100%, 49% 55%, 0 55%);
+  background-color: var(--buen-estado-color);
+}
+
+.protesis-fija-fin-mal {
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 35px;
+  margin-top: -7.5px;
+  clip-path: polygon(0 45%, 52% 45%, 52% 100%, 49% 100%, 49% 55%, 0 55%);
+  background-color: var(--mal-estado-color);
+}
+
+.contenedor-dentaria {
+  /* width: 50px; */
+  position: relative;
+  width: 60px;
+  height: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dentaria-clavija {
+  margin-bottom: 14%;
+  clip-path: polygon( 100% 100%, 0 100%, 11% 93%, 89% 93%, 50% 15%, 11% 93%, 0 100%, 50% 0);
+  width: 100%;
+  height: 100%;
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.dentaria-extruido {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon( 36% 75%, 46% 75%, 46% 64%, 57% 64%, 57% 75%, 68% 75%, 53% 86%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+  top: 25px;
+}
+
+.dentaria-extruido-invertido {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon( 36% 75%, 46% 75%, 46% 64%, 57% 64%, 57% 75%, 68% 75%, 53% 86%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+  bottom: 25px;
+  transform: rotate(180deg);
+}
+
+.giroversion-mesial {
+  width: 50%;
+  height: 20%;
+  left: 25%;
+  bottom: -20%;
+  background-image: url(../../assets/images/odonto/mesial.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+}
+
+.giroversion-mesial-invertido {
+  width: 50%;
+  height: 20%;
+  left: 25%;
+  top: -20%;
+  background-image: url(../../assets/images/odonto/mesialInvertido.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+}
+
+.giroversion-distal {
+  width: 50%;
+  height: 20%;
+  left: 25%;
+  bottom: -20%;
+  background-image: url(../../assets/images/odonto/distal.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+}
+
+.giroversion-distal-invertido {
+  width: 50%;
+  height: 20%;
+  left: 25%;
+  top: -20%;
+  background-image: url(../../assets/images/odonto/distalInvertido.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+}
+
+.dentaria-intruida {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon( 36% 75%, 46% 75%, 46% 64%, 57% 64%, 57% 75%, 68% 75%, 53% 86%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+  top: 63px;
+  transform: rotate(180deg);
+}
+
+.dentaria-intruida-invertido {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon( 36% 75%, 46% 75%, 46% 64%, 57% 64%, 57% 75%, 68% 75%, 53% 86%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+  bottom: 63px;
+}
+
+.geminasion {
+  background-image: url(../../assets/images/odonto/geminasion.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 15px;
+}
+
+.dentaria-supernumeraria {
+  background-image: url(../../assets/images/odonto/s.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 60%;
+  height: 60%;
+  position: absolute;
+  left: 85%;
+}
+
+.erupcion {
+  width: 100%;
+  height: 100%;
+  background-image: url(../../assets/images/odonto/erupcion.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+}
+
+.erupcion-invertido {
+  width: 100%;
+  height: 100%;
+  background-image: url(../../assets/images/odonto/erupcionInvertido.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+}
+
+.fractura-raiz {
+  width: 100%;
+  height: 100%;  
+  clip-path: polygon(0 28%, 0 25%, 100% 75%, 100% 78%);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+.fractura-raiz-invertido {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(0 28%, 0 25%, 100% 75%, 100% 78%);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+.fractura-incisal {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(78% 100%, 75% 100%, 100% 75%, 100% 78%);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+.fractura-incisal-invertido {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(78% 100%, 75% 100%, 100% 75%, 100% 78%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.fractura-coronal {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(0 57%, 0 53%, 100% 53%, 100% 57%);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+.fractura-coronal-invertido {
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(0 63%, 0 60%, 100% 60%, 100% 63%);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.pulpar-buen-estado {
+  width: 100%;
+  height: 120%;
+  clip-path: polygon(52% 65%, 48% 65%, 48% 0, 52% 0);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.pulpar-mal-estado {
+  width: 100%;
+  height: 120%;
+  clip-path: polygon(52% 65%, 48% 65%, 48% 0, 52% 0);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+.pulpar-invertido {
+  width: 100%;
+  height: 120%;
+  clip-path: polygon(52% 65%, 48% 65%, 48% 0, 52% 0);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.pulpar-buen-estado-inferior{
+  width: 100%;
+  height: 120%;      
+  margin-top: 16px;
+  clip-path: polygon(52% 65%, 48% 65%, 48% 0, 52% 0);
+  background-color: var(--buen-estado-color);
+  position: absolute;
+}
+
+.pulpar-mal-estado-inferior{
+  width: 100%;
+  height: 120%;      
+  margin-top: 16px;
+  clip-path: polygon(52% 65%, 48% 65%, 48% 0, 52% 0);
+  background-color: var(--mal-estado-color);
+  position: absolute;
+}
+
+/* 
+GUARDAR ESTO PARA EL DIENTE NIÑO
+.erupcion-infantil{
+  width: 60%;
+  height: 50%;
+  background-image: url(../../assets/images/odonto/erupcion.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  top: 33px;
+  left: 7px;
+  transform: rotate(180deg);
+} */
+
+.diastema {
+  background-image: url(../../assets/images/odonto/diastema.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 48%;
+  position: absolute;
+  top: 40px;
+  left: 50px;
+}
+
+.diastema-invertido {
+  background-image: url(../../assets/images/odonto/diastema.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 48%;
+  position: absolute;
+  top: 0;
+  left: 50px;
+}
+
+.fusion {
+  background-image: url(../../assets/images/odonto/fusion.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 150%;
+  height: 100%;
+  position: absolute;
+  top: 4px;
+  left: 15px;
+}
+
+.div1 {
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+.div2 {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+.div3 {
+  grid-area: 1 / 3 / 2 / 4;
+}
+
+.div4 {
+  grid-area: 1 / 4 / 2 / 5;
+}
+
+.div5 {
+  grid-area: 1 / 5 / 2 / 6;
+}
+
+.div6 {
+  grid-area: 1 / 6 / 2 / 7;
+}
+
+.div7 {
+  grid-area: 1 / 7 / 2 / 8;
+}
+
+.div8 {
+  grid-area: 1 / 8 / 2 / 9;
+}
+
+.div9 {
+  grid-area: 1 / 9 / 2 / 10;
+}
+
+.div10 {
+  grid-area: 1 / 10 / 2 / 11;
+}
+
+.div11 {
+  grid-area: 1 / 11 / 2 / 12;
+}
+
+.div12 {
+  grid-area: 1 / 12 / 2 / 13;
+}
+
+.div13 {
+  grid-area: 1 / 13 / 2 / 14;
+}
+
+.div14 {
+  grid-area: 1 / 14 / 2 / 15;
+}
+
+.div15 {
+  grid-area: 1 / 15 / 2 / 16;
+}
+
+.div16 {
+  grid-area: 1 / 16 / 2 / 17;
+}

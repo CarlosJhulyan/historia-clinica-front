@@ -1,0 +1,17 @@
+name: Despliegue automatizado
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  despliegue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: npm install --legacy-peer-deps && git remote set-url origin https://git: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@github.com/davalmeyda/odontologia.git && git config --global user.email "dav.almeyda@gmail.com" && git config --global user.name "David Almeyda" && CI=false npm run deploy

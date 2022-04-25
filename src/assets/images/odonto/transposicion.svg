@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Creator: CorelDRAW 2021 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="32.8674mm" height="11.5638mm" version="1.0" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1355.24 476.81"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:blue;stroke-width:30.93;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .str1 {stroke:blue;stroke-width:4.12;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil0 {fill:none}
+    .fil1 {fill:blue}
+   ]]>
+  </style>
+ </defs>
+ <g id="Capa_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2705160700336">
+   <path class="fil0 str0" d="M104.83 308.26c353.42,-545.04 786.67,-180.65 956.53,0"/>
+   <polygon class="fil1 str1" points="1151.23,300.13 1353.17,300.3 1252.66,460 "/>
+   <polygon class="fil1 str1" points="2.06,314.89 204.01,315.05 103.5,474.76 "/>
+   <path class="fil0 str0" d="M300.4 302.74c353.42,-545.04 786.67,-180.65 956.53,0"/>
+  </g>
+ </g>
+</svg>

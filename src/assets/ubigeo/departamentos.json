@@ -1,0 +1,252 @@
+[
+  {
+    "model": "ubigeo.departamento",
+    "pk": 1,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "01",
+      "cod_ubigeo_inei": "01",
+      "nombre": "Amazonas"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 2,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "02",
+      "cod_ubigeo_inei": "02",
+      "nombre": "\u00c1ncash"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 3,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "03",
+      "cod_ubigeo_inei": "03",
+      "nombre": "Apur\u00edmac"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 4,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "04",
+      "cod_ubigeo_inei": "04",
+      "nombre": "Arequipa"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 5,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "05",
+      "cod_ubigeo_inei": "05",
+      "nombre": "Ayacucho"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 6,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "06",
+      "cod_ubigeo_inei": "06",
+      "nombre": "Cajamarca"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 7,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "24",
+      "cod_ubigeo_inei": "07",
+      "nombre": "Callao"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 8,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "07",
+      "cod_ubigeo_inei": "08",
+      "nombre": "Cusco"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 9,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "08",
+      "cod_ubigeo_inei": "09",
+      "nombre": "Huancavelica"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 10,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "09",
+      "cod_ubigeo_inei": "10",
+      "nombre": "Hu\u00e1nuco"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 11,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "10",
+      "cod_ubigeo_inei": "11",
+      "nombre": "Ica"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 12,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "11",
+      "cod_ubigeo_inei": "12",
+      "nombre": "Jun\u00edn"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 13,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "12",
+      "cod_ubigeo_inei": "13",
+      "nombre": "La Libertad"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 14,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "13",
+      "cod_ubigeo_inei": "14",
+      "nombre": "Lambayeque"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 15,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "14",
+      "cod_ubigeo_inei": "15",
+      "nombre": "Lima"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 16,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "15",
+      "cod_ubigeo_inei": "16",
+      "nombre": "Loreto"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 17,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "16",
+      "cod_ubigeo_inei": "17",
+      "nombre": "Madre de Dios"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 18,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "17",
+      "cod_ubigeo_inei": "18",
+      "nombre": "Moquegua"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 19,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "18",
+      "cod_ubigeo_inei": "19",
+      "nombre": "Pasco"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 20,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "19",
+      "cod_ubigeo_inei": "20",
+      "nombre": "Piura"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 21,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "20",
+      "cod_ubigeo_inei": "21",
+      "nombre": "Puno"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 22,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "21",
+      "cod_ubigeo_inei": "22",
+      "nombre": "San Mart\u00edn"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 23,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "22",
+      "cod_ubigeo_inei": "23",
+      "nombre": "Tacna"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 24,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "23",
+      "cod_ubigeo_inei": "24",
+      "nombre": "Tumbes"
+    }
+  },
+  {
+    "model": "ubigeo.departamento",
+    "pk": 25,
+    "fields": {
+      "pais": 177,
+      "cod_ubigeo_reniec": "25",
+      "cod_ubigeo_inei": "25",
+      "nombre": "Ucayali"
+    }
+  }
+]

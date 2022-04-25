@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Creator: CorelDRAW 2021 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="23.3733mm" height="34.3959mm" version="1.0" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1230.57 1810.89"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:black;stroke-width:31.2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:22.9256}
+    .fil0 {fill:none}
+    .fil1 {fill:white}
+   ]]>
+  </style>
+ </defs>
+ <g id="Capa_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2422166018528">
+   <rect class="fil0" x="10.23" y="15.61" width="1204.73" height="1783.03"/>
+   <rect class="fil1 str0" x="17.58" y="992.94" width="1197.37" height="802.36"/>
+   <polygon class="fil1 str0" points="748.68,15.61 869.23,501.8 989.79,988 748.85,988.23 507.92,988.46 628.3,502.04 "/>
+   <rect class="fil0 str0" x="337.49" y="1225.84" width="557.57" height="336.53"/>
+   <line class="fil0 str0" x1="17.59" y1="988.46" x2="337.49" y2= "1225.84" />
+   <line class="fil0 str0" x1="337.49" y1="1562.37" x2="15.59" y2= "1793.29" />
+   <line class="fil0 str0" x1="1214.96" y1="992.92" x2="895.06" y2= "1225.84" />
+   <line class="fil0 str0" x1="895.06" y1="1562.37" x2="1202.73" y2= "1783.06" />
+   <polygon class="fil1 str0" points="481.24,15.61 601.79,501.81 722.35,988.01 481.41,988.24 240.48,988.47 360.86,502.04 "/>
+  </g>
+ </g>
+</svg>

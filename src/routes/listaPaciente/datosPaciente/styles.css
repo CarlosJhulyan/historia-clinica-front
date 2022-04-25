@@ -1,0 +1,23 @@
+/* .ant-tree-treenode {
+	color: black;
+} */
+.ant-tree-title {
+	color: black;
+}
+
+
+.asd{
+    background-color: rgba(0, 0, 0, 0.384);
+    position: absolute;
+    top: 0;
+    left: 0;
+    align-content: center;
+    display: flex;
+    flex-direction: column;
+    margin: 0px;
+    justify-content: center;
+    align-items: center;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+}

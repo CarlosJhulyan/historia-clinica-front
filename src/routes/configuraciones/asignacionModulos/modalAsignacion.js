@@ -1,0 +1,262 @@
+import React, { useState, createRef, useMemo } from 'react';
+import { Checkbox, Col, Modal, Row, Form, AutoComplete } from 'antd';
+import { httpClient } from '../../../util/Api';
+import { notificaciones } from '../../../util/util';
+import axios from 'axios';
+
+const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traerUsuarios }) => {
+	const formRef = createRef();
+
+	const onChange = e => {
+		setValores(e);
+	};
+
+	const opciones = crearOpciones(modulos);
+
+	const [valores, setValores] = useState(filaActual ? obtenerValores(filaActual.modulos) : []);
+	const [loading, setLoading] = useState(false);
+
+	const [valueCMP, setValueCMP] = useState('');
+	const [optionsCMP, setOptionsCMP] = useState([]);
+	const [valueNOM, setValueNOM] = useState('');
+	const [optionsNOM, setOptionsNOM] = useState([]);
+
+	const [cod, setCod] = useState('');
+
+	const token = JSON.parse(localStorage.getItem('token'));
+
+	const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
+	const [peticion, setPeticion] = useState(false);
+
+	// const cancelSource = useMemo(() => axios.CancelToken.source(), []);
+
+	const guardarAssignacion = async () => {
+		const repuesta = await httpClient.post('modulos/asignaModulos', {
+			codMedico: filaActual ? filaActual.cod_medico : cod,
+			modulos: valores,
+			codMedico1: token.cod_medico,
+		});
+		console.log(repuesta.data);
+		return repuesta.data;
+	};
+
+	const onSearchCMP = async searchText => {
+		var cmp = formRef.current.getFieldValue('num_cmp');
+		if (cmp ? cmp.length >= 2 : false) {
+			setPeticion(true);
+			setOptionsCMP();
+			const respuesta = await httpClient.post(
+				'modulos/getDataMedicos',
+				{
+					num_cmp: cmp,
+					des_nom_medico: '',
+				},
+				{ cancelToken: cancelSource.token }
+			);
+			var array1 = respuesta.data.data;
+			for (let i = 0; i < array1.length; i++) {
+				array1[i].key = array1[i].cod_medico;
+				array1[i].value = array1[i].cod_medico;
+				array1[i].label = array1[i].num_cmp;
+			}
+			setOptionsNOM();
+			setOptionsCMP(array1);
+		} else {
+			if (peticion) {
+				cancelSource.cancel('CMP Cancelado');
+				setCancelSource(axios.CancelToken.source());
+			}
+		}
+	};
+
+	const onSearchNOM = async searchText => {
+		var nombre = formRef.current.getFieldValue('des_nom_medico');
+		if (nombre ? nombre.length >= 4 : false) {
+			setPeticion(true);
+			setOptionsNOM();
+			const respuesta = await httpClient.post(
+				'modulos/getDataMedicos',
+				{
+					num_cmp: '',
+					des_nom_medico: nombre,
+				},
+				{ cancelToken: cancelSource.token }
+			);
+			var array2 = respuesta.data.data;
+			console.log(respuesta.data.data);
+			for (let i = 0; i < array2.length; i++) {
+				array2[i].key = array2[i].cod_medico;
+				array2[i].value = array2[i].cod_medico;
+				array2[i].label = (
+					<div>
+						{array2[i].des_nom_medico}
+						<div style={{ color: '#a3a3a3' }}>{' ' + array2[i].des_ape_medico}</div>
+					</div>
+				);
+			}
+			setOptionsCMP();
+			setOptionsNOM(array2);
+		} else {
+			if (peticion) {
+				cancelSource.cancel('NOM ancelado');
+				setCancelSource(axios.CancelToken.source());
+			}
+		}
+	};
+
+	const onSelectCMP = data => {
+		optionsCMP.forEach(element => {
+			if (element.key === data) {
+				formRef.current.setFieldsValue({
+					num_cmp: element.num_cmp,
+					des_nom_medico: `${element.des_nom_medico + ' ' + element.des_ape_medico}`,
+				});
+			}
+		});
+		setCod(data);
+		setValueCMP(data);
+	};
+
+	const onSelectNOM = data => {
+		optionsNOM.forEach(element => {
+			if (element.key === data) {
+				formRef.current.setFieldsValue({
+					num_cmp: element.num_cmp,
+					des_nom_medico: `${element.des_nom_medico + ' ' + element.des_ape_medico}`,
+				});
+			}
+		});
+		setCod(data);
+		setValueNOM(data);
+	};
+
+	const onChangeCMP = data => {
+		if (data.length <= 3) {
+			setOptionsCMP([]);
+		}
+	};
+
+	const onChangeNOM = data => {
+		if (data.length <= 3) {
+			setOptionsNOM([]);
+		}
+	};
+
+	return (
+		<Modal
+			okText="Aceptar"
+			cancelText="Cancelar"
+			confirmLoading={loading}
+			title={
+				<div
+					style={{
+						display: 'grid',
+						gridTemplateColumns: 'repeat(2, 1fr)',
+						gridTemplateRows: '1fr',
+						gridColumnGap: '0px',
+						gridRowGap: '0px',
+						marginRight: '5%',
+					}}
+				>
+					<div style={{ gridArea: '1 / 1 / 2 / 2', fontSize: '22px' }}>
+						{filaActual ? 'Modulos' : 'Agregar Médico'}
+					</div>
+				</div>
+			}
+			visible={abrirModal}
+			onOk={async () => {
+				if (filaActual) {
+					setLoading(true);
+					await guardarAssignacion();
+					await traerUsuarios();
+					setLoading(false);
+					setAbrirModal(false);
+				} else {
+					if (cod !== '') {
+						setLoading(true);
+						const respuesta = await guardarAssignacion();
+						console.log(respuesta);
+						if (respuesta.success) {
+							await traerUsuarios();
+							setLoading(false);
+							setAbrirModal(false);
+							notificaciones('Completado!');
+						} else {
+							notificaciones('El codigo del medico es incorrecto', 'Alerta');
+							setLoading(false);
+						}
+					} else {
+						console.log('nnnn');
+						notificaciones('Debe ingresar un código de médico', 'Alerta');
+					}
+				}
+			}}
+			onCancel={() => setAbrirModal(false)}
+		>
+			{filaActual ? null : (
+				<div style={{ paddingLeft: 15, paddingRight: 15, marginBottom: 25 }}>
+					<Form ref={formRef} layout="vertical">
+						<Row style={{ flexDirection: 'row' }}>
+							<Col sm={10} xs={24} style={{ paddingLeft: '0px' }}>
+								<Form.Item name="num_cmp">
+									<AutoComplete
+										value={valueCMP}
+										options={optionsCMP}
+										onSearch={onSearchCMP}
+										onSelect={onSelectCMP}
+										onChange={onChangeCMP}
+										style={{ width: '100%' }}
+										placeholder="Ingrese el CMP"
+										// notFoundContent={optionsCMP ? <Spin size="small" /> : null}
+									/>
+								</Form.Item>
+							</Col>
+							<Col sm={14} xs={24} style={{ paddingRight: '0px' }}>
+								<Form.Item name="des_nom_medico">
+									<AutoComplete
+										value={valueNOM}
+										options={optionsNOM}
+										onSearch={onSearchNOM}
+										onSelect={onSelectNOM}
+										onChange={onChangeNOM}
+										style={{ width: '100%' }}
+										placeholder="Ingrese el nombre del medico"
+										// notFoundContent={optionsCMP ? <Spin size="small" /> : null}
+									/>
+								</Form.Item>
+							</Col>
+						</Row>
+					</Form>
+				</div>
+			)}
+
+			<Checkbox.Group style={{ paddingLeft: 15 }} onChange={onChange} value={valores}>
+				<Row>{opciones}</Row>
+			</Checkbox.Group>
+		</Modal>
+	);
+};
+
+const crearOpciones = modulos => {
+	modulos.sort((a, b) => a.id_modulo - b.id_modulo);
+	return modulos.map(modulo => {
+		return (
+			<Col key={modulo.id_modulo} span={24}>
+				<Checkbox value={modulo.id_modulo}>{modulo.nombre_modulo}</Checkbox>
+			</Col>
+		);
+	});
+};
+
+const obtenerValores = modulos => {
+	const valores = [];
+	for (const key in modulos) {
+		if (Object.hasOwnProperty.call(modulos, key)) {
+			// const element = modulos[key];
+			valores.push(key.toString());
+		}
+	}
+	return valores;
+};
+
+export default ModalAsignacion;
