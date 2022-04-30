@@ -1,5 +1,5 @@
 import React, { useState, createRef, useMemo } from 'react';
-import { Checkbox, Col, Modal, Row, Form, AutoComplete } from 'antd';
+import { Checkbox, Col, Modal, Row, Form, AutoComplete, notification } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones } from '../../../util/util';
 import axios from 'axios';
@@ -28,16 +28,19 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 	const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
 	const [peticion, setPeticion] = useState(false);
 
-	// const cancelSource = useMemo(() => axios.CancelToken.source(), []);
-
 	const guardarAssignacion = async () => {
-		const repuesta = await httpClient.post('modulos/asignaModulos', {
-			codMedico: filaActual ? filaActual.cod_medico : cod,
-			modulos: valores,
-			codMedico1: token.cod_medico,
-		});
-		console.log(repuesta.data);
-		return repuesta.data;
+		try {
+			const repuesta = await httpClient.post('modulos/asignaModulos', {
+				codMedico: filaActual ? filaActual.cod_medico : cod,
+				modulos: valores,
+				codMedico1: token.cod_medico,
+			});
+			setAbrirModal(false);
+			notificaciones('Modulos asignado correctamente.', 'success');
+			return repuesta.data;
+		} catch (error) {
+			throw error;
+		}
 	};
 
 	const onSearchCMP = async searchText => {
@@ -166,27 +169,32 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 			visible={abrirModal}
 			onOk={async () => {
 				if (filaActual) {
-					setLoading(true);
-					await guardarAssignacion();
-					await traerUsuarios();
-					setLoading(false);
-					setAbrirModal(false);
+					if (valores.length >= 1) {
+						setLoading(true);
+						await guardarAssignacion();
+						await traerUsuarios();
+						setLoading(false);
+					} else {
+						notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
+					}
 				} else {
 					if (cod !== '') {
-						setLoading(true);
-						const respuesta = await guardarAssignacion();
-						console.log(respuesta);
-						if (respuesta.success) {
-							await traerUsuarios();
-							setLoading(false);
-							setAbrirModal(false);
-							notificaciones('Completado!');
+						if (valores.length >= 1) {
+							setLoading(true);
+							const respuesta = await guardarAssignacion();
+							if (respuesta?.success) {
+								await traerUsuarios();
+								setLoading(false);
+								setAbrirModal(false);
+								notificaciones('Completado!');
+							} else {
+								notificaciones('El codigo del medico es incorrecto.', 'Alerta');
+								setLoading(false);
+							}
 						} else {
-							notificaciones('El codigo del medico es incorrecto', 'Alerta');
-							setLoading(false);
+							notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
 						}
 					} else {
-						console.log('nnnn');
 						notificaciones('Debe ingresar un código de médico', 'Alerta');
 					}
 				}

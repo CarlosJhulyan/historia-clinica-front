@@ -9,11 +9,11 @@ import { notificaciones } from '../../util/util';
 
 
 export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setModalGuardar, limpiarData, setModalImpresion, traerDatos, setMostrarListaPaciente }) => {
-	console.log("ENVIAR DATA 2:", enviarData2);
+	console.log("ENVIAR DATA:", enviarData);
 
 	const dispatch = useDispatch();
 	const token = JSON.parse(localStorage.getItem('token'));
-
+	console.log(enviarData2);
 
 	const onConfirmAtendido = async () => {
 		/* setModalImpresion(true); */
@@ -45,7 +45,7 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 	const onCancelGuardado = async () => {
 
 		console.log('Guardado');
-		setModalGuardar(false);
+		// setModalGuardar(false);
 		dispatch(setOpacity(false));
 		console.log('DATITA', enviarData);
 

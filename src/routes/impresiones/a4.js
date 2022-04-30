@@ -111,7 +111,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 			{/* <div hidden></div> */}
 			<div id="pagina1">
 				<div style={{ position: 'relative' }}>
-					<img alt="hoja membreatada" src={tipo === 'local' ? rojo : azul}></img>
+					<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul}></img>
 
 					<div
 						style={{
@@ -162,7 +162,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								<strong>DNI :</strong> {datosModal.estado.NUM_DOCUMENTO}
 							</Col>
 							<Col xs={7}>
-								<strong>FECHA NACIMIENTO :</strong> {datosModal.estado.FEC_NAC_CLI}
+								<strong>FECHA NACIMIENTO :</strong> {datosModal.estado.FEC_NAC_CLI._i ? datosModal.estado.FEC_NAC_CLI._i : datosModal.estado.FEC_NAC_CLI}
 							</Col>
 							<Col xs={3}>
 								<strong>EDAD :</strong> {datosModal.estado.EDAD}
@@ -184,7 +184,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								marginTop: espacios + 10,
 								paddingTop: 10,
 								paddingBottom: 10,
-								backgroundColor: tipo === 'local' ? backgroundRojo : backgroundAzul,
+								backgroundColor: tipo === 'N' ? backgroundRojo : backgroundAzul,
 							}}
 						>
 							<Col xs={24}>
@@ -437,7 +437,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 			</div>
 			<div id="pagina2" style={{ marginTop: -1 }}>
 				<div style={{ position: 'relative' }}>
-					<img alt="hoja membreatada" src={tipo === 'local' ? rojo : azul}></img>
+					<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul}></img>
 
 					<div
 						style={{
@@ -619,7 +619,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								marginTop: espacios,
 								paddingTop: 10,
 								paddingBottom: 10,
-								backgroundColor: tipo === 'local' ? backgroundRojo : backgroundAzul,
+								backgroundColor: tipo === 'N' ? backgroundRojo : backgroundAzul,
 							}}
 						>
 							<Col xs={24}>
@@ -706,7 +706,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 
 			<div id="pagina3" style={{ marginTop: -1 }}>
 				<div style={{ position: 'relative' }}>
-					<img alt="hoja membreatada" src={tipo === 'local' ? rojo : azul}></img>
+					<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul}></img>
 
 					<div
 						style={{
@@ -728,7 +728,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								marginTop: espacios + 20,
 								paddingTop: 10,
 								paddingBottom: 10,
-								backgroundColor: tipo === 'local' ? backgroundRojo : backgroundAzul,
+								backgroundColor: tipo === 'N' ? backgroundRojo : backgroundAzul,
 							}}
 						>
 							<Col xs={24}>
@@ -780,7 +780,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								marginTop: espacios,
 								paddingTop: 10,
 								paddingBottom: 10,
-								backgroundColor: tipo === 'local' ? backgroundRojo : backgroundAzul,
+								backgroundColor: tipo === 'N' ? backgroundRojo : backgroundAzul,
 							}}
 						>
 							<Col xs={24}>
@@ -815,7 +815,7 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								marginTop: espacios,
 								paddingTop: 10,
 								paddingBottom: 10,
-								backgroundColor: tipo === 'local' ? backgroundRojo : backgroundAzul,
+								backgroundColor: tipo === 'N' ? backgroundRojo : backgroundAzul,
 							}}
 						>
 							<Col xs={24}>

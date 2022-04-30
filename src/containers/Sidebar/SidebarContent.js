@@ -119,9 +119,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 		if (token.modulos.includes('5')) {
 			menuItems.push(
 				<Menu.Item key="listaHospitalizar">
-					<Link to="/listaHospitalizar">
+					<Link to="/admisionHospitalaria">
 						<i className="icon icon-auth-screen" />
-						<span>Lista de Pacientes a Hospitalizar</span>
+						<span>Admisión Hospitalaria</span>
 					</Link>
 				</Menu.Item>
 			);
@@ -263,7 +263,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						<span>
 							{' '}
 							<i className="icon icon-copy" />
-							<span>Reportes</span>
+							<span>Auditoria</span>
 						</span>
 					}
 				>
@@ -317,12 +317,14 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 							<span>Asignacion de Modulos</span>
 						</Link>
 					</Menu.Item>
-					<Menu.Item key="configuraciones/camas">
-						<Link to="/configuraciones/camas">
-							<i className="icon icon-company" />
-							<span>Camas</span>
-						</Link>
-					</Menu.Item>
+					{ token.modulos.includes('15') &&
+						<Menu.Item key="configuraciones/camas">
+							<Link to="/configuraciones/camas">
+								<i className="icon icon-company" />
+								<span>Camas</span>
+							</Link>
+						</Menu.Item>
+					}
 					<Menu.Item key="configuraciones/firmas">
 						<Link to="/configuraciones/firmas">
 							<i className="icon icon-rendaring-calendar" />
@@ -347,12 +349,12 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					{/* <AppsNavigation /> */}
 				</div>
 				<CustomScrollbars
-					className={`gx-layout-sider-scrollbar ${anexo.tipo === 'local' && 'mitema'}`}
+					className={`gx-layout-sider-scrollbar ${anexo.tipo === 'N' && 'mitema'}`}
 				>
 					<Menu
 						defaultOpenKeys={[defaultOpenKeys]}
 						selectedKeys={[selectedKeys]}
-						style={anexo.tipo === 'local' ? { backgroundColor: '#e20612' } : {}}
+						style={anexo.tipo === 'N' ? { backgroundColor: '#e20612' } : {}}
 						theme={themeType === THEME_TYPE_LITE ? 'lite' : 'dark'}
 						mode="inline"
 					>

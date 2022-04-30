@@ -11,8 +11,6 @@ import { AuthProvider } from './authentication';
 import firebase from 'firebase/app';
 import { tipoAnexo } from './routes/listaPaciente/datosPaciente/apis';
 
-// const store = store;
-
 const NextApp = () => {
 	const firebaseConfig = {
 		apiKey: 'AIzaSyALYkzNUUfIwfWS-WvVnJ4ScnJAA3sDRPQ',
@@ -29,7 +27,6 @@ const NextApp = () => {
 	const iniciar = async () => {
 		const estado = await tipoAnexo();
 		setEstado(estado);
-		console.log('iniciado');
 	};
 
 	// Initialize Firebase

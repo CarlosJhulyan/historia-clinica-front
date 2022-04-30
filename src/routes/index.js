@@ -48,14 +48,16 @@ const App = ({ match }) => {
 					<Route path={`${match.url}configuraciones/modulos`} component={AsignacionModulos} />
 				);
 				items.push(
-					<Route path={`${match.url}configuraciones/camas`} component={ConfiguracionCamas} />
-				);
-				items.push(
 					<Route path={`${match.url}configuraciones/firmas`} component={ConfiguracionFirmas} />
 				);
 			}
+			if (token.modulos.includes('15')) {
+				items.push(
+					<Route path={`${match.url}configuraciones/camas`} component={ConfiguracionCamas} />
+				);
+			}
 			if (token.modulos.includes('5')) {
-				items.push(<Route path={`${match.url}listaHospitalizar`} component={listaHospitalizar} />);
+				items.push(<Route path={`${match.url}admisionHospitalaria`} component={listaHospitalizar} />);
 			}
 			if (token.modulos.includes('6')) {
 				items.push(<Route path={`${match.url}signosVitales`} component={SignosVitales} />);

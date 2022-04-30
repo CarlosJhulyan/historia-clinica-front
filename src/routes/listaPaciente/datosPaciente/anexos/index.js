@@ -9,7 +9,7 @@ const Anexos = ({ datosModal }) => {
 
 	return (
 		<div>
-			{tipoAnexo !== 'local' ? (
+			{tipoAnexo !== 'N' ? (
 				<AnexosFirestore datosModal={datosModal}></AnexosFirestore>
 			) : (
 				<AnexosLocal datosModal={datosModal}></AnexosLocal>

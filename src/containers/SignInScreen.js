@@ -9,11 +9,11 @@ import { useSelector } from 'react-redux';
 export const SignInScreen = ({ anexo, logo, logo2, onFinish, onFinishFailed, isLoading, error }) => {
 	const anexo1 = useSelector(state => state.anexo);
 
-	if (anexo1.tipo === 'local') {
+	if (anexo1.tipo === 'N') {
 		// modificar favicon
 		const favicon = document.querySelector('link[rel="shortcut icon"]');
 		favicon.href = iconFavicon;
-	} else {
+	} else if (anexo1.tipo === 'S') {
 		const favicon = document.querySelector('link[rel="shortcut icon"]');
 		favicon.href = iconFavicon2;
 	}
@@ -26,7 +26,7 @@ export const SignInScreen = ({ anexo, logo, logo2, onFinish, onFinishFailed, isL
                         <img src={logo} alt='Neature' />
                     </div> */}
 					<div className="gx-app-logo-wid">
-						<img src={anexo.tipo === 'local' ? logo : logo2} style={{ borderRadius: 50 }} alt="Neature" />
+						<img src={anexo.tipo === 'N' ? logo : logo2} style={{ borderRadius: 50 }} alt="Neature" />
 					</div>
 					{/*   <div className="gx-app-logo">
                         <img alt="example" src="/assets/images/biensalud-logo.ico" />

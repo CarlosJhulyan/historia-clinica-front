@@ -620,7 +620,7 @@ const ModaDetalles = (props) => {
 								>
 									{getDepartamentos().map((element) => {
 										return (
-											<Option key={element.pk} value={element.ubigeo}>
+											<Option key={element.ubigeo} value={element.ubigeo}>
 												{element.nombre}
 											</Option>
 										);
@@ -651,7 +651,7 @@ const ModaDetalles = (props) => {
 								>
 									{getProvincias(estado.DEP_UBIGEO).map((element) => {
 										return (
-											<Option key={element.pk} value={element.ubigeo}>
+											<Option key={element.ubigeo} value={element.ubigeo}>
 												{element.nombre}
 											</Option>
 										);
@@ -680,9 +680,9 @@ const ModaDetalles = (props) => {
 										option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 									}
 								>
-									{getDistritos(estado.PRV_UBIGEO).map((element) => {
+									{getDistritos(estado.DEP_UBIGEO, estado.PRV_UBIGEO).map((element) => {
 										return (
-											<Option key={element.pk} value={element.ubigeo}>
+											<Option key={element.ubigeo} value={element.ubigeo}>
 												{element.nombre}
 											</Option>
 										);

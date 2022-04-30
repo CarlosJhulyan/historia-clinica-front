@@ -1,7 +1,7 @@
 import { types } from '../../types/types';
 
 const anexos = {
-	tipo: 'local',
+	tipo: 'N',
 	data: [],
 };
 

@@ -57,11 +57,11 @@ const Sidebar = () => {
 		drawerStyle = 'gx-collapsed-sidebar';
 	}
 
-	if (anexo.tipo === 'local') {
+	if (anexo.tipo === 'N') {
 		// modificar favicon
 		const favicon = document.querySelector('link[rel="shortcut icon"]');
 		favicon.href = iconFavicon;
-	}else{
+	} else if (anexo.tipo === 'S') {
     const favicon = document.querySelector('link[rel="shortcut icon"]');
 		favicon.href = iconFavicon2;
   }
@@ -69,7 +69,7 @@ const Sidebar = () => {
 	return (
 		<Sider
 			className={`gx-app-sidebar ${drawerStyle} ${themeType !== THEME_TYPE_LITE ? 'gx-layout-sider-dark' : null}`}
-			style={anexo.tipo === 'local' ? { backgroundColor: '#e20612' } : {}}
+			style={anexo.tipo === 'N' ? { backgroundColor: '#e20612' } : {}}
 			trigger={null}
 			collapsed={width < TAB_SIZE ? false : sidebarCollapsed || navStyle === NAV_STYLE_NO_HEADER_MINI_SIDEBAR}
 			theme={themeType === THEME_TYPE_LITE ? 'lite' : 'dark'}

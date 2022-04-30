@@ -40,6 +40,7 @@ const ReporteIncompletos = () => {
 	const [optionsCOD, setOptionsCOD] = useState([]);
 	const [valueNOM, setValueNOM] = useState('');
 	const [optionsNOM, setOptionsNOM] = useState([]);
+	const [loadingEspecialidades, setLoadingEspecialidades] = useState(false);
 
 	const formSearch = useMemo(() => createRef(), []);
 
@@ -100,6 +101,7 @@ const ReporteIncompletos = () => {
 	};
 
 	const onSearchEspecialidad = async () => {
+		setLoadingEspecialidades(true);
 		try {
 			const { data: { data = [] } } = await httpClient.post(
 				'auditoria/getEspecialidades',
@@ -114,6 +116,7 @@ const ReporteIncompletos = () => {
 				const newData = exist ? Array.prototype.concat(previus, value) : previus;
 				return newData;
 			}, [])
+			setLoadingEspecialidades(false);
 			setOptionsEspecialidad(formatEspecialidades);
 		} catch (error) {
 			cancelSource.cancel('Especialidad Cancelada');
@@ -257,6 +260,15 @@ const ReporteIncompletos = () => {
 
 	const columns = [
 		{
+			title: 'Fecha',
+			dataIndex: 'fecha',
+			key: 'fecha',
+			render: record => {
+				const fechaParseada = Moment(record, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY');
+				return <span>{fechaParseada}</span>;
+			},
+		},
+		{
 			title: 'Especialidad',
 			dataIndex: 'especialidad',
 			key: 'especialidad',
@@ -275,19 +287,18 @@ const ReporteIncompletos = () => {
 			...getColumnSearchProps('nom_paciente'),
 		},
 		{
+			title: 'Estado',
+			dataIndex: 'estado',
+			key: 'estado',
+			render: record => (
+				<span>{record === 'G' ? 'GRABADO TEMPORAL' : 'ACTIVO'}</span>
+			),
+		},
+		{
 			title: 'Historia Clínica',
 			dataIndex: 'hc',
 			key: 'hc',
 			...getColumnSearchProps('hc'),
-		},
-		{
-			title: 'Fecha',
-			dataIndex: 'fecha',
-			key: 'fecha',
-			render: record => {
-				const fechaParseada = Moment(record, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY');
-				return <span>{fechaParseada}</span>;
-			},
 		},
 		{
 			title: 'Puntaje',
@@ -295,7 +306,7 @@ const ReporteIncompletos = () => {
 			key: 'puntaje',
 		},
 		{
-			title: '',
+			title: 'Campos',
 			dataIndex: 'completos',
 			key: 'completos',
 			render: (record, data) => {
@@ -403,10 +414,10 @@ const ReporteIncompletos = () => {
 								</Form.Item>
 								<Form.Item name="ESPECIALIDAD" style={{ width: '180px', margin: 0 }}>
 									<Select
-										disabled={optionsEspecialidad.length === 0}
+										disabled={loadingEspecialidades}
 										mode='multiple'
 										value={valueEspecialidad}
-										loading={optionsEspecialidad.length === 0}
+										loading={loadingEspecialidades}
 										onChange={onChangeEspecialidad}
 										onSelect={onSelectEspecialidad}
 										style={{ width: '100%' }}

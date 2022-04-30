@@ -518,7 +518,7 @@ export const desarrolloProcedimientos = dataGlobal => {
 	traerDesarrolloProcedimiento(dataGlobal).then(data => {
 		if (data.data.length > 0) {
 			const resp = data.data[0];
-			console.log('Desarrollo Proccedimiento:', resp);
+			// console.log('Desarrollo Proccedimiento:', resp);
 			const desarrollo = {
 				relatoMedico: resp.relato_medico,
 				conclusion: resp.conclusion,
@@ -726,17 +726,14 @@ export const traerEvolucionTratamientoOdonto = async dataGlobal => {
 		codPaciente: dataGlobal.codPaciente,
 		nroAtencion: dataGlobal.nroAtencion,
 	});
-	console.log('Evolucion Odontoooooooooooooooooooooooooooooooooooooooooo', data.data);
 	store.dispatch(setEvolucionTratamientoOdonto(data.data));
 };
 
 // TRAER TIPO DE ANEXO (FIRESTORE O LOCAL)
 export const tipoAnexo = async () => {
-	const respuesta = await httpClient.post('/tipoAnexos');
-	if (respuesta.data.success) {
-		if (respuesta.data.data[0].llave_tab_gral === 'S') {
-			store.dispatch(setTipoAnexo('S'));
-		}
+	const { data: { success, data = [] } } = await httpClient.post('/tipoAnexos');
+	if (success) {
+		store.dispatch(setTipoAnexo(data[0].llave_tab_gral));
 	}
 };
 
@@ -745,7 +742,6 @@ export const traerAnexo = async dataGlobal => {
 	const estado = store.getState();
 	// if (estado.anexo.tipo === 'local') {
 	const resp = await httpClient.post('/anexos/getAnexos', { numAtendMed: dataGlobal.nroAtencion });
-	console.log('ANEEEEEEEXOOO13223:', resp);
 	if (resp.data.success) {
 		store.dispatch(setAnexosAction({ ...estado.anexo, data: resp.data.data }));
 	}

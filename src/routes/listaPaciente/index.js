@@ -1,5 +1,19 @@
-import { Button, Card, Table, Modal, Input, Space } from 'antd';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { 
+	useCallback, 
+	useEffect, 
+	useMemo, 
+	useState 
+} from 'react';
+import { 
+	Button, 
+	Card, 
+	Table, 
+	Modal, 
+	Input, 
+	Space,
+	Radio,
+	Form
+} from 'antd';
 import ModalDetalles from './modalDetalles';
 import { httpClient } from '../../util/Api';
 import DatosPaciente from './datosPaciente/index';
@@ -132,18 +146,20 @@ const ListaPaciente = () => {
 		{
 			title: 'Fecha',
 			dataIndex: 'FECHA',
-			key: 'fecha',
-			...getColumnSearchProps('FECHA'),
+			key: 'fecha'
 		},
 		{
 			title: 'Hora',
 			dataIndex: 'HORA',
-			key: 'hora',
-			...getColumnSearchProps('HORA'),
-
+			key: 'hora'
 		},
 		{
-			title: 'Numero HC',
+			title: 'Especialidad',
+			dataIndex: 'ESPECIALIDAD',
+			key: 'especialidad'
+		},
+		{
+			title: 'Número HC',
 			dataIndex: 'COD_PACIENTE',
 			key: 'hc',
 			...getColumnSearchProps('COD_PACIENTE'),
@@ -159,19 +175,21 @@ const ListaPaciente = () => {
 		{
 			title: 'Edad',
 			dataIndex: 'EDAD',
-			key: 'edad',
-			...getColumnSearchProps('EDAD'),
-
+			key: 'edad'
 		},
 		{
-			title: 'Estado',
-			dataIndex: 'ESTADO',
-			key: 'estado',
-			...getColumnSearchProps('ESTADO'),
-
+			title: 'Area asignada',
+			dataIndex: 'ASIGNADO',
+			key: 'asignado',
+			render: (asignado) => (
+				<>
+					{asignado === '1' && <span>HOSPITALIZACION</span>}
+					{asignado === '2' && <span>EMERGENCIA</span>}
+				</>
+			)
 		},
 		{
-			title: 'Action',
+			title: 'Acción',
 			key: 'action',
 			render: (record) => (
 				<span>
@@ -231,20 +249,21 @@ const ListaPaciente = () => {
 						<div
 							style={{
 								display: 'grid',
-								gridTemplateColumns: 'repeat(2, 1fr)',
+								gridTemplateColumns: '250px auto',
 								gridTemplateRows: '1fr',
 								gridColumnGap: '0px',
 								gridRowGap: '0px',
-								marginRight: '5%',
+								overflowX: 'auto'
 							}}
 						>
-							<div style={{ gridArea: '1 / 1 / 2 / 2', fontSize: '22px', paddingTop: '20px' }}>Lista de Pacientes</div>
+							<div style={{ gridArea: '1 / 1 / 1 / 2', fontSize: '22px', paddingTop: '20px' }}>Lista de Pacientes</div>
 							<div
 								style={{
 									gridArea: '1 / 2 / 2 / 3',
 									display: 'flex',
 									flexDirection: 'row-reverse',
 									paddingTop: '15px',
+									gap: '50px'
 								}}
 							>
 								<Button
@@ -257,6 +276,17 @@ const ListaPaciente = () => {
 								>
 									Actualizar
 								</Button>
+								<Form.Item style={{ width: '430px' }} label='Filtrar por'>
+									<Radio.Group 
+										value='H'
+										onChange={() => {}}
+										buttonStyle="solid">
+											<Radio.Button value="H">Hospitalización</Radio.Button>
+											<Radio.Button value="E">Emergencia</Radio.Button>
+											<Radio.Button value="U">UCI</Radio.Button>
+											<Radio.Button value="S">SOP</Radio.Button>
+									</Radio.Group>
+								</Form.Item>
 							</div>
 						</div>
 					}
@@ -264,7 +294,7 @@ const ListaPaciente = () => {
 					<Table className="gx-table-responsive" columns={columns} dataSource={data} loading={data === undefined} />
 				</Card>
 			) : (
-				<DatosPaciente datosModal={datosModal} setMostrarListaPaciente={setMostrarListaPaciente} traerDatos={traerDatos} />
+				<DatosPaciente setDatosModal={setDatosModal} datosModal={datosModal} setMostrarListaPaciente={setMostrarListaPaciente} traerDatos={traerDatos} />
 			)}
 
 			{abrirModal ? (

@@ -49,12 +49,15 @@ import {
 } from '../../../appRedux/actions/menu/helpers';
 import { ModalRequeridos } from '../../../components/modal/ModalRequeridos';
 import { setClearUI, setMsgRequired } from '../../../appRedux/actions/ui';
-import {
-	ImpresionImagenes,
-	ImpresionLaboratorio,
-	ImpresionProcedimientos,
-	ImpresionTratamientos,
-} from '../../impresiones';
+// import {
+// 	ImpresionImagenes,
+// 	ImpresionLaboratorio,
+// 	ImpresionProcedimientos,
+// 	ImpresionTratamientos,
+// } from '../../impresiones';`
+
+import { ModalImpresionReceta } from './modal/modalImpresion';
+import { ModalImpresionA4 } from './modal/modalImpresionA4';
 
 const InformacionPaciente = ({
 	datosModal,
@@ -62,12 +65,13 @@ const InformacionPaciente = ({
 	setTabDefault,
 	traerDatos,
 }) => {
-	const a = moment();
 	const [estado, setEstado] = useState();
 	const [firma, setFirma] = useState('');
 	const [modalGuardar, setModalGuardar] = useState(false);
 	const localS = JSON.parse(localStorage.getItem('token'));
 	const [modalImpresion, setModalImpresion] = useState(false);
+	const [modalImpresionReceta, setModalImpresionReceta] = useState(false);
+	const [modalImpresionA4, setModalImpresionA4] = useState(false);
 	const [modalCerrar, setModalCerrar] = useState(false);
 	const [estadoImprimir, setEstadoImprimir] = useState(0);
 	const diagnostico = useSelector(state => state.diagnostico);
@@ -79,6 +83,7 @@ const InformacionPaciente = ({
 	const estadoFisico = useSelector(state => state.estadoFisico);
 	const enfermedadActual = useSelector(state => state.enfermedadActual);
 	const { filtroEspecialidad } = useSelector(state => state.ui);
+	const [cmp, setCmp] = useState('');
 
 	useEffect(() => {
 		if (datosModal.estado) {
@@ -98,8 +103,6 @@ const InformacionPaciente = ({
 			console.log(e);
 		}
 	}, []);
-
-	console.log("DATOS INFORMACION PACIENTE:", datosModal)
 
 	//LIMPIANDO
 
@@ -158,6 +161,9 @@ const InformacionPaciente = ({
 		const interconsulta = estadoRedux.procedimientoInterconsulta;
 
 		const data = {
+			nomMedico: JSON.parse(localStorage.getItem('token')).des_ape_medico.trim() + ', ' + JSON.parse(localStorage.getItem('token')).des_nom_medico.trim(),
+			nomPaciente: `${estado.NOMBRE} ${estado.APE_PATERNO} ${estado.APE_MATERNO}`,
+			especialidad: JSON.parse(localStorage.getItem('token')).des_especialidad,
 			codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
 			codCia: datosModal.estado.COD_CIA,
 			codMedico: localS.cod_medico,
@@ -273,6 +279,21 @@ const InformacionPaciente = ({
 		setEnviarData2(data2);
 		setModalGuardar(true);
 	};
+
+	const getCMP = async (codMedico) => {
+		const { data } = await httpClient.post('/getCMP', {
+			codMedico
+		});
+
+		if (data.success) {
+			setCmp(data.data[0].num_cmp);
+		}
+	}
+
+	useEffect(() => {
+		getCMP(enviarData.codMedico);
+	}, [enviarData.codMedico]);
+	
 
 	const impresionRef = useRef();
 	const estados = store.getState();
@@ -513,7 +534,59 @@ const InformacionPaciente = ({
 					</div>
 				</Modal>
 
-				<Modal
+				{modalImpresion ? (
+					<Modal
+						title="Recetas"
+						visible={modalImpresion}
+						okButtonProps={{ hidden: true }}
+						cancelText="Salir"
+						onCancel={() => {
+							limpiarData();
+							setMostrarListaPaciente(true);
+							setModalCerrar(false);
+							setModalImpresion(false);
+							setEstadoImprimir(0);
+							dispatch(setOpacity(true));
+						}}
+					>
+						<Row style={{ flexDirection: 'row' }}>
+							<Col lg={24} style={{ marginBottom: '10px' }}>
+								Seleccione una opción a imprimir:
+							</Col>
+							<Col lg={12}>
+								<Button style={{ width: '100%' }} onClick={() => setModalImpresionReceta(true)}>
+									Receta
+								</Button>
+							</Col>
+
+							<Col lg={12}>
+								<Button style={{ width: '100%' }} onClick={() => setModalImpresionA4(true)}>
+									A4
+								</Button>
+							</Col>
+						</Row>
+					</Modal>
+				) : null}
+
+				{modalImpresionReceta ? (
+					<ModalImpresionReceta
+						modalImpresionReceta={modalImpresionReceta}
+						setModalImpresionReceta={setModalImpresionReceta}
+						firma={firma}
+						datosModal={datosModal}
+					/>
+				) : null}
+				{modalImpresionA4 ? (
+					<ModalImpresionA4
+						cmp={cmp}
+						firma={firma}
+						modalImpresionA4={modalImpresionA4}
+						setModalImpresionA4={setModalImpresionA4}
+						datosModal={datosModal}
+					/>
+				) : null}
+
+				{/* <Modal
 					visible={modalImpresion}
 					width={305}
 					onCancel={() => {
@@ -702,7 +775,7 @@ const InformacionPaciente = ({
 							/>
 						) : null}
 					</div>
-				</Modal>
+				</Modal> */}
 
 				{datosModal.estado.alergias !== '' && datosModal.estado.alergias ? (
 					<Col span={24} style={{ paddingTop: 15 }}>

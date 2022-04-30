@@ -11,6 +11,7 @@ import { useAuth } from '../../authentication';
 import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
+import ModalTicketAtencion from './modalTicketAtencion';
 
 
 const datos = {
@@ -26,7 +27,7 @@ const ListaHospitalizar = () => {
   const [modalAsignacion, setModalAsignacion] = useState(false);
   const [filaActual, setFilaActual] = useState({});
   const [data, setData] = useState();
-  // const [dataDiagnostico, setDataDiagnostico] = useState();
+  const [abrirModalTicket, setAbrirModalTicket] = useState(false);
   const [datosModal, setDatosModal] = useState({});
   const [hospi, setHospi] = useState({});
   const [dataInicialCargada, setDataInicialCargada] = useState(false);
@@ -230,20 +231,20 @@ const ListaHospitalizar = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
+              gridTemplateColumns: '250px auto',
               gridTemplateRows: '1fr',
               gridColumnGap: '0px',
-              gridRowGap: '0px',
-              marginRight: '5%',
+              gridRowGap: '0px'
             }}
           >
-            <div style={{ gridArea: '1 / 1 / 2 / 2', fontSize: '22px', paddingTop: '20px' }}>Lista de Pacientes a Hospitalizar</div>
+            <div style={{ gridArea: '1 / 1 / 2 / 2', fontSize: '22px', paddingTop: '20px' }}>Admisión Hospitalaria</div>
             <div
               style={{
                 gridArea: '1 / 2 / 2 / 3',
                 display: 'flex',
                 flexDirection: 'row-reverse',
                 paddingTop: '15px',
+                gap: '20px'
               }}
             >
               <Button
@@ -255,6 +256,17 @@ const ListaHospitalizar = () => {
                 }}
               >
                 Actualizar
+              </Button>
+              <Button
+                type='primary'
+                onClick={() => setAbrirModalTicket(true)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                Generar Ticket
               </Button>
             </div>
           </div>
@@ -281,6 +293,13 @@ const ListaHospitalizar = () => {
           dataModal={filaActual}
           traerData={traerDatos}
           hospitalizacion={hospi}
+        />
+      ) : null}
+
+      {abrirModalTicket ? (
+        <ModalTicketAtencion 
+          abrirModal={abrirModalTicket}
+          setAbrirModal={setAbrirModalTicket}
         />
       ) : null}
 

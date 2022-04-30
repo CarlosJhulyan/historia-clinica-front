@@ -69,7 +69,7 @@ import { ModalHA } from '../../../components/modal/ModalHA';
 import { ModalResultadoLab } from '../../../components/modal/ModalResultadoLab';
 import { ModalSeguimiento } from '../../../components/modal/ModalSeguimiento';
 
-const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos }) => {
+const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDatosModal }) => {
 	console.log('DATOS MODAL222222222222222:', datosModal);
 	const dispatch = useDispatch();
 
@@ -115,17 +115,28 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos }) => {
 		secuenciaAntecedente: numeroAntecedente,
 	};
 
-	console.log('dataGlobal22222222:', dataGlobal);
-
 	const setEstadosOdontograma = data => {
 		dispatch(setEstadoOdonotograma(data));
 	};
+
+	const traerDataAtencionPacienteActual = async (datos) => {
+		const { data: { data = [] } } = await httpClient.post('pacientes/getAtencionPaciente', datos);
+		const estado = {
+			...datosModal.estado,
+			dataMedico: data
+		}
+		setDatosModal({ 
+			...datosModal,
+			estado
+		});
+	}
 
 	useEffect(() => {
 		getListaIgnorados();
 		AntecedentesGenerales();
 		traerCombos(dataGlobal);
 		traerAnexo(dataGlobal);
+		traerDataAtencionPacienteActual(dataGlobal);
 	}, []);
 
 	useEffect(() => {

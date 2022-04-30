@@ -68,9 +68,7 @@ import { ModalImpresionReceta } from './modalImpresion';
 import { ModalImpresionA4 } from './modalImpresionA4';
 
 const DetallesPaciente = ({ datosModal }) => {
-	console.log('DATOS MODAL DAVID', datosModal);
 	const dispatch = useDispatch();
-
 	const [opcion, setOpcion] = useState();
 	const [state, setState] = useState();
 	const [abrirModal, setAbrirModal] = useState(false);

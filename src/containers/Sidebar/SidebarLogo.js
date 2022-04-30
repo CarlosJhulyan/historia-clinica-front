@@ -25,7 +25,7 @@ const SidebarLogo = ({ sidebarCollapsed, setSidebarCollapsed }) => {
   }
 
   return (
-    <div className={`${anexo.tipo === "local" && "mitema"}`}>
+    <div className={`${anexo.tipo === "N" && "mitema"}`}>
       <div className="gx-layout-sider-header">
         {(navStyle === NAV_STYLE_FIXED || navStyle === NAV_STYLE_MINI_SIDEBAR) ? <div className="gx-linebar">
           <i
@@ -42,7 +42,7 @@ const SidebarLogo = ({ sidebarCollapsed, setSidebarCollapsed }) => {
             themeType === THEME_TYPE_LITE ?
               <img alt="logo1" src={("/assets/images/logoP.jpeg")} /> :
 
-              anexo.tipo === "local"
+              anexo.tipo === "N"
                 ? <div>
                   <img alt="logoHC" style={{ float: "left", width: " 25%" }} src={ImageLocal} />
                   <h1 style={{ color: "white", float: "right", width: " 70%", fontSize: "18px", paddingTop: "8px" }}>Historia Clinica</h1>

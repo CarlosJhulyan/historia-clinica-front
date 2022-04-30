@@ -46,6 +46,7 @@ const ReporteEspecialidad = () => {
 	const [optionsNOM, setOptionsNOM] = useState([]);
 	const [allEspecialidades, setAllEspecialidades] = useState(false);
 	const [csvData, setCsvData] = useState([]);
+	const [loadingEspecialidades, setLoadingEspecialidades] = useState(false);
 
 	const formSearch = useMemo(() => createRef(), []);
 	const { Option } = Select;
@@ -186,6 +187,7 @@ const ReporteEspecialidad = () => {
 	};
 
 	const onSearchEspecialidad = async () => {
+		setLoadingEspecialidades(true);
 		try {
 			const { data: { data = [] } } = await httpClient.post(
 				'auditoria/getEspecialidades',
@@ -201,6 +203,7 @@ const ReporteEspecialidad = () => {
 				return newData;
 			}, [])
 			setOptionsEspecialidad(formatEspecialidades);
+			setLoadingEspecialidades(false);
 		} catch (error) {
 			cancelSource.cancel('Especialidad Cancelada');
 			setCancelSource(axios.CancelToken.source());
@@ -519,10 +522,10 @@ const ReporteEspecialidad = () => {
 									
 									<Form.Item name="ESPECIALIDAD" style={{ width: '150px', margin: 0 }}>
 										<Select
-											disabled={allEspecialidades || optionsEspecialidad.length === 0}
+											disabled={allEspecialidades || loadingEspecialidades}
 											mode='multiple'
 											value={valueEspecialidad}
-											loading={optionsEspecialidad.length === 0}
+											loading={loadingEspecialidades}
 											onChange={onChangeEspecialidad}
 											onSelect={onSelectEspecialidad}
 											style={{ width: '100%' }}

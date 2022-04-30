@@ -8,12 +8,12 @@ export const getDepartamentos = () => {
     const data = prov['fields'];
     lista.push({
       ubigeo: data['cod_ubigeo_inei'],
-      nombre: data['nombre'],
+      nombre: data['nombre']
     });
   });
-  console.log(lista);
   return lista;
 }
+
 export const getProvincias = (ubigeoDepartamento) => {
   let lista = [];
   provinciasJson.forEach((prov) => {
@@ -21,25 +21,23 @@ export const getProvincias = (ubigeoDepartamento) => {
     if (ubigeoDepartamento === data['cod_ubigeo_inei'].substring(0, 2)) {
       lista.push({
         ubigeo: data['cod_ubigeo_inei'].substring(2,4),
-        nombre: data['nombre'],
+        nombre: data['nombre']
       });
     }
   });
-  console.log(lista);
   return lista;
 }
 
-export const getDistritos = (ubigeoProvincia) => {
+export const getDistritos = (ubigeoDepartamento, ubigeoProvincia) => {
   let lista = [];
   distritosJson.forEach((prov) => {
     const data = prov['fields'];
-    if (ubigeoProvincia === data['cod_ubigeo_inei'].substring(2, 4)) {
+    if (ubigeoProvincia === data['cod_ubigeo_inei'].substring(2, 4) && ubigeoDepartamento === data['cod_ubigeo_inei'].substring(0, 2)) {
       lista.push({
         ubigeo: data['cod_ubigeo_inei'].substring(4,6),
-        nombre: data['nombre'],
+        nombre: data['nombre']
       });
     }
   });
-  console.log(lista);
   return lista;
 }

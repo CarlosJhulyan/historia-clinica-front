@@ -23,7 +23,7 @@ export const ImpresionImagen = ({ datosModal, firma, cmp }) => {
 		<div>
 			<div id="pagina1">
 				<div style={{ position: 'relative' }}>
-					<img alt="hoja membreatada" src={tipo === 'local' ? rojo : azul}></img>
+					<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul}></img>
 
 					<div
 						style={{
@@ -79,7 +79,7 @@ export const ImpresionImagen = ({ datosModal, firma, cmp }) => {
 								marginBottom: espacios,
 								paddingTop: 10,
 								paddingBottom: 10,
-								backgroundColor: tipo === 'local' ? backgroundRojo : backgroundAzul,
+								backgroundColor: tipo === 'N' ? backgroundRojo : backgroundAzul,
 							}}
 						>
 							<Col xs={24}>
@@ -169,7 +169,7 @@ export const ImpresionImagen = ({ datosModal, firma, cmp }) => {
 			{dataProcedimiento.length > 8 && (
 				<div id="pagina2">
 					<div style={{ position: 'relative' }}>
-						<img alt="hoja membreatada" src={tipo === 'local' ? rojo : azul} />
+						<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul} />
 						<div
 							style={{
 								position: 'absolute',
@@ -274,7 +274,7 @@ export const ImpresionImagen = ({ datosModal, firma, cmp }) => {
 			{dataProcedimiento.length > 18 && (
 				<div id="pagina3">
 					<div style={{ position: 'relative' }}>
-						<img alt="hoja membreatada" src={tipo === 'local' ? rojo : azul} />
+						<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul} />
 						<div
 							style={{
 								position: 'absolute',
