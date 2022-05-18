@@ -45,9 +45,9 @@ const ListaPaciente = () => {
 		return {
 			codGrupoCia: '001',
 			codEstado,
-			codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
-			consultorio: JSON.parse(localStorage.getItem('token')).id_consultorio,
-			bus: JSON.parse(localStorage.getItem('token')).id_bus,
+			codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
+			consultorio: JSON.parse(sessionStorage.getItem('token')).id_consultorio,
+			bus: JSON.parse(sessionStorage.getItem('token')).id_bus,
 		};
 	}, [codEstado]);
 

@@ -7,7 +7,6 @@ import {
   Form,
   Input,
   notification,
-  AutoComplete,
   Col,
   Button,
   DatePicker,
@@ -23,10 +22,12 @@ import {
 import moment from 'moment';
 
 import { httpClient } from '../../util/Api';
+import { openNotification } from '../../util/util';
 
 function TomaPreTriaje() {
   const date = moment().locale('es');
-  const [disableFetch, setDisableFetch] = useState(false);
+  const [disableFetch, setDisableFetch] = useState(true);
+  const [loadingFetch, setLoadingFetch] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
   const [dateCurrent, setDateCurrent] = useState(moment());
   const [timeCurrent, setTimeCurrent] = useState(moment());
@@ -117,7 +118,6 @@ function TomaPreTriaje() {
 		try {
 			const { data: { data = [], message } } = await httpClient.post(`/pacientes/searchPacientes`, datosSearch);
       if (data.length !== 0) {
-        // setData(data[0]);
         const dataPaciente = {
           codGrupoCia: "001",
           codPaciente: data[0].key
@@ -126,24 +126,28 @@ function TomaPreTriaje() {
         setDatosEnviar({
           ...datosEnviar,
           PACIENTE: `${data[0].APE_PATERNO.toUpperCase()} ${data[0].APE_MATERNO.toUpperCase()}, ${data[0].NOMBRE.toUpperCase()}`,
-          USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+          USU_CREA: JSON.parse(sessionStorage.getItem('token')).usuario,
           COD_PACIENTE: response.data.data.COD_PACIENTE,
           NUM_HC: response.data.data.NRO_HC_ACTUAL,
-          COD_USU_CREA: JSON.parse(localStorage.getItem('token')).num_cmp,
+          COD_USU_CREA: JSON.parse(sessionStorage.getItem('token')).num_cmp,
         });
         setDataFound({
           ...response.data.data
         })
+        openNotification('Pre triaje', message);
+        setDisableFetch(false);
       } else {
         setDataFound({
           NUM_DOCUMENTO: '',
           APE_MATERNO: '',
           APE_PATERNO: '',
           NOMBRE: ''
-        })
+        });
+        setDisableFetch(true);
       }
 		} catch (e) {
 			openNotification('error', 'Búsqueda', e.message);
+      setDisableFetch(true);
 		}
 		setLoadingData(false);
 	}, [datosEnviar, searchDniText]);
@@ -158,13 +162,18 @@ function TomaPreTriaje() {
       ...datosEnviar,
       FECHA_TOMA: date
     });
+    setLoadingFetch(true);
     try {
-      const { data: { message } } = await httpClient.post('preTriaje/setPreTriaje', datosEnviar);
-      console.log(message);
-      console.log(datosEnviar);
+      const { data: { message, success } } = await httpClient.post('preTriaje/setPreTriaje', datosEnviar);
+      if (success) {
+        openNotification('Pre triaje', message);
+      } else {
+        openNotification('Pre triaje', message, 'Warning');
+      }
     } catch (error) {
       console.log(error);
     }
+    setLoadingFetch(false);
   }
 
   const formItemLayout = {
@@ -181,13 +190,6 @@ function TomaPreTriaje() {
   const handleChangeDniText = (e) => {
     setSearchDniText(e.target.value);
   }
-
-  const openNotification = (type, message, description) => {
-		notification[type]({
-			message,
-			description,
-		});
-	};
 
   const handleChangeInputs = e => {
     setDatosEnviar({ ...datosEnviar, [e.target.name]: e.target.value });
@@ -246,7 +248,7 @@ function TomaPreTriaje() {
 							}}
 						>
 							<Button
-								loading={false}
+								loading={loadingFetch}
 								style={{
 									backgroundColor: '#04B0AD',
 									color: 'white',

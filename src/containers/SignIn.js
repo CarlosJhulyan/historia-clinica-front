@@ -12,7 +12,7 @@ import { SignInScreen } from './SignInScreen';
 const SignIn = () => {
 	const { isLoading, error, userLogin } = useAuth();
 	const settings = useSelector(state => state.settings);
-	/* const token = JSON.parse(localStorage.getItem("token"));
+	/* const token = JSON.parse(sessionStorage.getItem("token"));
 	console.log("TOKEN:", token);
 
 	if (token === null) {

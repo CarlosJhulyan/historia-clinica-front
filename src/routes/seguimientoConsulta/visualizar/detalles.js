@@ -111,7 +111,7 @@ const DetallesPaciente = ({ datosModal }) => {
 	const [cmp, setCmp] = useState('');
 
 	// ---------------- ENVIAR DATOS -------------
-	const usuario = JSON.parse(localStorage.getItem('token'));
+	const usuario = JSON.parse(sessionStorage.getItem('token'));
 
 	const dataGlobal = {
 		codGrupoCia: data.codGrupoCia,
@@ -626,7 +626,7 @@ const DetallesPaciente = ({ datosModal }) => {
 	const traerFirma = useCallback(async () => {
 		try {
 			const { data } = await httpClient.post(`/medicos/getFirma`, {
-				codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
+				codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
 			});
 
 			if (data.data.url_firma) {

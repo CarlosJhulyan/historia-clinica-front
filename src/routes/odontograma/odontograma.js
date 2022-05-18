@@ -54,7 +54,7 @@ export const Odontograma = ({
 	diente2.importar(v);
 
 
-	const usuario = JSON.parse(localStorage.getItem('token'));
+	const usuario = JSON.parse(sessionStorage.getItem('token'));
 
 	// console.log(odontograma);
 

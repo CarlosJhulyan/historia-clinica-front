@@ -22,7 +22,7 @@ const EvolucionTratamientoOdonto = ({ datosModal }) => {
 		descripcion: '',
 	});
 
-	const codMedico = JSON.parse(localStorage.getItem('token'));
+	const codMedico = JSON.parse(sessionStorage.getItem('token'));
 
 	// referencia del formulario
 	const formRef = createRef();

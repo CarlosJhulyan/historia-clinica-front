@@ -71,7 +71,7 @@ import { setFiltroEspecialidad } from '../../../appRedux/actions/ui';
 import { setTratamientoCabeceraDetalleKardex } from '../../../appRedux/actions/kardex/TratamientoKardex';
 import { setDiagnosticoActionKardex } from '../../../appRedux/actions/kardex/DiagnosticoKardex';
 
-const codMedico = JSON.parse(localStorage.getItem('token'));
+const codMedico = JSON.parse(sessionStorage.getItem('token'));
 
 /********************************* API COMBOS******************************************/
 export const traerCombos = dataGlobal => {

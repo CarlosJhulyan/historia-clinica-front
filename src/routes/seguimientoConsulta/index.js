@@ -8,7 +8,7 @@ import { ModalLiberado } from './modalLiberado';
 import { ListaPaciente } from './listaPaciente';
 
 export const SeguimientoConsulta = () => {
-    const token = JSON.parse(localStorage.getItem('token'));
+    const token = JSON.parse(sessionStorage.getItem('token'));
 
     const [dataPaciente, setDataPaciente] = useState([]);
     const [dataSource, setDataSource] = useState([]);

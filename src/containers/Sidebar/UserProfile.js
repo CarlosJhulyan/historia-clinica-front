@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 const UserProfile = () => {
   const { userSignOut } = useAuth();
   const history = useHistory();
-  const data = JSON.parse(localStorage.getItem("token"));
+  const data = JSON.parse(sessionStorage.getItem("token"));
 
 
   const onLogoutClick = () => {

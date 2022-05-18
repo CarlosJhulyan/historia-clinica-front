@@ -38,7 +38,7 @@ export const useProvideAuth = () => {
           dispatch(setLoginLoading(false));
           fetchSuccess();
           // httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + data.token.access_token;          
-          localStorage.setItem('token', JSON.stringify(data.data));
+          sessionStorage.setItem('token', JSON.stringify(data.data));
           getAuthUser(data.data);
           if (callbackFun) callbackFun();
         } else {
@@ -58,7 +58,7 @@ export const useProvideAuth = () => {
       .then(({ data }) => {
         if (data.result) {
           fetchSuccess();
-          localStorage.setItem('token', data.token.access_token);
+          sessionStorage.setItem('token', data.token.access_token);
           httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + data.token.access_token;
           getAuthUser();
           if (callbackFun) callbackFun();
@@ -94,7 +94,7 @@ export const useProvideAuth = () => {
   const userSignOut = (callbackFun) => {
     fetchStart();
     fetchSuccess();
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setAuthUser(false);
     // httpClient
     //   .post('auth/logout')
@@ -102,7 +102,7 @@ export const useProvideAuth = () => {
     //     if (data.result) {
     //       fetchSuccess();
     //       httpClient.defaults.headers.common['Authorization'] = '';
-    //       localStorage.removeItem('token');
+    //       sessionstorage.removeItem('token');
     //       setAuthUser(false);
     //       if (callbackFun) callbackFun();
     //     } else {
@@ -140,7 +140,7 @@ export const useProvideAuth = () => {
   // ... latest auth object.
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     // if (token) {
     //   httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + token;
     // }
@@ -154,7 +154,7 @@ export const useProvideAuth = () => {
     //     setLoadingUser(false);
     //   })
     //   .catch(function () {
-    //     localStorage.removeItem('token');
+    //     sessionStorage.removeItem('token');
     //     httpClient.defaults.headers.common['Authorization'] = '';
     //     setLoadingUser(false);
     //   });

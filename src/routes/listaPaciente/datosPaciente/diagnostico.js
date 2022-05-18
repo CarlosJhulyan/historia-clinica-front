@@ -27,7 +27,7 @@ const Diagnostico = ({ datosModal }) => {
 	const [modalSugerencia, setModalSugerencia] = useState(false);
 	const { historiaClinica, visualizar } = useSelector(state => state.helpers);
 
-	const token = JSON.parse(localStorage.getItem('token'));
+	const token = JSON.parse(sessionStorage.getItem('token'));
 
 
 

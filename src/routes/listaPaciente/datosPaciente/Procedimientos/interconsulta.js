@@ -28,7 +28,7 @@ export const Interconsultas = ({ datosModal }) => {
 		);
 	};
 
-	const especialidad = JSON.parse(localStorage.getItem('token'));
+	const especialidad = JSON.parse(sessionStorage.getItem('token'));
 	const procedimiento = proc.filter(procedimiento => procedimiento.NOM_LAB !== especialidad.des_especialidad && procedimiento.TIP_PROCESO === 'C');
 	console.log("INTERCONSULTA FILTRADO : ", procedimiento)
 

@@ -31,7 +31,7 @@ const Odonto = (props) => {
 
 	const dispatch = useDispatch();
 
-	const usuario = JSON.parse(localStorage.getItem('token'));
+	const usuario = JSON.parse(sessionStorage.getItem('token'));
 
 	//DATA DEL DIENTE
 	const diente = new DienteAdulto();

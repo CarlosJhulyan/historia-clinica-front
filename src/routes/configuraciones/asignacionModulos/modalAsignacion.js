@@ -23,7 +23,7 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 
 	const [cod, setCod] = useState('');
 
-	const token = JSON.parse(localStorage.getItem('token'));
+	const token = JSON.parse(sessionStorage.getItem('token'));
 
 	const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
 	const [peticion, setPeticion] = useState(false);

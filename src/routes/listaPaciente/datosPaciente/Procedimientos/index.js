@@ -28,7 +28,7 @@ export const Procedemientos = ({ datosModal }) => {
 		);
 	};
 
-	const especialidad = JSON.parse(localStorage.getItem('token'));
+	const especialidad = JSON.parse(sessionStorage.getItem('token'));
 	//Agregar vcalidacion colum : tip_proceso = P 
 	const procedimiento = proc?.filter(procedimiento => procedimiento.TIP_PROCESO === 'P');
 	console.log("PROCEDIMIENTO FILTRADO: ", procedimiento)

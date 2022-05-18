@@ -68,7 +68,7 @@ const InformacionPaciente = ({
 	const [estado, setEstado] = useState();
 	const [firma, setFirma] = useState('');
 	const [modalGuardar, setModalGuardar] = useState(false);
-	const localS = JSON.parse(localStorage.getItem('token'));
+	const localS = JSON.parse(sessionStorage.getItem('token'));
 	const [modalImpresion, setModalImpresion] = useState(false);
 	const [modalImpresionReceta, setModalImpresionReceta] = useState(false);
 	const [modalImpresionA4, setModalImpresionA4] = useState(false);
@@ -95,7 +95,7 @@ const InformacionPaciente = ({
 	const traerFirma = useCallback(async () => {
 		try {
 			const { data } = await httpClient.post(`/medicos/getFirma`, {
-				codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
+				codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
 			});
 			console.log('FIRMA', data.data.url_firma);
 			setFirma(data.data.url_firma);
@@ -161,9 +161,9 @@ const InformacionPaciente = ({
 		const interconsulta = estadoRedux.procedimientoInterconsulta;
 
 		const data = {
-			nomMedico: JSON.parse(localStorage.getItem('token')).des_ape_medico.trim() + ', ' + JSON.parse(localStorage.getItem('token')).des_nom_medico.trim(),
+			nomMedico: JSON.parse(sessionStorage.getItem('token')).des_ape_medico.trim() + ', ' + JSON.parse(sessionStorage.getItem('token')).des_nom_medico.trim(),
 			nomPaciente: `${estado.NOMBRE} ${estado.APE_PATERNO} ${estado.APE_MATERNO}`,
-			especialidad: JSON.parse(localStorage.getItem('token')).des_especialidad,
+			especialidad: JSON.parse(sessionStorage.getItem('token')).des_especialidad,
 			codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
 			codCia: datosModal.estado.COD_CIA,
 			codMedico: localS.cod_medico,
@@ -349,7 +349,7 @@ const InformacionPaciente = ({
 		dispatch(setClearUI());
 	};
 
-	const token = JSON.parse(localStorage.getItem('token'));
+	const token = JSON.parse(sessionStorage.getItem('token'));
 	/* const arrayTemp = ['RADIOLOGIA', 'MAMOGRAFIA', 'DENSITOMETRIA OSEA', 'ECOGRAFIA', 'LABORATORIO'];
 	const especialidad = arrayTemp.filter((item) => token.des_especialidad.includes(item)); */
 

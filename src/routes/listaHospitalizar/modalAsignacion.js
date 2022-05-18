@@ -32,10 +32,10 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, traerData, dataModal, hosp
     const repuesta = await httpClient.post('camas/asignacionCama', {
       camaId: formRef.current.getFieldValue('camaId'),
       codPaciente: dataModal.COD_PACIENTE,
-      especialidad: JSON.parse(localStorage.getItem('token')).des_especialidad,
+      especialidad: JSON.parse(sessionStorage.getItem('token')).des_especialidad,
       dias: formRef.current.getFieldValue('dias'),
       genero: formRef.current.getFieldValue('genero'),
-      codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
+      codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
       idHospitalizacion: hospitalizacion.historia_clinica
     });
     return repuesta.data;

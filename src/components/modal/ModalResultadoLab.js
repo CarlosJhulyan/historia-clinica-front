@@ -10,7 +10,7 @@ export const ModalResultadoLab = ({ abrirResultadoLab, setAbrirResultadoLab, dat
 
 
 
-    const token = JSON.parse(localStorage.getItem('token'));
+    const token = JSON.parse(sessionStorage.getItem('token'));
     const form = createRef();
     const dataGlobal = useSelector(state => state.dataGlobal);
     const [loading, setLoading] = useState(false);

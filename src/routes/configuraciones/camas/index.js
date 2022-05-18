@@ -15,7 +15,7 @@ const ConfiguracionCamas = () => {
   const [editar, setEditar] = useState(null);
   const [tipo, setTipo] = useState(null);
 
-  const token = JSON.parse(localStorage.getItem('token'));
+  const token = JSON.parse(sessionStorage.getItem('token'));
 
   //* Obtener datos
   const traerPisos = async () => {

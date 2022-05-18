@@ -763,7 +763,7 @@ const AsignacionCamas = () => {
               var respuesta = await devolver({
                 camaId: record,
                 habitacionId_anterior: dataModalTransferir.habitacion_id_anterior,
-                codMedico: JSON.parse(localStorage.getItem('token')).cod_medico
+                codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico
               });
               if (respuesta.success) {
                 await traerData(dataModalTransferir.piso_id, dataModalTransferir.habitacion_id);
@@ -818,7 +818,7 @@ const AsignacionCamas = () => {
               setLoading(true);
               var respuesta = await liberar({
                 camaId: record,
-                codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
+                codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
                 idHospitalizacion: dataModalTransferir.historia_clinica,
                 motivoBaja: motivo
               });

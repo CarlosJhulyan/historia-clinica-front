@@ -19,7 +19,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const { navStyle, themeType } = useSelector(({ settings }) => settings);
 	const pathname = useSelector(({ common }) => common.pathname);
 	const anexo = useSelector(state => state.anexo);
-	const token = JSON.parse(localStorage.getItem('token'));
+	const token = JSON.parse(sessionStorage.getItem('token'));
 
 	console.log('token', token);
 

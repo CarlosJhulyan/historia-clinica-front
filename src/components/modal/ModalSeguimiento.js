@@ -12,7 +12,7 @@ export const ModalSeguimiento = ({ abrirSeguimientoM, setAbrirSeguimientoM, comb
 		especialidad: '',
 	});
 
-	const token = JSON.parse(localStorage.getItem('token'));
+	const token = JSON.parse(sessionStorage.getItem('token'));
 	const { codGrupoCia } = useSelector(state => state.dataGlobal);
 
 	const [dataSource, setDataSource] = useState([]);
