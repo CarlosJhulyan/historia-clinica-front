@@ -25,53 +25,43 @@ import { useAuth } from '../../authentication';
 import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
-
-
-const datos = {
-	codGrupoCia: '001',
-	codEstado: '2',
-	codMedico: '0000026144',
-	consultorio: '0',
-	bus: '0',
-};
+import axios from 'axios';
 
 const ListaPaciente = () => {
 	const [abrirModal, setAbrirModal] = useState(false);
 	const [filaActual, setFilaActual] = useState({});
 	const [data, setData] = useState();
-	// const [dataDiagnostico, setDataDiagnostico] = useState();
+	const [codEstado, setCodEstado] = useState('2');
 	const [datosModal, setDatosModal] = useState({});
 	const [dataInicialCargada, setDataInicialCargada] = useState(false);
 	const [mostrarListaPaciente, setMostrarListaPaciente] = useState(true);
-
 	const [sesionCerrada, setSesionCerrada] = useState(false);
 	const [state, setState] = useState();
-
+	const [dataLoading, setDataLoading] = useState(false);
 	const { userSignOut } = useAuth();
 	const history = useHistory();
 
 	const datos = useMemo(() => {
 		return {
 			codGrupoCia: '001',
-			codEstado: '2',
+			codEstado,
 			codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
 			consultorio: JSON.parse(localStorage.getItem('token')).id_consultorio,
 			bus: JSON.parse(localStorage.getItem('token')).id_bus,
 		};
-	}, []);
+	}, [codEstado]);
 
 	const traerDatos = useCallback(async () => {
-		console.log('TRAER DATOS');
+		setDataLoading(true);
 		try {
-			const { data } = await httpClient.post(`/pacientes`, datos);
-			console.log('PACIENTEEES:', data.data);
+			const { data } = await httpClient.post(`/pacientes`, { ...datos, codEstado });
 			setData(data.data);
 		} catch (e) {
-			console.log(e);
 			setData([]);
 		}
 		setDataInicialCargada(true);
-	}, []);
+		setDataLoading(false);
+	}, [codEstado, datos]);
 
 	const actualizarDatos = async () => {
 		setData(undefined);
@@ -79,22 +69,18 @@ const ListaPaciente = () => {
 	};
 
 	const mostrarModal = (record) => {
-		console.log('RECORD', record);
 		setFilaActual(record);
 		setAbrirModal(true);
 	};
 
 	useEffect(() => {
-		if (!dataInicialCargada) {
-			traerDatos();
-			// fecha
-			const fechaActual = moment().format('YYYY-MM-DD');
-			datosEnviar.evolucionTratamiento['FECHA'] = fechaActual;
+		traerDatos();
+	
+		const fechaActual = moment().format('YYYY-MM-DD');
+		datosEnviar.evolucionTratamiento['FECHA'] = fechaActual;
 
-			funn.ff = setMostrarListaPaciente;
-		}
-		/* return () => [] */
-	}, [dataInicialCargada, traerDatos]);
+		funn.ff = setMostrarListaPaciente;
+	}, [dataInicialCargada, traerDatos, codEstado]);
 
 	const getColumnSearchProps = dataIndex => ({
 		filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -200,12 +186,10 @@ const ListaPaciente = () => {
 	];
 
 	const handleDatos = (data) => {
-		console.log('HANDLE DATOS:', data);
 		setAbrirModal(false);
 		setDatosModal(data);
 		setMostrarListaPaciente(false);
 	};
-
 
 	const { getRemainingTime, getLastActiveTime } = useIdleTimer({
 		timeout: 1000 * 60 * 60,
@@ -239,7 +223,9 @@ const ListaPaciente = () => {
 		debounce: 500,
 	});
 
-
+	const handleChangeCodeStatus = e => {
+		setCodEstado(e.target.value);
+	}
 
 	return (
 		<>
@@ -267,6 +253,7 @@ const ListaPaciente = () => {
 								}}
 							>
 								<Button
+									disabled={dataLoading}
 									onClick={actualizarDatos}
 									style={{
 										display: 'flex',
@@ -276,22 +263,29 @@ const ListaPaciente = () => {
 								>
 									Actualizar
 								</Button>
-								<Form.Item style={{ width: '430px' }} label='Filtrar por'>
-									<Radio.Group 
-										value='H'
-										onChange={() => {}}
+								<Form.Item 
+										style={{ width: '430px' }} 
+										label='Filtrar por'>
+									<Radio.Group
+										value={codEstado}
+										onChange={handleChangeCodeStatus}
+										disabled={dataLoading}
 										buttonStyle="solid">
-											<Radio.Button value="H">Hospitalización</Radio.Button>
-											<Radio.Button value="E">Emergencia</Radio.Button>
-											<Radio.Button value="U">UCI</Radio.Button>
-											<Radio.Button value="S">SOP</Radio.Button>
+											<Radio.Button value="1">Hospitalización</Radio.Button>
+											<Radio.Button value="2">Emergencia</Radio.Button>
+											<Radio.Button value="3">UCI</Radio.Button>
+											<Radio.Button value="4">SOP</Radio.Button>
 									</Radio.Group>
 								</Form.Item>
 							</div>
 						</div>
 					}
 				>
-					<Table className="gx-table-responsive" columns={columns} dataSource={data} loading={data === undefined} />
+					<Table 
+						className="gx-table-responsive" 
+						columns={columns} 
+						dataSource={data} 
+						loading={dataLoading} />
 				</Card>
 			) : (
 				<DatosPaciente setDatosModal={setDatosModal} datosModal={datosModal} setMostrarListaPaciente={setMostrarListaPaciente} traerDatos={traerDatos} />

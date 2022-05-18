@@ -22,11 +22,13 @@ import { useAuth } from '../../authentication';
 import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
+import ModalTriaje from './modalTriaje';
 
 const { Option } = Select;
 
 const RegistroPaciente = () => {
 	const [abrirModal, setAbrirModal] = useState(false);
+	const [abrirModalTriaje, setAbrirModalTriaje] = useState(false);
 	const [filaActual, setFilaActual] = useState({});
 	const [data, setData] = useState();
 	const [loadingData, setLoadingData] = useState(false)
@@ -153,10 +155,12 @@ const RegistroPaciente = () => {
 	});
 
 	const handleSearch = async () => {
-		console.log(dataValida());
 		if (dataValida()) {
+			const dataOld = data;
 			await traerDatos();
-			setCodEditarPaciente(false);
+			if (dataOld !== data) {
+				setCodEditarPaciente(false);
+			}
 		} else {
 			openNotification('warning', 'Advertencia de búsqueda', 'Complete cualquiera de los campos para hacer la búsqueda.')
 		}
@@ -385,6 +389,8 @@ const RegistroPaciente = () => {
 					<Divider plain></Divider>
 					<Button type="primary" onClick={() => mostrarModal()}>Nuevo Paciente</Button>
 					<Button type="primary" disabled={!codEditarPaciente} onClick={() => mostrarModalEditar()}>Mod Paciente</Button>
+					<Button type="primary" disabled={!codEditarPaciente} onClick={() => setAbrirModalTriaje(true)}>Editar Pre triaje</Button>
+					{/* <Button type="primary" disabled={!codEditarPaciente} onClick={() => {}}>Activar/Desactivar</Button> */}
 					{/* <Button type="primary" onClick={() => {}}>Imprimir</Button>
 					<Button type="primary" onClick={() => {}}>Ver histórico atenciones</Button>
 					<Button type="primary" onClick={() => {}}>Resultados Lab. Pacientes</Button>
@@ -408,6 +414,14 @@ const RegistroPaciente = () => {
 					estadoCivil={estadoCivil}
 					tipoPariente={tipoPariente}
 					traerDatos={traerDatos}
+				/>
+			) : null}
+
+				{abrirModalTriaje ? (
+				<ModalTriaje
+					visibleModal={abrirModalTriaje}
+					setVisibleModal={setAbrirModalTriaje}
+					codPaciente={codEditarPaciente}
 				/>
 			) : null}
 

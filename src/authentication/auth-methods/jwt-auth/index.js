@@ -57,8 +57,6 @@ export const useProvideAuth = () => {
       .post('auth/register', user)
       .then(({ data }) => {
         if (data.result) {
-
-
           fetchSuccess();
           localStorage.setItem('token', data.token.access_token);
           httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + data.token.access_token;

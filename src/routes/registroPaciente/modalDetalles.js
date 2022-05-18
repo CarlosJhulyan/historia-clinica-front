@@ -260,10 +260,10 @@ const ModaDetalles = (props) => {
 			<Modal
 				width="70%"
 				footer={[
-					<Button onClick={() => handleCloseModal()}>
+					<Button disabled={loadingDataFetch} onClick={() => handleCloseModal()}>
 						Cancelar
 					</Button>,
-					<Button type='primary' onClick={() => {
+					<Button loading={loadingDataFetch} type='primary' onClick={() => {
 						showModalConfirm();
 					}}>
 						{

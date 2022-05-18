@@ -49,7 +49,7 @@ const ModaDetalles = (props) => {
   const datosPaciente = useMemo(() => {
     return {
       codGrupoCia: '001',
-      codPaciente: filaActual.COD_PACIENTE,
+      codPaciente: filaActual.cod_paciente,
     };
   }, [filaActual]);
 

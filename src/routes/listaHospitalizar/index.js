@@ -13,15 +13,6 @@ import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
 import ModalTicketAtencion from './modalTicketAtencion';
 
-
-const datos = {
-  codGrupoCia: '001',
-  codEstado: '2',
-  codMedico: '0000026144',
-  consultorio: '0',
-  bus: '0',
-};
-
 const ListaHospitalizar = () => {
   const [abrirModal, setAbrirModal] = useState(false);
   const [modalAsignacion, setModalAsignacion] = useState(false);
@@ -32,6 +23,7 @@ const ListaHospitalizar = () => {
   const [hospi, setHospi] = useState({});
   const [dataInicialCargada, setDataInicialCargada] = useState(false);
   const [mostrarListaPaciente, setMostrarListaPaciente] = useState(true);
+  const [tableLoading, setTableLoading] = useState(false);
 
   const [sesionCerrada, setSesionCerrada] = useState(false);
   const [state, setState] = useState();
@@ -50,22 +42,23 @@ const ListaHospitalizar = () => {
   }, []);
 
   const traerDatos = useCallback(async () => {
-    console.log('TRAER DATOS');
+    setTableLoading(true);
     try {
       var array = []
-      const { data } = await httpClient.post(`/pacientes`, datos);
+      const { data } = await httpClient.post(`/triaje/getTriajeLista`, datos);
       for (let i = 0; i < data.data.length; i++) {
-        if (data.data[i].ASIGNADO !== '1') {
+        if (data.data[i].asignado !== '1') {
           array.push(data.data[i]);
         }
+        data.data[i].key = data.data[i].COD_PACIENTE
       }
       setData(array);
     } catch (e) {
-      console.log(e);
-      setData();
+      setData([]);
     }
+    setTableLoading(false);
     setDataInicialCargada(true);
-  }, []);
+  }, [datos]);
 
   const actualizarDatos = async () => {
     setData(undefined);
@@ -139,37 +132,41 @@ const ListaHospitalizar = () => {
   const columns = [
     {
       title: 'Fecha',
-      dataIndex: 'FECHA',
+      dataIndex: 'fec_crea',
       key: 'fecha',
-      ...getColumnSearchProps('FECHA'),
+      render: (fecha) => (
+        <span>{moment(fecha, 'yyyy-MM-DD HH:mm:ss').format('DD/MM/yyyy')}</span>
+      )
     },
     {
       title: 'Hora',
-      dataIndex: 'HORA',
+      dataIndex: 'fec_crea',
       key: 'hora',
-      ...getColumnSearchProps('HORA'),
+      render: (hora) => (
+        <span>{moment(hora, 'yyyy-MM-DD HH:mm:ss').format('HH:mm:ss')}</span>
+      )
 
     },
     {
       title: 'Numero HC',
-      dataIndex: 'NUM_ATEN_MED',
-      key: 'hc',
-      ...getColumnSearchProps('NUM_ATEN_MED'),
+      dataIndex: 'nro_hc',
+      key: 'nro_hc'
 
     },
     {
       title: 'Paciente',
-      dataIndex: 'PACIENTE',
+      dataIndex: 'paciente',
       key: 'paciente',
       ...getColumnSearchProps('PACIENTE'),
 
     },
     {
       title: 'Edad',
-      dataIndex: 'EDAD',
+      dataIndex: 'fecha_nac',
       key: 'edad',
-      ...getColumnSearchProps('EDAD'),
-
+      render: (fecha) => (
+        <span>{moment(fecha, 'yyyy-MM-DD HH:mm:ss').fromNow().substring(5, 8).trim()}</span>
+      )
     },
     {
       title: 'Action',
@@ -272,7 +269,7 @@ const ListaHospitalizar = () => {
           </div>
         }
       >
-        <Table className="gx-table-responsive" columns={columns} dataSource={data} loading={data === undefined} />
+        <Table className="gx-table-responsive" columns={columns} dataSource={data} loading={tableLoading} />
       </Card>
 
       {abrirModal ? (
@@ -297,7 +294,8 @@ const ListaHospitalizar = () => {
       ) : null}
 
       {abrirModalTicket ? (
-        <ModalTicketAtencion 
+        <ModalTicketAtencion
+          traerDatosTable={traerDatos}
           abrirModal={abrirModalTicket}
           setAbrirModal={setAbrirModalTicket}
         />

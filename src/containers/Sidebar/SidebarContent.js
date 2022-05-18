@@ -72,6 +72,41 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 		// 	</SubMenu>
 		// );
 
+		menuItems.push(
+			<SubMenu
+				key="preTriaje"
+				popupClassName={getNavStyleSubMenuClass(navStyle)}
+				title={
+					<span>
+						{' '}
+						<i className="icon icon-icon" />
+						<span>Pre triaje</span>
+					</span>
+				}>
+					<Menu.Item key="tomaPreTriaje">
+						<Link to="/tomaPreTriaje">
+							<i className="icon icon-icon" />
+							<span>Toma de Pre triaje</span>
+						</Link>
+					</Menu.Item>
+					<Menu.Item key="historicoPreTriaje">
+						<Link to="/historicoPreTriaje">
+							<i className="icon icon-icon" />
+							<span>Historico de Pre triaje</span>
+						</Link>
+					</Menu.Item>
+			</SubMenu>
+		);
+
+		menuItems.push(
+			<Menu.Item key="admisionConsulta">
+				<Link to="/admisionConsulta">
+					<i className="icon icon-auth-screen" />
+					<span>Admisión Consulta</span>
+				</Link>
+			</Menu.Item>
+		);
+
 		if (token.modulos.includes('14')) {
 			menuItems.push(
 				<Menu.Item key="registroPaciente">

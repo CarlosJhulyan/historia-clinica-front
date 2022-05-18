@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import asyncComponent from 'util/asyncComponent';
+// import asyncComponent from 'util/asyncComponent';
 import AsignacionCamas from './asignacionCamas';
 import BalanceHidrico from './balanceHidrico';
 import HistorialBalanceHidrico from './historialBalanceHidrico';
@@ -12,7 +12,7 @@ import listaPaciente from './listaPaciente';
 import registroPaciente from './registroPaciente';
 import listaHospitalizar from './listaHospitalizar';
 import SignosVitales from './signosVitales';
-import { PruebaOdontograma } from './odontograma';
+// import { PruebaOdontograma } from './odontograma';
 import { SeguimientoConsulta } from './seguimientoConsulta';
 import HistorialSignosVitales from './historialSignosVitales';
 import TecnicoBalanceHidrico from './tecnicoBalanceHidrico';
@@ -21,6 +21,9 @@ import TratamientoKardex from './tratamientoKardex';
 import ReporteEspecialidad from './reportes/reporteEspecialidad';
 import Ingreso from './evolucionEnfermeria/ingreso';
 import Historial from './evolucionEnfermeria/historial';
+import TomaPreTriaje from './preTriaje/tomaPreTriaje';
+import HistoricoPreTriaje from './preTriaje';
+import AdmisionConsulta from './admisionConsulta';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -30,6 +33,11 @@ const App = ({ match }) => {
 
 		items.push(<Route path={`${match.url}historialEvolucionEnfermeria`} component={Historial} />)
 		items.push(<Route path={`${match.url}ingresoEvolucionEnfermeria`} component={Ingreso} />)
+
+		items.push(<Route path={`${match.url}tomaPreTriaje`} component={TomaPreTriaje} />);
+		items.push(<Route path={`${match.url}historicoPreTriaje`} component={HistoricoPreTriaje} />);
+
+		items.push(<Route path={`${match.url}admisionConsulta`} component={AdmisionConsulta} />);
 
 		if (token.modulos.length > 0) {
 			if (token.modulos.includes('1')) {
