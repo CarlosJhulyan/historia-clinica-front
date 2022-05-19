@@ -12,7 +12,7 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 	console.log("ENVIAR DATA:", enviarData);
 
 	const dispatch = useDispatch();
-	const token = JSON.parse(sessionStorage.getItem('token'));
+	const token = JSON.parse(localStorage.getItem('token'));
 	console.log(enviarData2);
 
 	const onConfirmAtendido = async () => {

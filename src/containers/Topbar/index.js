@@ -29,7 +29,7 @@ const Topbar = () => {
 	const navCollapsed = useSelector(({ common }) => common.navCollapsed);
 	const width = useSelector(({ common }) => common.width);
 	const [modalCerar, setModalCerrar] = useState(false);
-	const token = JSON.parse(sessionStorage.getItem('token'));
+	const token = JSON.parse(localStorage.getItem('token'));
 	/* const [searchText, setSearchText] = useState(''); */
 	const dispatch = useDispatch();
 

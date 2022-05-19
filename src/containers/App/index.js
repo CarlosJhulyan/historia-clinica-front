@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Redirect, Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Modal } from 'antd';
 import { IntlProvider } from "react-intl";
 
 import AppLocale from "../../lngProvider";
@@ -23,6 +23,7 @@ import {
 } from "../../constants/ThemeSetting";
 import CircularProgress from "../../components/CircularProgress";
 import { useAuth } from "../../authentication";
+import { httpClient } from "../../util/Api";
 
 const RestrictedRoute = ({ component: Component, location, authUser, ...rest }) =>
   <Route
@@ -69,6 +70,10 @@ const setNavStyle = (navStyle) => {
 };
 
 const App = () => {
+  const [modal, contextHolder] = Modal.useModal();
+  const ReachableContext = React.createContext();
+  const UnreachableContext = React.createContext();
+
   const locale = useSelector(({ settings }) => settings.locale);
   const navStyle = useSelector(({ settings }) => settings.navStyle);
   const layoutType = useSelector(({ settings }) => settings.layoutType);
@@ -76,9 +81,8 @@ const App = () => {
   const isDirectionRTL = useSelector(({ settings }) => settings.isDirectionRTL);
   const initURL = useSelector(({ settings }) => settings.initURL);
 
-  const { authUser, isLoadingUser } = useAuth();  
+  const { authUser, isLoadingUser, userSignOut } = useAuth();
   const dispatch = useDispatch();
-
   const location = useLocation();
   const history = useHistory();
   const match = useRouteMatch();
@@ -129,6 +133,35 @@ const App = () => {
     setNavStyle(navStyle);
   }, [layoutType, navStyle]);
 
+  useEffect(() => {
+    if (localStorage.getItem('version')) {
+      httpClient
+      .post('sistema/getVersion')
+      .then(({ data: { data, success, message } }) => {
+        if (success && localStorage.getItem('version') === data.num_version) {
+          console.log('Stable version', data.num_version);
+        } else {
+          modal.info({
+            title: 'Versión de Sistema',
+            content: (
+              <>
+                {message} Debe iniciar sesión nuevamente. Acepte para volver a logearse.
+              </>
+            ),
+            onOk: () => {
+              userSignOut();
+            },
+            okText: 'Aceptar',
+            centered: true
+          });
+        }
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+    }
+  }, [])
+
   const currentAppLocale = AppLocale[locale.locale];
 
   return isLoadingUser ? <CircularProgress /> : (
@@ -141,6 +174,7 @@ const App = () => {
           <Route exact path='/signup' component={SignUp} />
           <RestrictedRoute path={`${match.url}`} authUser={authUser} location={location} component={MainApp} />
         </Switch>
+        {contextHolder}
       </IntlProvider>
     </ConfigProvider>
   )

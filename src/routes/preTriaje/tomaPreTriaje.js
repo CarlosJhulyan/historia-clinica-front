@@ -126,10 +126,10 @@ function TomaPreTriaje() {
         setDatosEnviar({
           ...datosEnviar,
           PACIENTE: `${data[0].APE_PATERNO.toUpperCase()} ${data[0].APE_MATERNO.toUpperCase()}, ${data[0].NOMBRE.toUpperCase()}`,
-          USU_CREA: JSON.parse(sessionStorage.getItem('token')).usuario,
+          USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
           COD_PACIENTE: response.data.data.COD_PACIENTE,
           NUM_HC: response.data.data.NRO_HC_ACTUAL,
-          COD_USU_CREA: JSON.parse(sessionStorage.getItem('token')).num_cmp,
+          COD_USU_CREA: JSON.parse(localStorage.getItem('token')).num_cmp,
         });
         setDataFound({
           ...response.data.data

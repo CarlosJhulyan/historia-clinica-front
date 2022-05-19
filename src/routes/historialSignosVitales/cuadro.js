@@ -93,7 +93,7 @@ const CustomLegend = ({ payload }) => {
 };
 
 const Cuadro = () => {
-	const token = JSON.parse(sessionStorage.getItem('token'));
+	const token = JSON.parse(localStorage.getItem('token'));
 
 	const [loading, setLoading] = useState(false);
 	const [paciente, setPaciente] = useState();

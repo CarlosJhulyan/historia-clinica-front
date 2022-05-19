@@ -26,7 +26,7 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, editar, traerData, dataModal,
       especialidad: formRef.current.getFieldValue('especialidad'),
       dias: formRef.current.getFieldValue('dias'),
       genero: paciente.sexo_cli,
-      codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
+      codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
       idHospitalizacion: paciente.historia_clinica
     });
     return repuesta.data;

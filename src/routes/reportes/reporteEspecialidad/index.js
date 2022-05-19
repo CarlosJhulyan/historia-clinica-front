@@ -32,7 +32,6 @@ import moment from 'moment';
 const { RangePicker } = DatePicker;
 
 const ReporteEspecialidad = () => {
-	// const token = JSON.parse(sessionStorage.getItem('token'));
 	const [loading, setLoading] = useState(false);
 	const [btnBuscar, setBtnBuscar] = useState(true);
 	const [visibleModalLegend, setVisibleModalLegend] = useState(false);

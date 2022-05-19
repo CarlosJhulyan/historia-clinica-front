@@ -21,16 +21,16 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, editar, tipo, traerPisos, tra
   const [loading, setLoading] = useState(false);
   const [array, setArray] = useState([]);
   const [piso, setPiso] = useState({
-    codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
+    codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
     nombre: ""
   });
   const [habitacion, setHabitacion] = useState({
-    codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
+    codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
     nombre: "",
     pisoId: ""
   });
   const [cama, setCama] = useState({
-    codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico,
+    codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
     numero: "",
     habitacionId: "",
     tipo: ""

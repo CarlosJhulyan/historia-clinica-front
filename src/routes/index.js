@@ -26,7 +26,7 @@ import HistoricoPreTriaje from './preTriaje';
 import AdmisionConsulta from './admisionConsulta';
 
 const App = ({ match }) => {
-	const token = JSON.parse(sessionStorage.getItem('token'));
+	const token = JSON.parse(localStorage.getItem('token'));
 
 	const generateRoute = token => {
 		const items = [];

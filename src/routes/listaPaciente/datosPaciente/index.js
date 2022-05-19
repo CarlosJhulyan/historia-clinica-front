@@ -73,7 +73,7 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 	console.log('DATOS MODAL222222222222222:', datosModal);
 	const dispatch = useDispatch();
 
-	const token = JSON.parse(sessionStorage.getItem('token'));
+	const token = JSON.parse(localStorage.getItem('token'));
 	const [opcion, setOpcion] = useState();
 	const [state, setState] = useState();
 	const [abrirModal, setAbrirModal] = useState(false);
@@ -104,7 +104,7 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 	const opacity = useSelector(state => state.opacity);
 
 	// ---------------- ENVIAR DATOS -------------
-	const usuario = JSON.parse(sessionStorage.getItem('token'));
+	const usuario = JSON.parse(localStorage.getItem('token'));
 
 	const dataGlobal = {
 		codGrupoCia: data.codGrupoCia,

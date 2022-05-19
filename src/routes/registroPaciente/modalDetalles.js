@@ -175,7 +175,7 @@ const ModaDetalles = (props) => {
 			setEstado({
 				...estado,
 				...data.data,
-				USU_CREA_PACIENTE: JSON.parse(sessionStorage.getItem('token')).usuario,
+				USU_CREA_PACIENTE: JSON.parse(localStorage.getItem('token')).usuario,
 				EDAD_CLI: moment(data.data.FEC_NAC_CLI, formatoFecha).fromNow().substring(5, 8).trim()
 			});
 			setDateFormat(moment(data.data?.FEC_NAC_CLI, 'DD/MM/yyyy'));

@@ -119,7 +119,7 @@ const ModalProcedimiento = ({
 		setBtnActualizar(false);
 	};
 
-	const usuario = JSON.parse(sessionStorage.getItem('token'));
+	const usuario = JSON.parse(localStorage.getItem('token'));
 
 	return (
 		<>

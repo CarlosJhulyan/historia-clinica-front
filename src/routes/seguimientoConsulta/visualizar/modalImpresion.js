@@ -16,7 +16,7 @@ export const ModalImpresionReceta = ({ modalImpresionReceta, setModalImpresionRe
     console.log("fechaNacimiento:", datosModal);
 
     //IMPRESION
-    const localS = JSON.parse(sessionStorage.getItem('token'));
+    const localS = JSON.parse(localStorage.getItem('token'));
     const fechaActual = moment().format('DD/MM/YYYY');
     const impresionRef = useRef();
 

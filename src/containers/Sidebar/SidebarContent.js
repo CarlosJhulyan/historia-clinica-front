@@ -5,7 +5,9 @@ import { Link } from 'react-router-dom';
 import CustomScrollbars from 'util/CustomScrollbars';
 import SidebarLogo from './SidebarLogo';
 import UserProfile from './UserProfile';
-//import AppsNavigation from "./AppsNavigation";
+import { 
+	AuditOutlined,
+} from '@ant-design/icons';
 import {
 	NAV_STYLE_NO_HEADER_EXPANDED_SIDEBAR,
 	NAV_STYLE_NO_HEADER_MINI_SIDEBAR,
@@ -19,7 +21,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const { navStyle, themeType } = useSelector(({ settings }) => settings);
 	const pathname = useSelector(({ common }) => common.pathname);
 	const anexo = useSelector(state => state.anexo);
-	const token = JSON.parse(sessionStorage.getItem('token'));
+	const token = JSON.parse(localStorage.getItem('token'));
 
 	console.log('token', token);
 

@@ -37,8 +37,7 @@ export const useProvideAuth = () => {
         if (data.success) {
           dispatch(setLoginLoading(false));
           fetchSuccess();
-          // httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + data.token.access_token;          
-          sessionStorage.setItem('token', JSON.stringify(data.data));
+          localStorage.setItem('token', JSON.stringify(data.data));
           getAuthUser(data.data);
           if (callbackFun) callbackFun();
         } else {
@@ -48,6 +47,14 @@ export const useProvideAuth = () => {
       .catch(function (error) {
         fetchError(error.message);
       });
+      httpClient
+        .post('sistema/getVersion')
+        .then(({ data: { data, success } }) => {
+          if (success) localStorage.setItem('version', data.num_version);
+        })
+        .catch(function (error) {
+          fetchError(error.message);
+        });
   };
 
   const userSignup = (user, callbackFun) => {
@@ -58,7 +65,7 @@ export const useProvideAuth = () => {
       .then(({ data }) => {
         if (data.result) {
           fetchSuccess();
-          sessionStorage.setItem('token', data.token.access_token);
+          localStorage.setItem('token', data.token.access_token);
           httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + data.token.access_token;
           getAuthUser();
           if (callbackFun) callbackFun();
@@ -69,6 +76,14 @@ export const useProvideAuth = () => {
       .catch(function (error) {
         fetchError(error.message);
       });
+      httpClient
+        .post('sistema/getVersion')
+        .then(({ data: { data, success } }) => {
+          if (success) localStorage.setItem('version', data.num_version);
+        })
+        .catch(function (error) {
+          fetchError(error.message);
+        });
   };
 
   const sendPasswordResetEmail = (email, callbackFun) => {
@@ -94,44 +109,15 @@ export const useProvideAuth = () => {
   const userSignOut = (callbackFun) => {
     fetchStart();
     fetchSuccess();
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('token');
+    localStorage.removeItem('version');
     setAuthUser(false);
-    // httpClient
-    //   .post('auth/logout')
-    //   .then(({ data }) => {
-    //     if (data.result) {
-    //       fetchSuccess();
-    //       httpClient.defaults.headers.common['Authorization'] = '';
-    //       sessionstorage.removeItem('token');
-    //       setAuthUser(false);
-    //       if (callbackFun) callbackFun();
-    //     } else {
-    //       fetchError(data.error);
-    //     }
-    //   })
-    //   .catch(function (error) {
-    //     fetchError(error.message);
-    //   });
   };
 
   const getAuthUser = (data) => {
     fetchStart();
     fetchSuccess();
     setAuthUser(data);
-    // httpClient
-    //   .post('auth/me')
-    //   .then(({ data }) => {
-    //     if (data.user) {
-    //       fetchSuccess();
-    //       setAuthUser(data.user);
-    //     } else {
-    //       fetchError(data.error);
-    //     }
-    //   })
-    //   .catch(function (error) {
-    //     httpClient.defaults.headers.common['Authorization'] = '';
-    //     fetchError(error.message);
-    //   });
   };
 
   // Subscribe to user on mount
@@ -140,24 +126,9 @@ export const useProvideAuth = () => {
   // ... latest auth object.
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token');
-    // if (token) {
-    //   httpClient.defaults.headers.common['Authorization'] = 'Bearer ' + token;
-    // }
+    const token = localStorage.getItem('token');    
     setAuthUser(JSON.parse(token));
     setLoadingUser(false);
-    // httpClient
-    //   .post('auth/me')
-    //   .then(({ data }) => {
-    //     if (data.user) {
-    //     }
-    //     setLoadingUser(false);
-    //   })
-    //   .catch(function () {
-    //     sessionStorage.removeItem('token');
-    //     httpClient.defaults.headers.common['Authorization'] = '';
-    //     setLoadingUser(false);
-    //   });
   }, []);
 
   // Return the user object and auth methods

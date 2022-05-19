@@ -1,3 +1,3 @@
 module.exports = {
-  footerText: '',
+  footerText: '' || localStorage.getItem('version'),
 }

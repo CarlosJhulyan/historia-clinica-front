@@ -71,7 +71,7 @@ function ModalTriaje({
         setDatosEnviar({
           ...datosEnviar,
           PACIENTE: `${response.data.data.APE_PATERNO.toUpperCase()} ${response.data.data.APE_MATERNO.toUpperCase()}, ${response.data.data.NOMBRE.toUpperCase()}`,
-          USU_CREA: JSON.parse(sessionStorage.getItem('token')).usuario,
+          USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
           COD_PACIENTE: response.data.data.COD_PACIENTE,
           NUM_HC: response.data.data.NRO_HC_ACTUAL,
           FECHA_NAC: moment(response.data.data.FEC_NAC_CLI, 'DD/MM/yyyy').format('yyyy/MM/DD')
@@ -88,7 +88,7 @@ function ModalTriaje({
           PESO: data.peso,
           TEMP: data.temp,
           COD_PACIENTE: codPaciente,
-          USU_CREA: JSON.parse(sessionStorage.getItem('token')).usuario
+          USU_CREA: JSON.parse(localStorage.getItem('token')).usuario
         });
       }
     } catch (error) {

@@ -63,7 +63,7 @@ function AdmisionConsulta() {
     COD_CONSULTORIO: '1',
     COD_MEDICO: '',
     NOM_MEDICO: '',
-    USU_CREA: JSON.parse(sessionStorage.getItem('token')).usuario
+    USU_CREA: JSON.parse(localStorage.getItem('token')).usuario
   });
 
   const handleChangeText = e => {

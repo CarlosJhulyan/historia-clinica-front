@@ -10,7 +10,7 @@ import './formulario.css';
 const date = Moment().locale('es');
 
 const BalanceHidrico = () => {
-	const token = JSON.parse(sessionStorage.getItem('token'));
+	const token = JSON.parse(localStorage.getItem('token'));
 
 	const [editar, setEditar] = useState();
 	const [historia, setHistoria] = useState();

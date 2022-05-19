@@ -26,7 +26,7 @@ import { ArrowLeftOutlined, SearchOutlined } from '@ant-design/icons';
 const date = Moment().locale('es');
 
 const Formulario = ({ setSwitcher }) => {
-	const token = JSON.parse(sessionStorage.getItem('token'));
+	const token = JSON.parse(localStorage.getItem('token'));
 
 	const [loading, setLoading] = useState(false);
 	const [editar, setEditar] = useState();

@@ -157,7 +157,7 @@ const ModalTransferir = ({ abrirModal, setAbrirModal, traerData, dataModal }) =>
             habitacionId: cama.habitacionId,
             habitacion_anterior: cama.habitacion_anterior,
             piso_anterior: cama.piso_anterior,
-            codMedico: JSON.parse(sessionStorage.getItem('token')).cod_medico
+            codMedico: JSON.parse(localStorage.getItem('token')).cod_medico
           }
           respuesta = await transferirCama(body);
           if (respuesta.success) {

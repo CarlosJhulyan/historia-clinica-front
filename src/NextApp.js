@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { 
+	useEffect, 
+	useState 
+} from 'react';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { Route, Switch } from 'react-router-dom';
@@ -35,6 +38,7 @@ const NextApp = () => {
 			const abc = firebase.initializeApp(firebaseConfig);
 			setInitialFirestore(abc);
 		}
+
 		iniciar();
 	}, []);
 

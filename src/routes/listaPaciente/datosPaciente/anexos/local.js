@@ -195,7 +195,7 @@ const AnexosLocal = ({ datosModal }) => {
 
 
 	const guardarAnexo = async () => {
-		const codMedico = JSON.parse(sessionStorage.getItem('token'));
+		const codMedico = JSON.parse(localStorage.getItem('token'));
 
 		const dataForm = new FormData();
 		dataForm.append('codGrupoCia', datosModal.estado.COD_GRUPO_CIA);

@@ -8,7 +8,6 @@ import AboveHeader from "../Topbar/AboveHeader/index";
 
 import BelowHeader from "../Topbar/BelowHeader/index";
 import Topbar from "../Topbar/index";
-import {footerText} from "../../util/config";
 import App from "../../routes/index";
 
 import {
@@ -94,7 +93,7 @@ const MainApp = () => {
           <App match={match}/>
           <Footer>
             <div className="gx-layout-footer-content">
-              {footerText}
+              {localStorage.getItem('version')}
             </div>
           </Footer>
         </Content>

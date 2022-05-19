@@ -27,7 +27,6 @@ import ReactToPrint from 'react-to-print';
 const { RangePicker } = DatePicker;
 
 const ReporteIncompletos = () => {
-	// const token = JSON.parse(sessionStorage.getItem('token'));
 	const { Option } = Select;
 	const [loading, setLoading] = useState(false);
 	const [btnBuscar, setBtnBuscar] = useState(true);
