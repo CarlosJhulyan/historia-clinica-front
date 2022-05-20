@@ -70,6 +70,8 @@ import { setFiltroEspecialidad } from '../../../appRedux/actions/ui';
 
 import { setTratamientoCabeceraDetalleKardex } from '../../../appRedux/actions/kardex/TratamientoKardex';
 import { setDiagnosticoActionKardex } from '../../../appRedux/actions/kardex/DiagnosticoKardex';
+import { setExamenKardex } from '../../../appRedux/actions/kardex/ExamenKardex';
+import { setInterconsultaKardex } from '../../../appRedux/actions/kardex/InterconsultaKardex';
 
 const codMedico = JSON.parse(localStorage.getItem('token'));
 
@@ -193,7 +195,7 @@ export const examenFisico = dataGlobal => {
 	const stateRedux = store.getState();
 
 	traerFuncionesVitales(dataGlobal).then(async fvital => {
-		console.log('REEEESp:', fvital);
+		console.log('HV:', fvital);
 
 		if (fvital !== undefined) {
 			const triaje = {
@@ -214,11 +216,11 @@ export const examenFisico = dataGlobal => {
 				tiempoEnfermedad: fvital[0].TIEMPO_ENFERMEDAD === null ? '' : fvital[0].TIEMPO_ENFERMEDAD,
 				relatoCronologico:
 					fvital[0].RELATO_CRONOLOGICO === null ? '' : fvital[0].RELATO_CRONOLOGICO,
-				apetito: fvital[0].APETITO === null ? 'N' : fvital[0].APETITO,
-				sueno: fvital[0].SUENIO === null ? 'N' : fvital[0].SUENIO,
-				deposicion: fvital[0].DEPOSICION === null ? 'N' : fvital[0].DEPOSICION,
-				sed: fvital[0].SED === null ? 'N' : fvital[0].SED,
-				orina: fvital[0].ORINA === null ? 'N' : fvital[0].ORINA,
+				apetito: fvital[0].APETITO === null ? '' : fvital[0].APETITO,
+				sueno: fvital[0].SUENIO === null ? '' : fvital[0].SUENIO,
+				deposicion: fvital[0].DEPOSICION === null ? '' : fvital[0].DEPOSICION,
+				sed: fvital[0].SED === null ? '' : fvital[0].SED,
+				orina: fvital[0].ORINA === null ? '' : fvital[0].ORINA,
 			};
 
 			const estadoFisico = {
@@ -293,6 +295,9 @@ export const examenFisico = dataGlobal => {
 			};
 
 			obtenerTratamientoArr(filtros).then(data => {
+				console.log('dARRAY TRATAMIENTO 1: ', data);
+				console.log('dARRAY TRATAMIENTO 2: ', filtros);
+
 				store.dispatch(setTratamientoCabeceraDetalle(data));
 			});
 
@@ -322,8 +327,8 @@ export const getKardexHospitaliario = async data => {
 			const filtrosDiagnostico = removeDuplicates(fvital, 'COD_DIAGNOSTICO');
 			const obtenerDiagnosticoArr = async filtros => {
 				const dataDiagnostico = [];
-				if (filtros[0].COD_DIAGNOSTICO !== null) {
-					if (filtros.length > 0) {
+				if (filtros && filtros.length > 0) {
+					if (filtros[0].COD_DIAGNOSTICO !== null) {
 						for (const filtro of filtros) {
 							const diagnostico = {
 								key: filtro.COD_DIAGNOSTICO,
@@ -395,6 +400,68 @@ export const getKardexHospitaliario = async data => {
 			store.dispatch(setDiagnosticoActionKardex(stateRedux.kardexDiagnostico));
 		}
 	});
+
+	const fechaRes = await httpClient.post('/kardex/getFechaAtencion', data);
+	console.log('FECHA', fechaRes.data.data);
+	//Imagenes y Laboratorios
+	const examenes = [];
+
+	traerListaImagenes(data).then(d => {
+		console.log('LISTA IMAGENES:', d);
+		if (d) {
+			d.forEach(item => {
+				item.tipo = 'Imagen';
+			});
+			examenes.push(...d);
+		}
+	});
+
+	traerListaLaboratorio(data).then(d => {
+		console.log('LISTA LABORATORIO:', d);
+		if (d) {
+			d.forEach(item => {
+				item.tipo = 'Laboratorio';
+			});
+			examenes.push(...d);
+		}
+	});
+
+	stateRedux.kardexExamen = examenes;
+	store.dispatch(setExamenKardex(stateRedux.kardexExamen));
+
+	//Procedimientos e interconsultas
+	let arrayinterconsultas = [];
+
+	//Interconsulta
+	const respuesta = await httpClient.post('/pacientes/getInterconsultas', data);
+	if (respuesta.data.success) {
+		const data = respuesta.data.data;
+		const dat = data[0].map(e => ({
+			key: e.cod_prod,
+			COD_PROD: e.cod_prod,
+			DESC_PROD: e.desc_prod,
+			NOM_LAB: e.nom_lab,
+			RUC: e.ruc,
+			tipo: 'Interconsulta',
+		}));
+		arrayinterconsultas.push(...dat);
+	}
+	arrayinterconsultas = removeDuplicates(arrayinterconsultas, 'cod_prod');
+
+	traerListaProcedimiento(data).then(d => {
+		console.log('LISTA PROCEDIMIENTO:', d);
+		if (d) {
+			d.forEach(item => {
+				// item.FECHA = fechaRes.data.data.FECHA;
+				item.tipo = 'Procedimiento';
+				console.log('respuesta procedimiento', item);
+				arrayinterconsultas.push(item);
+			});
+		}
+	});
+
+	stateRedux.kardexInterconsulta = arrayinterconsultas;
+	store.dispatch(setInterconsultaKardex(stateRedux.kardexInterconsulta));
 };
 
 export const traerCombosKardex = () => {
@@ -414,6 +481,9 @@ export const traerCombosKardex = () => {
 	traerTratamientos(dataGlobal).then(data => {
 		store.dispatch(setDataTratamientos(data));
 	});
+
+	actualizarImagenes(dataGlobal);
+	actualizarLaboratorio(dataGlobal);
 };
 
 /*****************************PESTAÑA EVOLUCION DEL TRATAMIENTO**************************************/
@@ -518,7 +588,7 @@ export const desarrolloProcedimientos = dataGlobal => {
 	traerDesarrolloProcedimiento(dataGlobal).then(data => {
 		if (data.data.length > 0) {
 			const resp = data.data[0];
-			// console.log('Desarrollo Proccedimiento:', resp);
+			console.log('Desarrollo Proccedimiento:', resp);
 			const desarrollo = {
 				relatoMedico: resp.relato_medico,
 				conclusion: resp.conclusion,
@@ -726,14 +796,17 @@ export const traerEvolucionTratamientoOdonto = async dataGlobal => {
 		codPaciente: dataGlobal.codPaciente,
 		nroAtencion: dataGlobal.nroAtencion,
 	});
+	console.log('Evolucion Odontoooooooooooooooooooooooooooooooooooooooooo', data.data);
 	store.dispatch(setEvolucionTratamientoOdonto(data.data));
 };
 
 // TRAER TIPO DE ANEXO (FIRESTORE O LOCAL)
 export const tipoAnexo = async () => {
-	const { data: { success, data = [] } } = await httpClient.post('/tipoAnexos');
-	if (success) {
-		store.dispatch(setTipoAnexo(data[0].llave_tab_gral));
+	const respuesta = await httpClient.post('/tipoAnexos');
+	if (respuesta.data.success) {
+		if (respuesta.data.data[0].llave_tab_gral === 'S') {
+			store.dispatch(setTipoAnexo('S'));
+		}
 	}
 };
 
@@ -742,6 +815,7 @@ export const traerAnexo = async dataGlobal => {
 	const estado = store.getState();
 	// if (estado.anexo.tipo === 'local') {
 	const resp = await httpClient.post('/anexos/getAnexos', { numAtendMed: dataGlobal.nroAtencion });
+	console.log('ANEEEEEEEXOOO13223:', resp);
 	if (resp.data.success) {
 		store.dispatch(setAnexosAction({ ...estado.anexo, data: resp.data.data }));
 	}
@@ -789,7 +863,7 @@ const traerTratamientos = async dataGlobal => {
 // };
 
 const traerFuncionesVitales = async dataGlobal => {
-	console.log('data global: ', dataGlobal);
+	console.log('DATAAAAAAA FUNCION VITALES GLOBAL: ', dataGlobal);
 	const resp = await httpClient.post(`/antecedentes/funcionesvitales`, {
 		codGrupoCia: dataGlobal.codGrupoCia,
 		codLocal: dataGlobal.codLocal,

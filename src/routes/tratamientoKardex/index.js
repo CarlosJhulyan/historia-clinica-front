@@ -5,16 +5,15 @@ import { httpClient } from '../../util/Api';
 import { notificaciones } from '../../util/util';
 import Moment from 'moment';
 import axios from 'axios';
-import PrimeraParte from './primeraParte/primeraParte';
-import SegundaParte from './segundaParte/segundaParte';
-import TerceraParte from './terceraParte';
-import CuartaParte from './cuartaParte';
-import QuintaParte from './quintaParte';
-import SextaParte from './sextaParte';
-import { ModalPrimeraParte } from './primeraParte/modalPrimeraParte';
-import PrimeraPartePrueba from './primeraParte/primeraPartePrueba';
+import PrimeraParteTable from './tratamiento/primeraParte/primeraParteTable';
+import SextaParte from './tratamiento/sextaParte';
+import { ModalPrimeraParte } from './tratamiento/primeraParte/modalPrimeraParte';
 import { getKardexHospitaliario, traerCombosKardex } from '../listaPaciente/datosPaciente/apis';
 import { useSelector } from 'react-redux';
+import TablaExamen from './examen/tabla/tabla';
+import TablaInterconsulta from './interconsulta/tabla/tabla';
+import TablaEspeciales from './especiales/tabla/tabla';
+import Especiales from './especiales/especial';
 // import './formulario.css';
 
 const TratamientoKardex = () => {
@@ -27,6 +26,11 @@ const TratamientoKardex = () => {
 		cama: '',
 		habitacion: '',
 	});
+
+	const [editar, setEditar] = useState();
+	const [alergias, setAlergias] = useState();
+
+	const [state, setState] = useState('tratamientos');
 
 	const [historia, setHistoria] = useState();
 
@@ -61,14 +65,6 @@ const TratamientoKardex = () => {
 			dataIndex: 'tipodiagnostico',
 			key: 'tipodiagnostico',
 		},
-	];
-
-	const paginas = [
-		{
-			title: 'Tratamiento',
-			content: <PrimeraPartePrueba setAbrirModal={setAbrirModal} setDataModal={setDataModal} />,
-		},
-		{ title: 'Historial de Tratamiento', content: <SextaParte /> },
 	];
 
 	const onSearchCOD = async searchText => {
@@ -163,7 +159,13 @@ const TratamientoKardex = () => {
 					}`,
 				});
 				setValueCOD(cod);
-				setHistoria(element.historia_clinica);
+				setHistoria({
+					hc: element.historia_clinica,
+					codPaciente: element.cod_paciente,
+					nombrePaciente: `${
+						element.nom_cli + ' ' + element.ape_pat_cli + ' ' + element.ape_mat_cli
+					}`,
+				});
 				// validarTurno();
 			}
 		});
@@ -197,25 +199,21 @@ const TratamientoKardex = () => {
 		}
 	};
 
-	const GuardarBalance = () => {
+	const TraerDatos = () => {
 		setLoading(true);
-
-		console.log('OPCIONES333333 NOMBRE:', optionsNOM);
-		console.log('OPCIONES333333 CODIGO: ', optionsCOD);
-		console.log('OPCIONES333333 valor codigo: ', valueCOD);
-		console.log('OPCIONES333333 valor nombre: ', valueNOM);
+		setDataModal();
+		setEditar();
 
 		if (valueCOD) {
 			// Filtrar el valor del codigo con las opciones
 			optionsCOD.forEach(async element => {
 				if (element.cod_paciente === valueCOD) {
-					console.log('ELEMENTOOOOOOOOOOOOOO000 SELECCIONADO: ', element);
-
 					const dataGlobal = {
 						codGrupoCia: '001',
 						codLocal: '001',
 						codCia: '001',
 						nroAtencion: element.historia_clinica,
+						codPaciente: element.cod_paciente,
 					};
 
 					const dataCama = {
@@ -244,10 +242,78 @@ const TratamientoKardex = () => {
 					});
 
 					getKardexHospitaliario(dataGlobal);
+					//Obtener kardex
+					const kardex = await httpClient.post('kardex/getKardex', {
+						hc: element.historia_clinica,
+					});
+					if (kardex.data.success) {
+						console.log(kardex);
+						setEditar(kardex.data.data);
+					}
+
+					//Obtener Alergias
+					const alergias = await httpClient.post('pacientes/getAlergias', {
+						codGrupoCia: '001',
+						codPaciente: element.cod_paciente,
+					});
+					if (alergias.data.success) {
+						if (alergias.data.data.length > 0) {
+							setAlergias({
+								alergias: alergias.data.data[0].alergias,
+								otros: alergias.data.data[0].otros,
+							});
+						}
+					}
 				}
 			});
 		}
 	};
+
+	const paginasTratamientos = [
+		{
+			title: 'Tratamiento',
+			content: (
+				<PrimeraParteTable
+					setAbrirModal={setAbrirModal}
+					setDataModal={setDataModal}
+					historia={historia}
+					editar={editar}
+					TraerDatos={TraerDatos}
+				/>
+			),
+		},
+		{ title: 'Historial de Tratamiento', content: <SextaParte historia={historia} /> },
+	];
+	const paginasExamenes = [
+		{
+			title: 'Examenes',
+			content: <TablaExamen historia={historia} editar={editar} TraerDatos={TraerDatos} />,
+		},
+	];
+	const paginasInterconsulta = [
+		{
+			title: 'Interconsultas',
+			content: <TablaInterconsulta historia={historia} editar={editar} TraerDatos={TraerDatos} />,
+		},
+	];
+	const paginasEspeciales = [
+		{
+			title: 'Proc. Especiales',
+			content: (
+				<Especiales
+					historia={historia}
+					editar={editar}
+					TraerDatos={TraerDatos}
+					datosModal={{
+						estado: {
+							COD_GRUPO_CIA: '001',
+							COD_LOCAL_ANTECENDENTE: '001',
+						},
+					}}
+				/>
+			),
+		},
+	];
 
 	useEffect(() => {
 		if (dataTratamiento) {
@@ -337,7 +403,7 @@ const TratamientoKardex = () => {
 									color: 'white',
 								}}
 								/* 	disabled={!data.flagLleno} */
-								onClick={() => GuardarBalance()}
+								onClick={() => TraerDatos()}
 							>
 								Buscar
 							</Button>
@@ -360,9 +426,28 @@ const TratamientoKardex = () => {
 							<Spin style={{ margin: '0 0 10px 0' }} />
 							Buscando...
 						</div>
-					) : dataTratamiento.length !== 0 ? (
+					) : data.cama !== '' ? (
 						<>
 							<Row style={{ paddingBottom: '10px' }}>
+								{alergias ? (
+									<Col span={24} style={{ paddingBottom: 15 }}>
+										<div
+											style={{
+												backgroundColor: '#F60F5B',
+												padding: 10,
+												color: 'white',
+												fontSize: 16,
+											}}
+										>
+											<div style={{ textAlign: 'center' }}>
+												<b style={{ fontWeight: 600 }}>Alergias: </b>
+												{alergias.alergias} / <b style={{ fontWeight: 600 }}>Otros: </b>{' '}
+												{alergias.otros}
+											</div>
+											<div></div>
+										</div>
+									</Col>
+								) : null}
 								<Col
 									xs={2}
 									style={{
@@ -469,14 +554,70 @@ const TratamientoKardex = () => {
 										'No se encuentra el diagnóstico'}
 								</Col>
 							</Row>
+							<Button
+								type="primary"
+								onClick={() => {
+									setState('tratamientos');
+								}}
+								disabled={state === 'tratamientos'}
+							>
+								Tratamientos
+							</Button>
+							<Button
+								type="primary"
+								onClick={() => {
+									setState('examenes');
+								}}
+								disabled={state === 'examenes'}
+							>
+								Examenes
+							</Button>
+							<Button
+								type="primary"
+								onClick={() => {
+									setState('interconsultas');
+								}}
+								disabled={state === 'interconsultas'}
+							>
+								Interconsultas
+							</Button>
+							<Button
+								type="primary"
+								onClick={() => {
+									setState('especiales');
+								}}
+								disabled={state === 'especiales'}
+							>
+								Proc. Especiales
+							</Button>
 							<Tabs
 							//  onChange={callback}
 							>
-								{paginas.map((e, index) => (
-									<Tabs.TabPane tab={e.title} key={'tab' + index}>
-										{e.content}
-									</Tabs.TabPane>
-								))}
+								{state === 'tratamientos'
+									? paginasTratamientos.map((e, index) => (
+											<Tabs.TabPane tab={e.title} key={'tab' + index}>
+												{e.content}
+											</Tabs.TabPane>
+									  ))
+									: state === 'examenes'
+									? paginasExamenes.map((e, index) => (
+											<Tabs.TabPane tab={e.title} key={'tab' + index}>
+												{e.content}
+											</Tabs.TabPane>
+									  ))
+									: state === 'interconsultas'
+									? paginasInterconsulta.map((e, index) => (
+											<Tabs.TabPane tab={e.title} key={'tab' + index}>
+												{e.content}
+											</Tabs.TabPane>
+									  ))
+									: state === 'especiales'
+									? paginasEspeciales.map((e, index) => (
+											<Tabs.TabPane tab={e.title} key={'tab' + index}>
+												{e.content}
+											</Tabs.TabPane>
+									  ))
+									: null}
 							</Tabs>
 						</>
 					) : (
@@ -512,7 +653,13 @@ const TratamientoKardex = () => {
 				<ToastContainer pauseOnHover={false} />
 			</Card>
 			{abrirModal && (
-				<ModalPrimeraParte abrirModal={abrirModal} setAbrirModal={setAbrirModal} data={dataModal} />
+				<ModalPrimeraParte
+					abrirModal={abrirModal}
+					setAbrirModal={setAbrirModal}
+					data={dataModal}
+					TraerDatos={TraerDatos}
+					historia={historia}
+				/>
 			)}
 		</>
 	);

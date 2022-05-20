@@ -1,7 +1,7 @@
 import { Col, Button, Form, Input, Modal, Row, Space, Checkbox, Table } from 'antd';
 import React, { createRef, useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
-import { actualizarTratamientos } from '../../listaPaciente/datosPaciente/apis';
+import { actualizarTratamientos } from '../../../listaPaciente/datosPaciente/apis';
 const CheckboxGroup = Checkbox.Group;
 
 const options = [

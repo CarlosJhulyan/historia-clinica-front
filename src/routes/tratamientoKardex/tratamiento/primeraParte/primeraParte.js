@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { httpClient } from '../../../util/Api';
-import PrimeraPartePrueba from './primeraPartePrueba';
+import { httpClient } from '../../../../util/Api';
+import PrimeraParteTable from './primeraParteTable';
 import TabTratamiento from './tratamiento';
 
 const PrimeraParte = ({ data }) => {
@@ -27,7 +27,7 @@ const PrimeraParte = ({ data }) => {
 	return (
 		<div style={{ width: '100%' }}>
 			{/* <TabTratamiento /> */}
-			<PrimeraPartePrueba />
+			<PrimeraParteTable />
 		</div>
 	);
 };
