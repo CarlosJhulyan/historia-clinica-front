@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 // import asyncComponent from 'util/asyncComponent';
 import AsignacionCamas from './asignacionCamas';
@@ -24,22 +24,18 @@ import Historial from './evolucionEnfermeria/historial';
 import TomaPreTriaje from './preTriaje/tomaPreTriaje';
 import HistoricoPreTriaje from './preTriaje';
 import AdmisionConsulta from './admisionConsulta';
+import { Modal } from 'antd';
+import { useAuth } from '../authentication';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
+	const [modal, contextHolder] = Modal.useModal();
+	const { userSignOut } = useAuth();
 
 	const generateRoute = token => {
 		const items = [];
 
-		items.push(<Route path={`${match.url}historialEvolucionEnfermeria`} component={Historial} />)
-		items.push(<Route path={`${match.url}ingresoEvolucionEnfermeria`} component={Ingreso} />)
-
-		items.push(<Route path={`${match.url}tomaPreTriaje`} component={TomaPreTriaje} />);
-		items.push(<Route path={`${match.url}historicoPreTriaje`} component={HistoricoPreTriaje} />);
-
-		items.push(<Route path={`${match.url}admisionConsulta`} component={AdmisionConsulta} />);
-
-		if (token.modulos.length > 0) {
+		if (token.modulos?.length > 0) {
 			if (token.modulos.includes('1')) {
 				items.push(<Route path={`${match.url}listaPaciente`} component={listaPaciente} />);
 			}
@@ -67,18 +63,18 @@ const App = ({ match }) => {
 			if (token.modulos.includes('5')) {
 				items.push(<Route path={`${match.url}admisionHospitalaria`} component={listaHospitalizar} />);
 			}
-			if (token.modulos.includes('6')) {
+			if (token.modulos.includes('8')) {
 				items.push(<Route path={`${match.url}signosVitales`} component={SignosVitales} />);
 			}
-			if (token.modulos.includes('7')) {
+			if (token.modulos.includes('9')) {
 				items.push(
 					<Route path={`${match.url}historialSignosVitales`} component={HistorialSignosVitales} />
 				);
 			}
-			if (token.modulos.includes('8')) {
+			if (token.modulos.includes('6')) {
 				items.push(<Route path={`${match.url}balanceHidrico`} component={BalanceHidrico} />);
 			}
-			if (token.modulos.includes('9')) {
+			if (token.modulos.includes('7')) {
 				items.push(
 					<Route path={`${match.url}historialBalanceHidrico`} component={HistorialBalanceHidrico} />
 				);
@@ -108,11 +104,43 @@ const App = ({ match }) => {
 					<Route path={`${match.url}registroPaciente`} component={registroPaciente} />
 				);
 			}
-		} else {
+			if (token.modulos.includes('16')) {
+				items.push(<Route path={`${match.url}ingresoEvolucionEnfermeria`} component={Ingreso} />)
+			}
+			if (token.modulos.includes('17')) {
+				items.push(<Route path={`${match.url}historialEvolucionEnfermeria`} component={Historial} />)
+			}
+			if (token.modulos.includes('18')) {
+				items.push(<Route path={`${match.url}tomaPreTriaje`} component={TomaPreTriaje} />);
+			}
+			if (token.modulos.includes('19')) {
+				items.push(<Route path={`${match.url}historicoPreTriaje`} component={HistoricoPreTriaje} />);
+			}
+			if (token.modulos.includes('20')) {
+				items.push(<Route path={`${match.url}admisionConsulta`} component={AdmisionConsulta} />);
+			}
 		}
 
 		return items;
 	};
+
+	useEffect(() => {
+		if (!token.modulos || token.modulos.length <= 0) {
+			modal.info({
+				title: 'Modulos de Sistema',
+				content: (
+					<>
+						No cuenta con modulos a su disposición. Contactese con el administrador.
+					</>
+				),
+				onOk: () => {
+					userSignOut();
+				},
+				okText: 'Aceptar',
+				centered: true
+			});
+		}
+	}, [])
 
 	const rutas = generateRoute(token);
 
@@ -121,6 +149,7 @@ const App = ({ match }) => {
 			<Switch>
 				{/* ---------------- DAVID ------------------- */}
 				{rutas.map(item => item)}
+				{contextHolder}
 			</Switch>
 		</div>
 	);

@@ -126,7 +126,7 @@ export const useProvideAuth = () => {
   // ... latest auth object.
 
   useEffect(() => {
-    const token = localStorage.getItem('token');    
+    const token = localStorage.getItem('token');
     setAuthUser(JSON.parse(token));
     setLoadingUser(false);
   }, []);

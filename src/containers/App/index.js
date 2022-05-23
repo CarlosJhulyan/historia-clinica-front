@@ -71,9 +71,6 @@ const setNavStyle = (navStyle) => {
 
 const App = () => {
   const [modal, contextHolder] = Modal.useModal();
-  const ReachableContext = React.createContext();
-  const UnreachableContext = React.createContext();
-
   const locale = useSelector(({ settings }) => settings.locale);
   const navStyle = useSelector(({ settings }) => settings.navStyle);
   const layoutType = useSelector(({ settings }) => settings.layoutType);

@@ -6,7 +6,6 @@ import {
   Card,
   Form,
   Input,
-  notification,
   Col,
   Button,
   DatePicker,
@@ -143,6 +142,7 @@ function TomaPreTriaje() {
           APE_PATERNO: '',
           NOMBRE: ''
         });
+        openNotification('Pre triaje', 'Paciente no encontrado', 'Warning');
         setDisableFetch(true);
       }
 		} catch (e) {
@@ -167,6 +167,24 @@ function TomaPreTriaje() {
       const { data: { message, success } } = await httpClient.post('preTriaje/setPreTriaje', datosEnviar);
       if (success) {
         openNotification('Pre triaje', message);
+        setDatosEnviar({
+          COD_PACIENTE: '',
+          FC: '',
+          FR: '',
+          PA1: '',
+          PA2: '',
+          PESO: '',
+          SATURACION: '',
+          TALLA: '',
+          TEMP: ''
+        });
+        setDataFound({
+          APE_MATERNO: '',
+          APE_PATERNO: '',
+          NOMBRE: '',
+          NUM_DOCUMENTO: ''
+        });
+        setDisableEditDate(true);
       } else {
         openNotification('Pre triaje', message, 'Warning');
       }

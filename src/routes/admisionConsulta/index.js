@@ -16,6 +16,7 @@ import {
   Select,
   AutoComplete,
   Popconfirm,
+  Spin,
 } from 'antd';
 import moment from 'moment';
 
@@ -24,6 +25,7 @@ import { httpClient } from '../../util/Api';
 import FormatoNuevo from '../../assets/images/formato_nuevo.jpg';
 import FormatoViejo from '../../assets/images/formato_viejo.jpg';
 import axios from 'axios';
+import ModalListaEspera from './modalListaEspera';
 
 function AdmisionConsulta() {
   const { Option } = Select;
@@ -33,6 +35,8 @@ function AdmisionConsulta() {
   const [abrirModalOrden, setAbrirModalOrden] = useState(false);
   const [abrirModalPedido, setAbrirModalPedido] = useState(false);
   const [abrirModalConsulta, setAbrirModalConsulta] = useState(false);
+  const [abrirModalConfirmacion, setAbrirModalConfirmacion] = useState(false);
+  const [abrirModalListaEspera, setAbrirModalListaEspera] = useState(false);
 
   const [dataCabecera, setDataCabecera] = useState([{}]);
   const [dataDetalles, setDataDetalles] = useState([{}]);
@@ -42,12 +46,13 @@ function AdmisionConsulta() {
   const [valueCOD, setValueCOD] = useState('');
   const [optionsCOD, setOptionsCOD] = useState([]);
   const [pedidoFound, setPedidoFound] = useState(false);
-  const [consultaConfirmada, setConsultaConfirmada] = useState(false);
+  const [consultaConfirmada, setConsultaConfirmada] = useState(true);
   const [opcionBusqueda, setOpcionBusqueda] = useState(1);
 
   const [loadingData, setLoadingData] = useState(false);
   const [loadingDataConsultorio, setLoadingDataConsultorio] = useState(false);
   const [loadingConfirmar, setLoadingConfirmar] = useState(false);
+  const [loadingInsertarConsultaMedica, setLoadingInsertarConsultaMedica] = useState(false);
 
   const [dataSend, setDataSend] = useState({
     NUM_PEDIDO: '',
@@ -60,11 +65,14 @@ function AdmisionConsulta() {
     FECHA_FORMAT: null,
     MONTO: '',
     COD_ESPECIALIDAD: '1',
-    COD_CONSULTORIO: '1',
+    COD_BUS: '1',
     COD_MEDICO: '',
     NOM_MEDICO: '',
-    USU_CREA: JSON.parse(localStorage.getItem('token')).usuario
+    USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+    ESTADO: 'T'
   });
+
+  const [modulos, setModulos] = useState([]);
 
   const handleChangeText = e => {
     setDataSend({
@@ -85,14 +93,14 @@ function AdmisionConsulta() {
     setDataSend({
       ...dataSend,
       COD_ESPECIALIDAD: e,
-      COD_CONSULTORIO: ''
+      COD_BUS: ''
     });
   }
 
   const handleChangeConsultorio = e => {
     setDataSend({
       ...dataSend,
-      COD_CONSULTORIO: e
+      COD_BUS: e
     });
   }
 
@@ -213,8 +221,8 @@ function AdmisionConsulta() {
 					COD_MEDICO: element.cod_medico,
 					NOM_MEDICO: `${element.des_nom_medico + ' ' + element.des_ape_medico}`,
 				});
-				setValueCOD(data);
 			}
+      setValueCOD(element.num_cmp);
 		});
 	};
 
@@ -225,15 +233,16 @@ function AdmisionConsulta() {
 		}
 	};
 
-  const onSearchCOD = async () => {
-		var nom = valueCOD;
-		if (nom ? nom.length >= 4 : false) {
+  const onSearchCOD = async (data) => {
+		var cod = data;
+		if (cod ? cod.length >= 4 : false) {
 			setPeticion(true);
 			setOptionsCOD();
 			const respuesta = await httpClient.post(
 				'modulos/getDataMedicos',
 				{
-					des_nom_medico: nom,
+					num_cmp: cod,
+					des_nom_medico: '',
 				},
 				{ cancelToken: cancelSource.token }
 			);
@@ -246,7 +255,7 @@ function AdmisionConsulta() {
 					array1[i].value = array1[i].cod_medico;
 					array1[i].label = (
 						<div>
-							{array1[i].cod_medico}
+							{array1[i].num_cmp}
 							<div style={{ color: '#a3a3a3' }}>{array1[i].des_ape_medico}</div>
 						</div>
 					);
@@ -263,7 +272,7 @@ function AdmisionConsulta() {
 
   const traerPedido = async (numPedido) => {
     setLoadingData(true);
-    setConsultaConfirmada(false);
+    // setConsultaConfirmada(false);
     setOpcionBusqueda(1);
     try {
       const responseCabecera = await httpClient.post('pedido/getPedidoCabecera', { NUM_PEDIDO: numPedido || dataSend.NUM_PEDIDO });
@@ -276,6 +285,7 @@ function AdmisionConsulta() {
       } else {
         setDataCabecera(responseCabecera.data.data);
         setDataDetalles(responseDetalles.data.data);
+        setDataSend({ ...dataSend, COD_PACIENTE: responseCabecera.data.data[0].COD_PACIENTE });
         setAbrirModalPedido(false);
         setPedidoFound(true);
       }
@@ -288,7 +298,7 @@ function AdmisionConsulta() {
 
   const traerOrden = async () => {
     setLoadingData(true);
-    setConsultaConfirmada(false);
+    // setConsultaConfirmada(false);
     const { NUM_ORDEN } = dataSend;
     setOpcionBusqueda(2);
     try {
@@ -304,7 +314,8 @@ function AdmisionConsulta() {
         setDataDetalles(responseDetalles.data.data);
         setDataSend({
           ...dataSend,
-          NUM_PEDIDO: responseCabecera.data.data[0].NUM_PEDIDO
+          NUM_PEDIDO: responseCabecera.data.data[0].NUM_PEDIDO,
+          COD_PACIENTE: responseCabecera.data.data[0].COD_PACIENTE,
         })
         setAbrirModalOrden(false);
         setPedidoFound(true);
@@ -388,31 +399,63 @@ function AdmisionConsulta() {
     }
   }
 
-  const confirmarRecepcion = async () => {
-    setLoadingConfirmar(true);
+  const insertarConsultaMedica = async () => {
+    setLoadingInsertarConsultaMedica(true);
     try {
-      const { data: { success, message } } = await httpClient.post('consultaMedica/setConfirmarRecepcion', dataSend);
+      const { data: { data: atencionMedica = '', success, message } } = await httpClient.post('consultaMedica/setConsultaMedica', dataSend);
       if (success) {
-        if (opcionBusqueda === 1) await traerPedido();
-        else await traerOrden();
-        setConsultaConfirmada(true);
-        openNotification('Confirmar recepción', message);
+        openNotification('Atención Médica', message + ' Número de Atención Médica: ' + atencionMedica);
+        setDataCabecera([{}]);
+        setDataDetalles([{}]);
+        setPedidoFound(false);
+        setAbrirModalConfirmacion(false);
+        setAbrirModalConsulta(false);
       } else {
-        openNotification('Confirmar recepción', message, 'Warning');
-        setConsultaConfirmada(false);
+        openNotification('Atención Médica', message, 'Warning');
       }
     } catch (error) {
-      openNotification('Confirmar recepción', 'No se pudo realizar la acción', 'Alerta');
-      setConsultaConfirmada(false);
+      console.error(error);
     }
-    setLoadingConfirmar(false);
+    setLoadingInsertarConsultaMedica(false);
   }
+
+  const getModulosConsultaMedica = async () => {
+    try {
+      const { data: { data = [], success } } = await httpClient.post('consultaMedica/getTipoConsultaModulos');
+      if (success) {
+        setModulos(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // const confirmarRecepcion = async () => {
+  //   setLoadingConfirmar(true);
+  //   try {
+  //     const { data: { success, message } } = await httpClient.post('consultaMedica/setConfirmarRecepcion', dataSend);
+  //     if (success) {
+  //       if (opcionBusqueda === 1) await traerPedido();
+  //       else await traerOrden();
+  //       setConsultaConfirmada(true);
+  //       openNotification('Confirmar recepción', message);
+  //     } else {
+  //       openNotification('Confirmar recepción', message, 'Warning');
+  //       setConsultaConfirmada(false);
+  //     }
+  //   } catch (error) {
+  //     openNotification('Confirmar recepción', 'No se pudo realizar la acción', 'Alerta');
+  //     setConsultaConfirmada(false);
+  //   }
+  //   setLoadingConfirmar(false);
+  // }
 
   useEffect(() => {
     const fetchData = async () => {
       await traerComprobantesPago();
       await traerEspecialidades();
       await traerConsultorios();
+      await getModulosConsultaMedica();
     }
     fetchData();
   }, [])
@@ -441,20 +484,40 @@ function AdmisionConsulta() {
                 flexWrap: 'wrap'
               }}
             >
+              {
+                modulos.length ? (
+                  <>
+                    {
+                      modulos[1].llave_tab_gral === 'S' &&
+                        <Button
+                          onClick={() => setAbrirModalPedido(true)}
+                          type='primary'>
+                            Buscar pedido
+                        </Button>
+                    }
+                    {
+                      modulos[2].llave_tab_gral === 'S' &&
+                        <Button
+                          onClick={() => setAbrirModalOrden(true)}
+                          type='primary'>
+                            Buscar orden
+                        </Button>
+                    }
+                    {
+                      modulos[0].llave_tab_gral === 'S' &&
+                        <Button
+                          onClick={() => setAbrirModalManual(true)}
+                          type='default'>
+                            Buscar comprobante manual.
+                        </Button>
+                    }
+                  </>
+                ) : <Spin />
+              }
               <Button
-                onClick={() => setAbrirModalPedido(true)}
-                type='primary'>
-                  Buscar pedido
-              </Button>
-              <Button
-                onClick={() => setAbrirModalOrden(true)}
-                type='primary'>
-                  Buscar orden
-              </Button>
-              <Button
-                onClick={() => setAbrirModalManual(true)}
+                onClick={() => setAbrirModalListaEspera(true)}
                 type='default'>
-                  Buscar comprobante manual.
+                  Lista de espera
               </Button>
               {
                 pedidoFound &&
@@ -463,12 +526,12 @@ function AdmisionConsulta() {
                   <Button
                     onClick={() => setAbrirModalConsulta(true)}
                     type='default'>
-                      Consulta médica
+                      Confirmar recepción
                   </Button> :
                   <Popconfirm
                   placement="bottomRight"
                   title='¿Está seguro de confirmar recepción?'
-                  onConfirm={() => confirmarRecepcion()}
+                  // onConfirm={() => confirmarRecepcion()}
                   okText="De acuerdo"
                   cancelText="No"
                   >
@@ -627,26 +690,29 @@ function AdmisionConsulta() {
         centered
         onCancel={() => setAbrirModalPedido(false)}
         visible={abrirModalPedido}>
-        <Row>
-          <Col span={12}>
-            <Form.Item label='Número Pedido'>
-              <Input 
-                name='NUM_PEDIDO'
-                onChange={handleChangeText}
-                value={dataSend.NUM_PEDIDO} />
-            </Form.Item>
-            <Form.Item>
-              <Button 
-                loading={loadingData} 
-                onClick={() => traerPedido()}>
-                  Buscar Pedido
-              </Button>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Image preview={false} src={FormatoViejo} />
-          </Col>
-        </Row>
+        <Form>
+          <Row>
+            <Col span={12}>
+              <Form.Item label='Número Pedido'>
+                <Input 
+                  name='NUM_PEDIDO'
+                  onChange={handleChangeText}
+                  value={dataSend.NUM_PEDIDO} />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  htmlType='submit'
+                  loading={loadingData} 
+                  onClick={() => traerPedido()}>
+                    Buscar Pedido
+                </Button>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Image preview={false} src={FormatoViejo} />
+            </Col>
+          </Row>
+        </Form>
       </Modal>
 
       <Modal
@@ -656,18 +722,13 @@ function AdmisionConsulta() {
         cancelText='Salir'
         centered
         onCancel={() => setAbrirModalConsulta(false)}
+        onOk={() => setAbrirModalConfirmacion(true)}
         width={600}
         visible={abrirModalConsulta}>
           <Form {...formItemLayout}>
             <Form.Item
               name="numComprobante"
               label="Médico"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: 'Este campo es requerido',
-              //   },
-              // ]}
             >
               <Input.Group>
                 <Row gutter={24}>
@@ -704,7 +765,7 @@ function AdmisionConsulta() {
             <Form.Item
               label="Consultorio"
             >
-              <Select disabled={loadingDataConsultorio} loading={loadingDataConsultorio} onChange={handleChangeConsultorio} value={dataSend.COD_CONSULTORIO}>
+              <Select disabled={loadingDataConsultorio} loading={loadingDataConsultorio} onChange={handleChangeConsultorio} value={dataSend.COD_BUS}>
               {
                   dataConsultorios.map((item) => (
                     <Option key={item.key} value={item.value}>{item.descripcion}</Option>
@@ -714,6 +775,31 @@ function AdmisionConsulta() {
             </Form.Item>
           </Form>
       </Modal>
+
+      <Modal
+        centered
+        width={350}
+        closable={false}
+        title='Confirmación'
+        onCancel={() => setAbrirModalConfirmacion(false)}
+        onOk={() => insertarConsultaMedica()}
+        okButtonProps={{
+          loading: loadingInsertarConsultaMedica,
+        }}
+        cancelButtonProps={{
+          disabled: loadingInsertarConsultaMedica,
+        }}
+        visible={abrirModalConfirmacion}>
+          ¿Desea grabar la solicitud de atención?
+      </Modal>
+
+      <ModalListaEspera
+        traerConsultorios={traerConsultorios}
+        dataConsultorios={dataConsultorios}
+        dataEspecialidades={dataEspecialidades}
+        loadingDataConsultorio={loadingDataConsultorio}
+        setVisible={setAbrirModalListaEspera}
+        visible={abrirModalListaEspera}/>
     </div>
   )
 }

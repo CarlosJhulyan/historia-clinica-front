@@ -31,6 +31,7 @@ const ListaPaciente = () => {
 	const [abrirModal, setAbrirModal] = useState(false);
 	const [filaActual, setFilaActual] = useState({});
 	const [data, setData] = useState();
+	const [codEstado, setCodEstado] = useState('2');
 	const [datosModal, setDatosModal] = useState({});
 	const [dataInicialCargada, setDataInicialCargada] = useState(false);
 	const [mostrarListaPaciente, setMostrarListaPaciente] = useState(true);
@@ -43,24 +44,24 @@ const ListaPaciente = () => {
 	const datos = useMemo(() => {
 		return {
 			codGrupoCia: '001',
-			codEstado: '2',
+			codEstado,
 			codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
 			consultorio: JSON.parse(localStorage.getItem('token')).id_consultorio,
 			bus: JSON.parse(localStorage.getItem('token')).id_bus,
 		};
-	}, []);
+	}, [codEstado]);
 
 	const traerDatos = useCallback(async () => {
 		setDataLoading(true);
 		try {
-			const { data } = await httpClient.post(`/pacientes`, datos);
+			const { data } = await httpClient.post(`/pacientes`, { ...datos, codEstado });
 			setData(data.data);
 		} catch (e) {
 			setData([]);
 		}
 		setDataInicialCargada(true);
 		setDataLoading(false);
-	}, [datos]);
+	}, [codEstado, datos]);
 
 	const actualizarDatos = async () => {
 		setData(undefined);
@@ -79,7 +80,7 @@ const ListaPaciente = () => {
 		datosEnviar.evolucionTratamiento['FECHA'] = fechaActual;
 
 		funn.ff = setMostrarListaPaciente;
-	}, [dataInicialCargada, traerDatos]);
+	}, [dataInicialCargada, traerDatos, codEstado]);
 
 	const getColumnSearchProps = dataIndex => ({
 		filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -163,11 +164,15 @@ const ListaPaciente = () => {
 			key: 'edad'
 		},
 		{
-			title: 'Estado',
-			dataIndex: 'ESTADO',
-			key: 'estado',
-			...getColumnSearchProps('ESTADO'),
-
+			title: 'Area asignada',
+			dataIndex: 'ASIGNADO',
+			key: 'asignado',
+			render: (asignado) => (
+				<>
+					{asignado === '1' && <span>HOSPITALIZACION</span>}
+					{asignado === '2' && <span>EMERGENCIA</span>}
+				</>
+			)
 		},
 		{
 			title: 'Acción',
@@ -218,6 +223,10 @@ const ListaPaciente = () => {
 		debounce: 500,
 	});
 
+	const handleChangeCodeStatus = e => {
+		setCodEstado(e.target.value);
+	}
+
 	return (
 		<>
 			{mostrarListaPaciente ? (
@@ -254,6 +263,20 @@ const ListaPaciente = () => {
 								>
 									Actualizar
 								</Button>
+								<Form.Item 
+										style={{ width: '430px' }} 
+										label='Filtrar por'>
+									<Radio.Group
+										value={codEstado}
+										onChange={handleChangeCodeStatus}
+										disabled={dataLoading}
+										buttonStyle="solid">
+											<Radio.Button value="1">Hospitalización</Radio.Button>
+											<Radio.Button value="2">Emergencia</Radio.Button>
+											<Radio.Button value="3">UCI</Radio.Button>
+											<Radio.Button value="4">SOP</Radio.Button>
+									</Radio.Group>
+								</Form.Item>
 							</div>
 						</div>
 					}

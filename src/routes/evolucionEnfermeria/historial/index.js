@@ -316,6 +316,7 @@ function Historial() {
         loading={loadingData}
         columns={columns} />
       <Modal
+        centered
         closable={false}
         title='Descripción de estado del paciente'
         visible={visibleModalText}
