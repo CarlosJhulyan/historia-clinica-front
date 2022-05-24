@@ -126,7 +126,7 @@ function ModalListaEspera({
       const { data: { success, message } } = await httpClient.post('atencionMedica/updateAtencion', {
         USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
         NUM_ATENCION: numHCSelection,
-        ESTADO: 'G'
+        ESTADO: 'C'
       });
       if (success) {
         openNotification('Atención Médica', message);
