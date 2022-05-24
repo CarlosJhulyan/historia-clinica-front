@@ -13,6 +13,7 @@ import {
 } from 'antd';
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
+import ModalTriaje from './modalTriaje';
 
 function ModalListaEspera({ 
   visible, 
@@ -25,12 +26,18 @@ function ModalListaEspera({
   const { Option } = Select;
   const [loadingData, setLoadingData] = useState(false);
   const [dataListaEspera, setDataListaEspera] = useState([]);
+  const [abrirModalTriaje, setAbrirModalTriaje] = useState(false);
   const [dataSend, setDataSend] = useState({
     // codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
     codEstado: '1',
     consultorio: '1',
     bus: ''
   });
+  const [numHCSelection, setNumHCSelection] = useState('');
+  const [atender, setAtender] = useState('');
+
+  const [loadingAnular, setLoadingAnular] = useState(false);
+  const [loadingActualizar, setLoadingActualizar] = useState(false);
 
   const handleChangeEspecialidad = e => {
     traerConsultorios(e);
@@ -95,101 +102,172 @@ function ModalListaEspera({
     [dataSend]
   )
 
+  const anularAtencionMedica = async () => {
+    setLoadingAnular(true);
+    try {
+      const { data: { success, message } } = await httpClient.post('atencionMedica/setAnular', {
+        USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+        NUM_ATENCION: numHCSelection
+      });
+      if (success) {
+        openNotification('Atención Médica', message);
+      } else {
+        openNotification('Atención Médica', message, 'Warning');
+      }
+    } catch (error) {
+      console.error(error)
+    }
+    setLoadingAnular(false);
+  }
+
+  const actualizarAtencionMedica = async () => {
+    setLoadingActualizar(true);
+    try {
+      const { data: { success, message } } = await httpClient.post('atencionMedica/updateAtencion', {
+        USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+        NUM_ATENCION: numHCSelection,
+        ESTADO: 'G'
+      });
+      if (success) {
+        openNotification('Atención Médica', message);
+      } else {
+        openNotification('Atención Médica', message, 'Warning');
+      }
+    } catch (error) {
+      console.error(error)
+    }
+    setLoadingActualizar(false);
+  }
+
   const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
   };
 
+  const establecerAtender = () => {
+    if (atender === 'PEND.TRIAJE') {
+      setAbrirModalTriaje(true);
+    } else if (atender === 'PEND.ATENCION') {
+      actualizarAtencionMedica();
+    }
+  }
+
   return (
-    <Modal
-      width={700}
-      centered
-      title='Lista de Espera'
-      visible={visible}
-      onCancel={() => setVisible(false)}
-      footer={[
-        <Button type='primary'>
-          Anular
-        </Button>,
-        <Button type='primary'>
-          Actualizar
-        </Button>,
-        <Button type='primary'>
-          Atender
-        </Button>
-      ]}
-    >
-      <Form {...layout} style={{ paddingLeft: 20, paddingRight: 20 }}>
-        <Row>
-          <Col span={12}>
-            <Form.Item
-              label="Especialidad"
-            >
-              <Select onChange={handleChangeEspecialidad} value={dataSend.consultorio}>
+    <>
+      <Modal
+        width={700}
+        centered
+        title='Lista de Espera'
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        footer={[
+          <Button
+            loading={loadingAnular}
+            onClick={() => anularAtencionMedica()}
+            disabled={!numHCSelection || numHCSelection.length < 0}
+            type='primary'>
+              Anular
+          </Button>,
+          <Button
+            onClick={() => traerListaEspera()}
+            type='primary'>
+              Actualizar
+          </Button>,
+          <Button
+            loading={loadingActualizar}
+            disabled={!numHCSelection || numHCSelection.length < 0}
+            onClick={() => establecerAtender()}
+            type='primary'>
+              Atender
+          </Button>
+        ]}
+      >
+        <Form {...layout} style={{ paddingLeft: 20, paddingRight: 20 }}>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                label="Especialidad"
+              >
+                <Select onChange={handleChangeEspecialidad} value={dataSend.consultorio}>
+                  {
+                    dataEspecialidades.map((item) => (
+                      <Option key={item.key} value={item.value}>{item.descripcion}</Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={4}>
+              <Button
+                onClick={() => traerListaEspera()}>
+                  Buscar
+              </Button>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                label="Consultorio"
+              >
+                <Select disabled={loadingDataConsultorio} loading={loadingDataConsultorio} onChange={handleChangeConsultorio} value={dataSend.bus}>
                 {
-                  dataEspecialidades.map((item) => (
-                    <Option key={item.key} value={item.value}>{item.descripcion}</Option>
-                  ))
-                }
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Button
-              onClick={() => traerListaEspera()}
-              loading={loadingData}>
-                Buscar
-            </Button>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <Form.Item
-              label="Consultorio"
-            >
-              <Select disabled={loadingDataConsultorio} loading={loadingDataConsultorio} onChange={handleChangeConsultorio} value={dataSend.bus}>
-              {
-                  dataConsultorios.map((item) => (
-                    <Option key={item.key} value={item.value}>{item.descripcion}</Option>
-                  ))
-                }
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <Form.Item
-              label="Medico"
-            >
-              
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            <Form.Item
-              label="HC. Fisica"
-            >
-              
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              label="Nro HC. Fisica"
-            >
-              
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-      <Table
-        size='small'
-        bordered
-        loading={loadingData}
-        dataSource={dataListaEspera}
-        columns={columns}/>
-    </Modal>
+                    dataConsultorios.map((item) => (
+                      <Option key={item.key} value={item.value}>{item.descripcion}</Option>
+                    ))
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                label="Medico"
+              >
+                
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12}>
+              <Form.Item
+                label="HC. Fisica"
+              >
+                
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Nro HC. Fisica"
+              >
+                
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <Table
+          rowSelection={{
+            type: 'radio',
+            onChange: (selectedRowKeys, selectedRows) => {
+              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+              setAtender(selectedRows[0].ESTADO);
+              setNumHCSelection(selectedRowKeys[0]);
+            },
+          }}
+          pagination={{
+            pageSize: 5
+          }}
+          size='small'
+          bordered
+          loading={loadingData}
+          dataSource={dataListaEspera}
+          columns={columns}/>
+      </Modal>
+      <ModalTriaje
+        numAtencionMedica={numHCSelection}
+        setAbrirModal={setAbrirModalTriaje}
+        abrirModal={abrirModalTriaje}/>
+    </>
   )
 }
 

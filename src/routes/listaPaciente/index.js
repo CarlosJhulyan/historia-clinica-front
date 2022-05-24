@@ -20,12 +20,12 @@ import DatosPaciente from './datosPaciente/index';
 import moment from 'moment';
 import { datosEnviar, funn } from '../../constants/datosEnviar';
 
-import { useIdleTimer } from 'react-idle-timer';
 import { useAuth } from '../../authentication';
 import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import ModalListaEspera from '../admisionConsulta/modalListaEspera';
 
 const ListaPaciente = () => {
 	const [abrirModal, setAbrirModal] = useState(false);
@@ -34,11 +34,13 @@ const ListaPaciente = () => {
 	const [datosModal, setDatosModal] = useState({});
 	const [dataInicialCargada, setDataInicialCargada] = useState(false);
 	const [mostrarListaPaciente, setMostrarListaPaciente] = useState(true);
-	const [sesionCerrada, setSesionCerrada] = useState(false);
 	const [state, setState] = useState();
 	const [dataLoading, setDataLoading] = useState(false);
 	const { userSignOut } = useAuth();
-	const history = useHistory();
+	const [dataConsultorios, setDataConsultorios] = useState(['1']);
+	const [dataEspecialidades, setDataEspecialidades] = useState([]);
+	const [loadingDataConsultorio, setLoadingDataConsultorio] = useState(false);
+	const [abrirModalListaEspera, setAbrirModalListaEspera] = useState(false);
 
 	const datos = useMemo(() => {
 		return {
@@ -186,37 +188,33 @@ const ListaPaciente = () => {
 		setMostrarListaPaciente(false);
 	};
 
-	const { getRemainingTime, getLastActiveTime } = useIdleTimer({
-		timeout: 1000 * 60 * 60,
-		onIdle: (event) => {
-			if (!sesionCerrada) {
-				Modal.confirm({
-					title: 'Tu sesión ha expirado',
-					content: (
-						<div>
-							<p>
-								Permaneció mucho tiempo inactivo. <br /> Por favor vuelva a Iniciar Sesión.
-							</p>
-						</div>
-					),
-					onOk() {
-						userSignOut(() => {
-							history.push('/');
-						});
-					},
-					onCancel() {
-						setSesionCerrada(false);
-					},
-					cancelText: 'Quedarme Aqui',
-					okText: 'Aceptar',
-				});
-				setSesionCerrada(true);
-			}
-		},
-		onActive: (event) => { },
-		onAction: (event) => { },
-		debounce: 500,
-	});
+	const traerConsultorios = async (id = '1') => {
+    setLoadingDataConsultorio(true);
+    try {
+      const { data: { data = [], success } } = await httpClient.post('atencionMedica/getConsultorios', { COD_ESPECIALIDAD: id });
+      if (success) {
+        setDataConsultorios(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    setLoadingDataConsultorio(false);
+  }
+
+  const traerEspecialidades = async () => {
+    try {
+      const { data: { data = [], success } } = await httpClient.post('atencionMedica/getEspecialidades');
+      if (success) {
+        setDataEspecialidades(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+	useEffect(() => {
+		traerEspecialidades();
+	}, [])
 
 	return (
 		<>
@@ -254,6 +252,11 @@ const ListaPaciente = () => {
 								>
 									Actualizar
 								</Button>
+								<Button
+									onClick={() => setAbrirModalListaEspera(true)}
+									type='default'>
+										Lista de espera
+								</Button>
 							</div>
 						</div>
 					}
@@ -278,6 +281,14 @@ const ListaPaciente = () => {
 			) : null}
 
 			<ToastContainer pauseOnHover={false} />
+
+			<ModalListaEspera
+        traerConsultorios={traerConsultorios}
+        dataConsultorios={dataConsultorios}
+        dataEspecialidades={dataEspecialidades}
+        loadingDataConsultorio={loadingDataConsultorio}
+        setVisible={setAbrirModalListaEspera}
+        visible={abrirModalListaEspera}/>
 		</>
 	);
 };

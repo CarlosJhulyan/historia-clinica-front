@@ -378,7 +378,7 @@ function AdmisionConsulta() {
   const traerConsultorios = async (id = '1') => {
     setLoadingDataConsultorio(true);
     try {
-      const { data: { data = [], success } } = await httpClient.post('consultaMedica/getConsultorios', { COD_ESPECIALIDAD: id });
+      const { data: { data = [], success } } = await httpClient.post('atencionMedica/getConsultorios', { COD_ESPECIALIDAD: id });
       if (success) {
         setDataConsultorios(data);
       }
@@ -390,7 +390,7 @@ function AdmisionConsulta() {
 
   const traerEspecialidades = async () => {
     try {
-      const { data: { data = [], success } } = await httpClient.post('consultaMedica/getEspecialidades');
+      const { data: { data = [], success } } = await httpClient.post('atencionMedica/getEspecialidades');
       if (success) {
         setDataEspecialidades(data);
       }
@@ -402,9 +402,9 @@ function AdmisionConsulta() {
   const insertarConsultaMedica = async () => {
     setLoadingInsertarConsultaMedica(true);
     try {
-      const { data: { data: atencionMedica = '', success, message } } = await httpClient.post('consultaMedica/setConsultaMedica', dataSend);
+      const { data: { data: atencionMedica = '', success, message } } = await httpClient.post('atencionMedica/setConsultaMedica', dataSend);
       if (success) {
-        openNotification('Atención Médica', message + ' Número de Atención Médica: ' + atencionMedica);
+        openNotification('Atención Médica', message + ': ' + atencionMedica);
         setDataCabecera([{}]);
         setDataDetalles([{}]);
         setPedidoFound(false);
@@ -421,7 +421,7 @@ function AdmisionConsulta() {
 
   const getModulosConsultaMedica = async () => {
     try {
-      const { data: { data = [], success } } = await httpClient.post('consultaMedica/getTipoConsultaModulos');
+      const { data: { data = [], success } } = await httpClient.post('atencionMedica/getTipoConsultaModulos');
       if (success) {
         setModulos(data);
       }
@@ -514,11 +514,6 @@ function AdmisionConsulta() {
                   </>
                 ) : <Spin />
               }
-              <Button
-                onClick={() => setAbrirModalListaEspera(true)}
-                type='default'>
-                  Lista de espera
-              </Button>
               {
                 pedidoFound &&
                 (
@@ -541,6 +536,11 @@ function AdmisionConsulta() {
                   </Popconfirm>
                 )
               }
+              {/* <Button
+                onClick={() => setAbrirModalListaEspera(true)}
+                type='default'>
+                  Lista de espera
+              </Button> */}
             </div>
           </div>
         }
