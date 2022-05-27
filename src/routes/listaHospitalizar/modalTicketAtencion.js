@@ -69,7 +69,7 @@ function ModalTicketAtencion({
     TEMP: '',
     PESO: '',
     TALLA: '',
-    SATURACION: '',
+    SATURACION: ''
   });
 
   const [message, setMessage] = useState({
@@ -155,25 +155,38 @@ function ModalTicketAtencion({
           visible: true
         });
       } else {
-        setData(data[0]);
-        const dataPaciente = {
-          codGrupoCia: "001",
-          codPaciente: data[0].key
+        const { data: { success, message } } = await httpClient.post(`/triaje/getExisteTriaje`, {
+          COD_PACIENTE: data[0].COD_PACIENTE
+        });
+        if (success) {
+          setData(data[0]);
+          const dataPaciente = {
+            codGrupoCia: "001",
+            codPaciente: data[0].key
+          }
+          const response = await httpClient.post(`/pacientes/getPaciente`, dataPaciente);
+          setDatosEnviar({
+            ...datosEnviar,
+            PACIENTE: `${data[0].APE_PATERNO.toUpperCase()} ${data[0].APE_MATERNO.toUpperCase()}, ${data[0].NOMBRE.toUpperCase()}`,
+            USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+            COD_PACIENTE: response.data.data.COD_PACIENTE,
+            NUM_HC: response.data.data.NRO_HC_ACTUAL,
+            FECHA_NAC: moment(response.data.data.FEC_NAC_CLI, 'DD/MM/yyyy').format('yyyy/MM/DD'),
+            COD_GRUPO_CIA: response.data.data.COD_GRUPO_CIA
+          });
+          setMessage({
+            text: `${data[0].APE_PATERNO.toUpperCase()} ${data[0].APE_MATERNO.toUpperCase()}, ${data[0].NOMBRE.toUpperCase()}`,
+            type: 'success',
+            visible: true
+          });
+        } else {
+          setMessage({
+            text: message,
+            type: 'warning',
+            visible: true
+          });
         }
-        const response = await httpClient.post(`/pacientes/getPaciente`, dataPaciente);
-        setDatosEnviar({
-          ...datosEnviar,
-          PACIENTE: `${data[0].APE_PATERNO.toUpperCase()} ${data[0].APE_MATERNO.toUpperCase()}, ${data[0].NOMBRE.toUpperCase()}`,
-          USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
-          COD_PACIENTE: response.data.data.COD_PACIENTE,
-          NUM_HC: response.data.data.NRO_HC_ACTUAL,
-          FECHA_NAC: moment(response.data.data.FEC_NAC_CLI, 'DD/MM/yyyy').format('yyyy/MM/DD'),
-        });
-        setMessage({
-          text: `${data[0].APE_PATERNO.toUpperCase()} ${data[0].APE_MATERNO.toUpperCase()}, ${data[0].NOMBRE.toUpperCase()}`,
-          type: 'success',
-          visible: true
-        });
+        
       }
 		} catch (e) {
 			openNotification('error', 'Búsqueda', e.message);
@@ -209,8 +222,45 @@ function ModalTicketAtencion({
         NUM_ATEN_MED: numAtencionMedica
       }
 
+      // Grabar hospitalizacion
+      var hospi = "0";
+      var urge = "0";
+
+      if (areaDesignada === '1') {
+        hospi = '1';
+      } else {
+        urge = '1';
+      }
+
+      const dd = {
+        historiaClinica: numAtencionMedica,
+        codPaciente: datosEnviar.COD_PACIENTE,
+      };
+  
       if (successAtencion) {
-        const { data: { data = [], message, success } } = await httpClient.post(`triaje/upsertTriaje`, dataFetch);
+        const respuesta = await httpClient.post('/pacientes/getHospitalizacion', dd);
+        if (respuesta.data.data) {
+          const nuevo = {
+            codGrupoCia: datosEnviar.COD_GRUPO_CIA,
+            codPaciente: datosEnviar.COD_PACIENTE,
+            historiaClinica: datosEnviar.NUM_HC,
+            hospitalizacion: hospi,
+            urgencia: urge,
+            numAtenMed: numAtencionMedica
+          };
+          await httpClient.post('/pacientes/setHospitalizacion', nuevo);
+        } else {
+          const editar = {
+            id: respuesta.data.data.id,
+            hospitalizacion: hospi,
+            urgencia: urge
+          };
+          await httpClient.post('/pacientes/updateHospitalizacion', editar);
+        }
+      }
+
+      if (successAtencion) {
+        const { data: { message, success } } = await httpClient.post(`triaje/upsertTriaje`, dataFetch);
         if (success) {
           const repuesta = await httpClient.post('camas/asignacionCama', {
             camaId: dataAsignar.camaId,
