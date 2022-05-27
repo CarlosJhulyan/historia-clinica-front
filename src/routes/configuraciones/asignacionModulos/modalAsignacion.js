@@ -1,5 +1,5 @@
 import React, { useState, createRef, useMemo } from 'react';
-import { Checkbox, Col, Modal, Row, Form, AutoComplete, notification } from 'antd';
+import { Checkbox, Col, Modal, Row, Form, AutoComplete, notification, Divider } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones } from '../../../util/util';
 import axios from 'axios';
@@ -247,13 +247,25 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 
 const crearOpciones = modulos => {
 	modulos.sort((a, b) => a.id_modulo - b.id_modulo);
-	return modulos.map(modulo => {
-		return (
-			<Col key={modulo.id_modulo} span={24}>
-				<Checkbox value={modulo.id_modulo}>{modulo.nombre_modulo}</Checkbox>
-			</Col>
-		);
-	});
+	return (
+		<>
+			{
+				modulos.map(modulo => modulo.hc === '1' && (
+					<Col key={modulo.id_modulo} span={24}>
+						<Checkbox value={modulo.id_modulo}>{modulo.nombre_modulo}</Checkbox>
+					</Col>
+				))
+			}
+			<Divider />
+			{
+				modulos.map(modulo => modulo.hs === '1' && (
+					<Col key={modulo.id_modulo} span={24}>
+						<Checkbox value={modulo.id_modulo}>{modulo.nombre_modulo}</Checkbox>
+					</Col>
+				))
+			}
+		</>
+	)
 };
 
 const obtenerValores = modulos => {

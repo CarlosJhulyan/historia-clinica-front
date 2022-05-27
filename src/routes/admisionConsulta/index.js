@@ -6,36 +6,24 @@ import {
   Card,
   Button,
   Table,
-  Modal,
-  Image,
-  Row,
-  Col,
-  Form,
-  Input,
-  DatePicker,
-  Select,
-  AutoComplete,
-  Popconfirm,
+  // Popconfirm,
   Spin,
 } from 'antd';
-import moment from 'moment';
 
 import { openNotification } from '../../util/util';
 import { httpClient } from '../../util/Api';
-import FormatoNuevo from '../../assets/images/formato_nuevo.jpg';
-import FormatoViejo from '../../assets/images/formato_viejo.jpg';
-import axios from 'axios';
-import ModalListaEspera from './modalListaEspera';
 
-function AdmisionConsulta() {
-  const { Option } = Select;
-  const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
-  const [peticion, setPeticion] = useState(false);
+import ModalListaEspera from './modalListaEspera';
+import ModalAtencionMedica from './modalAtencionMedica';
+import ModalBusquedaPedido from './modalBusquedaPedido';
+import ModalBusquedaComprobante from './modalBusquedaComprobante';
+import ModalBusquedaOrden from './modalBusquedaOrden';
+
+function AdmisionConsulta() {  
   const [abrirModalManual, setAbrirModalManual] = useState(false);
   const [abrirModalOrden, setAbrirModalOrden] = useState(false);
   const [abrirModalPedido, setAbrirModalPedido] = useState(false);
   const [abrirModalConsulta, setAbrirModalConsulta] = useState(false);
-  const [abrirModalConfirmacion, setAbrirModalConfirmacion] = useState(false);
   const [abrirModalListaEspera, setAbrirModalListaEspera] = useState(false);
 
   const [dataCabecera, setDataCabecera] = useState([{}]);
@@ -43,16 +31,13 @@ function AdmisionConsulta() {
   const [dataComprobantesPago, setDataComprobantesPago] = useState([]);
   const [dataEspecialidades, setDataEspecialidades] = useState([]);
   const [dataConsultorios, setDataConsultorios] = useState(['1']);
-  const [valueCOD, setValueCOD] = useState('');
-  const [optionsCOD, setOptionsCOD] = useState([]);
+  
   const [pedidoFound, setPedidoFound] = useState(false);
-  const [consultaConfirmada, setConsultaConfirmada] = useState(true);
-  const [opcionBusqueda, setOpcionBusqueda] = useState(1);
+  // const [consultaConfirmada, setConsultaConfirmada] = useState(true);
 
   const [loadingData, setLoadingData] = useState(false);
   const [loadingDataConsultorio, setLoadingDataConsultorio] = useState(false);
-  const [loadingConfirmar, setLoadingConfirmar] = useState(false);
-  const [loadingInsertarConsultaMedica, setLoadingInsertarConsultaMedica] = useState(false);
+  // const [loadingConfirmar, setLoadingConfirmar] = useState(false);
 
   const [dataSend, setDataSend] = useState({
     NUM_PEDIDO: '',
@@ -78,37 +63,6 @@ function AdmisionConsulta() {
     setDataSend({
       ...dataSend,
       [e.target.name]: e.target.value
-    });
-  }
-
-  const handleChangeTipoComp = e => {
-    setDataSend({
-      ...dataSend,
-      TIPO_COMP_PAGO: e
-    });
-  }
-
-  const handleChangeEspecialidad = e => {
-    traerConsultorios(e);
-    setDataSend({
-      ...dataSend,
-      COD_ESPECIALIDAD: e,
-      COD_BUS: ''
-    });
-  }
-
-  const handleChangeConsultorio = e => {
-    setDataSend({
-      ...dataSend,
-      COD_BUS: e
-    });
-  }
-
-  const handleChangeCalendar = (e = moment()) => {
-    setDataSend({
-      ...dataSend,
-      FECHA_FORMAT: e,
-      FECHA: e ? moment(e._d).format('DD/MM/yyyy') : ''
     });
   }
 
@@ -202,78 +156,8 @@ function AdmisionConsulta() {
     },
   ];
 
-  const formItemLayout = {
-    labelCol: {
-      xs: { span: 24 },
-      sm: { span: 7 },
-    },
-    wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 17 },
-    },
-  };
-
-  const onSelectCOD = data => {
-		optionsCOD.forEach(element => {
-			if (element.key === data) {
-				setDataSend({
-          ...dataSend,
-					COD_MEDICO: element.cod_medico,
-					NOM_MEDICO: `${element.des_nom_medico + ' ' + element.des_ape_medico}`,
-				});
-			}
-      setValueCOD(element.num_cmp);
-		});
-	};
-
-  const onChangeCOD = data => {
-    setValueCOD(data);
-		if (data.length <= 3) {
-			setOptionsCOD([]);
-		}
-	};
-
-  const onSearchCOD = async (data) => {
-		var cod = data;
-		if (cod ? cod.length >= 4 : false) {
-			setPeticion(true);
-			setOptionsCOD();
-			const respuesta = await httpClient.post(
-				'modulos/getDataMedicos',
-				{
-					num_cmp: cod,
-					des_nom_medico: '',
-				},
-				{ cancelToken: cancelSource.token }
-			);
-			var array1 = respuesta.data.data;
-			for (let i = 0; i < array1.length; i++) {
-				if (array1[i].asignado === '0') {
-					delete array1[i];
-				} else {
-					array1[i].key = array1[i].cod_medico;
-					array1[i].value = array1[i].cod_medico;
-					array1[i].label = (
-						<div>
-							{array1[i].num_cmp}
-							<div style={{ color: '#a3a3a3' }}>{array1[i].des_ape_medico}</div>
-						</div>
-					);
-				}
-			}
-			setOptionsCOD(array1);
-		} else {
-			if (peticion) {
-				cancelSource.cancel('COD Cancelado');
-				setCancelSource(axios.CancelToken.source());
-			}
-		}
-	};
-
   const traerPedido = async (numPedido) => {
     setLoadingData(true);
-    // setConsultaConfirmada(false);
-    setOpcionBusqueda(1);
     try {
       const responseCabecera = await httpClient.post('pedido/getPedidoCabecera', { NUM_PEDIDO: numPedido || dataSend.NUM_PEDIDO });
       const responseDetalles = await httpClient.post('pedido/getPedidoDetalles', { NUM_PEDIDO: numPedido || dataSend.NUM_PEDIDO });
@@ -296,37 +180,6 @@ function AdmisionConsulta() {
     setLoadingData(false);
   }
 
-  const traerOrden = async () => {
-    setLoadingData(true);
-    // setConsultaConfirmada(false);
-    const { NUM_ORDEN } = dataSend;
-    setOpcionBusqueda(2);
-    try {
-      const responseCabecera = await httpClient.post('orden/getOrdenCabecera', { NUM_ORDEN });
-      const responseDetalles = await httpClient.post('orden/getOrdenDetalles', { NUM_ORDEN });
-      if (!responseCabecera.data.success || !responseDetalles.data.success) {
-        openNotification('Orden', responseCabecera.data.message, 'Warning');
-        setDataCabecera([{}]);
-        setDataDetalles([{}]);
-        setPedidoFound(false);
-      } else {
-        setDataCabecera(responseCabecera.data.data);
-        setDataDetalles(responseDetalles.data.data);
-        setDataSend({
-          ...dataSend,
-          NUM_PEDIDO: responseCabecera.data.data[0].NUM_PEDIDO,
-          COD_PACIENTE: responseCabecera.data.data[0].COD_PACIENTE,
-        })
-        setAbrirModalOrden(false);
-        setPedidoFound(true);
-      }
-    } catch (error) {
-      openNotification('Orden', 'Error en la petición', 'Alerta');
-      setPedidoFound(false);
-    }
-    setLoadingData(false);
-  }
-
   const traerComprobantesPago = async () => {
     try {
       const { data: { data = [] } } = await httpClient.post('comprobante/getComprobantesPago');
@@ -336,45 +189,6 @@ function AdmisionConsulta() {
     }
   }
 
-  const traerCorrelativoMontoNeto = async () => {
-    setLoadingData(true);
-    const dataFormat = { 
-      ...dataSend, 
-      NUM_COMPROBANTE: dataSend.SERIE_COMP.toUpperCase() + dataSend.NUM_COMP
-    };
-
-    try {
-      const { data: { data = [], message: messageComp, success: successComp } } = await httpClient.post('comprobante/getCorrelativoMontoNeto', dataFormat);
-      
-      if (successComp) {
-        setDataSend({
-          ...dataSend,
-          MONTO: data.MONTO.trim(),
-          FECHA: data.FECHA,
-          FECHA_FORMAT: moment(data.FECHA, 'DD/MM/yyyy'),
-          NUM_PEDIDO: data.NUM_PED_VTA
-        });
-
-        const { data: { message: messageValidacion, success: successValidacion } } = await httpClient.post('pedido/verificacionPedido', {
-          NUM_PEDIDO: data.NUM_PED_VTA,
-          MONTO: data.MONTO.trim(),
-        });
-
-        if (successValidacion) {
-          await traerPedido(data.NUM_PED_VTA);
-          openNotification('Pedido', messageValidacion);
-        } else {
-          openNotification('Pedido', messageValidacion, 'Warning');
-        }
-      } else {
-        openNotification('Comprobante', messageComp, 'Warning');
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    setLoadingData(false);
-  }
-  
   const traerConsultorios = async (id = '1') => {
     setLoadingDataConsultorio(true);
     try {
@@ -399,26 +213,6 @@ function AdmisionConsulta() {
     }
   }
 
-  const insertarConsultaMedica = async () => {
-    setLoadingInsertarConsultaMedica(true);
-    try {
-      const { data: { data: atencionMedica = '', success, message } } = await httpClient.post('atencionMedica/setConsultaMedica', dataSend);
-      if (success) {
-        openNotification('Atención Médica', message + ': ' + atencionMedica);
-        setDataCabecera([{}]);
-        setDataDetalles([{}]);
-        setPedidoFound(false);
-        setAbrirModalConfirmacion(false);
-        setAbrirModalConsulta(false);
-      } else {
-        openNotification('Atención Médica', message, 'Warning');
-      }
-    } catch (error) {
-      console.error(error);
-    }
-    setLoadingInsertarConsultaMedica(false);
-  }
-
   const getModulosConsultaMedica = async () => {
     try {
       const { data: { data = [], success } } = await httpClient.post('atencionMedica/getTipoConsultaModulos');
@@ -429,26 +223,6 @@ function AdmisionConsulta() {
       console.error(error);
     }
   }
-
-  // const confirmarRecepcion = async () => {
-  //   setLoadingConfirmar(true);
-  //   try {
-  //     const { data: { success, message } } = await httpClient.post('consultaMedica/setConfirmarRecepcion', dataSend);
-  //     if (success) {
-  //       if (opcionBusqueda === 1) await traerPedido();
-  //       else await traerOrden();
-  //       setConsultaConfirmada(true);
-  //       openNotification('Confirmar recepción', message);
-  //     } else {
-  //       openNotification('Confirmar recepción', message, 'Warning');
-  //       setConsultaConfirmada(false);
-  //     }
-  //   } catch (error) {
-  //     openNotification('Confirmar recepción', 'No se pudo realizar la acción', 'Alerta');
-  //     setConsultaConfirmada(false);
-  //   }
-  //   setLoadingConfirmar(false);
-  // }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -517,23 +291,24 @@ function AdmisionConsulta() {
               {
                 pedidoFound &&
                 (
-                  consultaConfirmada ?
+                  // consultaConfirmada ?
                   <Button
                     onClick={() => setAbrirModalConsulta(true)}
                     type='default'>
                       Confirmar recepción
-                  </Button> :
-                  <Popconfirm
-                  placement="bottomRight"
-                  title='¿Está seguro de confirmar recepción?'
-                  // onConfirm={() => confirmarRecepcion()}
-                  okText="De acuerdo"
-                  cancelText="No"
-                  >
-                    <Button type='primary' loading={loadingConfirmar}>
-                        Confirmar recepción
-                    </Button>
-                  </Popconfirm>
+                  </Button> 
+                  // :
+                  // <Popconfirm
+                  // placement="bottomRight"
+                  // title='¿Está seguro de confirmar recepción?'
+                  // // onConfirm={() => confirmarRecepcion()}
+                  // okText="De acuerdo"
+                  // cancelText="No"
+                  // >
+                  //   <Button type='primary' loading={loadingConfirmar}>
+                  //       Confirmar recepción
+                  //   </Button>
+                  // </Popconfirm>
                 )
               }
               {/* <Button
@@ -548,6 +323,7 @@ function AdmisionConsulta() {
         
       </Card>
       <Table
+        className="gx-table-responsive"
         style={{ marginBottom: 30 }}
         title={() => <span>Cabecera Pedido</span>} 
         size='small'
@@ -555,243 +331,61 @@ function AdmisionConsulta() {
         pagination={false}
         columns={cabeceraColumn} />
       <Table
+        className="gx-table-responsive"
         pagination={false}
         dataSource={dataDetalles}
         title={() => <span>Detalles Pedido</span>} 
         size='small' 
-        columns={detallesColumn} />
+        columns={detallesColumn} 
+      />
 
-      <Modal
-        title='Consulta de Correlativo Comprobante'
-        closable={false}
-        okText='Aceptar'
-        cancelText='Salir'
-        centered
-        onCancel={() => setAbrirModalManual(false)}
-        onOk={() => traerCorrelativoMontoNeto()}
-        okButtonProps={{
-          loading: loadingData
-        }}
-        cancelButtonProps={{
-          disabled: loadingData
-        }}
-        visible={abrirModalManual}>
-          <Form {...formItemLayout}>
-            <Form.Item
-              label="Tipo Comprobante"
-            >
-              <Select onChange={handleChangeTipoComp} value={dataSend.TIPO_COMP_PAGO}>
-                {
-                  dataComprobantesPago.map((item) => (
-                    <Option key={item.key} value={item.value}>{item.descripcion}</Option>
-                  ))
-                }
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Nro. Comprobante"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: 'Este campo es requerido',
-              //   },
-              // ]}
-            >
-              <Input.Group>
-                <Row gutter={24}>
-                  <Col span={7}>
-                    <Input
-                      onChange={handleChangeText}
-                      name='SERIE_COMP'
-                      value={dataSend.SERIE_COMP} />
-                  </Col>
-                  <Col span={17}>
-                    <Input
-                      onChange={handleChangeText}
-                      name='NUM_COMP'
-                      value={dataSend.NUM_COMP} />
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-            <Form.Item
-              label="Monto"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: 'Este campo es requerido',
-              //   },
-              // ]}
-            >
-              <Input
-                onChange={handleChangeText}
-                value={dataSend.MONTO}
-                type='number'
-                name='MONTO'
-                prefix="S/" />
-            </Form.Item>
-            <Form.Item
-              label="Fecha"
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: 'Este campo es requerido',
-              //   },
-              // ]}
-            >
-              <DatePicker
-                onChange={handleChangeCalendar}
-                name='FECHA_FORMAT'
-                value={dataSend.FECHA_FORMAT}
-                format='DD/MM/yyyy'
-                placeholder='dd/mm/yyyy' 
-                style={{ width: '100%' }} />
-            </Form.Item>
-          </Form>
-      </Modal>
+      <ModalBusquedaOrden
+        abrirModalOrden={abrirModalOrden}
+        dataSend={dataSend}
+        handleChangeText={handleChangeText}
+        loadingData={loadingData}
+        setAbrirModalOrden={setAbrirModalOrden}
+        setDataCabecera={setDataCabecera}
+        setDataDetalles={setDataDetalles}
+        setDataSend={setDataSend}
+        setLoadingData={setLoadingData}
+        setPedidoFound={setPedidoFound}
+      />
 
-      <Modal
-        footer={false}
-        title='Búsqueda por Número de Orden'
-        closable={false}
-        okText='Aceptar'
-        cancelText='Salir'
-        centered
-        onCancel={() => setAbrirModalOrden(false)}
-        visible={abrirModalOrden}>
-        <Row>
-              <Col span={12}>
-                <Form.Item label='Número Orden'>
-                  <Input
-                    name='NUM_ORDEN'
-                    onChange={handleChangeText}
-                    value={dataSend.NUM_ORDEN} />
-                </Form.Item>
-                <Form.Item>
-                  <Button
-                    loading={loadingData} 
-                    onClick={() => traerOrden()}>
-                      Buscar Orden
-                  </Button>
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Image preview={false} src={FormatoNuevo} />
-              </Col>
-            </Row>
-      </Modal>
+      <ModalBusquedaComprobante
+        abrirModalManual={abrirModalManual}
+        dataSend={dataSend}
+        handleChangeText={handleChangeText}
+        loadingData={loadingData}
+        setDataSend={setDataSend}
+        setAbrirModalManual={setAbrirModalManual}
+        setLoadingData={setLoadingData}
+        traerPedido={traerPedido}
+        dataComprobantesPago={dataComprobantesPago}
+      />
 
-      <Modal
-        footer={false}
-        title='Búsqueda por Número de Pedido'
-        closable={false}
-        okText='Aceptar'
-        cancelText='Salir'
-        centered
-        onCancel={() => setAbrirModalPedido(false)}
-        visible={abrirModalPedido}>
-        <Form>
-          <Row>
-            <Col span={12}>
-              <Form.Item label='Número Pedido'>
-                <Input 
-                  name='NUM_PEDIDO'
-                  onChange={handleChangeText}
-                  value={dataSend.NUM_PEDIDO} />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  htmlType='submit'
-                  loading={loadingData} 
-                  onClick={() => traerPedido()}>
-                    Buscar Pedido
-                </Button>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Image preview={false} src={FormatoViejo} />
-            </Col>
-          </Row>
-        </Form>
-      </Modal>
+      <ModalBusquedaPedido
+        abrirModalPedido={abrirModalPedido}
+        dataSend={dataSend}
+        handleChangeText={handleChangeText}
+        loadingData={loadingData}
+        setAbrirModalPedido={setAbrirModalPedido}
+        traerPedido={traerPedido}
+      />
 
-      <Modal
-        title='Datos Consulta Médica'
-        closable={false}
-        okText='Aceptar'
-        cancelText='Salir'
-        centered
-        onCancel={() => setAbrirModalConsulta(false)}
-        onOk={() => setAbrirModalConfirmacion(true)}
-        width={600}
-        visible={abrirModalConsulta}>
-          <Form {...formItemLayout}>
-            <Form.Item
-              name="numComprobante"
-              label="Médico"
-            >
-              <Input.Group>
-                <Row gutter={24}>
-                  <Col span={8}>
-                  <AutoComplete
-                    value={valueCOD}
-                    options={optionsCOD}
-                    onSearch={onSearchCOD}
-                    onSelect={onSelectCOD}
-                    onChange={onChangeCOD}
-                    style={{ width: '100%' }}
-                  />
-                  </Col>
-                  <Col span={16}>
-                    <Input 
-                      name='NOM_MEDICO'
-                      disabled
-                      value={dataSend.NOM_MEDICO} />
-                  </Col>
-                </Row>
-              </Input.Group>
-            </Form.Item>
-            <Form.Item
-              label="Especialidad"
-            >
-              <Select onChange={handleChangeEspecialidad} value={dataSend.COD_ESPECIALIDAD}>
-                {
-                  dataEspecialidades.map((item) => (
-                    <Option key={item.key} value={item.value}>{item.descripcion}</Option>
-                  ))
-                }
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label="Consultorio"
-            >
-              <Select disabled={loadingDataConsultorio} loading={loadingDataConsultorio} onChange={handleChangeConsultorio} value={dataSend.COD_BUS}>
-              {
-                  dataConsultorios.map((item) => (
-                    <Option key={item.key} value={item.value}>{item.descripcion}</Option>
-                  ))
-                }
-              </Select>
-            </Form.Item>
-          </Form>
-      </Modal>
-
-      <Modal
-        centered
-        width={350}
-        closable={false}
-        title='Confirmación'
-        onCancel={() => setAbrirModalConfirmacion(false)}
-        onOk={() => insertarConsultaMedica()}
-        okButtonProps={{
-          loading: loadingInsertarConsultaMedica,
-        }}
-        cancelButtonProps={{
-          disabled: loadingInsertarConsultaMedica,
-        }}
-        visible={abrirModalConfirmacion}>
-          ¿Desea grabar la solicitud de atención?
-      </Modal>
+      <ModalAtencionMedica
+        dataConsultorios={dataConsultorios}
+        dataEspecialidades={dataEspecialidades}
+        abrirModalConsulta={abrirModalConsulta}
+        setAbrirModalConsulta={setAbrirModalConsulta}
+        traerConsultorios={traerConsultorios}
+        setDataSend={setDataSend}
+        dataSend={dataSend}
+        loadingDataConsultorio={loadingDataConsultorio}
+        setDataCabecera={setDataCabecera}
+        setDataDetalles={setDataDetalles}
+        setPedidoFound={setPedidoFound}
+      />
 
       <ModalListaEspera
         traerConsultorios={traerConsultorios}
@@ -799,7 +393,8 @@ function AdmisionConsulta() {
         dataEspecialidades={dataEspecialidades}
         loadingDataConsultorio={loadingDataConsultorio}
         setVisible={setAbrirModalListaEspera}
-        visible={abrirModalListaEspera}/>
+        visible={abrirModalListaEspera}
+      />
     </div>
   )
 }

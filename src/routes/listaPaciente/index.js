@@ -7,12 +7,9 @@ import React, {
 import { 
 	Button, 
 	Card, 
-	Table, 
-	Modal, 
+	Table,
 	Input, 
 	Space,
-	Radio,
-	Form
 } from 'antd';
 import ModalDetalles from './modalDetalles';
 import { httpClient } from '../../util/Api';
@@ -21,10 +18,8 @@ import moment from 'moment';
 import { datosEnviar, funn } from '../../constants/datosEnviar';
 
 import { useAuth } from '../../authentication';
-import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
-import axios from 'axios';
 import ModalListaEspera from '../admisionConsulta/modalListaEspera';
 
 const ListaPaciente = () => {

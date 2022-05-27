@@ -33,7 +33,7 @@ function ModalListaEspera({
     consultorio: '1',
     bus: ''
   });
-  const [numHCSelection, setNumHCSelection] = useState('');
+  const [numHCSelection, setNumHCSelection] = useState([]);
   const [atender, setAtender] = useState('');
 
   const [loadingAnular, setLoadingAnular] = useState(false);
@@ -86,6 +86,7 @@ function ModalListaEspera({
   const traerListaEspera = useCallback(
     async () => {
       setLoadingData(true);
+      setDataListaEspera([]);
       try {
         const { data: { data = [], success, message } } = await httpClient.post('pacientes/getListaEsperaTriaje', dataSend);
         if (success) {
@@ -107,7 +108,7 @@ function ModalListaEspera({
     try {
       const { data: { success, message } } = await httpClient.post('atencionMedica/setAnular', {
         USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
-        NUM_ATENCION: numHCSelection
+        NUM_ATENCION: numHCSelection[0]
       });
       if (success) {
         openNotification('Atención Médica', message);
@@ -125,7 +126,7 @@ function ModalListaEspera({
     try {
       const { data: { success, message } } = await httpClient.post('atencionMedica/updateAtencion', {
         USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
-        NUM_ATENCION: numHCSelection,
+        NUM_ATENCION: numHCSelection[0],
         ESTADO: 'C'
       });
       if (success) {
@@ -164,7 +165,7 @@ function ModalListaEspera({
           <Button
             loading={loadingAnular}
             onClick={() => anularAtencionMedica()}
-            disabled={!numHCSelection || numHCSelection.length < 0}
+            disabled={!numHCSelection || numHCSelection.length <= 0}
             type='primary'>
               Anular
           </Button>,
@@ -175,14 +176,16 @@ function ModalListaEspera({
           </Button>,
           <Button
             loading={loadingActualizar}
-            disabled={!numHCSelection || numHCSelection.length < 0}
+            disabled={!numHCSelection || numHCSelection.length <= 0}
             onClick={() => establecerAtender()}
             type='primary'>
               Atender
           </Button>
         ]}
       >
-        <Form {...layout} style={{ paddingLeft: 20, paddingRight: 20 }}>
+        <Form
+          {...layout}
+          style={{ paddingLeft: 20, paddingRight: 20 }}>
           <Row>
             <Col span={12}>
               <Form.Item
@@ -232,27 +235,27 @@ function ModalListaEspera({
             <Col span={12}>
               <Form.Item
                 label="HC. Fisica"
-              >
-                
+              >                
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
                 label="Nro HC. Fisica"
               >
-                
               </Form.Item>
             </Col>
           </Row>
         </Form>
         <Table
+          className="gx-table-responsive"
           rowSelection={{
             type: 'radio',
             onChange: (selectedRowKeys, selectedRows) => {
               console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
               setAtender(selectedRows[0].ESTADO);
-              setNumHCSelection(selectedRowKeys[0]);
+              setNumHCSelection(selectedRowKeys);
             },
+            selectedRowKeys: numHCSelection
           }}
           pagination={{
             pageSize: 5
@@ -264,7 +267,7 @@ function ModalListaEspera({
           columns={columns}/>
       </Modal>
       <ModalTriaje
-        numAtencionMedica={numHCSelection}
+        numAtencionMedica={numHCSelection[0]}
         setAbrirModal={setAbrirModalTriaje}
         abrirModal={abrirModalTriaje}/>
     </>

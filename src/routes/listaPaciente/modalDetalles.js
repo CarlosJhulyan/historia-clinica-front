@@ -195,8 +195,7 @@ const ModaDetalles = (props) => {
 			codPaciente: estado.COD_PACIENTE,
 			secuenciaAntecedente: estado.SECUENCIA_ANTECEDENTE === null ? '0' : estado.SECUENCIA_ANTECEDENTE,
 		};
-
-		dispatch(setDataGlobal(dataGlobal))
+		dispatch(setDataGlobal(dataGlobal));
 	};
 
 	return (
@@ -594,7 +593,7 @@ const ModaDetalles = (props) => {
 											option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 										}
 									>
-										{getDistritos(estado.PRV_UBIGEO).map((element) => {
+										{getDistritos(estado.DEP_UBIGEO, estado.PRV_UBIGUE).map((element) => {
 											return (
 												<Option key={element} value={element.ubigeo}>
 													{element.nombre}

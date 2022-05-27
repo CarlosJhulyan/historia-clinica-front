@@ -641,6 +641,7 @@ export const traerEstematologico = dataGlobal => {
 ///////////////////////////////////// A P I S ////////////////////////////////////////////////////
 
 export const traerDesarrolloProcedimiento = async dataGlobal => {
+	console.log('DATA_GLOBAL: ', dataGlobal);
 	const { data } = await httpClient.post(`/procedimientos/getProcedimientos`, {
 		codGrupoCia: dataGlobal.codGrupoCia,
 		codPaciente: dataGlobal.codPaciente,

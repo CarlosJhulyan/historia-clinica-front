@@ -299,12 +299,8 @@ function Ingreso() {
           <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
 						<div
 							style={{
-								gridArea: '1 / 2 / 2 / 3',
 								display: 'flex',
-								flexDirection: 'row-reverse',
 								width: '100%',
-								margin: 0,
-								// padding: 0
 							}}
 						>
 							<Form

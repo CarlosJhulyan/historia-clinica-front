@@ -2,7 +2,8 @@ import React, {
   useState, 
   useCallback,
   useEffect,
-  useRef
+  useRef,
+  createRef
 } from 'react';
 import {
   Modal,
@@ -13,7 +14,10 @@ import {
   Steps,
   InputNumber,
   notification,
-  Alert
+  Alert,
+  Row,
+  Col,
+  Select
 } from 'antd';
 import {
   SearchOutlined
@@ -26,9 +30,10 @@ import moment from 'moment';
 function ModalTicketAtencion({
   setAbrirModal,
   abrirModal,
-  traerDatosTable
+  traerDatosTable,
+  traerData,
 }) {
-  const formTriaje = useRef();
+  const formRef = createRef();
   const { Step } = Steps;
   const [current, setCurrent] = React.useState(0);
   const [abrirModalNew, setAbrirModalNew] = useState(false);
@@ -40,6 +45,20 @@ function ModalTicketAtencion({
   const [numDocumento, setNumDocumento] = useState('');
   const [loadingFetch, setLoadingFetch] = useState(false);
   const [data, setData] = useState({});
+
+  const [dataAsignar, setDataAsignar] = useState({
+    camaId: '',
+    genero: '',
+    habitacionId: '',
+    pisoId: ''
+  });
+
+  const [arrayCama, setArrayCama] = useState([]);
+  const [pisos, setPisos] = useState([]);
+  const [habitaciones, setHabitaciones] = useState([]);
+  const [camas, setCamas] = useState([]);
+  const [array, setArray] = useState([]);
+
   const [datosEnviar, setDatosEnviar] = useState({
     COD_PACIENTE: '',
     NUM_ATEN_MED: '',
@@ -50,7 +69,7 @@ function ModalTicketAtencion({
     TEMP: '',
     PESO: '',
     TALLA: '',
-    SATURACION: ''
+    SATURACION: '',
   });
 
   const [message, setMessage] = useState({
@@ -175,23 +194,140 @@ function ModalTicketAtencion({
   const fetchData = async () => {
     setLoadingFetch(true);
     try {
+      const { data: { success: successAtencion, data: numAtencionMedica } } = await httpClient.post('atencionMedica/setConsultaMedica', {
+        USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+        COD_ESPECIALIDAD: JSON.parse(localStorage.getItem('token')).id_consultorio,
+        COD_BUS: JSON.parse(localStorage.getItem('token')).id_bus,
+        COD_PACIENTE: datosEnviar.COD_PACIENTE,
+        COD_MEDICO: JSON.parse(localStorage.getItem('token')).cod_medico,
+        ESTADO: 'C'
+      });
+      
       const dataFetch = {
         ...datosEnviar,
         ASIGNADO: areaDesignada,
+        NUM_ATEN_MED: numAtencionMedica
       }
-      const { data: { data = [], message, success } } = await httpClient.post(`triaje/upsertTriaje`, dataFetch);
-      if (success) {
-        openNotification('success', 'Triaje', message);
-        setAbrirModal(false);
-        traerDatosTable();
-      } else {
-        openNotification('warning', 'Triaje', message);
+
+      if (successAtencion) {
+        const { data: { data = [], message, success } } = await httpClient.post(`triaje/upsertTriaje`, dataFetch);
+        if (success) {
+          const repuesta = await httpClient.post('camas/asignacionCama', {
+            camaId: dataAsignar.camaId,
+            codPaciente: datosEnviar.COD_PACIENTE,
+            especialidad: JSON.parse(localStorage.getItem('token')).des_especialidad,
+            dias: dataAsignar.dias,
+            genero: dataAsignar.genero,
+            codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
+            idHospitalizacion: numAtencionMedica
+          });
+  
+          if (repuesta.data.success) {
+            openNotification('success', 'Triaje', message);
+            setAbrirModal(false);
+            traerDatosTable();
+          } else {
+            console.log('No se pudo completar')
+          }
+        } else {
+          openNotification('warning', 'Triaje', message);
+        }
       }
     } catch (error) {
       console.log(error);
     }
+    
     setLoadingFetch(false);
   }
+
+  const traerPisos = async () => {
+    const respuesta = await httpClient.get('camas/getPisos');
+    respuesta.data.data.forEach((data) => {
+      data.key = data.piso_id;
+    })
+    setPisos(respuesta.data.data);
+  };
+
+  const traerHabitaciones = async () => {
+    const respuesta = await httpClient.get('camas/getHabitaciones');
+    respuesta.data.data.forEach((data) => {
+      data.key = data.habitacion_id;
+    })
+    setHabitaciones(respuesta.data.data);
+  };
+
+  const traerCamas = async () => {
+    const respuesta = await httpClient.get('camas/getCamas');
+    respuesta.data.data.forEach((data) => {
+      data.key = data.habitacion_id;
+    })
+    setCamas(respuesta.data.data);
+  };
+
+  const onChangeGenero = (e) => {
+    formRef.current.setFieldsValue({
+      genero: e
+    });
+    setDataAsignar({
+      ...dataAsignar,
+      genero: e
+    })
+  };
+
+  const onChangePiso = (e) => {
+    pisos.forEach((element) => {
+      if (element.piso_id === e) {
+        formRef.current.setFieldsValue({
+          pisoId: element.piso_id,
+          habitacionId: null
+        });
+        setDataAsignar({
+          ...dataAsignar,
+          pisoId: element.piso_id,
+          habitacionId: null
+        })
+      }
+    });
+    const arr = habitaciones.filter(element => element.piso_id === e);
+    setArray(arr);
+  };
+
+  const onChangeHabitación = (e) => {
+    habitaciones.forEach((element) => {
+      if (element.key === e) {
+        formRef.current.setFieldsValue({
+          habitacionId: element.habitacion_id
+        });
+        setDataAsignar({
+          ...dataAsignar,
+          habitacionId: element.habitacion_id
+        })
+      }
+    });
+    const arr = camas.filter(element => element.habitacion_id === e);
+    setArrayCama(arr);
+  };
+
+  const onChangeCama = (e) => {
+    camas.forEach((element) => {
+      if (element.cama_id === e) {
+        formRef.current.setFieldsValue({
+          camaId: element.cama_id
+        });
+        setDataAsignar({
+          ...dataAsignar,
+          camaId: element.cama_id
+        })
+        console.log(element.cama_id);
+      }
+    });
+  };
+
+  useEffect(() => {
+    traerPisos();
+    traerHabitaciones();
+    traerCamas();
+  }, [])
 
   const steps = [
     {
@@ -342,6 +478,134 @@ function ModalTicketAtencion({
           </Form.Item>
         </Form>
       ),
+    },
+    {
+      title: 'Asignar Cama',
+      content: (
+        <Form ref={formRef} layout="horizontal" style={{ padding: '0 20px 0 20px' }}>
+          <Row style={{ flexDirection: 'row' }}>
+            {
+              datosEnviar ?
+                <>
+                  <Col xs={6} style={{ padding: '0 0 8px 0' }}>
+                    PACIENTE:
+                  </Col>
+                  <Col xs={18} style={{ padding: '0 0 8px 0' }}>
+                    {datosEnviar ? datosEnviar.PACIENTE : null}
+                  </Col>
+                  <Col xs={6} style={{ padding: '0 0 8px 0' }}>
+                    EDAD:
+                  </Col>
+                  <Col xs={18} style={{ padding: '0 0 8px 0' }}>
+                    {datosEnviar ? moment(datosEnviar.FECHA_NAC, "YYYY/MM/DD").month(0).from(moment().month(0)).substring(5) : null}
+                  </Col>
+                </>
+                : null
+            }
+            {/* <Col xs={6} style={{ padding: '20px 0 10px 0', display: 'flex', alignItems: 'center' }}>
+              <div>Días:</div>
+            </Col>
+            <Col xs={18} style={{ padding: '20px 0 10px 0' }}>
+              <Form.Item name="dias" style={{ margin: 0, padding: 0 }} >
+                <Input type="number" placeholder="Días" />
+              </Form.Item>
+            </Col> */}
+            <Col xs={6} style={{ padding: '10px 0 10px 0', display: 'flex', alignItems: 'center' }}>
+              <div>Género:</div>
+            </Col>
+            <Col xs={18} style={{ padding: '10px 0 10px 0' }}>
+              <Form.Item name="genero" style={{ margin: 0, padding: 0 }}>
+                <Select
+                  style={{ width: '100% ', margin: '0' }}
+                  showSearch
+                  placeholder="Seleccione un piso"
+                  optionFilterProp="children"
+                  onChange={onChangeGenero}
+                  onSearch={() => { }}
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  < Select.Option value={"M"}>Masculino</Select.Option>
+                  < Select.Option value={"F"}>Femenino</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={6} style={{ padding: '10px 0 10px 0', display: 'flex', alignItems: 'center' }}>
+              <div>Piso:</div>
+            </Col>
+            <Col xs={18} style={{ padding: '10px 0 10px 0' }}>
+              <Form.Item name="pisoId" style={{ margin: 0 }}>
+                <Select
+                  style={{ width: '100% ', margin: '0' }}
+                  showSearch
+                  placeholder="Seleccione un piso"
+                  optionFilterProp="children"
+                  onChange={onChangePiso}
+                  onSearch={() => { }}
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {
+                    pisos.map((element) => {
+                      return < Select.Option value={element.piso_id}>{element.nombre_piso}</Select.Option>;
+                    })
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={6} style={{ padding: '10px 0 10px 0', display: 'flex', alignItems: 'center' }}>
+              <div>Habitación:</div>
+            </Col>
+            <Col xs={18} style={{ padding: '10px 0 10px 0' }}>
+              <Form.Item name="habitacionId" style={{ margin: 0, padding: 0 }}>
+                <Select
+                  style={{ width: '100% ', margin: '0' }}
+                  showSearch
+                  placeholder="Seleccione una habitación "
+                  optionFilterProp="children"
+                  onChange={onChangeHabitación}
+                  onSearch={() => { }}
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {
+                    array.map((element) => {
+                      return < Select.Option value={element.habitacion_id}>{element.nombre_habitacion}</Select.Option>;
+                    })
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col xs={6} style={{ padding: '10px 0 20px 0', display: 'flex', alignItems: 'center' }}>
+              <div>Cama:</div>
+            </Col>
+            <Col xs={18} style={{ padding: '10px 0 20px 0' }}>
+              <Form.Item name="camaId" style={{ margin: 0 }}>
+                <Select
+                  style={{ width: '100% ', margin: '0' }}
+                  showSearch
+                  placeholder="Seleccione un piso"
+                  optionFilterProp="children"
+                  onChange={onChangeCama}
+                  onSearch={() => { }}
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {
+                    arrayCama.map((element) => {
+                      return < Select.Option value={element.cama_id}>{element.numero + " - " + element.tipo + (element.transferido === "1" ? " (TRANSFERIDO)" : "")}</Select.Option>;
+                    })
+                  }
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+      )
     }
   ];
   
