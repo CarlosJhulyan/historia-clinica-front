@@ -1,11 +1,10 @@
-import { Button, Card, Table, Modal, Input, Space } from 'antd';
+import { Button, Card, Table, Input, Space } from 'antd';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import ModalAsignacion from './modalAsignacion';
 import { httpClient } from '../../util/Api';
 import moment from 'moment';
 import { datosEnviar, funn } from '../../constants/datosEnviar';
 
-import { useIdleTimer } from 'react-idle-timer';
 import { useAuth } from '../../authentication';
 import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
@@ -13,10 +12,12 @@ import { SearchOutlined } from '@ant-design/icons';
 import ModalTicketAtencion from './modalTicketAtencion';
 import ModalDetalles from '../listaPaciente/modalDetalles';
 import DatosPaciente from '../listaPaciente/datosPaciente';
+import ModalDetallesTriaje from './modalDetallesTriaje';
 
 const ListaHospitalizar = () => {
   const [abrirModal, setAbrirModal] = useState(false);
   const [modalAsignacion, setModalAsignacion] = useState(false);
+  const [modalDetallesTriaje, setModalDetallesTriaje] = useState(false);
   const [filaActual, setFilaActual] = useState({});
   const [data, setData] = useState();
   const [abrirModalTicket, setAbrirModalTicket] = useState(false);
@@ -75,6 +76,14 @@ const ListaHospitalizar = () => {
     });
     setAbrirModal(true);
   };
+
+  const mostrarModalDetallesTriaje = (record) => {
+    setFilaActual({
+      ...record,
+      NUM_ATEN_MED: data
+    });
+    setModalDetallesTriaje(true);
+  }
 
   useEffect(() => {
     if (!dataInicialCargada) {
@@ -196,16 +205,18 @@ const ListaHospitalizar = () => {
           {estado === 'A' && 'ATENDIDO'}
           {estado === 'G' && 'GRABADO TEMPORALMENTE'}
         </span>
-      )
+      ),
 		},
     {
-      title: 'Action',
+      title: 'Acciones',
       key: 'action',
       render: (record) => (
-        <span>
-          <Button onClick={() => mostrarModal(record)}>Detalles</Button>
-        </span>
+        <>
+          <Button onClick={() => mostrarModal(record)}>Consulta</Button>
+          <Button onClick={() => mostrarModalDetallesTriaje(record)}>Triaje</Button>
+        </>
       ),
+      width: 220
     },
   ];
 
@@ -330,6 +341,14 @@ const ListaHospitalizar = () => {
           dataModal={filaActual}
           traerData={traerDatos}
           hospi={hospi}
+        />
+      ) : null}
+
+      {modalDetallesTriaje ? (
+        <ModalDetallesTriaje 
+          setVisible={setModalDetallesTriaje}
+          visible={modalDetallesTriaje}
+          filaActual={filaActual}
         />
       ) : null}
 
