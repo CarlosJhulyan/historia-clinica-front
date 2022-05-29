@@ -2,8 +2,6 @@ import React, { useEffect, useState, createRef, useMemo } from 'react';
 import { Button, Card, AutoComplete, Form, Tabs, Row, Col, Spin, Table } from 'antd';
 import { ToastContainer } from 'react-toastify';
 import { httpClient } from '../../util/Api';
-import { notificaciones } from '../../util/util';
-import Moment from 'moment';
 import axios from 'axios';
 import PrimeraParteTable from './tratamiento/primeraParte/primeraParteTable';
 import SextaParte from './tratamiento/sextaParte';
@@ -12,7 +10,6 @@ import { getKardexHospitaliario, traerCombosKardex } from '../listaPaciente/dato
 import { useSelector } from 'react-redux';
 import TablaExamen from './examen/tabla/tabla';
 import TablaInterconsulta from './interconsulta/tabla/tabla';
-import TablaEspeciales from './especiales/tabla/tabla';
 import Especiales from './especiales/especial';
 // import './formulario.css';
 
@@ -26,14 +23,13 @@ const TratamientoKardex = () => {
 		cama: '',
 		habitacion: '',
 	});
-
 	const [editar, setEditar] = useState();
 	const [alergias, setAlergias] = useState();
-
+	
 	const [state, setState] = useState('tratamientos');
-
+	
 	const [historia, setHistoria] = useState();
-
+	
 	const [valueCOD, setValueCOD] = useState('');
 	const [optionsCOD, setOptionsCOD] = useState([]);
 	const [valueNOM, setValueNOM] = useState('');
@@ -204,8 +200,7 @@ const TratamientoKardex = () => {
 		setDataModal();
 		setEditar();
 
-		if (valueCOD) {
-			// Filtrar el valor del codigo con las opciones
+		if (valueCOD.length > 0 || valueCOD) {
 			optionsCOD.forEach(async element => {
 				if (element.cod_paciente === valueCOD) {
 					const dataGlobal = {
@@ -215,24 +210,24 @@ const TratamientoKardex = () => {
 						nroAtencion: element.historia_clinica,
 						codPaciente: element.cod_paciente,
 					};
-
+	
 					const dataCama = {
 						codPaciente: element.cod_paciente,
 						historiaClinica: element.historia_clinica,
 					};
-
+	
 					const respuesta = await httpClient.post('pacientes/getHospitalizacion', dataCama);
 					const dataHospitalizacion = respuesta.data.data[0];
-
+	
 					let servicio = '';
 					if (dataHospitalizacion.hospitalizacion === '1') {
 						servicio = 'HOSPITALIZACION';
 					}
-
+	
 					if (dataHospitalizacion.urgencia === '1') {
 						servicio = 'URGENCIA';
 					}
-
+	
 					setData({
 						...data,
 						cama: element.cama,
@@ -240,7 +235,7 @@ const TratamientoKardex = () => {
 						servicio: servicio,
 						habitacion: element.habitacion,
 					});
-
+	
 					getKardexHospitaliario(dataGlobal);
 					//Obtener kardex
 					const kardex = await httpClient.post('kardex/getKardex', {
@@ -250,7 +245,70 @@ const TratamientoKardex = () => {
 						console.log(kardex);
 						setEditar(kardex.data.data);
 					}
+	
+					//Obtener Alergias
+					const alergias = await httpClient.post('pacientes/getAlergias', {
+						codGrupoCia: '001',
+						codPaciente: element.cod_paciente,
+					});
+					if (alergias.data.success) {
+						if (alergias.data.data.length > 0) {
+							setAlergias({
+								alergias: alergias.data.data[0].alergias,
+								otros: alergias.data.data[0].otros,
+							});
+						}
+					}
+				}
+			});
+		}
 
+		if (valueNOM.length > 0 || valueNOM) {
+			optionsNOM.forEach(async element => {
+				if (element.cod_paciente === valueNOM) {
+					const dataGlobal = {
+						codGrupoCia: '001',
+						codLocal: '001',
+						codCia: '001',
+						nroAtencion: element.historia_clinica,
+						codPaciente: element.cod_paciente,
+					};
+	
+					const dataCama = {
+						codPaciente: element.cod_paciente,
+						historiaClinica: element.historia_clinica,
+					};
+	
+					const respuesta = await httpClient.post('pacientes/getHospitalizacion', dataCama);
+					const dataHospitalizacion = respuesta.data.data[0];
+	
+					let servicio = '';
+					if (dataHospitalizacion.hospitalizacion === '1') {
+						servicio = 'HOSPITALIZACION';
+					}
+	
+					if (dataHospitalizacion.urgencia === '1') {
+						servicio = 'URGENCIA';
+					}
+	
+					setData({
+						...data,
+						cama: element.cama,
+						paciente: element.nombre_completo,
+						servicio: servicio,
+						habitacion: element.habitacion,
+					});
+	
+					getKardexHospitaliario(dataGlobal);
+					//Obtener kardex
+					const kardex = await httpClient.post('kardex/getKardex', {
+						hc: element.historia_clinica,
+					});
+					if (kardex.data.success) {
+						console.log(kardex);
+						setEditar(kardex.data.data);
+					}
+	
 					//Obtener Alergias
 					const alergias = await httpClient.post('pacientes/getAlergias', {
 						codGrupoCia: '001',

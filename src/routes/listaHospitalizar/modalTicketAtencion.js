@@ -647,7 +647,7 @@ function ModalTicketAtencion({
                 >
                   {
                     arrayCama.map((element) => {
-                      return < Select.Option value={element.cama_id}>{element.numero + " - " + element.tipo + (element.transferido === "1" ? " (TRANSFERIDO)" : "")}</Select.Option>;
+                      return < Select.Option disabled={element.estado === '1'} value={element.cama_id}>{element.numero + " - " + element.tipo + (element.transferido === "1" ? " (TRANSFERIDO)" : "")}</Select.Option>;
                     })
                   }
                 </Select>

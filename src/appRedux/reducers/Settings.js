@@ -7,7 +7,8 @@ import {
   NAV_STYLE_MINI_SIDEBAR,
   THEME_COLOR,
   THEME_TYPE,
-  THEME_TYPE_SEMI_DARK, UPDATE_RTL_STATUS
+  THEME_TYPE_SEMI_DARK, 
+  UPDATE_RTL_STATUS
 } from "../../constants/ThemeSetting";
 import { types } from "../types/types";
 
@@ -26,6 +27,7 @@ const initialSettings = {
   },
   initURL: '',
   loading: false,
+  loadingAdmin: false,
   horaImprimible:'00:00:00',
 };
 
@@ -78,6 +80,13 @@ const SettingsReducer = (state = initialSettings, action) => {
       return {
         ...state,
         loading: action.payload
+      }
+    }
+
+    case types.setLoginAdminLoading: {
+      return {
+        ...state,
+        loadingAdmin: action.payload
       }
     }
 

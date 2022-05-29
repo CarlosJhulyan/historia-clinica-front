@@ -76,7 +76,7 @@ const HistorialBalanceHidrico = () => {
 				{ cancelToken: cancelSource.token }
 			);
 			var array2 = respuesta.data.data;
-			console.log(respuesta.data.data);
+			
 			for (let i = 0; i < array2.length; i++) {
 				if (array2[i].asignado === '0') {
 					delete array2[i];
@@ -150,10 +150,9 @@ const HistorialBalanceHidrico = () => {
 
 	const BuscarBalance = () => {
 		setLoading(true);
-		const historia_clinica = optionsCOD[0].historia_clinica;
 		httpClient
 			.post('/balance/getHistoryBalanceHidrico', {
-				historiaClinica: historia_clinica,
+				historiaClinica: valueCOD || valueNOM,
 			})
 			.then(({ data }) => {
 				const response = data.data;

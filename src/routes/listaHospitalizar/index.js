@@ -27,11 +27,7 @@ const ListaHospitalizar = () => {
   const [mostrarListaPaciente, setMostrarListaPaciente] = useState(true);
   const [tableLoading, setTableLoading] = useState(false);
 
-  const [sesionCerrada, setSesionCerrada] = useState(false);
   const [state, setState] = useState();
-
-  const { userSignOut } = useAuth();
-  const history = useHistory();
 
   const datos = useMemo(() => {
     return {
@@ -72,7 +68,7 @@ const ListaHospitalizar = () => {
   const mostrarModal = async (record) => {
     setFilaActual({
       ...record,
-      NUM_ATEN_MED: data
+      ...data[0]
     });
     setAbrirModal(true);
   };
@@ -80,7 +76,7 @@ const ListaHospitalizar = () => {
   const mostrarModalDetallesTriaje = (record) => {
     setFilaActual({
       ...record,
-      NUM_ATEN_MED: data
+      ...data[0]
     });
     setModalDetallesTriaje(true);
   }

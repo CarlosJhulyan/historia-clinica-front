@@ -5,9 +5,6 @@ import { Link } from 'react-router-dom';
 import CustomScrollbars from 'util/CustomScrollbars';
 import SidebarLogo from './SidebarLogo';
 import UserProfile from './UserProfile';
-import { 
-	AuditOutlined,
-} from '@ant-design/icons';
 import {
 	NAV_STYLE_NO_HEADER_EXPANDED_SIDEBAR,
 	NAV_STYLE_NO_HEADER_MINI_SIDEBAR,
@@ -22,8 +19,8 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const pathname = useSelector(({ common }) => common.pathname);
 	const anexo = useSelector(state => state.anexo);
 	const token = JSON.parse(localStorage.getItem('token'));
-
-	console.log('token', token);
+	const tokenAdmin = JSON.parse(localStorage.getItem('token-admin'));
+	const initURL = useSelector(({ settings }) => settings.initURL);
 
 	const getNoHeaderClass = navStyle => {
 		if (
@@ -48,7 +45,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const createMenuItem = () => {
 		const menuItems = [];
 
-		if (token.modulos) {
+		if (token.modulos && !initURL.includes('/hc-admin')) {
 			if (token.modulos.includes('16') || token.modulos.includes('17')) {
 				menuItems.push(
 					<SubMenu
@@ -354,42 +351,67 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 				);
 			}
 	
-			if (token.modulos.includes('4')) {
-				menuItems.push(
-					<SubMenu
-						key="configuraciones"
-						popupClassName={getNavStyleSubMenuClass(navStyle)}
-						title={
-							<span>
-								{' '}
-								<i className="icon icon-extra-components" />
-								<span>Configuraciones</span>
-							</span>
-						}
-					>
-						<Menu.Item key="configuraciones/modulos">
-							<Link to="/configuraciones/modulos">
-								<i className="icon icon-widgets" />
-								<span>Asignacion de Modulos</span>
-							</Link>
-						</Menu.Item>
-						{ token.modulos.includes('15') &&
-							<Menu.Item key="configuraciones/camas">
-								<Link to="/configuraciones/camas">
-									<i className="icon icon-company" />
-									<span>Camas</span>
-								</Link>
-							</Menu.Item>
-						}
-						<Menu.Item key="configuraciones/firmas">
-							<Link to="/configuraciones/firmas">
-								<i className="icon icon-rendaring-calendar" />
-								<span>Firma Digital</span>
-							</Link>
-						</Menu.Item>
-					</SubMenu>
-				);
-			}
+			// if (token.modulos.includes('4')) {
+			// 	menuItems.push(
+			// 		<SubMenu
+			// 			key="configuraciones"
+			// 			popupClassName={getNavStyleSubMenuClass(navStyle)}
+			// 			title={
+			// 				<span>
+			// 					{' '}
+			// 					<i className="icon icon-extra-components" />
+			// 					<span>Configuraciones</span>
+			// 				</span>
+			// 			}
+			// 		>
+			// 			<Menu.Item key="configuraciones/modulos">
+			// 				<Link to="/configuraciones/modulos">
+			// 					<i className="icon icon-widgets" />
+			// 					<span>Asignacion de Modulos</span>
+			// 				</Link>
+			// 			</Menu.Item>
+			// 			{ token.modulos.includes('15') &&
+			// 				<Menu.Item key="configuraciones/camas">
+			// 					<Link to="/configuraciones/camas">
+			// 						<i className="icon icon-company" />
+			// 						<span>Camas</span>
+			// 					</Link>
+			// 				</Menu.Item>
+			// 			}
+			// 			<Menu.Item key="configuraciones/firmas">
+			// 				<Link to="/configuraciones/firmas">
+			// 					<i className="icon icon-rendaring-calendar" />
+			// 					<span>Firma Digital</span>
+			// 				</Link>
+			// 			</Menu.Item>
+			// 		</SubMenu>
+			// 	);
+			// }
+		}
+
+		if (tokenAdmin && initURL.includes('/hc-admin')) {
+			menuItems.push(
+				<>
+					<Menu.Item key="configuraciones/modulos">
+						<Link to="/hc-admin/configuraciones/modulos">
+							<i className="icon icon-widgets" />
+							<span>Asignacion de Modulos</span>
+						</Link>
+					</Menu.Item>
+					<Menu.Item key="configuraciones/camas">
+						<Link to="/hc-admin/configuraciones/camas">
+							<i className="icon icon-company" />
+							<span>Camas</span>
+						</Link>
+					</Menu.Item>
+					<Menu.Item key="configuraciones/firmas">
+						<Link to="/hc-admin/configuraciones/firmas">
+							<i className="icon icon-rendaring-calendar" />
+							<span>Firma Digital</span>
+						</Link>
+					</Menu.Item>
+				</>
+			);
 		}
 
 		return menuItems;

@@ -107,10 +107,10 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, editar, tipo, traerPisos, tra
   };
 
   useEffect(() => {
-    console.log(editar);
     if (editar) {
       if (tipo === 'piso') {
         setPiso({
+          ...piso,
           ...editar,
           pisoId: editar.piso_id
         });
@@ -119,6 +119,7 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, editar, tipo, traerPisos, tra
         });
       } else if (tipo === 'habitacion') {
         setHabitacion({
+          ...habitacion,
           ...editar,
           pisoId: editar.piso_id,
           habitacionId: editar.habitacion_id
@@ -131,6 +132,7 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, editar, tipo, traerPisos, tra
         const arr = habitaciones.filter(element => element.piso_id === editar.piso_id);
         setArray(arr);
         setCama({
+          ...cama,
           ...editar,
           camaId: editar.cama_id,
           habitacionId: editar.habitacion_id

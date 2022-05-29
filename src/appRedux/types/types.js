@@ -5,6 +5,7 @@ export const types = {
 	setClearUI: '[UI] setClearUI',
 
 	setLoginLoading: 'SET_LOGIN_LOADING',
+	setLoginAdminLoading: 'SET_LOGIN_ADMIN_LOADING',
 	setHoraImprimible: '[SET] Hora imprimible',
 
 	//SELECCIONAR MENÚ

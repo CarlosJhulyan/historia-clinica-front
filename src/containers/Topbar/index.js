@@ -32,6 +32,7 @@ const Topbar = () => {
 	const token = JSON.parse(localStorage.getItem('token'));
 	/* const [searchText, setSearchText] = useState(''); */
 	const dispatch = useDispatch();
+	const initURL = useSelector(({ settings }) => settings.initURL);
 
 	/* const languageMenu = () => (
     <CustomScrollbars className="gx-popover-lang-scroll">
@@ -51,13 +52,14 @@ const Topbar = () => {
      setSearchText(evt.target.value);
    }; */
 
-	const { userSignOut } = useAuth();
+	const { adminSignOut } = useAuth();
+
 	const history = useHistory();
 
 	const onLogoutClick = () => {
-		userSignOut(() => {
-			history.push('/');
-		});
+		adminSignOut(() => {
+			history.push('/hc-admin');
+		})
 	};
 
 	return (
@@ -78,9 +80,17 @@ const Topbar = () => {
 				<Link to="/" className="gx-d-block gx-d-lg-none gx-pointer">
 					<img alt="" src={'/assets/images/w-logo.png'} />
 				</Link>
-				<Button onClick={() => setModalCerrar(true)} style={{ marginTop: 12 }}>
-					Cerrar Sesión
-				</Button>
+				<div>
+					{initURL.includes('/hc-admin') ? (
+						<Button onClick={() => onLogoutClick()} style={{ marginTop: 12 }}>
+							Cerrar Sesión Admin
+						</Button>
+					) : (
+						<Button onClick={() => setModalCerrar(true)} style={{ marginTop: 12 }}>
+							Cerrar Sesión
+						</Button>
+					)}
+				</div>
 
 				<div
 					style={{

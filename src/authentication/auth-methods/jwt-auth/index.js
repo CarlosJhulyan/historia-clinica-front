@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setLoginLoading } from '../../../appRedux/actions/Setting';
+import { setLoginLoading, setLoginAdminLoading } from '../../../appRedux/actions/Setting';
 import { httpClient } from "../../../util/Api";
 
 export const useProvideAuth = () => {
   const [authUser, setAuthUser] = useState(null);
+  const [authAdmin, setAuthAdmin] = useState(null);
   const [error, setError] = useState('');
   const [isLoadingUser, setLoadingUser] = useState(true);
   const [isLoading, setLoading] = useState(false);
+  const [loadingAdmin, setLoadingAdmin] = useState(false);
+  const [errorAdmin, setErrorAdmin] = useState('');
   const dispatch = useDispatch();
 
 
@@ -26,11 +29,25 @@ export const useProvideAuth = () => {
     setError(error);
   };
 
+  const fetchStartAdmin = () => {
+    setLoadingAdmin(true);
+    setErrorAdmin('');
+  };
+
+  const fetchSuccessAdmin = () => {
+    setLoadingAdmin(false);
+    setErrorAdmin('');
+  };
+
+  const fetchErrorAdmin = (error) => {
+    setLoadingAdmin(false);
+    setErrorAdmin(error);
+  };
+
   const userLogin = (user, callbackFun) => {
     dispatch(setLoginLoading(true));
     console.log("CARGanDOOOOO...",);
     fetchStart();
-    /*  var login = 'http://192.168.123.1/api/login'; */
     httpClient
       .post(`/login`, user)
       .then(({ data }) => {
@@ -56,6 +73,27 @@ export const useProvideAuth = () => {
           fetchError(error.message);
         });
   };
+
+  const adminLogin = (admin, callbackFun) => {
+    dispatch(setLoginAdminLoading(true));
+    fetchStartAdmin();
+    httpClient
+      .post(`/login-admin`, admin)
+      .then(({ data }) => {
+        if (data.success) {
+          dispatch(setLoginAdminLoading(false));
+          fetchSuccessAdmin();
+          localStorage.setItem('token-admin', JSON.stringify(data.data));
+          getAuthAdmin(data.data);
+          if (callbackFun) callbackFun();
+        } else {
+          fetchErrorAdmin(data.message);
+        }
+      })
+      .catch(function (error) {
+        fetchErrorAdmin(error.message);
+      });
+  }
 
   const userSignup = (user, callbackFun) => {
 
@@ -114,10 +152,24 @@ export const useProvideAuth = () => {
     setAuthUser(false);
   };
 
+  const adminSignOut = (callbackFun) => {
+    fetchStartAdmin();
+    fetchSuccessAdmin();
+    localStorage.removeItem('token-admin');
+    setAuthAdmin(null);
+    if (callbackFun) callbackFun();
+  };
+
   const getAuthUser = (data) => {
     fetchStart();
     fetchSuccess();
     setAuthUser(data);
+  };
+
+  const getAuthAdmin = (data) => {
+    fetchStartAdmin();
+    fetchSuccessAdmin();
+    setAuthAdmin(data);
   };
 
   // Subscribe to user on mount
@@ -129,6 +181,12 @@ export const useProvideAuth = () => {
     const token = localStorage.getItem('token');
     setAuthUser(JSON.parse(token));
     setLoadingUser(false);
+  }, []);
+
+  useEffect(() => {
+    const tokenAdmin = localStorage.getItem('token-admin');
+    setAuthAdmin(JSON.parse(tokenAdmin));
+    setLoadingAdmin(false);
   }, []);
 
   // Return the user object and auth methods
@@ -146,5 +204,11 @@ export const useProvideAuth = () => {
     renderSocialMediaLogin,
     sendPasswordResetEmail,
     confirmPasswordReset,
+    getAuthAdmin,
+    adminLogin,
+    adminSignOut,
+    loadingAdmin,
+    errorAdmin,
+    authAdmin,
   };
 };
