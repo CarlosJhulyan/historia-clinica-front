@@ -140,7 +140,6 @@ const BalanceHidrico = () => {
 				{ cancelToken: cancelSource.token }
 			);
 			var array2 = respuesta.data.data;
-			console.log(respuesta.data.data);
 			for (let i = 0; i < array2.length; i++) {
 				if (array2[i].asignado === '0') {
 					delete array2[i];
@@ -416,12 +415,13 @@ const BalanceHidrico = () => {
 		setLoading(true);
 		const body = formRef.current.getFieldsValue();
 		body.fecha = Moment(body.fecha).format('YYYY/MM/DD');
-		body.paciente = valueCOD;
+		body.paciente = valueCOD || valueNOM;
 		body.estacion = estaciones;
 		body.codMedico = token.cod_medico;
 		body.historia_clinica = historia;
 		body.balance_hidrico = balance;
 		var validator = false;
+		console.log(body);
 		if (
 			body.paciente.length > 0 &&
 			body.fecha.length > 0 &&

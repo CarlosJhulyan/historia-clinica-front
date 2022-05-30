@@ -172,12 +172,12 @@ export const ModalHorario = ({
 				onCancel={() => setAbrir(false)}
 				okText="Confirmar"
 				cancelText="Cancelar"
-				width={'20%'}
+				width={400}
 			>
 				<Form ref={formRef} layout="vertical">
 					<Row style={{ flexDirection: 'row' }}>
 						{(!dataModal.horarios || !dataModal.horarios.length > 0) && (
-							<Col lg={24} md={6} sm={8} xs={24}>
+							<Col lg={24} xs={24}>
 								<div style={{ width: '100%', margin: '0 0 10px 0' }}>Hora Administrada</div>
 								<Input
 									onChange={e => onChangeHora(e)}
@@ -187,7 +187,7 @@ export const ModalHorario = ({
 							</Col>
 						)}
 						{horario.length > 0 && (
-							<Col lg={24} md={6} sm={8} xs={24}>
+							<Col lg={24} xs={24}>
 								<div
 									style={{
 										width: '100%',

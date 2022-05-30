@@ -82,7 +82,7 @@ const Formulario = ({ setSwitcher }) => {
 		console.log(body.p_a);
 		body.fecha = Moment(body.fecha).format('YYYY/MM/DD');
 		body.turno = dateTime.turno[0];
-		body.paciente = valueCOD;
+		body.paciente = valueCOD || valueNOM;
 		body.codMedico = token.cod_medico;
 		body.historia_clinica = paciente.historia;
 		var validator = false;

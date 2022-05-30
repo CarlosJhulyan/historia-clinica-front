@@ -186,7 +186,7 @@ const ModaDetalles = (props) => {
 		handleDatos({ estado: est });
 
 		/* "0000128101", */
-
+		console.log('ESTADO NEW SOLU', estado);
 		const dataGlobal = {
 			codGrupoCia: estado.COD_GRUPO_CIA,
 			codLocal: estado.COD_LOCAL_ANTECENDENTE === null ? '001' : estado.COD_LOCAL_ANTECENDENTE,

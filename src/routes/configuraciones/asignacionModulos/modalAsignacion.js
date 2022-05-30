@@ -1,5 +1,5 @@
 import React, { useState, createRef, useMemo } from 'react';
-import { Checkbox, Col, Modal, Row, Form, AutoComplete, notification, Divider } from 'antd';
+import { Checkbox, Col, Modal, Row, Form, AutoComplete, notification, Divider, Radio } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones } from '../../../util/util';
 import axios from 'axios';
@@ -8,22 +8,29 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 	const formRef = createRef();
 
 	const onChange = e => {
+		console.log(e);
 		setValores(e);
 	};
-
-	const opciones = crearOpciones(modulos);
-
+	
 	const [valores, setValores] = useState(filaActual ? obtenerValores(filaActual.modulos) : []);
 	const [loading, setLoading] = useState(false);
-
+	
 	const [valueCMP, setValueCMP] = useState('');
 	const [optionsCMP, setOptionsCMP] = useState([]);
 	const [valueNOM, setValueNOM] = useState('');
 	const [optionsNOM, setOptionsNOM] = useState([]);
+	
+	const [areaDesignada, setAreaDesignada] = useState('1');
+	const opcionesHC = crearOpcionesHC(modulos);
+	const opcionesHospi = crearOpcionesHospi(modulos);
 
 	const [cod, setCod] = useState('');
 
 	const token = JSON.parse(localStorage.getItem('token'));
+
+	const handleChangeAreaDesignada = (e) => {
+    setAreaDesignada(e.target.value);
+  }
 
 	const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
 	const [peticion, setPeticion] = useState(false);
@@ -237,36 +244,46 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 					</Form>
 				</div>
 			)}
-
+			<div style={{ textAlign: 'center', marginBottom: 30 }}>
+				<Radio.Group
+					value={areaDesignada} 
+					// size="small"
+					onChange={handleChangeAreaDesignada}
+					buttonStyle="solid">
+						<Radio.Button value="1">Historia clinica</Radio.Button>
+						<Radio.Button value="2">Hospitalización</Radio.Button>
+				</Radio.Group>
+			</div>
 			<Checkbox.Group style={{ paddingLeft: 15 }} onChange={onChange} value={valores}>
-				<Row>{opciones}</Row>
+				<Row>{areaDesignada === '1' ? opcionesHC : opcionesHospi}</Row>
 			</Checkbox.Group>
 		</Modal>
 	);
 };
 
-const crearOpciones = modulos => {
-	modulos.sort((a, b) => a.id_modulo - b.id_modulo);
-	return (
-		<>
-			{
-				modulos.map(modulo => modulo.hc === '1' && (
-					<Col key={modulo.id_modulo} span={24}>
-						<Checkbox value={modulo.id_modulo}>{modulo.nombre_modulo}</Checkbox>
-					</Col>
-				))
-			}
-			<Divider />
-			{
-				modulos.map(modulo => modulo.hs === '1' && (
-					<Col key={modulo.id_modulo} span={24}>
-						<Checkbox value={modulo.id_modulo}>{modulo.nombre_modulo}</Checkbox>
-					</Col>
-				))
-			}
-		</>
-	)
-};
+const crearOpcionesHC = (modulos) => (
+	<>
+		{
+			modulos.map(modulo => modulo.hc === '1' && (
+				<Col key={modulo.id_modulo} span={24}>
+					<Checkbox value={modulo.id_modulo}>{modulo.nombre_modulo}</Checkbox>
+				</Col>
+			))
+		}
+	</>
+);
+
+const crearOpcionesHospi = (modulos) => (
+	<>
+		{
+			modulos.map(modulo => (modulo.hs === '1' && modulo.id_modulo !== '4' && modulo.id_modulo !== '15') && (
+				<Col key={modulo.id_modulo} span={24}>
+					<Checkbox value={modulo.id_modulo}>{modulo.nombre_modulo}</Checkbox>
+				</Col>
+			))
+		}
+	</>
+);
 
 const obtenerValores = modulos => {
 	const valores = [];

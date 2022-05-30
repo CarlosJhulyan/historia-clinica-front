@@ -416,7 +416,7 @@ const TecnicoBalanceHidrico = () => {
 		setLoading(true);
 		const body = formRef.current.getFieldsValue();
 		body.fecha = Moment(body.fecha).format('YYYY/MM/DD');
-		body.paciente = valueCOD;
+		body.paciente = valueCOD || valueNOM;
 		body.estacion = estaciones;
 		body.codMedico = token.cod_medico;
 		body.historia_clinica = historia;

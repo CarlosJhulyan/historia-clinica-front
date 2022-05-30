@@ -208,7 +208,7 @@ const ListaHospitalizar = () => {
       key: 'action',
       render: (record) => (
         <>
-          <Button onClick={() => mostrarModal(record)}>Consulta</Button>
+          <Button hidden={record.ESTADO === 'A'} onClick={() => mostrarModal(record)}>Consulta</Button>
           <Button onClick={() => mostrarModalDetallesTriaje(record)}>Triaje</Button>
         </>
       ),

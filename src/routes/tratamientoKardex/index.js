@@ -177,7 +177,13 @@ const TratamientoKardex = () => {
 					}`,
 				});
 				setValueNOM(nom);
-				setHistoria(element.historia_clinica);
+				setHistoria({
+					hc: element.historia_clinica,
+					codPaciente: element.cod_paciente,
+					nombrePaciente: `${
+						element.nom_cli + ' ' + element.ape_pat_cli + ' ' + element.ape_mat_cli
+					}`,
+				});
 				// validarTurno();
 			}
 		});
@@ -207,7 +213,7 @@ const TratamientoKardex = () => {
 						codGrupoCia: '001',
 						codLocal: '001',
 						codCia: '001',
-						nroAtencion: element.historia_clinica,
+						nroAtencion: element.num_aten_med,
 						codPaciente: element.cod_paciente,
 					};
 	
@@ -270,7 +276,7 @@ const TratamientoKardex = () => {
 						codGrupoCia: '001',
 						codLocal: '001',
 						codCia: '001',
-						nroAtencion: element.historia_clinica,
+						nroAtencion: element.num_aten_med,
 						codPaciente: element.cod_paciente,
 					};
 	
