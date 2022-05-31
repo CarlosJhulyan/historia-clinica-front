@@ -45,7 +45,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const createMenuItem = () => {
 		const menuItems = [];
 
-		if (token.modulos && !initURL.includes('/hc-admin')) {
+		if (token?.modulos && !initURL.includes('/hc-admin')) {
 			if (token.modulos.includes('16') || token.modulos.includes('17')) {
 				menuItems.push(
 					<SubMenu

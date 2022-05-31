@@ -26,11 +26,11 @@ import { useAuth } from "../../authentication";
 import { httpClient } from "../../util/Api";
 import SignInAdmin from "../SignInAdmin";
 
-const RestrictedRoute = ({ component: Component, location, authUser, ...rest }) =>
+const RestrictedRoute = ({ component: Component, location, authUser, authAdmin, ...rest }) =>
   <Route
     {...rest}
     render={props =>
-      authUser
+      (authUser || authAdmin)
         ? <Component {...props} />
         : <Redirect
           to={{
@@ -121,8 +121,14 @@ const App = () => {
   });
 
   useEffect(() => {
-    if (!isLoadingUser) {
-      if (!authUser) {
+     if (!isLoadingUser || !loadingAdmin) {
+      if (!authAdmin && initURL.includes('/hc-admin')) {
+        history.push('/hc-admin/signin');
+      } else if (authAdmin && initURL.includes('/hc-admin')) {
+        history.push(initURL);
+      } else if (authAdmin && initURL === '/hc-admin/signin') {
+        history.push('/hc-admin');
+      } else if (!authUser) {
         history.push('/signin');
       } else if (initURL === '' || initURL === '/' || initURL === '/signin') {
         history.push('/');
@@ -130,19 +136,7 @@ const App = () => {
         history.push(initURL);
       }
     }
-  }, [isLoadingUser, authUser, initURL, history]);
-
-  useEffect(() => {
-    if (!loadingAdmin) {
-      if (!authAdmin && initURL.includes('/hc-admin')) {
-        history.push('/hc-admin/signin');
-      } else if (authAdmin && initURL === '/hc-admin/signin') {
-        history.push('/hc-admin');
-      } else {
-        history.push(initURL);
-      }
-    }
-  }, [loadingAdmin, authAdmin, initURL, history]);
+  }, [isLoadingUser, authUser, initURL, history, authAdmin, loadingAdmin]);
 
   useEffect(() => {
     setLayoutType(layoutType);
@@ -189,7 +183,7 @@ const App = () => {
           <Route exact path='/signin' component={SignIn} />
           <Route exact path='/signup' component={SignUp} />
           <Route exact path='/hc-admin/signin' component={SignInAdmin} />
-          <RestrictedRoute path={`${match.url}`} authUser={authUser} location={location} component={MainApp} />
+          <RestrictedRoute path={`${match.url}`} authUser={authUser} location={location} component={MainApp} authAdmin={authAdmin} />
         </Switch>
         {contextHolder}
       </IntlProvider>

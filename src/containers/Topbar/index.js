@@ -30,6 +30,7 @@ const Topbar = () => {
 	const width = useSelector(({ common }) => common.width);
 	const [modalCerar, setModalCerrar] = useState(false);
 	const token = JSON.parse(localStorage.getItem('token'));
+	const tokenAdmin = JSON.parse(localStorage.getItem('token-admin'));
 	/* const [searchText, setSearchText] = useState(''); */
 	const dispatch = useDispatch();
 	const initURL = useSelector(({ settings }) => settings.initURL);
@@ -101,24 +102,34 @@ const Topbar = () => {
 						gap: '30px',
 					}}
 				>
-					<div>
+					{(token && !initURL.includes('/hc-admin')) && (
+						<>
+							<div>
+								<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
+									MÉDICO:{' '}
+									<span style={{ fontWeight: 'normal' }}>
+										{token.des_nom_medico + ' ' + token.des_ape_medico}
+									</span>{' '}
+								</h4>
+							</div>
+							<div>
+								<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
+									ESPECIALIDAD: <span style={{ fontWeight: 'normal' }}>{token.des_especialidad}</span>
+								</h4>
+							</div>
+							<div>
+								<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
+									CMP: <span style={{ fontWeight: 'normal' }}>{token.num_cmp}</span>
+								</h4>
+							</div>
+						</>
+					)
+					}
+					{(tokenAdmin && initURL.includes('/hc-admin')) && <div>
 						<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-							MÉDICO:{' '}
-							<span style={{ fontWeight: 'normal' }}>
-								{token.des_nom_medico + ' ' + token.des_ape_medico}
-							</span>{' '}
+							<span style={{ fontWeight: 'normal' }}>{tokenAdmin.login_usu}</span>
 						</h4>
-					</div>
-					<div>
-						<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-							ESPECIALIDAD: <span style={{ fontWeight: 'normal' }}>{token.des_especialidad}</span>
-						</h4>
-					</div>
-					<div>
-						<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-							CMP: <span style={{ fontWeight: 'normal' }}>{token.num_cmp}</span>
-						</h4>
-					</div>
+					</div>}
 				</div>
 			</Header>
 			{modalCerar ? (

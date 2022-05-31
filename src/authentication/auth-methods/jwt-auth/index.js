@@ -87,6 +87,7 @@ export const useProvideAuth = () => {
           getAuthAdmin(data.data);
           if (callbackFun) callbackFun();
         } else {
+          dispatch(setLoginAdminLoading(false));
           fetchErrorAdmin(data.message);
         }
       })

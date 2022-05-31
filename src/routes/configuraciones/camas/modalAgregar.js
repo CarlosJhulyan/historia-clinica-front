@@ -17,20 +17,22 @@ import UCIM_F from '../../../assets/camas/UCIM_F.png';
 import UCIM_M from '../../../assets/camas/UCIM_M.png';
 
 const ModalAgregar = ({ abrirModal, setAbrirModal, editar, tipo, traerPisos, traerHabitaciones, traerCamas, habitaciones, pisos }) => {
+  const token = JSON.parse(localStorage.getItem('token'));
+  const tokenAdmin = JSON.parse(localStorage.getItem('token-admin'));
 
   const [loading, setLoading] = useState(false);
   const [array, setArray] = useState([]);
   const [piso, setPiso] = useState({
-    codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
+    codMedico: tokenAdmin.login_usu || token.cod_medico,
     nombre: ""
   });
   const [habitacion, setHabitacion] = useState({
-    codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
+    codMedico: tokenAdmin.login_usu || token.cod_medico,
     nombre: "",
     pisoId: ""
   });
   const [cama, setCama] = useState({
-    codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
+    codMedico: tokenAdmin.login_usu || token.cod_medico,
     numero: "",
     habitacionId: "",
     tipo: ""

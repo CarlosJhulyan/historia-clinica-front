@@ -36,7 +36,7 @@ const App = ({ match }) => {
 	const generateRoute = token => {
 		const items = [];
 
-		if (token.modulos?.length > 0) {
+		if (token && token.modulos?.length > 0) {
 			if (token.modulos.includes('1')) {
 				items.push(<Route path={`${match.url}listaPaciente`} component={listaPaciente} />);
 			}
@@ -138,7 +138,7 @@ const App = ({ match }) => {
 	};
 
 	useEffect(() => {
-		if (!token.modulos || token.modulos.length <= 0) {
+		if (token && (!token.modulos || token?.modulos.length <= 0)) {
 			modal.info({
 				title: 'Modulos de Sistema',
 				content: (

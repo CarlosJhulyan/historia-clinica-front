@@ -16,6 +16,7 @@ const ConfiguracionCamas = () => {
   const [tipo, setTipo] = useState(null);
 
   const token = JSON.parse(localStorage.getItem('token'));
+  const tokenAdmin = JSON.parse(localStorage.getItem('token-admin'));
 
   //* Obtener datos
   const traerPisos = async () => {
@@ -76,17 +77,17 @@ const ConfiguracionCamas = () => {
         if (tipo === 'piso') {
           respuesta = await eliminarPiso({
             pisoId: record.piso_id,
-            codMedico: token.cod_medico,
+            codMedico: tokenAdmin.login_usu || token.cod_medico,
           });
         } else if (tipo === 'habitacion') {
           respuesta = await eliminarHabitacion({
             habitacionId: record.habitacion_id,
-            codMedico: token.cod_medico,
+            codMedico: tokenAdmin.login_usu || token.cod_medico,
           });
         } else if (tipo === 'cama') {
           respuesta = await eliminarCama({
             camaId: record.cama_id,
-            codMedico: token.cod_medico,
+            codMedico: tokenAdmin.login_usu || token.cod_medico,
           });
         }
         if (respuesta.success) {
@@ -114,7 +115,7 @@ const ConfiguracionCamas = () => {
         const respuesta = await mantenimientoCama({
           camaId: record.cama_id,
           estado: record.estado === '0' ? '2' : '0',
-          codMedico: token.cod_medico,
+          codMedico: tokenAdmin.login_usu || token.cod_medico,
         });
         if (respuesta.success) {
           await traerPisos();

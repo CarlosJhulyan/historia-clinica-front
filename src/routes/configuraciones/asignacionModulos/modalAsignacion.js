@@ -27,6 +27,7 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 	const [cod, setCod] = useState('');
 
 	const token = JSON.parse(localStorage.getItem('token'));
+	const tokenAdmin = JSON.parse(localStorage.getItem('token-admin'));
 
 	const handleChangeAreaDesignada = (e) => {
     setAreaDesignada(e.target.value);
@@ -40,7 +41,7 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 			const repuesta = await httpClient.post('modulos/asignaModulos', {
 				codMedico: filaActual ? filaActual.cod_medico : cod,
 				modulos: valores,
-				codMedico1: token.cod_medico,
+				codMedico1: tokenAdmin.login_usu || token.cod_medico,
 			});
 			setAbrirModal(false);
 			notificaciones('Modulos asignado correctamente.', 'success');

@@ -32,7 +32,7 @@ const AsignacionModulos = () => {
 		filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
 			<div style={{ padding: 8 }}>
 				<Input
-					placeholder={`Buscar ${dataIndex}`}
+					placeholder={`Buscar`}
 					value={selectedKeys[0]}
 					onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
 					onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -71,10 +71,16 @@ const AsignacionModulos = () => {
 
 	const columns = [
 		{
-			title: 'Cod. Colegio',
+			title: 'CMP',
 			dataIndex: 'num_cmp',
 			key: 'num_cmp',
 			...getColumnSearchProps('num_cmp'),
+		},
+		{
+			title: 'DNI',
+			dataIndex: 'num_doc_iden',
+			key: 'num_doc_iden',
+			...getColumnSearchProps('num_doc_iden'),
 		},
 		{
 			title: 'Nombres',
