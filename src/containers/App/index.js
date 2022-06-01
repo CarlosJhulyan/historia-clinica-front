@@ -129,14 +129,14 @@ const App = () => {
         history.push('/hc-admin/signin');
       } else if (!authReports && initURL.includes('/reportes')) {
         history.push('/reportes/signin');
-      } else if (authAdmin && initURL.includes('/hc-admin')) {
-        history.push(initURL);
-      } else if (authReports && initURL.includes('/reportes')) {
-        history.push(initURL);
       } else if (authAdmin && initURL === '/hc-admin/signin') {
         history.push('/hc-admin');
       } else if (authReports && initURL === '/reportes/signin') {
         history.push('/reportes');
+      } else if (authAdmin && initURL.includes('/hc-admin')) {
+        history.push(initURL);
+      } else if (authReports && initURL.includes('/reportes')) {
+        history.push(initURL);
       } else if (!authUser) {
         history.push('/signin');
       } else if (initURL === '' || initURL === '/' || initURL === '/signin') {

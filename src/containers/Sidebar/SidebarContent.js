@@ -189,7 +189,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 			) {
 				menuItems.push(
 					<SubMenu
-						key="enferemeria"
+						key="enfermeria"
 						popupClassName={getNavStyleSubMenuClass(navStyle)}
 						title={
 							<span>
@@ -201,7 +201,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					>
 						{(token.modulos.includes('6') || token.modulos.includes('7')) && (
 							<SubMenu
-								key="enferemeria/balanceHidrico"
+								key="enfermeria/balanceHidrico"
 								popupClassName={getNavStyleSubMenuClass(navStyle)}
 								title={
 									<span>
@@ -212,7 +212,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 								}
 							>
 								{token.modulos.includes('6') && (
-									<Menu.Item key="enferemeria/balanceHidrico/agregarBalanceHidrico">
+									<Menu.Item key="enfermeria/balanceHidrico/agregarBalanceHidrico">
 										<Link to="/balanceHidrico">
 											<i className="icon icon-icon" />
 											<span>Agregar Balance Hidrico</span>
@@ -220,7 +220,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 									</Menu.Item>
 								)}
 								{token.modulos.includes('7') && (
-									<Menu.Item key="enferemeria/balanceHidrico/historialBalanceHidrico">
+									<Menu.Item key="enfermeria/balanceHidrico/historialBalanceHidrico">
 										<Link to="/historialBalanceHidrico">
 											<i className="icon icon-icon" />
 											<span>Historial Balance Hidrico</span>
@@ -231,7 +231,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						)}
 						{(token.modulos.includes('8') || token.modulos.includes('9')) && (
 							<SubMenu
-								key="enferemeria/signosVitales"
+								key="enfermeria/signosVitales"
 								popupClassName={getNavStyleSubMenuClass(navStyle)}
 								title={
 									<span>
@@ -242,7 +242,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 								}
 							>
 								{token.modulos.includes('8') && (
-									<Menu.Item key="enferemeria/signosVitales/agregarSignosVitales">
+									<Menu.Item key="enfermeria/signosVitales/agregarSignosVitales">
 										<Link to="/signosVitales">
 											<i className="icon icon-company" />
 											<span>Agregar Signos Vitales</span>
@@ -250,7 +250,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 									</Menu.Item>
 								)}
 								{token.modulos.includes('9') && (
-									<Menu.Item key="enferemeria/signosVitales/historialSignosVitales">
+									<Menu.Item key="enfermeria/signosVitales/historialSignosVitales">
 										<Link to="/historialSignosVitales">
 											<i className="icon icon-company" />
 											<span>Historial Signos Vitales</span>
@@ -311,7 +311,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 			if (token.modulos.includes('11') || token.modulos.includes('13')) {
 				menuItems.push(
 					<SubMenu
-						key="reportes"
+						key="auditoria"
 						popupClassName={getNavStyleSubMenuClass(navStyle)}
 						title={
 							<span>
