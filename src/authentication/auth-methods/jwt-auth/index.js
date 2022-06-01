@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { setLoginLoading, setLoginAdminLoading } from '../../../appRedux/actions/Setting';
-import { httpClient } from "../../../util/Api";
+import { setLoginLoading, setLoginAdminLoading, setLoginReportsLoading } from '../../../appRedux/actions/Setting';
+import { httpClient, httpClientReports } from "../../../util/Api";
 
 export const useProvideAuth = () => {
   const [authUser, setAuthUser] = useState(null);
   const [authAdmin, setAuthAdmin] = useState(null);
+  const [authReports, setAuthReports] = useState(null);
   const [error, setError] = useState('');
+  const [errorReports, setErrorReports] = useState('');
   const [isLoadingUser, setLoadingUser] = useState(true);
   const [isLoading, setLoading] = useState(false);
   const [loadingAdmin, setLoadingAdmin] = useState(false);
+  const [loadingReports, setLoadingReports] = useState(false);
   const [errorAdmin, setErrorAdmin] = useState('');
   const dispatch = useDispatch();
 
@@ -42,6 +45,21 @@ export const useProvideAuth = () => {
   const fetchErrorAdmin = (error) => {
     setLoadingAdmin(false);
     setErrorAdmin(error);
+  };
+
+  const fetchStartReports = () => {
+    setLoadingReports(true);
+    setErrorReports('');
+  };
+
+  const fetchSuccessReports = () => {
+    setLoadingReports(false);
+    setErrorReports('');
+  };
+
+  const fetchErrorReports = (error) => {
+    setLoadingReports(false);
+    setErrorReports(error);
   };
 
   const userLogin = (user, callbackFun) => {
@@ -143,6 +161,35 @@ export const useProvideAuth = () => {
     }, 300);
   };
 
+  const reportsLogin = (user, callbackFun) => {
+    dispatch(setLoginReportsLoading(true));
+    fetchStartReports();
+    httpClientReports
+      .post(`/login`, user)
+      .then(({ data }) => {
+        if (data.success) {
+          fetchSuccessReports();
+          data.modulos.sort();
+          localStorage.setItem("token-reports", JSON.stringify(data));
+          getAuthReports(data);
+          if (callbackFun) callbackFun();
+        } else {
+          fetchErrorReports(data.message);
+        }
+      })
+      .catch(function (error) {
+        fetchErrorReports(error.message);
+      });
+    dispatch(setLoginReportsLoading(false));
+  };
+
+  const reportsSignOut = (callbackFun) => {
+    fetchStartReports();
+    fetchSuccessReports();
+    localStorage.removeItem("token-reports");
+    setAuthReports(null);
+  };
+
   const renderSocialMediaLogin = () => null;
 
   const userSignOut = (callbackFun) => {
@@ -159,6 +206,12 @@ export const useProvideAuth = () => {
     localStorage.removeItem('token-admin');
     setAuthAdmin(null);
     if (callbackFun) callbackFun();
+  };
+
+  const getAuthReports = (data) => {
+    fetchStartReports();
+    fetchSuccessReports();
+    setAuthReports(data);
   };
 
   const getAuthUser = (data) => {
@@ -190,6 +243,12 @@ export const useProvideAuth = () => {
     setLoadingAdmin(false);
   }, []);
 
+  useEffect(() => {
+    const tokenReports = localStorage.getItem('token-reports');
+    setAuthReports(JSON.parse(tokenReports));
+    setLoadingReports(false);
+  }, []);
+
   // Return the user object and auth methods
   return {
     isLoadingUser,
@@ -211,5 +270,11 @@ export const useProvideAuth = () => {
     loadingAdmin,
     errorAdmin,
     authAdmin,
+    getAuthReports,
+    reportsLogin,
+    reportsSignOut,
+    loadingReports,
+    errorReports,
+    authReports
   };
 };

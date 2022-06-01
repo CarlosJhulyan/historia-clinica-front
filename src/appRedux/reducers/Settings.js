@@ -28,6 +28,7 @@ const initialSettings = {
   initURL: '',
   loading: false,
   loadingAdmin: false,
+  loadingReports: false,
   horaImprimible:'00:00:00',
 };
 
@@ -87,6 +88,13 @@ const SettingsReducer = (state = initialSettings, action) => {
       return {
         ...state,
         loadingAdmin: action.payload
+      }
+    }
+
+    case types.setLoginReportsLoading: {
+      return {
+        ...state,
+        loadingReports: action.payload
       }
     }
 

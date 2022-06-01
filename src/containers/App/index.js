@@ -25,12 +25,13 @@ import CircularProgress from "../../components/CircularProgress";
 import { useAuth } from "../../authentication";
 import { httpClient } from "../../util/Api";
 import SignInAdmin from "../SignInAdmin";
+import SignInReports from "../SignInReport";
 
-const RestrictedRoute = ({ component: Component, location, authUser, authAdmin, ...rest }) =>
+const RestrictedRoute = ({ component: Component, location, authUser, authAdmin, authReports, ...rest }) =>
   <Route
     {...rest}
     render={props =>
-      (authUser || authAdmin)
+      (authUser || authAdmin || authReports)
         ? <Component {...props} />
         : <Redirect
           to={{
@@ -84,7 +85,9 @@ const App = () => {
     isLoadingUser, 
     userSignOut,
     loadingAdmin,
-    authAdmin
+    authAdmin,
+    authReports,
+    loadingReports,
   } = useAuth();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -121,13 +124,19 @@ const App = () => {
   });
 
   useEffect(() => {
-     if (!isLoadingUser || !loadingAdmin) {
+     if (!isLoadingUser || !loadingAdmin || !loadingReports) {
       if (!authAdmin && initURL.includes('/hc-admin')) {
         history.push('/hc-admin/signin');
+      } else if (!authReports && initURL.includes('/reportes')) {
+        history.push('/reportes/signin');
       } else if (authAdmin && initURL.includes('/hc-admin')) {
+        history.push(initURL);
+      } else if (authReports && initURL.includes('/reportes')) {
         history.push(initURL);
       } else if (authAdmin && initURL === '/hc-admin/signin') {
         history.push('/hc-admin');
+      } else if (authReports && initURL === '/reportes/signin') {
+        history.push('/reportes');
       } else if (!authUser) {
         history.push('/signin');
       } else if (initURL === '' || initURL === '/' || initURL === '/signin') {
@@ -136,7 +145,7 @@ const App = () => {
         history.push(initURL);
       }
     }
-  }, [isLoadingUser, authUser, initURL, history, authAdmin, loadingAdmin]);
+  }, [isLoadingUser, authUser, initURL, history, authAdmin, loadingAdmin, loadingReports, authReports]);
 
   useEffect(() => {
     setLayoutType(layoutType);
@@ -174,7 +183,7 @@ const App = () => {
 
   const currentAppLocale = AppLocale[locale.locale];
 
-  return isLoadingUser ? <CircularProgress /> : (
+  return (isLoadingUser || loadingAdmin || loadingReports) ? <CircularProgress /> : (
     <ConfigProvider locale={currentAppLocale.antd} direction={isDirectionRTL ? 'rtl' : 'ltr'}>
       <IntlProvider
         locale={currentAppLocale.locale}
@@ -183,7 +192,8 @@ const App = () => {
           <Route exact path='/signin' component={SignIn} />
           <Route exact path='/signup' component={SignUp} />
           <Route exact path='/hc-admin/signin' component={SignInAdmin} />
-          <RestrictedRoute path={`${match.url}`} authUser={authUser} location={location} component={MainApp} authAdmin={authAdmin} />
+          <Route exact path='/reportes/signin' component={SignInReports} />
+          <RestrictedRoute path={`${match.url}`} authUser={authUser} location={location} component={MainApp} authAdmin={authAdmin} authReports={authReports} />
         </Switch>
         {contextHolder}
       </IntlProvider>

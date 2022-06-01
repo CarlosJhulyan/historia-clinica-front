@@ -1,5 +1,4 @@
 import React from "react";
-import { Avatar, Popover } from "antd";
 import { useAuth } from "../../authentication";
 import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -17,16 +16,6 @@ const UserProfile = () => {
     });
   }
 
-  const userMenuOptions = (
-    <ul className="gx-user-popover">
-      {/* <li>My Account</li>
-      <li>Connections</li> */}
-      <li onClick={onLogoutClick}>Cerrar sesión
-      </li>
-    </ul>
-  );
-
-
   const nombre = data && data.des_nom_medico.split(' ');
   const nombreAdmin = (dataAdmin && initURL.includes('/hc-admin')) && dataAdmin.login_usu;
 
@@ -35,7 +24,7 @@ const UserProfile = () => {
       {/* <Popover placement="bottomRight" content={userMenuOptions} trigger="click"> */}
         {/* <Avatar src={"https://via.placeholder.com/150"} className="gx-size-40 gx-pointer gx-mr-3" alt="" /> */}
         <span className="gx-avatar-name">
-          {nombreAdmin || nombre[0]} {(data && !initURL.includes('/hc-admin')) && data.des_ape_medico}
+          {nombreAdmin || ((nombre &&  !initURL.includes('/reportes')) && nombre[0])} {(data && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) && data.des_ape_medico}
         </span>
       {/* </Popover> */}
     </div>

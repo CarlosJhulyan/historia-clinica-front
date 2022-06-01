@@ -6,13 +6,13 @@ import { useSelector } from "react-redux";
 //import { settings } from "nprogress";
 
 const SignInReports = (props) => {
-  const { loadingReportes, errorReportes, reportesLogin } = useAuth();
+  const { loadingReports, errorReports, reportsLogin } = useAuth();
   const settings = useSelector((state) => state.settings);
 
   const onFinishFailed = (errorInfo) => {};
 
   const onFinish = (values) => {
-    reportesLogin(values);
+    reportsLogin(values);
   };
 
   return (
@@ -24,7 +24,7 @@ const SignInReports = (props) => {
         justifyContent: "center",
       }}
     >
-      {settings.loading ? (
+      {settings.loadingReports ? (
         <Spin tip="Iniciando sesión" size="large"></Spin>
       ) : (
         <div
@@ -91,7 +91,7 @@ const SignInReports = (props) => {
                 </Form>
               </div>
             </div>
-            <AppNotificationContainer loading={loadingReportes} error={errorReportes} />
+            <AppNotificationContainer loading={loadingReports} error={errorReports} />
           </div>
         </div>
       )}

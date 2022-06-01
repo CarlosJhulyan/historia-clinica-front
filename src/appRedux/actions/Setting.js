@@ -71,6 +71,13 @@ export const setLoginAdminLoading = (loading) => {
   };
 }
 
+export const setLoginReportsLoading = (loading) => {
+  return {
+    type: 'SET_LOGIN_REPORTS_LOADING',
+    payload: loading
+  };
+}
+
 export const setHoraImprimible = (data) => {
   return {
     type: '[SET] Hora imprimible',

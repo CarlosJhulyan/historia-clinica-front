@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 // import asyncComponent from 'util/asyncComponent';
 import AsignacionCamas from './asignacionCamas';
@@ -16,22 +16,44 @@ import SignosVitales from './signosVitales';
 import { SeguimientoConsulta } from './seguimientoConsulta';
 import HistorialSignosVitales from './historialSignosVitales';
 import TecnicoBalanceHidrico from './tecnicoBalanceHidrico';
-import ReporteIncompletos from './reportes/reporteIncompletos';
+import ReporteIncompletos from './auditoria/reporteIncompletos';
 import TratamientoKardex from './tratamientoKardex';
-import ReporteEspecialidad from './reportes/reporteEspecialidad';
+import ReporteEspecialidad from './auditoria/reporteEspecialidad';
 import Ingreso from './evolucionEnfermeria/ingreso';
 import Historial from './evolucionEnfermeria/historial';
 import TomaPreTriaje from './preTriaje/tomaPreTriaje';
 import HistoricoPreTriaje from './preTriaje';
 import AdmisionConsulta from './admisionConsulta';
+import Reporte1 from './reportes/reporte1';
+import Reporte2 from './reportes/reporte2';
+import Reporte3 from './reportes/reporte3';
+import Reporte4 from './reportes/reporte4';
 import { Modal } from 'antd';
 import { useAuth } from '../authentication';
+import { tablasPrincipales } from "../constants/TablasPrincipales";
+import { httpClientReports } from '../util/Api';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
 	const tokenAdmin = JSON.parse(localStorage.getItem('token-admin'));
+	const tokenReports = JSON.parse(localStorage.getItem('token-reports'));
 	const [modal, contextHolder] = Modal.useModal();
+	const [dataPrincial, setDataPrincial] = useState(false);
 	const { userSignOut } = useAuth();
+
+	const traerDataPrincial = async () => {
+    const response = await httpClientReports.post("reportes/getTablasPrimarias");
+    if (response && response.data && response.data.data) {
+      response.data.data.forEach((element) => {
+        element.forEach((elemento) => {
+          elemento.key =
+            elemento.cod_esp || elemento.cod_mes || elemento.cod_tipo;
+        });
+      });
+    }
+    tablasPrincipales.TablasPrincipales = response.data.data;
+    setDataPrincial(true);
+  };
 
 	const generateRoute = token => {
 		const items = [];
@@ -87,7 +109,7 @@ const App = ({ match }) => {
 			}
 			if (token.modulos.includes('11')) {
 				items.push(
-					<Route path={`${match.url}reportes/incompleto`} component={ReporteIncompletos} />
+					<Route path={`${match.url}auditoria/incompleto`} component={ReporteIncompletos} />
 				);
 			}
 			if (token.modulos.includes('12')) {
@@ -97,7 +119,7 @@ const App = ({ match }) => {
 			}
 			if (token.modulos.includes('13')) {
 				items.push(
-					<Route path={`${match.url}reportes/especialidad`} component={ReporteEspecialidad} />
+					<Route path={`${match.url}auditoria/especialidad`} component={ReporteEspecialidad} />
 				);
 			}
 			if (token.modulos.includes('14')) {
@@ -134,6 +156,21 @@ const App = ({ match }) => {
 			);
 		}
 
+		if (tokenReports && dataPrincial) {
+			items.push(
+				<Route path={`${match.url}reportes/reporte1`} component={Reporte1} />
+			);
+			items.push(
+				<Route path={`${match.url}reportes/reporte2`} component={Reporte2} />
+			);
+			items.push(
+				<Route path={`${match.url}reportes/reporte3`} component={Reporte3} />
+			);
+			items.push(
+				<Route path={`${match.url}reportes/reporte4`} component={Reporte4} />
+			);
+		}
+
 		return items;
 	};
 
@@ -153,6 +190,7 @@ const App = ({ match }) => {
 				centered: true
 			});
 		}
+		traerDataPrincial();
 	}, [])
 
 	const rutas = generateRoute(token);
