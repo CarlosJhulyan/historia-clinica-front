@@ -6,6 +6,7 @@ export const types = {
 
 	setLoginLoading: 'SET_LOGIN_LOADING',
 	setLoginAdminLoading: 'SET_LOGIN_ADMIN_LOADING',
+	setLoginReportsLoading: 'SET_LOGIN_REPORTS_LOADING',
 	setHoraImprimible: '[SET] Hora imprimible',
 
 	//SELECCIONAR MENÚ

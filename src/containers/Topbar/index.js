@@ -53,13 +53,19 @@ const Topbar = () => {
      setSearchText(evt.target.value);
    }; */
 
-	const { adminSignOut } = useAuth();
+	const { adminSignOut, authUser, reportsSignOut } = useAuth();
 
 	const history = useHistory();
 
-	const onLogoutClick = () => {
+	const onLogoutAdmin = () => {
 		adminSignOut(() => {
 			history.push('/hc-admin');
+		})
+	};
+
+	const onLogoutReports = () => {
+		reportsSignOut(() => {
+			history.push('/reportes');
 		})
 	};
 
@@ -82,15 +88,18 @@ const Topbar = () => {
 					<img alt="" src={'/assets/images/w-logo.png'} />
 				</Link>
 				<div>
-					{initURL.includes('/hc-admin') ? (
-						<Button onClick={() => onLogoutClick()} style={{ marginTop: 12 }}>
+					{initURL.includes('/hc-admin') &&
+						<Button onClick={() => onLogoutAdmin()} style={{ marginTop: 12 }}>
 							Cerrar Sesión Admin
-						</Button>
-					) : (
+						</Button>}
+					{initURL.includes('/reportes') &&
+						<Button onClick={() => onLogoutReports()} style={{ marginTop: 12 }}>
+							Cerrar Sesión Reportes
+						</Button>}
+					{(authUser && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) && 
 						<Button onClick={() => setModalCerrar(true)} style={{ marginTop: 12 }}>
 							Cerrar Sesión
-						</Button>
-					)}
+						</Button>}
 				</div>
 
 				<div
@@ -102,7 +111,7 @@ const Topbar = () => {
 						gap: '30px',
 					}}
 				>
-					{(token && !initURL.includes('/hc-admin')) && (
+					{(token && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) && (
 						<>
 							<div>
 								<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
