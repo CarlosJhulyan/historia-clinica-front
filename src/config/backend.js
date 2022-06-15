@@ -11,7 +11,7 @@ export const urlImagen = 'http://192.168.4.230/historial-clinico-backend/public/
 // export const baseUrlDavid = 'http://23.254.228.60/historial-clinico-backend/public/api';
 // export const urlImagen = 'http://23.254.228.60/historial-clinico-backend/public/';
 
-export const baseUrl = 'http://localhost:8000/api';
+export const baseUrl = 'http://127.0.0.1:8000/api';
 export const baseUrlNew = 'http://192.236.179.158/backend/public/api';
 
 export const baseUrlReports = 'http://localhost:8001/api';
