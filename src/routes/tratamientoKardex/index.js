@@ -11,6 +11,8 @@ import { useSelector } from 'react-redux';
 import TablaExamen from './examen/tabla/tabla';
 import TablaInterconsulta from './interconsulta/tabla/tabla';
 import Especiales from './especiales/especial';
+import Invasivo from './invasivos/invasivo';
+import HistorialInvasivos from './invasivos/HistorialInvasivos';
 // import './formulario.css';
 
 const TratamientoKardex = () => {
@@ -379,6 +381,26 @@ const TratamientoKardex = () => {
 		},
 	];
 
+	const paginasInvasivos = [
+		{
+			title: 'Invasivos',
+			content: (
+				<Invasivo
+					historia={historia}
+					editar={editar}
+					TraerDatos={TraerDatos}
+					datosModal={{
+						estado: {
+							COD_GRUPO_CIA: '001',
+							COD_LOCAL_ANTECENDENTE: '001',
+						},
+					}}
+				/>
+			),
+		},
+		{ title: 'Historial de Invasivos', content: <HistorialInvasivos historia={historia} /> },
+	];
+
 	useEffect(() => {
 		if (dataTratamiento) {
 			traerCombosKardex();
@@ -654,6 +676,15 @@ const TratamientoKardex = () => {
 							>
 								Proc. Especiales
 							</Button>
+							<Button
+								type="primary"
+								onClick={() => {
+									setState('invasivos');
+								}}
+								disabled={state === 'invasivos'}
+							>
+								invasivos
+							</Button>
 							<Tabs
 							//  onChange={callback}
 							>
@@ -677,6 +708,12 @@ const TratamientoKardex = () => {
 									  ))
 									: state === 'especiales'
 									? paginasEspeciales.map((e, index) => (
+											<Tabs.TabPane tab={e.title} key={'tab' + index}>
+												{e.content}
+											</Tabs.TabPane>
+									  ))
+									: state === 'invasivos'
+									? paginasInvasivos.map((e, index) => (
 											<Tabs.TabPane tab={e.title} key={'tab' + index}>
 												{e.content}
 											</Tabs.TabPane>
