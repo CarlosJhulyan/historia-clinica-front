@@ -32,6 +32,8 @@ import { Modal } from 'antd';
 import { useAuth } from '../authentication';
 import { tablasPrincipales } from "../constants/TablasPrincipales";
 import { httpClientReports } from '../util/Api';
+import GenerarPedido from './posVenta/generarPedido';
+import PosVenta from './posVenta';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -57,6 +59,9 @@ const App = ({ match }) => {
 
 	const generateRoute = token => {
 		const items = [];
+
+		items.push(<Route key={30} path={`${match.url}generarPedido`} component={GenerarPedido} />);
+		items.push(<Route key={31} path={`${match.url}posVentas`} component={PosVenta} />);
 
 		if (token && token.modulos?.length > 0) {
 			if (token.modulos.includes('1')) {

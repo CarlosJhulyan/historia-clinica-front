@@ -35,8 +35,6 @@ function HistoricoPreTriaje() {
     }
   ]);
 
-  console.log(stateDate);
-
   const getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>

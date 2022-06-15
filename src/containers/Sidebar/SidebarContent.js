@@ -46,6 +46,32 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const createMenuItem = () => {
 		const menuItems = [];
 
+		menuItems.push(
+			<SubMenu
+				key="posVentaG"
+				popupClassName={getNavStyleSubMenuClass(navStyle)}
+				title={
+					<span>
+						{' '}
+						<i className="icon icon-icon" />
+						<span>Pos Venta</span>
+					</span>
+				}>
+					<Menu.Item key="generarPedido">
+						<Link to="/generarPedido">
+							<i className="icon icon-icon" />
+							<span>Generar Pedido</span>
+						</Link>
+					</Menu.Item>
+					<Menu.Item key="posVentas">
+						<Link to="/posVentas">
+							<i className="icon icon-icon" />
+							<span>Lista de productos y precios</span>
+						</Link>
+					</Menu.Item>
+			</SubMenu>
+		);
+
 		if (token?.modulos && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) {
 			if (token.modulos.includes('16') || token.modulos.includes('17')) {
 				menuItems.push(

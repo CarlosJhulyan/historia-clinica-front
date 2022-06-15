@@ -87,6 +87,7 @@ function ModalListaEspera({
     async () => {
       setLoadingData(true);
       setDataListaEspera([]);
+      setNumHCSelection([]);
       try {
         const { data: { data = [], success, message } } = await httpClient.post('pacientes/getListaEsperaTriaje', dataSend);
         if (success) {
