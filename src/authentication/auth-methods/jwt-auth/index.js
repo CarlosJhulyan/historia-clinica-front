@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoginLoading, setLoginAdminLoading, setLoginReportsLoading } from '../../../appRedux/actions/Setting';
 import { httpClient, httpClientReports } from "../../../util/Api";
+import log from 'd3-scale/src/log';
 
 export const useProvideAuth = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -90,6 +91,43 @@ export const useProvideAuth = () => {
         .catch(function (error) {
           fetchError(error.message);
         });
+  };
+
+  const usuarioLogin = (user, callbackFun) => {
+    dispatch(setLoginLoading(true));
+    fetchStart();
+    httpClientReports
+      .post(`/login`, user)
+      .then(({ data: dataLogin }) => {
+        if (dataLogin.success) {
+          httpClient
+            .post('/login/getUsuario', user)
+            .then(({ data }) => {
+              dispatch(setLoginLoading(false));
+              fetchSuccess();
+              localStorage.setItem('token', JSON.stringify({
+                ...dataLogin,
+                data: data.data
+              }));
+              getAuthUser(data.data);
+              if (callbackFun) callbackFun();
+            })
+            .catch(function (error) {});
+        } else {
+          fetchError(dataLogin.message);
+        }
+      })
+      .catch(function (error) {
+        fetchError(error.message);
+      });
+    httpClient
+      .post('sistema/getVersion')
+      .then(({ data: { data, success } }) => {
+        if (success) localStorage.setItem('version', data.num_version);
+      })
+      .catch(function (error) {
+        fetchError(error.message);
+      });
   };
 
   const adminLogin = (admin, callbackFun) => {
@@ -275,6 +313,7 @@ export const useProvideAuth = () => {
     reportsSignOut,
     loadingReports,
     errorReports,
-    authReports
+    authReports,
+    usuarioLogin,
   };
 };

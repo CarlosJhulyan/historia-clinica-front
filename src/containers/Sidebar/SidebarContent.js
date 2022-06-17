@@ -46,31 +46,33 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const createMenuItem = () => {
 		const menuItems = [];
 
-		menuItems.push(
-			<SubMenu
-				key="posVentaG"
-				popupClassName={getNavStyleSubMenuClass(navStyle)}
-				title={
-					<span>
+    if (token?.data && token.data.login_usu) {
+      menuItems.push(
+        <SubMenu
+          key="posVentaG"
+          popupClassName={getNavStyleSubMenuClass(navStyle)}
+          title={
+            <span>
 						{' '}
-						<i className="icon icon-icon" />
+              <i className="icon icon-icon" />
 						<span>Pos Venta</span>
 					</span>
-				}>
-					<Menu.Item key="generarPedido">
-						<Link to="/generarPedido">
-							<i className="icon icon-icon" />
-							<span>Generar Pedido</span>
-						</Link>
-					</Menu.Item>
-					<Menu.Item key="posVentas">
+          }>
+          <Menu.Item key="generarPedido">
+            <Link to="/generarPedido">
+              <i className="icon icon-icon" />
+              <span>Generar Pedido</span>
+            </Link>
+          </Menu.Item>
+          {/* <Menu.Item key="posVentas">
 						<Link to="/posVentas">
 							<i className="icon icon-icon" />
 							<span>Lista de productos y precios</span>
 						</Link>
-					</Menu.Item>
-			</SubMenu>
-		);
+					</Menu.Item> */}
+        </SubMenu>
+      );
+    }
 
 		if (token?.modulos && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) {
 			if (token.modulos.includes('16') || token.modulos.includes('17')) {
@@ -106,7 +108,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</SubMenu>
 				);
 			}
-	
+
 			if (token.modulos.includes('18') || token.modulos.includes('19')) {
 				menuItems.push(
 					<SubMenu
@@ -140,7 +142,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</SubMenu>
 				);
 			}
-	
+
 			if (token.modulos.includes('20')) {
 				menuItems.push(
 					<Menu.Item key="admisionConsulta">
@@ -150,8 +152,8 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						</Link>
 					</Menu.Item>
 				);
-			}		
-	
+			}
+
 			if (token.modulos.includes('14')) {
 				menuItems.push(
 					<Menu.Item key="registroPaciente">
@@ -162,7 +164,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item>
 				);
 			}
-			
+
 			if (token.modulos.includes('1')) {
 				menuItems.push(
 					<Menu.Item key="listaPaciente">
@@ -173,7 +175,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item>
 				);
 			}
-	
+
 			if (token.modulos.includes('2')) {
 				menuItems.push(
 					<Menu.Item key="seguimientoConsulta">
@@ -184,7 +186,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item>
 				);
 			}
-	
+
 			if (token.modulos.includes('3')) {
 				menuItems.push(
 					<Menu.Item key="asignacionCamas">
@@ -195,7 +197,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item>
 				);
 			}
-	
+
 			if (token.modulos.includes('5')) {
 				menuItems.push(
 					<Menu.Item key="listaHospitalizar">
@@ -206,7 +208,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item>
 				);
 			}
-	
+
 			if (
 				token.modulos.includes('6') ||
 				token.modulos.includes('7') ||
@@ -288,7 +290,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</SubMenu>
 				);
 			}
-	
+
 			if (token.modulos.includes('10')) {
 				menuItems.push(
 					<SubMenu
@@ -333,7 +335,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</SubMenu>
 				);
 			}
-	
+
 			if (token.modulos.includes('11') || token.modulos.includes('13')) {
 				menuItems.push(
 					<SubMenu
@@ -366,7 +368,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</SubMenu>
 				);
 			}
-	
+
 			if (token.modulos.includes('12')) {
 				menuItems.push(
 					<Menu.Item key="tratamientoKardex">
@@ -377,7 +379,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item>
 				);
 			}
-	
+
 			// if (token.modulos.includes('4')) {
 			// 	menuItems.push(
 			// 		<SubMenu

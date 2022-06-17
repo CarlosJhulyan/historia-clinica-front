@@ -32,8 +32,7 @@ import { Modal } from 'antd';
 import { useAuth } from '../authentication';
 import { tablasPrincipales } from "../constants/TablasPrincipales";
 import { httpClientReports } from '../util/Api';
-import GenerarPedido from './posVenta/generarPedido';
-import PosVenta from './posVenta';
+import GenerarPedido from './posVenta';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -59,9 +58,6 @@ const App = ({ match }) => {
 
 	const generateRoute = token => {
 		const items = [];
-
-		items.push(<Route key={30} path={`${match.url}generarPedido`} component={GenerarPedido} />);
-		items.push(<Route key={31} path={`${match.url}posVentas`} component={PosVenta} />);
 
 		if (token && token.modulos?.length > 0) {
 			if (token.modulos.includes('1')) {
@@ -132,7 +128,7 @@ const App = ({ match }) => {
 				items.push(<Route key={20} path={`${match.url}admisionConsulta`} component={AdmisionConsulta} />);
 			}
 		}
-		
+
 		if (tokenAdmin) {
 			items.push(
 				<Route key={25} path={`${match.url}hc-admin/configuraciones/modulos`} component={AsignacionModulos} />
@@ -159,6 +155,10 @@ const App = ({ match }) => {
 				<Route key={31} path={`${match.url}reportes/reporte4`} component={Reporte4} />
 			);
 		}
+
+    if (token?.data) {
+      items.push(<Route key={30} path={`${match.url}generarPedido`} component={GenerarPedido} />);
+    }
 
 		return items;
 	};

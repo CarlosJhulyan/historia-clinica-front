@@ -16,7 +16,7 @@ const UserProfile = () => {
     });
   }
 
-  const nombre = data && data.des_nom_medico.split(' ');
+  const nombre = data && (!data.data) ? data.des_nom_medico.split(' ') : data?.data?.nom_usu.split(' ');
   const nombreAdmin = (dataAdmin && initURL.includes('/hc-admin')) && dataAdmin.login_usu;
 
   return (

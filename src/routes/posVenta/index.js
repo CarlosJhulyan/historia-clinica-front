@@ -1,4 +1,5 @@
 import React, {
+  useEffect,
   useState
 } from 'react';
 import {
@@ -6,53 +7,33 @@ import {
   Form,
   AutoComplete,
   Button,
-  Table,
-  Row,
   Input,
   Space,
-  Select,
-  Col
+  Table,
+  Divider,
+  Row,
+  Modal,
 } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
 import moment from 'moment';
+import { SearchOutlined } from '@ant-design/icons';
+import ModalListaProductos from './modalListaProductos';
+import { httpClient } from '../../util/Api';
 
-function PosVenta() {
-  const [data, setData] = useState([
-    {
-      key: 1,
-      codigo: '001478',
-      descripcion: '03 sesion de masaje relajante x 30 minutos',
-      unidad: 'UND',
-      marca: 'MASOTERAPIA',
-      precio: '50.00'
-    },
-    {
-      key: 2,
-      codigo: '001480',
-      descripcion: '06 Sesion de masaje decontracturannte x 30 minutos',
-      unidad: 'UND',
-      marca: 'MASOTERAPIA',
-      precio: '200.00'
-    },
-    {
-      key: 3,
-      codigo: '001481',
-      descripcion: '06 sesion de masaje relajante x 30 minutos',
-      unidad: 'UND',
-      marca: 'MASOTERAPIA',
-      precio: '100.00'
-    },
-    {
-      key: 4,
-      codigo: '000648',
-      descripcion: '17 Hidroxi progesterona',
-      unidad: 'UND',
-      marca: 'LABORATORIO',
-      precio: '68.00'
-    },
-  ]);
+function GenerarPedido() {
+  const [modal, contextHolder] = Modal.useModal();
   const [state, setState] = useState();
-  const { Option } = Select;
+  const [visibleModal, setVisibleModal] = useState(false);
+  const token = JSON.parse(localStorage.getItem('token'));
+  const [data, setData] = useState([{
+    codigo: '00000001',
+    descripcion: '06 Sesion de masaje relajante x 30 minutos',
+    unidad: 'UND',
+    precio: '100.00',
+    cantidad: '1',
+    descuento: '',
+    precio_venta: '100.00',
+    total: '100.00'
+  }])
 
   const getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -111,7 +92,7 @@ function PosVenta() {
       title: 'Descripción',
       dataIndex: 'descripcion',
       key: 'descripcion',
-      width: '400px'
+      width: '350px'
     },
     {
       title: 'Unidad',
@@ -120,16 +101,72 @@ function PosVenta() {
 
     },
     {
-      title: 'Marca',
-      dataIndex: 'marca',
-      key: 'marca',
-    },
-    {
       title: 'Precio',
       dataIndex: 'precio',
       key: 'precio',
     },
+    {
+      title: 'Cantidad',
+      dataIndex: 'cantidad',
+      key: 'cantidad',
+    },
+    {
+      title: '%Dscto',
+      dataIndex: 'descuento',
+      key: 'descuento',
+    },
+    {
+      title: 'Precio Venta',
+      dataIndex: 'precio_venta',
+      key: 'precio_venta',
+    },
+    {
+      title: 'Total',
+      dataIndex: 'total',
+      key: 'total',
+    },
   ];
+
+  const getFechaMovCaja = async () => {
+    const codGrupoCia = '001';
+    const codLocal = '001';
+
+    try {
+      const { data: { success, data: result } } = await httpClient.post('posventa/getCajaDispoUsuario', {
+        codGrupoCia,
+        codLocal,
+        secUsu: token.data.sec_usu_local
+      });
+      // console.log(result);
+      if (success) {
+        const { data: { success: successFechaMov, data: fechaMovCaja, message } } = await httpClient.post('posventa/getFechaMovCaja', {
+          codGrupoCia,
+          codLocal,
+          numCaja: result
+        });
+
+        const { data: { success: successFechaSistema, data: fechaSistema } } = await httpClient.get('posventa/getFechaHoraDB');
+
+        if (fechaMovCaja.length > 0 && fechaMovCaja.substring(0, 5) !== fechaSistema.substring(0, 5))
+          showModal('Debe CERRAR su caja para empezar un NUEVO DIA.\n La fecha actual no coincide con la Fecha de Apertura de Caja.');
+      }
+    } catch (e) {
+      showModal('Error al obtener la fecha de movimiento de caja');
+    }
+  }
+
+  const showModal = (message) => {
+    modal.info({
+      title: 'Sistema',
+      content: (
+        <>
+          {message}
+        </>
+      ),
+      okText: 'Aceptar',
+      centered: true
+    });
+  }
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -142,185 +179,178 @@ function PosVenta() {
     }),
   };
 
+  useEffect(() => {
+    getFechaMovCaja();
+  }, [])
+
   return (
-    <Card title={
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '300px auto 100px',
-          gridTemplateRows: '1fr',
-          gridColumnGap: '0px',
-          gridRowGap: '0px',
-          overflowX: 'auto'
-        }}
-      >
-        <div style={{ 
-          gridArea: '1 / 1 / 2 / 2', 
-          fontSize: '22px', 
-          marginTop: '15px',
-        }}>
-          Lista de Productos y Precios
-        </div>
+    <>
+      <Card title={
         <div
           style={{
-            gridArea: '1 / 2 / 2 / 3',
-            display: 'flex',
-            flexDirection: 'row-reverse',
+            display: 'grid',
+            gridTemplateColumns: '280px auto 100px',
+            gridTemplateRows: '1fr',
+            gridColumnGap: '0px',
+            gridRowGap: '0px',
+            overflowX: 'auto'
           }}
         >
-          <Form
-            // ref={formSearch}
+          <div style={{
+            gridArea: '1 / 1 / 2 / 2',
+            fontSize: '22px',
+            marginTop: '15px'
+          }}>
+            Generar Pedido
+          </div>
+          <div
             style={{
-              width: '100%',
+              gridArea: '1 / 2 / 2 / 3',
               display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'row',
-              gap: '5px 10px',
-            }}
-          >
-            <Form.Item name="codPaciente" style={{ width: '30%', margin: 0 }}>
-              <AutoComplete
-                // value={valueCOD}
-                // options={optionsCOD}
-                // onSearch={onSearchCOD}
-                // onSelect={onSelectCOD}
-                // onChange={onChangeCOD}
-                style={{ width: '100%' }}
-                placeholder="Nombre de Producto"
-              />
-            </Form.Item>
-            <Form.Item name="ESPECIALIDAD" style={{ width: '30%', margin: 0 }}>
-              <Select
-                // disabled={allEspecialidades || loadingEspecialidades}
-                mode='multiple'
-                // value={valueEspecialidad}
-                // loading={loadingEspecialidades}
-                // onChange={onChangeEspecialidad}
-                // onSelect={onSelectEspecialidad}
-                // style={{ width: '100%' }}
-                placeholder="Especialidades"
-              >
-                <Option value=''>Seleccionar</Option>)
-                {/* {
-                  optionsEspecialidad.map(especialidad =>
-                    <Option key={especialidad.key} value={especialidad.especialidad}>{especialidad.especialidad}</Option>)
-                } */}
-              </Select>
-            </Form.Item>
-          </Form>
-        </div>
-        <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
               flexDirection: 'row-reverse',
             }}
           >
-            <Button
-              // loading={loading}
+            <Form
+              // ref={formSearch}
               style={{
-                backgroundColor: '#04B0AD',
-                color: 'white',
-                marginTop: '10px'
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'row',
+                gap: '10px',
               }}
-              // onClick={() => buscarHistorial()}
-              // disabled={btnBuscar}
             >
-              Datos Pedido
-            </Button>
-            <Button
-              // loading={loading}
-              style={{
-                backgroundColor: '#04B0AD',
-                color: 'white',
-                marginTop: '10px'
-              }}
-              // onClick={() => buscarHistorial()}
-              // disabled={btnBuscar}
-            >
-              <SearchOutlined />
-            </Button>
+              <Form.Item name="codPaciente" style={{ width: '30%', margin: 0 }}>
+                <AutoComplete
+                  // value={valueCOD}
+                  // options={optionsCOD}
+                  // onSearch={onSearchCOD}
+                  // onSelect={onSelectCOD}
+                  // onChange={onChangeCOD}
+                  style={{ width: '100%' }}
+                  placeholder="Nombre de Producto"
+                />
+              </Form.Item>
+            </Form>
           </div>
-      </div>
-    }>
-      <Row justify='space-between' style={{
-        gap: 20
-      }}>
-        <Col
-          span='10'
+          <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexDirection: 'row-reverse',
+              }}
+            >
+              {/* <Button
+                // loading={loading}
+                style={{
+                  backgroundColor: '#04B0AD',
+                  color: 'white',
+                  marginTop: '10px'
+                }}
+                // onClick={() => buscarHistorial()}
+                // disabled={btnBuscar}
+              >
+                <SearchOutlined />
+              </Button> */}
+              <Button
+                // loading={loading}
+                style={{
+                  backgroundColor: '#04B0AD',
+                  color: 'white',
+                  marginTop: '10px'
+                }}
+                // onClick={() => buscarHistorial()}
+                // disabled={btnBuscar}
+              >
+                Datos Atención
+              </Button>
+              <Button
+                // loading={loading}
+                style={{
+                  backgroundColor: '#04B0AD',
+                  color: 'white',
+                  marginTop: '10px'
+                }}
+                onClick={() => setVisibleModal(true)}
+                // disabled={btnBuscar}
+              >
+                Lista
+              </Button>
+            </div>
+        </div>
+      }>
+        <Row
+          justify='start'
           style={{
-            display: 'flex',
             gap: '20px 80px',
-            marginBottom: 20
+            marginLeft: 10,
+            marginBottom: 10
           }}
         >
-          <span>Unidad: {moment().format('DD/MM/yyyy')}</span>
-          <span>Precio: S/. 50.00</span>
-          <span>Stock adic.: </span>
-        </Col>
-        <Col 
-          span='10'
+          <span>Fecha: {moment().format('DD/MM/yyyy')}</span>
+          <span>Tipo Cambio: 3.34</span>
+          <span>Vendedor: {JSON.parse(localStorage.getItem('token'))?.data.login_usu}</span>
+          <span>Ult. Pedido: _____</span>
+        </Row>
+        <Row
           style={{
-            display: 'flex',
-            gap: '20px 100px',
+            marginLeft: 10,
             marginBottom: 20
           }}
         >
-          <span>Items: 0</span>
-          <span>Total Venta: S/. 0.00</span>
-        </Col>
-      </Row>
-      {/* <Divider /> */}
-      <Table
-        rowSelection={{
-          type: 'checkbox',
-          ...rowSelection
-        }}
-        className="gx-table-responsive" 
-        columns={columns}
-        dataSource={data}
-        // footer={() => (
-        //   <Row
-        //     justify='start'
-        //     style={{
-        //       gap: '20px 80px',
-        //       marginLeft: 10,
-        //       // marginBottom: 20,
-        //       fontWeight: 'bold'
-        //     }}
-        //   >
-        //     <span>Red. S/. 0.00</span>
-        //     <span>I.G.V.: 15.25</span>
-        //     <span>TOTAL: S/. 100.00</span>
-        //     <span>US: $ 29.94</span>
-        //   </Row>
-        // )}
-        // loading={tableLoading}
-      />
-      <div style={{
-        marginTop: 20
-      }}>
-        <Button type='primary'>
-          Info Prod.
-        </Button>
-        <Button type='primary'>
-          Cotizar
-        </Button>
-        <Button type='primary'>
-          Ingresar Pedido/Cotizacion
-        </Button>
-        <Button type='primary'>
-          Aceptar
-        </Button>
-        <Button type='default'>
-          Ver Campañas
-        </Button>
-        <Button type='default'>
-          Limpiar Filtro
-        </Button>
-      </div>
-    </Card>
+          Relacion de Productos: 1 items
+        </Row>
+        {/* <Divider /> */}
+        <Table
+          rowSelection={{
+            type: 'radio',
+            ...rowSelection
+          }}
+          className="gx-table-responsive"
+          columns={columns}
+          dataSource={data}
+          footer={() => (
+            <Row
+              justify='start'
+              style={{
+                gap: '20px 80px',
+                marginLeft: 10,
+                // marginBottom: 20,
+                fontWeight: 'bold'
+              }}
+            >
+              <span>Red. S/. 0.00</span>
+              <span>I.G.V.: 15.25</span>
+              <span>TOTAL: S/. 100.00</span>
+              <span>US: $ 29.94</span>
+            </Row>
+          )}
+          // loading={tableLoading}
+        />
+        <div style={{
+          marginTop: 20
+        }}>
+          <Button type='primary'>
+            Grabar
+          </Button>
+          <Button type='primary'>
+            Cambiar Cantidad
+          </Button>
+          <Button type='primary'>
+            Borrar
+          </Button>
+          <Button type='primary'>
+            Cotizar
+          </Button>
+        </div>
+      </Card>
+      <ModalListaProductos
+          visible={visibleModal}
+          setVisible={setVisibleModal}
+        />
+      {contextHolder}
+    </>
   )
 }
 
-export default PosVenta;
+export default GenerarPedido;

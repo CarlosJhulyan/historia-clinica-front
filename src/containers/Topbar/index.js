@@ -96,7 +96,7 @@ const Topbar = () => {
 						<Button onClick={() => onLogoutReports()} style={{ marginTop: 12 }}>
 							Cerrar Sesión Reportes
 						</Button>}
-					{(authUser && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) && 
+					{(authUser && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) &&
 						<Button onClick={() => setModalCerrar(true)} style={{ marginTop: 12 }}>
 							Cerrar Sesión
 						</Button>}
@@ -115,22 +115,34 @@ const Topbar = () => {
 						<>
 							<div>
 								<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-									MÉDICO:{' '}
+                  {!token.data ? (
+                    <>
+                      MÉDICO:{' '}
+                    </>
+                  ) : (
+                    <>
+                      USUARIO:{' '}
+                    </>
+                  )}
 									<span style={{ fontWeight: 'normal' }}>
-										{token.des_nom_medico + ' ' + token.des_ape_medico}
+										{!token.data ? token.des_nom_medico + ' ' + token.des_ape_medico : token.data.login_usu}
 									</span>{' '}
 								</h4>
 							</div>
-							<div>
-								<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-									ESPECIALIDAD: <span style={{ fontWeight: 'normal' }}>{token.des_especialidad}</span>
-								</h4>
-							</div>
-							<div>
-								<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-									CMP: <span style={{ fontWeight: 'normal' }}>{token.num_cmp}</span>
-								</h4>
-							</div>
+              {!token.data && (
+                <>
+                  <div>
+                    <h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
+                      ESPECIALIDAD: <span style={{ fontWeight: 'normal' }}>{token.des_especialidad}</span>
+                    </h4>
+                  </div>
+                  <div>
+                    <h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
+                      CMP: <span style={{ fontWeight: 'normal' }}>{token.num_cmp}</span>
+                    </h4>
+                  </div>
+                </>
+              )}
 						</>
 					)
 					}
