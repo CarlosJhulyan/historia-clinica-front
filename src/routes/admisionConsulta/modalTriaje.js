@@ -1,4 +1,4 @@
-import React, { 
+import React, {
   useEffect,
   useState
 } from 'react';
@@ -14,7 +14,7 @@ import { openNotification } from '../../util/util';
 function ModalTriaje({
   setAbrirModal,
   abrirModal,
-  numAtencionMedica
+  numAtencionMedica, traerListaEspera
 }) {
   const [datosEnviar, setDatosEnviar] = useState({
     NUM_ATENCION: '',
@@ -51,6 +51,7 @@ function ModalTriaje({
       const { data: { success, message } } = await httpClient.post('atencionMedica/setTriaje', datosEnviar);
       if (success) {
         openNotification('Insertar Triaje', message);
+        traerListaEspera();
         setAbrirModal(false);
         setDatosEnviar({
           NUM_ATENCION: '',
@@ -72,7 +73,7 @@ function ModalTriaje({
     }
     setLoading(false);
   }
-  
+
   useEffect(() => {
     setDatosEnviar({
       ...datosEnviar,
@@ -82,7 +83,7 @@ function ModalTriaje({
 
   return (
     <>
-      <Modal 
+      <Modal
         width="600px"
         closable={false}
         centered
@@ -90,7 +91,7 @@ function ModalTriaje({
         footer={[
           <Button
             type='primary'
-            style={{ margin: '0 8px' }} 
+            style={{ margin: '0 8px' }}
             loading={loading}
             onClick={() => insertarTriaje()}>
             Insertar
@@ -99,10 +100,10 @@ function ModalTriaje({
         onCancel={() => setAbrirModal(false)}
         visible={abrirModal}
         onOk={async () => {
-          
+
         }}
       >
-        <div style={{ 
+        <div style={{
           // minHeight: '200px',
           // paddingTop: '40px',
           textAlign: 'center',
@@ -117,9 +118,9 @@ function ModalTriaje({
                 <Input
                   type='number'
                   name="PA1"
-                  value={datosEnviar.PA1} 
-                  onChange={handleChangeInputs} 
-                  min={0} 
+                  value={datosEnviar.PA1}
+                  onChange={handleChangeInputs}
+                  min={0}
                   style={{ width: '95px' }} placeholder="" />
               </Form.Item>
               <span style={{ marginTop: 10, margin: '0 10px', padding: 0, display: 'inline-block' }} className="ant-form-text">/</span>
@@ -129,11 +130,11 @@ function ModalTriaje({
                 noStyle
               >
                 <Input
-                  type='number' 
+                  type='number'
                   name="PA2"
-                  value={datosEnviar.PA2} 
-                  onChange={handleChangeInputs} 
-                  min={0} 
+                  value={datosEnviar.PA2}
+                  onChange={handleChangeInputs}
+                  min={0}
                   style={{ width: '90px' }} placeholder="" />
               </Form.Item>
               <span style={{ marginTop: 10, marginLeft: 10 }} className="ant-form-text">MMHG.</span>
@@ -141,11 +142,11 @@ function ModalTriaje({
             <Form.Item label="F. Resporatoria" style={{ textAlign: 'left' }}>
               <Form.Item noStyle>
                 <Input
-                  type='number' 
-                  name="FR" 
-                  value={datosEnviar.FR} 
-                  onChange={handleChangeInputs} 
-                  min={0} 
+                  type='number'
+                  name="FR"
+                  value={datosEnviar.FR}
+                  onChange={handleChangeInputs}
+                  min={0}
                   style={{ width: '95px' }} />
               </Form.Item>
               <span style={{ marginLeft: 10 }} className="ant-form-text"> X'.</span>
@@ -153,11 +154,11 @@ function ModalTriaje({
             <Form.Item label="F. Cardiaca" style={{ textAlign: 'left' }}>
               <Form.Item noStyle>
                 <Input
-                  type='number' 
+                  type='number'
                   name="FC"
-                  value={datosEnviar.FC} 
-                  onChange={handleChangeInputs} 
-                  min={0} 
+                  value={datosEnviar.FC}
+                  onChange={handleChangeInputs}
+                  min={0}
                   style={{ width: '95px' }} />
               </Form.Item>
               <span style={{ marginLeft: 10 }} className="ant-form-text"> X'.</span>
@@ -165,11 +166,11 @@ function ModalTriaje({
             <Form.Item label="Temperatura" style={{ textAlign: 'left' }}>
               <Form.Item noStyle>
                 <Input
-                  type='number' 
+                  type='number'
                   name="TEMP"
-                  value={datosEnviar.TEMP} 
-                  onChange={handleChangeInputs} 
-                  min={0} 
+                  value={datosEnviar.TEMP}
+                  onChange={handleChangeInputs}
+                  min={0}
                   style={{ width: '95px' }} />
               </Form.Item>
               <span style={{ marginLeft: 10 }} className="ant-form-text"> °C.</span>
@@ -177,11 +178,11 @@ function ModalTriaje({
             <Form.Item label="Peso" style={{ textAlign: 'left' }}>
               <Form.Item noStyle>
                 <Input
-                  type='number' 
+                  type='number'
                   name="PESO"
-                  value={datosEnviar.PESO} 
-                  onChange={handleChangeInputs} 
-                  min={0} 
+                  value={datosEnviar.PESO}
+                  onChange={handleChangeInputs}
+                  min={0}
                   style={{ width: '95px' }} />
               </Form.Item>
               <span style={{ marginLeft: 10 }} className="ant-form-text"> Kg.</span>
@@ -189,11 +190,11 @@ function ModalTriaje({
             <Form.Item label="Talla" style={{ textAlign: 'left' }}>
               <Form.Item noStyle>
                 <Input
-                  type='number' 
+                  type='number'
                   name="TALLA"
-                  value={datosEnviar.TALLA} 
-                  onChange={handleChangeInputs} 
-                  min={0} 
+                  value={datosEnviar.TALLA}
+                  onChange={handleChangeInputs}
+                  min={0}
                   style={{ width: '95px' }} />
               </Form.Item>
               <span style={{ marginLeft: 10 }} className="ant-form-text"> cms.</span>
@@ -201,11 +202,11 @@ function ModalTriaje({
             <Form.Item label="Saturación O2" style={{ textAlign: 'left' }}>
               <Form.Item noStyle>
                 <Input
-                  type='number' 
+                  type='number'
                   name="SATURACION"
-                  value={datosEnviar.SATURACION} 
-                  onChange={handleChangeInputs} 
-                  min={0} 
+                  value={datosEnviar.SATURACION}
+                  onChange={handleChangeInputs}
+                  min={0}
                   style={{ width: '95px' }} />
               </Form.Item>
               <span style={{ marginLeft: 10 }} className="ant-form-text"> %</span>

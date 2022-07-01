@@ -109,7 +109,10 @@ export const useProvideAuth = () => {
                 ...dataLogin,
                 data: data.data
               }));
-              getAuthUser(data.data);
+              getAuthUser({
+                ...dataLogin,
+                data: data.data
+              });
               if (callbackFun) callbackFun();
             })
             .catch(function (error) {});

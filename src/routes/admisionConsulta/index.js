@@ -2,7 +2,7 @@ import React, {
   useEffect,
   useState
 } from 'react';
-import { 
+import {
   Card,
   Button,
   Table,
@@ -19,7 +19,7 @@ import ModalBusquedaPedido from './modalBusquedaPedido';
 import ModalBusquedaComprobante from './modalBusquedaComprobante';
 import ModalBusquedaOrden from './modalBusquedaOrden';
 
-function AdmisionConsulta() {  
+function AdmisionConsulta() {
   const [abrirModalManual, setAbrirModalManual] = useState(false);
   const [abrirModalOrden, setAbrirModalOrden] = useState(false);
   const [abrirModalPedido, setAbrirModalPedido] = useState(false);
@@ -31,7 +31,7 @@ function AdmisionConsulta() {
   const [dataComprobantesPago, setDataComprobantesPago] = useState([]);
   const [dataEspecialidades, setDataEspecialidades] = useState([]);
   const [dataConsultorios, setDataConsultorios] = useState(['1']);
-  
+
   const [pedidoFound, setPedidoFound] = useState(false);
   // const [consultaConfirmada, setConsultaConfirmada] = useState(true);
 
@@ -296,7 +296,7 @@ function AdmisionConsulta() {
                     onClick={() => setAbrirModalConsulta(true)}
                     type='default'>
                       Confirmar recepción
-                  </Button> 
+                  </Button>
                   // :
                   // <Popconfirm
                   // placement="bottomRight"
@@ -320,12 +320,12 @@ function AdmisionConsulta() {
           </div>
         }
       >
-        
+
       </Card>
       <Table
         className="gx-table-responsive"
         style={{ marginBottom: 30 }}
-        title={() => <span>Cabecera Pedido</span>} 
+        title={() => <span>Cabecera Pedido</span>}
         size='small'
         dataSource={dataCabecera}
         pagination={false}
@@ -334,9 +334,9 @@ function AdmisionConsulta() {
         className="gx-table-responsive"
         pagination={false}
         dataSource={dataDetalles}
-        title={() => <span>Detalles Pedido</span>} 
-        size='small' 
-        columns={detallesColumn} 
+        title={() => <span>Detalles Pedido</span>}
+        size='small'
+        columns={detallesColumn}
       />
 
       <ModalBusquedaOrden
@@ -385,15 +385,6 @@ function AdmisionConsulta() {
         setDataCabecera={setDataCabecera}
         setDataDetalles={setDataDetalles}
         setPedidoFound={setPedidoFound}
-      />
-
-      <ModalListaEspera
-        traerConsultorios={traerConsultorios}
-        dataConsultorios={dataConsultorios}
-        dataEspecialidades={dataEspecialidades}
-        loadingDataConsultorio={loadingDataConsultorio}
-        setVisible={setAbrirModalListaEspera}
-        visible={abrirModalListaEspera}
       />
     </div>
   )

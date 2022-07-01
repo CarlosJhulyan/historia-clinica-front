@@ -1,8 +1,9 @@
 import React, {
-  useEffect,
+  createRef,
+  useEffect, useMemo,
   useState
 } from 'react';
-import { 
+import {
   Card,
   Form,
   Input,
@@ -22,11 +23,26 @@ import { DateRangePicker } from 'react-date-range';
 import { es } from 'react-date-range/dist/locale';
 import 'react-date-range/dist/styles.css';
 import './styles.css';
+import { httpClient } from '../../util/Api';
+import axios from 'axios';
+import ModalTriajeDetalles from './modalTriajeDetalles';
+import { openNotification } from '../../util/util';
 
 function HistoricoPreTriaje() {
+  const [peticion, setPeticion] = useState(false);
+  const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
   const [visibleModalDate, setVisibleModalDate] = useState(false);
   const [state, setState] = useState();
-
+  const [data, setData] = useState([]);
+  const [valuePaciente, setValuePaciente] = useState('');
+  const [optionsPaciente, setOptionsPaciente] = useState([]);
+  const [valueMedico, setValueMedico] = useState('');
+  const [optionsMedico, setOptionsMedico] = useState([]);
+  const formSearch = useMemo(() => createRef(), []);
+  const [btnBuscar, setBtnBuscar] = useState(false);
+  const [loadingData, setLoadingData] = useState(false);
+  const [visibleModalTriaje, setVisibleModalTriaje] = useState(false);
+  const [filaActual, setFilaActual] = useState({});
   const [stateDate, setStateDate] = useState([
     {
       startDate: new Date(),
@@ -34,6 +50,37 @@ function HistoricoPreTriaje() {
       key: 'selection'
     }
   ]);
+
+  const searchPreTriaje = async () => {
+    setBtnBuscar(true);
+    setLoadingData(true);
+    try {
+      const { data: { data = [], success, message } } = await httpClient.post('preTriaje/searchPreTriaje', {
+        FECHA_INICIO: moment(stateDate[0].startDate).format('yyyy-MM-DD'),
+        FECHA_FIN: moment(stateDate[0].endDate).format('yyyy-MM-DD'),
+        NUM_CMP: valueMedico,
+        COD_PACIENTE: valuePaciente,
+      });
+
+      if (success) {
+        if (data.length === 0) openNotification('Pre triaje', 'No se encontro registros', 'Warning');
+        else openNotification('Pre triaje', message);
+        setData(data.map((item, index) => {
+          return {
+            ...item,
+            key: index
+          }
+        }));
+      } else {
+        openNotification('Pre triaje', message, 'Warning')
+        setData([]);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setBtnBuscar(false);
+    setLoadingData(false);
+  }
 
   const getColumnSearchProps = dataIndex => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -122,11 +169,107 @@ function HistoricoPreTriaje() {
       key: 'action',
       render: (record) => (
         <span>
-          <Button onClick={() => {}}>Detalles</Button>
+          <Button onClick={() => {
+            setFilaActual(record);
+            setVisibleModalTriaje(true);
+          }}>Detalles</Button>
         </span>
       ),
     },
   ];
+
+  const onSearchPaciente = async () => {
+    var nombre = formSearch.current.getFieldValue('nomPaciente');
+    if (nombre ? nombre.length >= 4 : false) {
+      setPeticion(true);
+      setOptionsPaciente();
+      const respuesta = await httpClient.post(
+        'preTriaje/searchPacientes',
+        {
+          NOM_PACIENTE: nombre
+        },
+        { cancelToken: cancelSource.token }
+      );
+      const array1 = respuesta.data.data;
+
+      const arrayFormat = array1.reduce((previus, current) => {
+        const exist = previus.every(item => item.key !== current.key);
+        const newData = exist ? Array.prototype.concat(previus, {
+          ...current,
+          label: (
+            <div>
+              <div style={{ color: '#a3a3a3' }}>{current.paciente}</div>
+            </div>
+          )
+        }) : previus;
+        return newData;
+      }, [])
+
+      setOptionsPaciente(arrayFormat);
+    } else {
+      if (peticion) {
+        cancelSource.cancel('COD Cancelado');
+        setCancelSource(axios.CancelToken.source());
+      }
+    }
+  };
+
+  const onSearchMedico = async () => {
+    const nombre = formSearch.current.getFieldValue('nomMedico');
+    if (nombre ? nombre.length >= 4 : false) {
+      setPeticion(true);
+      setOptionsMedico();
+      const { data: { data = [] } } = await httpClient.post(
+        'preTriaje/searchMedicos',
+        {
+          NOM_MEDICO: nombre,
+        },
+        { cancelToken: cancelSource.token }
+      );
+
+      const arrayFormat = data.reduce((previus, current) => {
+        const exist = previus.every(item => item.key !== current.key);
+        const newData = exist ? Array.prototype.concat(previus, {
+          ...current,
+          label: (
+            <div>
+              <div style={{ color: '#a3a3a3' }}>{current.medico}</div>
+            </div>
+          )
+        }) : previus;
+        return newData;
+      }, [])
+
+      setOptionsMedico(arrayFormat);
+    } else {
+      if (peticion) {
+        cancelSource.cancel('NOM ancelado');
+        setCancelSource(axios.CancelToken.source());
+      }
+    }
+  };
+
+  const onSelectMedico = data => {
+    setValueMedico(data);
+  };
+
+  const onChangePaciente = data => {
+    if (data.length <= 3) {
+      setOptionsPaciente([]);
+      setValuePaciente('');
+    }
+  };
+
+  const onChangeMedico = data => {
+    if (data.length <= 3) {
+      setOptionsMedico([]);
+      setValueMedico('');
+    }
+  };
+
+  const onSelectPaciente = data => {
+    setValuePaciente(data);
+  };
 
   useEffect(() => {
     const labels = document.querySelectorAll('.rdrStaticRangeLabel');
@@ -170,7 +313,7 @@ function HistoricoPreTriaje() {
               }}
             >
               <Form
-                // ref={formSearch}
+                ref={formSearch}
                 style={{
                   width: '100%',
                   display: 'flex',
@@ -179,42 +322,41 @@ function HistoricoPreTriaje() {
                   gap: '10px',
                 }}
               >
-                <Form.Item name="codPaciente" style={{ width: '30%', margin: 0 }}>
+                <Form.Item name="nomPaciente" style={{ width: '30%', margin: 0 }}>
                   <AutoComplete
-                    // value={valueCOD}
-                    // options={optionsCOD}
-                    // onSearch={onSearchCOD}
-                    // onSelect={onSelectCOD}
-                    // onChange={onChangeCOD}
+                    value={valuePaciente}
+                    options={optionsPaciente}
+                    onSearch={onSearchPaciente}
+                    onSelect={onSelectPaciente}
+                    onChange={onChangePaciente}
                     style={{ width: '100%' }}
                     placeholder="Nombre de Paciente"
                   />
                 </Form.Item>
-                <Form.Item name="nombrePaciente" style={{ width: '30%', margin: 0 }}>
+                <Form.Item name="nomMedico" style={{ width: '30%', margin: 0 }}>
                   <AutoComplete
-                    // value={valueNOM}
-                    // options={optionsNOM}
-                    // onSearch={onSearchNOM}
-                    // onSelect={onSelectNOM}
-                    // onChange={onChangeNOM}
+                    value={valueMedico}
+                    options={optionsMedico}
+                    onSearch={onSearchMedico}
+                    onSelect={onSelectMedico}
+                    onChange={onChangeMedico}
                     style={{ width: '100%' }}
                     placeholder="Nombre del médico"
                   />
                 </Form.Item>
                 <Form.Item name="rangoFechas" style={{ width: '20%', margin: 0 }}>
                   <Button
-                    // loading={loading}
                     style={{
                       backgroundColor: '#04B0AD',
                       color: 'white',
                       marginTop: '12px'
                     }}
                     onClick={() => setVisibleModalDate(true)}
-                    // disabled={btnBuscar}
+                    disabled={btnBuscar}
                   >
                     Filtrar por fecha
-                  </Button>    
-                </Form.Item> 
+                  </Button>
+                </Form.Item>
               </Form>
             </div>
             <div
@@ -226,25 +368,25 @@ function HistoricoPreTriaje() {
                 }}
               >
                 <Button
-                  // loading={loading}
+                  loading={btnBuscar}
                   style={{
                     backgroundColor: '#04B0AD',
                     color: 'white',
                     marginTop: '10px'
                   }}
-                  // onClick={() => buscarHistorial()}
+                  onClick={searchPreTriaje}
                   // disabled={btnBuscar}
                 >
                   <SearchOutlined />
-                </Button>              
+                </Button>
               </div>
           </div>
         }>
-          <Table 
-            className="gx-table-responsive" 
+          <Table
+            className="gx-table-responsive"
             columns={columns}
-            // dataSource={data} 
-            // loading={tableLoading} 
+            dataSource={data}
+            loading={loadingData}
           />
       </Card>
       <Modal
@@ -252,6 +394,7 @@ function HistoricoPreTriaje() {
         centered
         closable={false}
         onCancel={() => setVisibleModalDate(false)}
+        onOk={() => setVisibleModalDate(false)}
         visible={visibleModalDate}>
           <DateRangePicker
             onChange={item => setStateDate([item.selection])}
@@ -263,6 +406,13 @@ function HistoricoPreTriaje() {
             locale={es}
           />
       </Modal>
+      {visibleModalTriaje && (
+        <ModalTriajeDetalles
+          visible={visibleModalTriaje}
+          setVisible={setVisibleModalTriaje}
+          filaActual={filaActual}
+        />
+      )}
     </>
   )
 }

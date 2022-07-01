@@ -109,7 +109,7 @@ export const SignInScreen = (
           </div>
         </TabPane>
 
-        <TabPane tab='Administrador' key='2'>
+        <TabPane tab='Personal' key='2'>
           <div className="gx-app-login-main-content">
             <div className="gx-app-logo-content">
               <div className="gx-app-logo-wid">
@@ -118,7 +118,7 @@ export const SignInScreen = (
             </div>
             <div className="gx-app-login-content">
               <div style={{ width: '100%', textAlign: 'center' }}>
-                <h1 style={{ color: '#57494E' }}>Usuario</h1>
+                <h1 style={{ color: '#57494E' }}>Bienvenido</h1>
               </div>
               <div>
                 <Form

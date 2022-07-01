@@ -2,7 +2,7 @@ import React, { useState, createRef, useEffect } from 'react';
 import { Col, Modal, Row, Form, AutoComplete, Button } from 'antd';
 import { DeleteOutlined } from "@ant-design/icons";
 import { httpClient } from '../../../util/Api';
-import { urlImagen } from "../../../config/backend";
+import { baseUrlImage } from '../../../config/backend';
 import { notificaciones } from '../../../util/util';
 import axios from 'axios';
 
@@ -80,7 +80,6 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, filaActual, traerData }) => {
         { cancelToken: cancelSource.token }
       );
       var array2 = respuesta.data.data;
-      console.log(respuesta.data.data);
       for (let i = 0; i < array2.length; i++) {
         array2[i].key = array2[i].cod_medico;
         array2[i].value = array2[i].cod_medico;
@@ -157,10 +156,9 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, filaActual, traerData }) => {
   const hiddenFileInput = React.useRef(null);
 
   useEffect(() => {
-    console.log(filaActual);
     if (filaActual != null) {
       if (filaActual.url_firma != null) {
-        setImagenURL(urlImagen + filaActual.url_firma);
+        setImagenURL(`${baseUrlImage}/${filaActual.url_firma}`);
         formRef.current.setFieldsValue({
           num_cmp: filaActual.cod_med
         })
@@ -196,16 +194,15 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, filaActual, traerData }) => {
         const img = imagen;
         if (nombre ? nombre.length > 0 : false && img ? img.length > 0 : false) {
           validator = true;
-          console.log('create');
         }
         if (validator) {
           setLoading(true);
           const respuesta = await registrarFirma();
           if (respuesta.success) {
-            await traerData();
             setLoading(false);
             setAbrirModal(false);
             notificaciones('Completado!');
+            await traerData();
           } else {
             notificaciones(respuesta.message, 'Alerta');
             setLoading(false);

@@ -1,14 +1,14 @@
-import React, { 
-	useCallback, 
-	useEffect, 
-	useMemo, 
-	useState 
+import React, {
+	useCallback,
+	useEffect,
+	useMemo,
+	useState
 } from 'react';
-import { 
-	Button, 
-	Card, 
+import {
+	Button,
+	Card,
 	Table,
-	Input, 
+	Input,
 	Space,
 } from 'antd';
 import ModalDetalles from './modalDetalles';
@@ -20,7 +20,7 @@ import { datosEnviar, funn } from '../../constants/datosEnviar';
 import { useAuth } from '../../authentication';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
-import ModalListaEspera from '../admisionConsulta/modalListaEspera';
+// import ModalListaEspera from '../admisionConsulta/modalListaEspera';
 
 const ListaPaciente = () => {
 	const [abrirModal, setAbrirModal] = useState(false);
@@ -71,7 +71,7 @@ const ListaPaciente = () => {
 
 	useEffect(() => {
 		traerDatos();
-	
+
 		const fechaActual = moment().format('YYYY-MM-DD');
 		datosEnviar.evolucionTratamiento['FECHA'] = fechaActual;
 
@@ -247,19 +247,19 @@ const ListaPaciente = () => {
 								>
 									Actualizar
 								</Button>
-								<Button
-									onClick={() => setAbrirModalListaEspera(true)}
-									type='default'>
-										Lista de espera
-								</Button>
+								{/*<Button*/}
+								{/*	onClick={() => setAbrirModalListaEspera(true)}*/}
+								{/*	type='default'>*/}
+								{/*		Lista de espera*/}
+								{/*</Button>*/}
 							</div>
 						</div>
 					}
 				>
-					<Table 
-						className="gx-table-responsive" 
-						columns={columns} 
-						dataSource={data} 
+					<Table
+						className="gx-table-responsive"
+						columns={columns}
+						dataSource={data}
 						loading={dataLoading} />
 				</Card>
 			) : (
@@ -277,13 +277,13 @@ const ListaPaciente = () => {
 
 			<ToastContainer pauseOnHover={false} />
 
-			<ModalListaEspera
-        traerConsultorios={traerConsultorios}
-        dataConsultorios={dataConsultorios}
-        dataEspecialidades={dataEspecialidades}
-        loadingDataConsultorio={loadingDataConsultorio}
-        setVisible={setAbrirModalListaEspera}
-        visible={abrirModalListaEspera}/>
+			{/*<ModalListaEspera*/}
+      {/*  traerConsultorios={traerConsultorios}*/}
+      {/*  dataConsultorios={dataConsultorios}*/}
+      {/*  dataEspecialidades={dataEspecialidades}*/}
+      {/*  loadingDataConsultorio={loadingDataConsultorio}*/}
+      {/*  setVisible={setAbrirModalListaEspera}*/}
+      {/*  visible={abrirModalListaEspera}/>*/}
 		</>
 	);
 };

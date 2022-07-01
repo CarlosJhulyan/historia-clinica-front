@@ -2,7 +2,7 @@ import React, {
   useState,
   useCallback
 } from 'react';
-import { 
+import {
   Card,
   Form,
   Input,
@@ -22,6 +22,7 @@ import moment from 'moment';
 
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
+import datosDelProfesional from '../historiaOdontologica/DatosDelProfesional';
 
 function TomaPreTriaje() {
   const date = moment().locale('es');
@@ -157,14 +158,13 @@ function TomaPreTriaje() {
   }
 
   const fetchData = async () => {
-    const date = `${dateTime.date.format('yyyy-MM-DD')} ${dateTime.hours}:${dateTime.minutes}:${dateTime.seconds}`;
-    setDatosEnviar({
-      ...datosEnviar,
-      FECHA_TOMA: date
-    });
     setLoadingFetch(true);
+    const dataSend = {
+      ...datosEnviar,
+      FECHA_TOMA: `${dateTime.date.format('yyyy-MM-DD')} ${dateTime.hours}:${dateTime.minutes}:${dateTime.seconds}`
+    }
     try {
-      const { data: { message, success } } = await httpClient.post('preTriaje/setPreTriaje', datosEnviar);
+      const { data: { message, success } } = await httpClient.post('preTriaje/setPreTriaje', dataSend);
       if (success) {
         openNotification('Pre triaje', message);
         setDatosEnviar({
@@ -382,11 +382,11 @@ function TomaPreTriaje() {
               noStyle
             >
               <Input
-                type='number' 
+                type='number'
                 name="PA2"
                 value={datosEnviar.PA2}
-                onChange={handleChangeInputs} 
-                min={0} 
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '90px' }} placeholder="" />
             </Form.Item>
             <span style={{ marginTop: 10, marginLeft: '10px', padding: 0 }} className="ant-form-text">MMHG.</span>
@@ -394,11 +394,11 @@ function TomaPreTriaje() {
           <Form.Item label="F. Resporatoria" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
-                name="FR" 
-                value={datosEnviar.FR} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                type='number'
+                name="FR"
+                value={datosEnviar.FR}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> X'.</span>
@@ -406,11 +406,11 @@ function TomaPreTriaje() {
           <Form.Item label="F. Cardiaca" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="FC"
-                value={datosEnviar.FC} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.FC}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> X'.</span>
@@ -418,11 +418,11 @@ function TomaPreTriaje() {
           <Form.Item label="Temperatura" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="TEMP"
-                value={datosEnviar.TEMP} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.TEMP}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> °C.</span>
@@ -430,11 +430,11 @@ function TomaPreTriaje() {
           <Form.Item label="Peso" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="PESO"
-                value={datosEnviar.PESO} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.PESO}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> Kg.</span>
@@ -442,11 +442,11 @@ function TomaPreTriaje() {
           <Form.Item label="Talla" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="TALLA"
-                value={datosEnviar.TALLA} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.TALLA}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> cms.</span>
@@ -454,11 +454,11 @@ function TomaPreTriaje() {
           <Form.Item label="Saturación O2" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="SATURACION"
-                value={datosEnviar.SATURACION} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.SATURACION}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> %</span>

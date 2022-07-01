@@ -33,6 +33,8 @@ import { useAuth } from '../authentication';
 import { tablasPrincipales } from "../constants/TablasPrincipales";
 import { httpClientReports } from '../util/Api';
 import GenerarPedido from './posVenta';
+import MovimientosCaja from './posVenta/movimientosCaja';
+import ListaEspera from './admisionConsulta/listaEspera';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -62,6 +64,7 @@ const App = ({ match }) => {
 		if (token && token.modulos?.length > 0) {
 			if (token.modulos.includes('1')) {
 				items.push(<Route key={1} path={`${match.url}listaPaciente`} component={listaPaciente} />);
+        items.push(<Route key={1} path={`${match.url}listaEspera`} component={ListaEspera} />);
 			}
 			if (token.modulos.includes('2')) {
 				items.push(<Route key={2} path={`${match.url}seguimientoConsulta`} component={SeguimientoConsulta} />);
@@ -158,6 +161,7 @@ const App = ({ match }) => {
 
     if (token?.data) {
       items.push(<Route key={30} path={`${match.url}generarPedido`} component={GenerarPedido} />);
+      items.push(<Route key={31} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />);
     }
 
 		return items;

@@ -15,129 +15,101 @@ import {
   Modal,
 } from 'antd';
 import moment from 'moment';
-import { SearchOutlined } from '@ant-design/icons';
-import ModalListaProductos from './modalListaProductos';
+import ModalListaProductos from './modals/modalListaProductos';
 import { httpClient } from '../../util/Api';
 
 function GenerarPedido() {
   const [modal, contextHolder] = Modal.useModal();
-  const [state, setState] = useState();
   const [visibleModal, setVisibleModal] = useState(false);
+  const [disabledAll, setDisabledAll] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);
   const token = JSON.parse(localStorage.getItem('token'));
-  const [data, setData] = useState([{
-    codigo: '00000001',
-    descripcion: '06 Sesion de masaje relajante x 30 minutos',
-    unidad: 'UND',
-    precio: '100.00',
-    cantidad: '1',
-    descuento: '',
-    precio_venta: '100.00',
-    total: '100.00'
-  }])
+  const [data, setData] = useState([]);
 
-  const getColumnSearchProps = dataIndex => ({
-    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          placeholder={`Buscar ${dataIndex}`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
-          style={{ marginBottom: 8, display: 'block' }}
-        />
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
-            size="small"
-            style={{ width: 90 }}
-          >
-            Buscar
-          </Button>
-          <Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-            Reiniciar
-          </Button>
-        </Space>
-      </div>
-    ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-    onFilter: (value, record) =>
-      record[dataIndex]
-        ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
-        : '',
+  const [dataDetallesFinally, setDataDetallesFinally] = useState({
+    total: 0,
+    totalDolar: 0,
+    items: 0,
+    tipoCambio: 3.34
   });
-
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    setState({
-      searchText: selectedKeys[0],
-      searchedColumn: dataIndex,
-    });
-  };
-
-  const handleReset = clearFilters => {
-    clearFilters();
-    setState({ searchText: '' });
-  };
 
   const columns = [
     {
       title: 'Código',
-      dataIndex: 'codigo',
-      key: 'codigo',
-      ...getColumnSearchProps('codigo'),
+      dataIndex: 'CODIGO',
+      key: 'CODIGO'
     },
     {
       title: 'Descripción',
-      dataIndex: 'descripcion',
-      key: 'descripcion',
+      dataIndex: 'DESCRIPCION',
+      key: 'DESCRIPCION',
       width: '350px'
     },
     {
       title: 'Unidad',
-      dataIndex: 'unidad',
-      key: 'unidad'
+      dataIndex: 'UNIDAD',
+      key: 'UNIDAD'
 
     },
     {
       title: 'Precio',
-      dataIndex: 'precio',
-      key: 'precio',
+      dataIndex: 'PRECIO',
+      key: 'PRECIO',
+      align: 'right',
     },
     {
       title: 'Cantidad',
       dataIndex: 'cantidad',
       key: 'cantidad',
+      align: 'right',
     },
     {
       title: '%Dscto',
       dataIndex: 'descuento',
       key: 'descuento',
+      align: 'right',
     },
     {
       title: 'Precio Venta',
-      dataIndex: 'precio_venta',
-      key: 'precio_venta',
+      dataIndex: 'pu',
+      key: 'pu',
+      align: 'right',
     },
     {
       title: 'Total',
       dataIndex: 'total',
       key: 'total',
+      align: 'right',
     },
   ];
+
+  const chargeDetailsModalProducto = (productos, detalles) => {
+    const dataFinally = productos.map(product => {
+      return {
+        ...product,
+        ...detalles.find(detail => detail.key === product.key),
+      }
+    });
+    setData(dataFinally);
+    const total = dataFinally.reduce((previus, current) => current.total + previus, 0);
+    setDataDetallesFinally({
+      tipoCambio: 3.34,
+      items: dataFinally.length,
+      total,
+      totalDolar: total / 3.34
+    });
+  }
 
   const getFechaMovCaja = async () => {
     const codGrupoCia = '001';
     const codLocal = '001';
-
+    setLoadingData(true);
     try {
       const { data: { success, data: result } } = await httpClient.post('posventa/getCajaDispoUsuario', {
         codGrupoCia,
         codLocal,
         secUsu: token.data.sec_usu_local
       });
-      // console.log(result);
       if (success) {
         const { data: { success: successFechaMov, data: fechaMovCaja, message } } = await httpClient.post('posventa/getFechaMovCaja', {
           codGrupoCia,
@@ -147,8 +119,15 @@ function GenerarPedido() {
 
         const { data: { success: successFechaSistema, data: fechaSistema } } = await httpClient.get('posventa/getFechaHoraDB');
 
-        if (fechaMovCaja.length > 0 && fechaMovCaja.substring(0, 5) !== fechaSistema.substring(0, 5))
+        if (fechaMovCaja.length > 0 && fechaMovCaja.substring(0, 5) !== fechaSistema.substring(0, 5)) {
           showModal('Debe CERRAR su caja para empezar un NUEVO DIA.\n La fecha actual no coincide con la Fecha de Apertura de Caja.');
+          setDisabledAll(true);
+        }
+        else {
+          setDisabledAll(false);
+          setVisibleModal(true);
+        }
+        setLoadingData(false);
       }
     } catch (e) {
       showModal('Error al obtener la fecha de movimiento de caja');
@@ -222,6 +201,7 @@ function GenerarPedido() {
             >
               <Form.Item name="codPaciente" style={{ width: '30%', margin: 0 }}>
                 <AutoComplete
+                  disabled={disabledAll}
                   // value={valueCOD}
                   // options={optionsCOD}
                   // onSearch={onSearchCOD}
@@ -255,24 +235,24 @@ function GenerarPedido() {
               <Button
                 // loading={loading}
                 style={{
-                  backgroundColor: '#04B0AD',
+                  backgroundColor: '#0169aa',
                   color: 'white',
                   marginTop: '10px'
                 }}
                 // onClick={() => buscarHistorial()}
-                // disabled={btnBuscar}
+                disabled={disabledAll}
               >
                 Datos Atención
               </Button>
               <Button
-                // loading={loading}
                 style={{
-                  backgroundColor: '#04B0AD',
+                  backgroundColor: '#0169aa',
                   color: 'white',
                   marginTop: '10px'
                 }}
                 onClick={() => setVisibleModal(true)}
-                // disabled={btnBuscar}
+                disabled={disabledAll}
+                loading={loadingData}
               >
                 Lista
               </Button>
@@ -288,7 +268,7 @@ function GenerarPedido() {
           }}
         >
           <span>Fecha: {moment().format('DD/MM/yyyy')}</span>
-          <span>Tipo Cambio: 3.34</span>
+          <span>Tipo Cambio: {dataDetallesFinally.tipoCambio}</span>
           <span>Vendedor: {JSON.parse(localStorage.getItem('token'))?.data.login_usu}</span>
           <span>Ult. Pedido: _____</span>
         </Row>
@@ -298,7 +278,7 @@ function GenerarPedido() {
             marginBottom: 20
           }}
         >
-          Relacion de Productos: 1 items
+          Relacion de Productos: {dataDetallesFinally.items} items
         </Row>
         {/* <Divider /> */}
         <Table
@@ -306,6 +286,7 @@ function GenerarPedido() {
             type: 'radio',
             ...rowSelection
           }}
+          loading={loadingData}
           className="gx-table-responsive"
           columns={columns}
           dataSource={data}
@@ -321,8 +302,8 @@ function GenerarPedido() {
             >
               <span>Red. S/. 0.00</span>
               <span>I.G.V.: 15.25</span>
-              <span>TOTAL: S/. 100.00</span>
-              <span>US: $ 29.94</span>
+              <span>TOTAL: S/. {dataDetallesFinally.total}</span>
+              <span>US: $ {dataDetallesFinally.totalDolar}</span>
             </Row>
           )}
           // loading={tableLoading}
@@ -330,24 +311,49 @@ function GenerarPedido() {
         <div style={{
           marginTop: 20
         }}>
-          <Button type='primary'>
+          <Button
+            disabled={disabledAll}
+            style={{
+              backgroundColor: '#0169aa',
+              color: '#fff'
+            }}
+          >
             Grabar
           </Button>
-          <Button type='primary'>
+          <Button
+            disabled={disabledAll}
+            style={{
+              backgroundColor: '#0169aa',
+              color: '#fff'
+            }}
+          >
             Cambiar Cantidad
           </Button>
-          <Button type='primary'>
+          <Button
+            disabled={disabledAll}
+            style={{
+              backgroundColor: '#0169aa',
+              color: '#fff'
+            }}
+          >
             Borrar
           </Button>
-          <Button type='primary'>
+          <Button
+            disabled={disabledAll}
+            style={{
+              backgroundColor: '#0169aa',
+              color: '#fff'
+            }}
+          >
             Cotizar
           </Button>
         </div>
       </Card>
       <ModalListaProductos
-          visible={visibleModal}
-          setVisible={setVisibleModal}
-        />
+        visible={visibleModal}
+        setVisible={setVisibleModal}
+        chargeDetailsModalProducto={chargeDetailsModalProducto}
+      />
       {contextHolder}
     </>
   )

@@ -64,12 +64,12 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
               <span>Generar Pedido</span>
             </Link>
           </Menu.Item>
-          {/* <Menu.Item key="posVentas">
-						<Link to="/posVentas">
+          <Menu.Item key="movimientosCaja">
+						<Link to="/movimientosCaja">
 							<i className="icon icon-icon" />
-							<span>Lista de productos y precios</span>
+							<span>Movimientos de Caja</span>
 						</Link>
-					</Menu.Item> */}
+					</Menu.Item>
         </SubMenu>
       );
     }
@@ -167,12 +167,30 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 
 			if (token.modulos.includes('1')) {
 				menuItems.push(
-					<Menu.Item key="listaPaciente">
-						<Link to="/listaPaciente">
-							<i className="icon icon-auth-screen" />
-							<span>Lista de Pacientes</span>
-						</Link>
-					</Menu.Item>
+          <SubMenu
+            key="pacientes"
+            popupClassName={getNavStyleSubMenuClass(navStyle)}
+            title={
+              <span>
+								{' '}
+                <i className="icon icon-auth-screen" />
+								<span>Pacientes</span>
+							</span>
+            }
+          >
+            <Menu.Item key="listaPaciente">
+              <Link to="/listaPaciente">
+                <i className="icon icon-auth-screen" />
+                <span>Lista de Pacientes</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="listaEspera">
+              <Link to="/listaEspera">
+                <i className="icon icon-auth-screen" />
+                <span>Lista de Espera</span>
+              </Link>
+            </Menu.Item>
+          </SubMenu>
 				);
 			}
 
