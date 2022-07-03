@@ -206,6 +206,7 @@ function ModalMantenimientoMedico({
 		) {
 			console.log({ cmp, apellidoP, apellidoM, referencia, nombre });
 			console.log('error');
+			notificaciones('Debe completar todos los campos', 'Alerta');
 		} else {
 			const funGuardar = async () => {
 				await httpClient.post('/posventa/grabarMedico', {

@@ -261,7 +261,7 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent }) => {
         footer={[
           <Button onClick={() => mostrarModal()}>Nuevo Paciente</Button>,
           <Button disabled={!codEditarPaciente} onClick={() => mostrarModalEditar()}>Modificar Paciente</Button>,
-          <Button disabled={!codEditarPaciente} onClick={() => setAbrirModalTriaje(true)}>Editar Pre Triaje</Button>,
+          // <Button disabled={!codEditarPaciente} onClick={() => setAbrirModalTriaje(true)}>Editar Pre Triaje</Button>,
           <Button loading={loadingDataSelect} disabled={!codEditarPaciente} onClick={() => traerDatosPaciente()}>Seleccionar Paciente</Button>,
           <Button onClick={() => setVisible(false)}>Cerrar</Button>
         ]}
