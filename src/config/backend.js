@@ -15,7 +15,7 @@ export const baseUrl = 'http://127.0.0.1:8000/api';
 export const baseUrlImage = 'http://127.0.0.1:8000';
 export const baseUrlNew = 'http://192.236.179.158/backend/public/api';
 
-export const baseUrlReports = 'http://localhost:8001/api';
+export const baseUrlReports = 'http://127.0.0.1:8000/api';
 export const baseUrlReportsNew = 'http://192.236.179.158/reportes/public/api';
 
 //CONEXION BACKEND PRODUCCION
