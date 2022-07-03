@@ -4,6 +4,7 @@ import moment from 'moment';
 import ModalListaProductos from './modals/modalListaProductos';
 import { httpClient } from '../../util/Api';
 import ModalDatosPedido from './modals/modalDatosPedido';
+import ModalCobrarPedido from './modals/modalCobrarPedido';
 
 function GenerarPedido() {
 	const [modal, contextHolder] = Modal.useModal();
@@ -13,6 +14,7 @@ function GenerarPedido() {
 	const token = JSON.parse(localStorage.getItem('token'));
 	const [data, setData] = useState([]);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
+  const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
 
 	const [dataDetallesFinally, setDataDetallesFinally] = useState({
 		total: 0,
@@ -318,6 +320,7 @@ function GenerarPedido() {
 							backgroundColor: '#0169aa',
 							color: '#fff',
 						}}
+            onClick={() => setVisibleModalCobrarPedido(true)}
 					>
 						Grabar
 					</Button>
@@ -355,7 +358,14 @@ function GenerarPedido() {
 				setVisible={setVisibleModal}
 				chargeDetailsModalProducto={chargeDetailsModalProducto}
 			/>
-			<ModalDatosPedido visible={visibleModalDatosPedido} setVisible={setVisibleModalDatosPedido} />
+			<ModalDatosPedido
+        visible={visibleModalDatosPedido}
+        setVisible={setVisibleModalDatosPedido}
+      />
+      <ModalCobrarPedido
+        setVisible={setVisibleModalCobrarPedido}
+        visible={visibleModalCobrarPedido}
+      />
 			{contextHolder}
 		</>
 	);
