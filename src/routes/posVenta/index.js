@@ -14,6 +14,11 @@ function GenerarPedido() {
 	const [data, setData] = useState([]);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 
+	// ESTADOS DEL MODAL DATOS PEDIDOS
+	const [pacienteCurrent, setPacienteCurrent] = useState({});
+	const [medicoCurrent, setMedicoCurrent] = useState({});
+	const [clienteCurrent, setClienteCurrent] = useState({});
+
 	const [dataDetallesFinally, setDataDetallesFinally] = useState({
 		total: 0,
 		totalDolar: 0,
@@ -354,8 +359,23 @@ function GenerarPedido() {
 				visible={visibleModal}
 				setVisible={setVisibleModal}
 				chargeDetailsModalProducto={chargeDetailsModalProducto}
+				pacienteCurrent={pacienteCurrent}
+				setPacienteCurrent={setPacienteCurrent}
+				medicoCurrent={medicoCurrent}
+				setMedicoCurrent={setMedicoCurrent}
+				clienteCurrent={clienteCurrent}
+				setClienteCurrent={setClienteCurrent}
 			/>
-			<ModalDatosPedido visible={visibleModalDatosPedido} setVisible={setVisibleModalDatosPedido} />
+			<ModalDatosPedido
+				visible={visibleModalDatosPedido}
+				setVisible={setVisibleModalDatosPedido}
+				pacienteCurrent={pacienteCurrent}
+				setPacienteCurrent={setPacienteCurrent}
+				medicoCurrent={medicoCurrent}
+				setMedicoCurrent={setMedicoCurrent}
+				clienteCurrent={clienteCurrent}
+				setClienteCurrent={setClienteCurrent}
+			/>
 			{contextHolder}
 		</>
 	);

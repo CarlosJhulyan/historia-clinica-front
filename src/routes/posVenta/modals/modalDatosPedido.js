@@ -9,14 +9,31 @@ import ModalListaMedicos from './modalListaMedicos';
 import ModalListaPacientes from './modalListaPacientes';
 import ModalListaClientes from './modalListaClientes';
 
-function ModalDatosPedido({ visible, setVisible }) {
+function ModalDatosPedido({
+	visible,
+	setVisible,
+	pacienteCurrent,
+	setPacienteCurrent,
+	medicoCurrent,
+	setMedicoCurrent,
+	clienteCurrent,
+	setClienteCurrent,
+}) {
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
-	const [pacienteCurrent, setPacienteCurrent] = useState({});
-	const [medicoCurrent, setMedicoCurrent] = useState({});
-	const [clienteCurrent, setClienteCurrent] = useState({});
+
 	const [tipoVenta, setTipoVenta] = useState(2);
+
+	const handleLimpiar = () => {
+		console.log('limpiar');
+		// LIMIPIAMOS MEDICO
+		setMedicoCurrent({});
+		// LIMIPAMOS PACIENTE
+		setPacienteCurrent({});
+		// LIMIPAMOS CLIENTE
+		setClienteCurrent({});
+	};
 
 	return (
 		<>
@@ -117,6 +134,7 @@ function ModalDatosPedido({ visible, setVisible }) {
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
+										onClick={handleLimpiar}
 									>
 										Limpiar
 									</Button>
@@ -136,7 +154,7 @@ function ModalDatosPedido({ visible, setVisible }) {
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-										// onClick={resetEspecialidades}
+										onClick={() => setVisible(false)}
 									>
 										Cerrar
 									</Button>
