@@ -5,6 +5,8 @@ import ModalListaProductos from './modals/modalListaProductos';
 import { httpClient } from '../../util/Api';
 import ModalDatosPedido from './modals/modalDatosPedido';
 import ModalCobrarPedido from './modals/modalCobrarPedido';
+import { openNotification } from '../../util/util';
+import { useAuth } from '../../authentication';
 
 function GenerarPedido() {
 	const [modal, contextHolder] = Modal.useModal();
@@ -15,6 +17,15 @@ function GenerarPedido() {
 	const [data, setData] = useState([]);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
   const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
+  const { authUser: { data: user }  } = useAuth();
+  const dataFetch = {
+    codGrupoCia: '001',
+    codLocal: '001',
+  };
+	// ESTADOS DEL MODAL DATOS PEDIDOS
+	const [pacienteCurrent, setPacienteCurrent] = useState({});
+	const [medicoCurrent, setMedicoCurrent] = useState({});
+	const [clienteCurrent, setClienteCurrent] = useState({});
 
 	const [dataDetallesFinally, setDataDetallesFinally] = useState({
 		total: 0,
@@ -155,8 +166,40 @@ function GenerarPedido() {
 		}),
 	};
 
+  const validaOperacionCaja = async (tipOp) => {
+    try {
+      const { data: { success, message } } = await httpClient.post('posventa/validaOperacionCaja', {
+        ...dataFetch,
+        secUsu: user.sec_usu_local,
+        tipOp
+      });
+
+      if (!success) {
+        openNotification('Pos Venta', message + '. Puede continuar...');
+        return true;
+      } else {
+        openNotification('Pos Venta', message, 'Warning');
+        return false;
+      };
+    } catch (e) {
+      console.error('Error en la validacion de operacion caja', e);
+    }
+  }
+
+  const handleGrabarPedido = () => {
+    // if (!clienteCurrent.key && !medicoCurrent.key && !pacienteCurrent.key)
+      setVisibleModalDatosPedido(true);
+    // else
+    // setVisibleModalCobrarPedido(true);
+  }
+
 	useEffect(() => {
-		getFechaMovCaja();
+		const chargeDataAsync = async () => {
+      const valido = await validaOperacionCaja('MA');
+      if (valido) await getFechaMovCaja();
+    }
+
+    chargeDataAsync()
 	}, []);
 
 	return (
@@ -320,7 +363,7 @@ function GenerarPedido() {
 							backgroundColor: '#0169aa',
 							color: '#fff',
 						}}
-            onClick={() => setVisibleModalCobrarPedido(true)}
+            onClick={handleGrabarPedido}
 					>
 						Grabar
 					</Button>
@@ -357,14 +400,33 @@ function GenerarPedido() {
 				visible={visibleModal}
 				setVisible={setVisibleModal}
 				chargeDetailsModalProducto={chargeDetailsModalProducto}
+				pacienteCurrent={pacienteCurrent}
+				setPacienteCurrent={setPacienteCurrent}
+				medicoCurrent={medicoCurrent}
+				setMedicoCurrent={setMedicoCurrent}
+				clienteCurrent={clienteCurrent}
+				setClienteCurrent={setClienteCurrent}
 			/>
 			<ModalDatosPedido
-        visible={visibleModalDatosPedido}
-        setVisible={setVisibleModalDatosPedido}
-      />
+				visible={visibleModalDatosPedido}
+				setVisible={setVisibleModalDatosPedido}
+				pacienteCurrent={pacienteCurrent}
+				setPacienteCurrent={setPacienteCurrent}
+				medicoCurrent={medicoCurrent}
+				setMedicoCurrent={setMedicoCurrent}
+				clienteCurrent={clienteCurrent}
+				setClienteCurrent={setClienteCurrent}
+			/>
       <ModalCobrarPedido
         setVisible={setVisibleModalCobrarPedido}
         visible={visibleModalCobrarPedido}
+        pacienteCurrent={pacienteCurrent}
+        setPacienteCurrent={setPacienteCurrent}
+        medicoCurrent={medicoCurrent}
+        setMedicoCurrent={setMedicoCurrent}
+        clienteCurrent={clienteCurrent}
+        setClienteCurrent={setClienteCurrent}
+        productos={data}
       />
 			{contextHolder}
 		</>
