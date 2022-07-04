@@ -321,6 +321,27 @@ function ListaEspera() {
           loading={loadingData}
           dataSource={dataListaEspera}
           columns={columns}/>
+        <Row justify='end' style={{marginTop: 20}}>
+          <Button
+            loading={loadingAnular}
+            onClick={() => anularAtencionMedica()}
+            disabled={!numHCSelection || numHCSelection.length <= 0}
+            type='primary'>
+            Anular
+          </Button>
+          <Button
+            onClick={() => traerListaEspera()}
+            type='primary'>
+            Actualizar
+          </Button>
+          <Button
+            loading={loadingActualizar}
+            disabled={!numHCSelection || numHCSelection.length <= 0}
+            onClick={() => establecerAtender()}
+            type='primary'>
+            Atender
+          </Button>
+        </Row>
       </Card>
       <ModalTriaje
         traerListaEspera={traerListaEspera}
