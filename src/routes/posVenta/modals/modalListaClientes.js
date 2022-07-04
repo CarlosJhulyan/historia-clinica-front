@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Divider, Form, Input, Modal, Row, Select, Table } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, Table } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones, openNotification } from '../../../util/util';
 import { ToastContainer } from 'react-toastify';
@@ -194,6 +194,8 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					visible={visibleModalUpsertCliente}
 					tipo={tipo}
 					filaActual={filaActual}
+					setFilaActual={setFilaActual}
+					handleSearch={handleSearch}
 				/>
 			) : null}
 			<ToastContainer pauseOnHover={false} />
@@ -201,12 +203,19 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 	);
 }
 
-function ModalMantenimientoCliente({ visible, setVisible, tipo, filaActual }) {
+function ModalMantenimientoCliente({
+	visible,
+	setVisible,
+	tipo,
+	filaActual,
+	setFilaActual,
+	handleSearch,
+}) {
 	const [form] = Form.useForm();
 
-	const [natural, setNatural] = useState(false);
-
-	console.log(tipo);
+	const [natural, setNatural] = useState(
+		tipo === 'crear' ? true : filaActual.TIP_DOCUMENTO === '01'
+	);
 
 	useEffect(() => {
 		if (tipo === 'editar') {
@@ -240,15 +249,44 @@ function ModalMantenimientoCliente({ visible, setVisible, tipo, filaActual }) {
 		const { documento, telefono, correo, nombre, apellidoP, apellidoM, direccion, razonSocial } =
 			form.getFieldsValue();
 		console.log(documento, telefono, correo, nombre, apellidoP, apellidoM, direccion, razonSocial);
-		if (documento === '' || nombre === '' || apellidoP === '' || apellidoM === '') {
-			notificaciones('Debe completar todos los campos', 'Alerta');
+
+		if (natural) {
+			if (documento === '' || nombre === '' || apellidoP === '' || apellidoM === '') {
+				notificaciones('Debe completar todos los campos', 'Alerta');
+				return;
+			}
 		} else {
-			const funGuardar = async () => {
+			if (documento === '' || razonSocial === '') {
+				notificaciones('Debe completar todos los campos', 'Alerta');
+				return;
+			}
+		}
+
+		let funGuardar = () => {};
+
+		if (tipo === 'editar') {
+			funGuardar = async () => {
+				await httpClient.post('/posventa/modificarCliente', {
+					pNombreCliente: nombre !== '' ? nombre : '.',
+					pApellidoPat: apellidoP !== '' ? apellidoP : '.',
+					pApellidoMat: apellidoM !== '' ? apellidoM : '.',
+					pTipoDocIdent: documento.length > 8 ? '02' : '01',
+					pDni: documento,
+					pDirCliente: direccion !== '' ? direccion : '.',
+					vRazonSocial: razonSocial !== '' ? razonSocial : '.',
+					vTelefono: telefono !== '' ? telefono : '.',
+					vCorreo: correo !== '' ? correo : '.',
+					idUsuarioLogueado: token.data.sec_usu_local,
+					pCodCliente: filaActual.key,
+				});
+			};
+		} else {
+			funGuardar = async () => {
 				await httpClient.post('/posventa/grabarCliente', {
-					pNombre: nombre,
-					pAPellidoPat: apellidoP,
-					pApellidoMat: apellidoM,
-					pTipoDocIdent: documento > 8 ? '02' : '01',
+					pNombre: nombre !== '' ? nombre : '.',
+					pAPellidoPat: apellidoP !== '' ? apellidoP : '.',
+					pApellidoMat: apellidoM !== '' ? apellidoM : '.',
+					pTipoDocIdent: documento.length > 8 ? '02' : '01',
 					pDni: documento,
 					pDirCliente: direccion !== '' ? direccion : '.',
 					vRazonSocial: razonSocial !== '' ? razonSocial : '.',
@@ -257,25 +295,28 @@ function ModalMantenimientoCliente({ visible, setVisible, tipo, filaActual }) {
 					idUsuarioLogueado: token.data.sec_usu_local,
 				});
 			};
-			setVisible(false);
-			form.setFieldsValue({
-				documento: '',
-				telefono: '',
-				correo: '',
-				nombre: '',
-				apellidoP: '',
-				apellidoM: '',
-				direccion: '',
-				razonSocial: '',
-			});
-			console.log('guardar');
-			notificaciones('', 'Promesa', {
-				pendiente: 'Guardando...',
-				ok: 'Guardado correctamente',
-				error: 'Error al guardar',
-				promesa: funGuardar,
-			});
 		}
+
+		setVisible(false);
+		form.setFieldsValue({
+			documento: '',
+			telefono: '',
+			correo: '',
+			nombre: '',
+			apellidoP: '',
+			apellidoM: '',
+			direccion: '',
+			razonSocial: '',
+		});
+		console.log('guardar');
+		notificaciones('', 'Promesa', {
+			pendiente: 'Guardando...',
+			ok: 'Guardado correctamente',
+			error: 'Error al guardar',
+			promesa: funGuardar,
+		});
+		setFilaActual({});
+		handleSearch();
 	};
 
 	return (
