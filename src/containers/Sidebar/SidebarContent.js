@@ -145,10 +145,10 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 
 			if (token.modulos.includes('20')) {
 				menuItems.push(
-					<Menu.Item key="admisionConsulta">
-						<Link to="/admisionConsulta">
+					<Menu.Item key="ingresoAtenciones">
+						<Link to="/ingresoAtenciones">
 							<i className="icon icon-auth-screen" />
-							<span>Admisión Consulta</span>
+							<span>Ingreso Atenciones</span>
 						</Link>
 					</Menu.Item>
 				);

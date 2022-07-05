@@ -128,7 +128,7 @@ const App = ({ match }) => {
 				items.push(<Route key={19} path={`${match.url}historicoPreTriaje`} component={HistoricoPreTriaje} />);
 			}
 			if (token.modulos.includes('20')) {
-				items.push(<Route key={20} path={`${match.url}admisionConsulta`} component={AdmisionConsulta} />);
+				items.push(<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />);
 			}
 		}
 
