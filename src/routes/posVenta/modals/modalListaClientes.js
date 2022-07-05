@@ -277,7 +277,7 @@ function ModalMantenimientoCliente({
 					vTelefono: telefono !== '' ? telefono : '.',
 					vCorreo: correo !== '' ? correo : '.',
 					idUsuarioLogueado: token.data.sec_usu_local,
-					pCodCliente: filaActual.key,
+					pCodCliente: filaActual.COD_CLI,
 				});
 			};
 		} else {

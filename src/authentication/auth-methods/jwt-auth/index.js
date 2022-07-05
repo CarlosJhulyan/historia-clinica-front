@@ -96,8 +96,8 @@ export const useProvideAuth = () => {
   const usuarioLogin = (user, callbackFun) => {
     dispatch(setLoginLoading(true));
     fetchStart();
-    httpClientReports
-      .post(`/login`, user)
+    httpClient
+      .post(`/loginUsuLocal`, user)
       .then(({ data: dataLogin }) => {
         if (dataLogin.success) {
           httpClient
