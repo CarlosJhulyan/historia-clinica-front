@@ -6,7 +6,6 @@ import Paciente from '../../../assets/posventa/paciente.png';
 import ModalListaMedicos from './modalListaMedicos';
 import ModalListaPacientes from './modalListaPacientes';
 import ModalListaClientes from './modalListaClientes';
-import { httpClient } from '../../../util/Api';
 
 function ModalDatosPedido({
                             visible,
@@ -17,7 +16,9 @@ function ModalDatosPedido({
                             setMedicoCurrent,
                             clienteCurrent,
                             setClienteCurrent,
-                            grabarDatosAtencionCabecera
+                            visibleDatosPedidoAceptar,
+                            grabarPedido,
+                            guardarDatosPedidoCabecera,
 }) {
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
@@ -143,8 +144,13 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-                    // disabled={!clienteCurrent.key && !medicoCurrent.key && !pacienteCurrent.key}
-										onClick={grabarDatosAtencionCabecera}
+                    // disabled={!clienteCurrent.key || !medicoCurrent.key || !pacienteCurrent.key}
+										onClick={() => {
+                      if (grabarPedido)
+                        guardarDatosPedidoCabecera();
+                      else
+                        visibleDatosPedidoAceptar();
+                    }}
 									>
 										Aceptar
 									</Button>

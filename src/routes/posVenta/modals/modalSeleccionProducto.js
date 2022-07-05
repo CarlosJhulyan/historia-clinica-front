@@ -11,7 +11,13 @@ import {
 } from 'antd';
 import { httpClient } from '../../../util/Api';
 
-function ModalSeleccionProducto({ visible, setProductoCurrent, productoCurrent, cancelProductoSelected, aceptedProductoSelected }) {
+function ModalSeleccionProducto({
+                                  visible,
+                                  setProductoCurrent,
+                                  productoCurrent,
+                                  cancelProductoSelected,
+                                  aceptedProductoSelected
+}) {
   const dataInitialFetch = {
     codGrupoCia: '001',
     codLocal: '001'
@@ -196,6 +202,7 @@ function ModalSeleccionProducto({ visible, setProductoCurrent, productoCurrent, 
                 }}
                 onClick={() => {
                   aceptedProductoSelected(productoCurrent.key, {
+                    ...detalles,
                     pu: Number(dataForm.pu),
                     cantidad: Number(dataForm.cantidad),
                     total: dataForm.total

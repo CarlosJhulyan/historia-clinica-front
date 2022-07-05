@@ -185,10 +185,6 @@ function ModalListaProductos({
 		setVisibleModalCantidad(false);
 	};
 
-	useEffect(() => {
-		console.log(productosDetalles);
-	}, [productosDetalles]);
-
 	const getListaProductos = async () => {
 		setLoadingProductos(true);
 		try {
