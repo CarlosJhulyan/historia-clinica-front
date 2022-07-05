@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Form, AutoComplete, Button, Input, Space, Table, Divider, Row, Modal } from 'antd';
+import { Card, Form, AutoComplete, Button, Input, Space, Table, Divider, Row, Modal, Descriptions } from 'antd';
 import moment from 'moment';
 import ModalListaProductos from './modals/modalListaProductos';
 import { httpClient } from '../../util/Api';
@@ -9,6 +9,7 @@ import { openNotification } from '../../util/util';
 import { useAuth } from '../../authentication';
 
 function GenerarPedido() {
+  const { info } = Modal;
 	const [modal, contextHolder] = Modal.useModal();
 	const [visibleModal, setVisibleModal] = useState(false);
 	const [disabledAll, setDisabledAll] = useState(true);
@@ -17,11 +18,27 @@ function GenerarPedido() {
 	const [data, setData] = useState([]);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
   const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
+  const [visibleModalDetailsDatos, setVisibleModalDetailsDatos] = useState(true);
   const { authUser: { data: user }  } = useAuth();
+  const [numCaja, setNumCaja] = useState('');
+  const [grabarPedido, setGrabarPedido] = useState(false);
+  const [fechaSistema, setFechaSistema] = useState(false);
+
   const dataFetch = {
     codGrupoCia: '001',
     codLocal: '001',
   };
+
+  const COD_NUMERA_COTIZA_DIARIO = "088";
+  const COD_NUMERA_RESERVA_DIARIO = "090";
+  const COD_NUMERA_PEDIDO_DIARIO = "009";
+  const TIPO_PEDIDO_VENTA_MESON = "01";
+  const TIPO_COMP_PEDIDO = "01";
+  const TIPO_CONVENIO = "N";
+  const DISTRIBUCION_GRATUITA = "N";
+  const ESTADO_PEDIDO_PENDIENTE = "P";
+  const VALOR_TIPO_CAMBIO = 3.34;
+
 	// ESTADOS DEL MODAL DATOS PEDIDOS
 	const [pacienteCurrent, setPacienteCurrent] = useState({});
 	const [medicoCurrent, setMedicoCurrent] = useState({});
@@ -33,6 +50,195 @@ function GenerarPedido() {
 		items: 0,
 		tipoCambio: 3.34,
 	});
+
+  const [dataFetchCabecera, setDataFetchCabecera] = useState({
+    cCodGrupoCia_in: '001',
+    cCodLocal_in: '001',
+    cNumPedVta_in: '',
+    cCodCliLocal_in: '',
+    cSecMovCaja_in: '',
+    nValBrutoPedVta_in: '',
+    nValNetoPedVta_in: '',
+    nValRedondeoPedVta_in: '',
+    nValIgvPedVta_in: '',
+    nValDctoPedVta_in: '',
+    cTipPedVta_in: TIPO_PEDIDO_VENTA_MESON,
+    nValTipCambioPedVta_in: VALOR_TIPO_CAMBIO,
+    cNumPedDiario_in: '',
+    nCantItemsPedVta_in: 0,
+    cEstPedVta_in: ESTADO_PEDIDO_PENDIENTE,
+    cTipCompPago_in: TIPO_COMP_PEDIDO,
+    cNomCliPedVta_in: '',
+    cDirCliPedVta_in: '',
+    cRucCliPedVta_in: '',
+    cUsuCreaPedVtaCab_in: user.login_usu,
+    cIndDistrGratuita_in: DISTRIBUCION_GRATUITA,
+    cIndPedidoConvenio_in: TIPO_CONVENIO,
+    cCodConvenio_in: '',
+    cCodUsuLocal_in: user.sec_usu_local,
+    cIndUsoEfectivo_in: '',
+    cIndUsoTarjeta_in: '',
+    cCodForma_Tarjeta_in: '',
+    cColegioMedico_in: '',
+    cCodCliente_in: '',
+    cIndConvBTLMF: '',
+    cCodSolicitud: '',
+    cNumCmp: '',
+    cNombreMedico: '',
+    cRecetaCodCia: '',
+    cRecetaCodLocal: '',
+    cRecetaNumero: '',
+    cIndSoat: '',
+    cDNI_PACIENTE: '',
+    cNumCmp_asociado: '',
+    cNombreMedico_asociado: '',
+    cCodPaciente: '',
+    cIDRef: '',
+    cDescRef: '',
+    cNumCmp_visitador: '',
+    cNombreMedico_visitador: '',
+    cIndCotizacion: 'N',
+    cIndReserva: 'N',
+    cCodCiaReserva: 'N',
+    cCodLocalReserva: 'N',
+    cCodPedidoReserva: 'N',
+  });
+
+  const guardarDatosPedidoCabecera = async () => {
+    try {
+      const dataLocalCabecera = {
+        ...dataFetchCabecera
+      }
+      // Cargando los numeros de pedido
+      dataLocalCabecera.cNumPedDiario_in = await getNuSecNumeracion(COD_NUMERA_PEDIDO_DIARIO, 10);
+      dataLocalCabecera.cNumPedDiario_in = await getNumeraPedidoDiario();
+
+      dataLocalCabecera.cCodCliLocal_in = clienteCurrent.COD_CLI;
+      dataLocalCabecera.cSecMovCaja_in = await obtenerMovApertura();
+      // Valores de pedido
+      dataLocalCabecera.nValBrutoPedVta_in = '';
+      dataLocalCabecera.nValNetoPedVta_in = dataDetallesFinally.total;
+      dataLocalCabecera.nValRedondeoPedVta_in = '';
+      dataLocalCabecera.nValIgvPedVta_in = (Number(dataDetallesFinally.total) * 0.18);
+      dataLocalCabecera.nValDctoPedVta_in = '';
+      dataLocalCabecera.nCantItemsPedVta_in = data.length;
+
+      // Datos cliente
+      dataLocalCabecera.cNomCliPedVta_in = clienteCurrent.CLIENTE;
+      dataLocalCabecera.cDirCliPedVta_in = clienteCurrent.DIRECCION;
+      dataLocalCabecera.cRucCliPedVta_in = clienteCurrent.NUM_DOCUMENTO;
+      dataLocalCabecera.cCodCliente_in = '';
+
+      dataLocalCabecera.cColegioMedico_in = ''; // TODO: falta mapear
+      dataLocalCabecera.cCodCliente_in = ''; // TODO: falta mapear
+      dataLocalCabecera.cIndConvBTLMF = 'N';
+
+      // Datos medico
+      dataLocalCabecera.cNumCmp = medicoCurrent.CMP;
+      dataLocalCabecera.cNombreMedico = medicoCurrent.NOMBRE_COMPLETO;
+
+      dataLocalCabecera.cIndSoat = 'N';
+
+      // DAtos paciente
+      dataLocalCabecera.cDNI_PACIENTE = pacienteCurrent.NUM_DOCUMENTO;
+      dataLocalCabecera.cCodPaciente = pacienteCurrent.COD_PACIENTE;
+
+      // Datos de hospital
+      dataLocalCabecera.cIDRef = ''; // TODO: falta mapear
+      dataLocalCabecera.cDescRef = ''; // TODO: falta mapear
+
+      console.log(dataLocalCabecera);
+      // GRABAR LOS DATOS
+      //grabarPedidoFinally(dataLocalCabecera);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const getNuSecNumeracion = async (pCoNumeracion, pLength) => {
+    try {
+      const { data: { data, success } } = await httpClient.post('posventa/getNumeracion', {
+        ...dataFetch,
+        codNumera: pCoNumeracion
+      });
+      if (success) {
+        return completeWithSymbol(data, pLength, "0", "I");
+      }
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  const grabarPedidoFinally = async (data) => {
+    try {
+      const { data: { data, success, message } } = await httpClient.post('/posventa/grabarPedidoCabecera', data);
+      if (success) {
+        console.log(data);
+        openNotification('Cabecera', 'Cabecera grabada');
+      } else {
+        openNotification('Cabecera', message, 'warning')
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const obtenerMovApertura = async () => {
+    // TODO: ERROR EN EL ENDPOINT
+    try {
+      const { data: { data, success: successMov } } = await httpClient.post('posventa/getMovApertura', {
+        ...dataFetch,
+        numCaja
+      });
+      if (successMov) {
+        return data
+      } else return null;
+    } catch (e) {
+      console.error('Error al obtener movimientos apertura', e);
+    }
+  }
+
+  const getFechaModPedido = async () => {
+    try {
+      const { data: { data, success, message } } = await httpClient.post('posventa/getFechaModNumeraPed', {
+        ...dataFetch,
+        codNumera: COD_NUMERA_PEDIDO_DIARIO
+      });
+      if (success) console.log(data);
+      else console.log(message);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const completeWithSymbol = (pValue, pLength, pSymbol, pAlign) => {
+    let tempString = pValue;
+    for (let i = pValue.length(); i < pLength; ++i) {
+      if (pAlign.trim().equalsIgnoreCase("I")) {
+        tempString = pSymbol + tempString;
+      }
+      else {
+        tempString += pSymbol;
+      }
+    }
+    return tempString;
+  }
+
+  const getNumeraPedidoDiario = async () => {
+    // TODO: falta terminar
+    let feModNumeracion = await getFechaModPedido();
+    let feHoyDia = fechaSistema;
+    let numPedDiario = "";
+
+    feHoyDia = feHoyDia.trim().substring(0, 2);
+    feModNumeracion = feModNumeracion.trim().substring(0, 2);
+
+    if (Number(feHoyDia) !== Number(feModNumeracion)) {
+
+    }
+
+    // console.log(fecha);
+  }
 
 	const columns = [
 		{
@@ -139,7 +345,9 @@ function GenerarPedido() {
 					setDisabledAll(false);
 					setVisibleModal(true);
 				}
+        setFechaSistema(fechaSistema);
 				setLoadingData(false);
+        setNumCaja(result);
 			}
 		} catch (e) {
 			showModal('Error al obtener la fecha de movimiento de caja');
@@ -175,10 +383,9 @@ function GenerarPedido() {
       });
 
       if (!success) {
-        openNotification('Pos Venta', message + '. Puede continuar...');
         return true;
       } else {
-        openNotification('Pos Venta', message, 'Warning');
+        openNotification('Pos Venta', 'Abra una nueva caja para continuar', 'Warning');
         return false;
       };
     } catch (e) {
@@ -187,16 +394,53 @@ function GenerarPedido() {
   }
 
   const handleGrabarPedido = () => {
-    // if (!clienteCurrent.key && !medicoCurrent.key && !pacienteCurrent.key)
+    if (!clienteCurrent && !medicoCurrent.key && !pacienteCurrent.key)
+      setVisibleModalCobrarPedido(true);
+    else
       setVisibleModalDatosPedido(true);
-    // else
-    // setVisibleModalCobrarPedido(true);
+  }
+
+  const datosPedidoAceptar = () => {
+    setVisibleModalDatosPedido(false);
+    info({
+      title: 'Mensaje del Sistema',
+      width: 500,
+      content: (
+        <>
+          <Divider />
+          <Descriptions size='small'>
+            <Descriptions.Item span={3} label='EL PEDIDO SERA REGISTRADO PARA EL MÉDICO'></Descriptions.Item>
+            <Descriptions.Item span={3} label='CMP'>{medicoCurrent.CMP}</Descriptions.Item>
+            <Descriptions.Item span={3} label='NOMBRES COMPLETOS'>{medicoCurrent.NOMBRE_COMPLETO}</Descriptions.Item>
+          </Descriptions>
+          <Divider />
+          <Descriptions size='small'>
+            <Descriptions.Item span={3} label='Y PARA EL PACIENTE'></Descriptions.Item>
+            <Descriptions.Item span={3} label='DNI'>{pacienteCurrent.NUM_DOCUMENTO}</Descriptions.Item>
+            <Descriptions.Item span={3} label='NOMBRES'>{pacienteCurrent.NOMBRE}</Descriptions.Item>
+            <Descriptions.Item span={3} label='APELLIDOS'>{pacienteCurrent.APE_PATERNO} {pacienteCurrent.APE_MATERNO}</Descriptions.Item>
+          </Descriptions>
+        </>
+      ),
+      centered: true,
+      okText: 'Aceptar',
+      okButtonProps: {
+        style: {
+          background: '#0169aa',
+          color: '#fff'
+        }
+      }
+    })
   }
 
 	useEffect(() => {
 		const chargeDataAsync = async () => {
       const valido = await validaOperacionCaja('MA');
       if (valido) await getFechaMovCaja();
+      else {
+        setDisabledAll(true);
+        setLoadingData(false);
+      }
     }
 
     chargeDataAsync()
@@ -363,7 +607,8 @@ function GenerarPedido() {
 							backgroundColor: '#0169aa',
 							color: '#fff',
 						}}
-            onClick={handleGrabarPedido}
+            // onClick={handleGrabarPedido}
+            onClick={guardarDatosPedidoCabecera}
 					>
 						Grabar
 					</Button>
@@ -408,6 +653,7 @@ function GenerarPedido() {
 				setClienteCurrent={setClienteCurrent}
 			/>
 			<ModalDatosPedido
+        grabarDatosAtencionCabecera={datosPedidoAceptar}
 				visible={visibleModalDatosPedido}
 				setVisible={setVisibleModalDatosPedido}
 				pacienteCurrent={pacienteCurrent}

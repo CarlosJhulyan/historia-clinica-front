@@ -52,7 +52,7 @@ function MovimientosCaja() {
     if (validado)
       confirm({
           icon: <ExclamationCircleOutlined />,
-          content: '¿Está seguro que desea efectuar la operación?',
+          content: '¿Está seguro que desea efectuar la operación? Esto puede tomar unos segundos.',
           onOk: async () => {
             if (validado) {
               await obtenerValorComprobanteBoleta();

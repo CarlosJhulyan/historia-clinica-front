@@ -9,71 +9,20 @@ import ModalListaClientes from './modalListaClientes';
 import { httpClient } from '../../../util/Api';
 
 function ModalDatosPedido({
-	visible,
-	setVisible,
-	pacienteCurrent,
-	setPacienteCurrent,
-	medicoCurrent,
-	setMedicoCurrent,
-	clienteCurrent,
-	setClienteCurrent,
+                            visible,
+                            setVisible,
+                            pacienteCurrent,
+                            setPacienteCurrent,
+                            medicoCurrent,
+                            setMedicoCurrent,
+                            clienteCurrent,
+                            setClienteCurrent,
+                            grabarDatosAtencionCabecera
 }) {
-  const COD_NUMERA_COTIZA_DIARIO = "088";
-  const COD_NUMERA_RESERVA_DIARIO = "090";
-  const TIPO_PEDIDO_VENTA_MESON = "01";
-  const TIPO_CONVENIO = "N";
-  const DISTRIBUCION_GRATUITA = "N";
-  const ESTADO_PEDIDO_PENDIENTE = "P";
-  const VALOR_TIPO_CAMBIO = 3.34;
-
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
-  const [dataFetch, setDataFetch] = useState({
-    codGrupoCia: '001',
-    codLocal: '001',
-    numPedidoVenta: '',
-    codCliLocal: '',
-    secMovCaja: '',
-    valBrutoPed: '',
-    valNetoPed: '',
-    valRedondeoPed: '',
-    valIgvPed: '',
-    valDsctoPed: '',
-    tipoVenta: TIPO_PEDIDO_VENTA_MESON,
-    tipoCambio: VALOR_TIPO_CAMBIO,
-    numPedidoDiario: '',
-    cantidadItemsPedido: 0,
-  });
-
 	const [tipoVenta, setTipoVenta] = useState(2);
-
-  const aceptarDatosAtencion = async () => {
-
-  }
-
-  const getNumeracionPedido = async () => {
-    try {
-      const { data: { data, success } } = await httpClient.post('posventa/getNumeracion');
-      if (success) {
-        setDataFetch({
-          ...dataFetch,
-          numPedidoVenta: data
-        })
-      }
-    } catch(e) {
-      console.error(e);
-    }
-  }
-
-  const getFechaModPedido = async () => {
-    try {
-      const { data: { data, success } } = await httpClient.post('posventa/getFechaModNumeraPed');
-
-    } catch (e) {
-
-    }
-  }
 
 	const handleLimpiar = () => {
 		console.log('limpiar');
@@ -194,8 +143,8 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-                    disabled={!clienteCurrent || !medicoCurrent || !pacienteCurrent}
-										onClick={aceptarDatosAtencion}
+                    // disabled={!clienteCurrent.key && !medicoCurrent.key && !pacienteCurrent.key}
+										onClick={grabarDatosAtencionCabecera}
 									>
 										Aceptar
 									</Button>
