@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Button,
 	Card,
@@ -17,6 +17,7 @@ import ModalListaPacientes from './modalListaPacientes';
 import ModalListaClientes from './modalListaClientes';
 import Doctor from '../../../assets/posventa/doctor.png';
 import Paciente from '../../../assets/posventa/paciente.png';
+import { httpClient } from '../../../util/Api';
 
 function ModalCobrarPedido({
 	visible,
@@ -28,6 +29,8 @@ function ModalCobrarPedido({
 	setMedicoCurrent,
 	setPacienteCurrent,
 	productos,
+	dataFetch,
+	cNumPedVta_in,
 }) {
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
@@ -37,6 +40,112 @@ function ModalCobrarPedido({
 		'VISA POS',
 		'MASTERCARD POS',
 	]);
+
+	const [listaCajaEspecialidad, setListaCajaEspecialidad] = useState(null);
+	const [listaCajaDetEspecialidad, setListaCajaDetEspecialidad] = useState(null);
+	const [formasPagoSinConvenio, setFormasPagoSinConvenio] = useState(null);
+
+	useEffect(() => {
+		inicializar();
+	}, []);
+
+	const inicializar = async () => {
+		const promesas = [];
+		await procesaPedidoEspecialidad();
+		promesas.push(cargaListaCajaEspecialidad);
+		promesas.push(cargaListaCajaDetEspecialidad);
+		promesas.push(getFormasPagoSinConvenio);
+		await Promise.all(promesas);
+	};
+
+	const procesaPedidoEspecialidad = async () => {
+		try {
+			const {
+				data: { success, message },
+			} = await httpClient.post('/posventa/procesaPedidoEspecialidad', {
+				...dataFetch,
+				cNumPedVta_in,
+			});
+			if (success) console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const cargaListaCajaEspecialidad = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('/posventa/cargaListaCajaEspecialidad', {
+				...dataFetch,
+				cNumPedVta_in,
+			});
+			if (success) setListaCajaEspecialidad(data);
+			else console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const cargaListaCajaDetEspecialidad = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('/posventa/cargaListaCajaDetEspecialidad', {
+				...dataFetch,
+				cNumPedVta_in,
+			});
+			if (success) setListaCajaDetEspecialidad(data);
+			else console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const getFormasPagoSinConvenio = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('/posventa/getFormasPagoSinConvenio', {
+				...dataFetch,
+				indConvenio: '',
+				codConvenio: '',
+				codCliente: clienteCurrent.COD_CLI,
+				numPed: cNumPedVta_in,
+			});
+			if (success) setFormasPagoSinConvenio(data);
+			else console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const cobraPedido = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('/posventa/cobraPedido', {
+				codGrupoCia: '',
+				codLocal: '',
+				cNumPedVta_in: '',
+				cSecMovCaja_in: '',
+				cCodNumera_in: '',
+				cTipCompPago_in: '',
+				cCodMotKardex_in: '',
+				cTipDocKardex_in: '',
+				cCodNumeraKardex_in: '',
+				cUsuCreaCompPago_in: '',
+				cDescDetalleForPago_in: '',
+				cPermiteCampana: '',
+				cDni_in: '',
+				cNumCompPagoImpr_in: '',
+			});
+			if (success) setFormasPagoSinConvenio(data);
+			else console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
 	const columnsEspecialidad = [
 		{

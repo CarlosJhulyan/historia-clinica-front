@@ -6,24 +6,26 @@ import Paciente from '../../../assets/posventa/paciente.png';
 import ModalListaMedicos from './modalListaMedicos';
 import ModalListaPacientes from './modalListaPacientes';
 import ModalListaClientes from './modalListaClientes';
+import { notificaciones, openNotification } from '../../../util/util';
 
 function ModalDatosPedido({
-                            visible,
-                            setVisible,
-                            pacienteCurrent,
-                            setPacienteCurrent,
-                            medicoCurrent,
-                            setMedicoCurrent,
-                            clienteCurrent,
-                            setClienteCurrent,
-                            visibleDatosPedidoAceptar,
-                            grabarPedido,
-                            guardarDatosPedidoCabecera,
+	visible,
+	setVisible,
+	pacienteCurrent,
+	setPacienteCurrent,
+	medicoCurrent,
+	setMedicoCurrent,
+	clienteCurrent,
+	setClienteCurrent,
+	visibleDatosPedidoAceptar,
+	grabarPedido,
+	guardarDatosPedidoCabecera,
 }) {
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
 	const [tipoVenta, setTipoVenta] = useState(2);
+	const [guardando, setGuardando] = useState(false);
 
 	const handleLimpiar = () => {
 		console.log('limpiar');
@@ -44,7 +46,7 @@ function ModalDatosPedido({
 				visible={visible}
 				title="Datos de Pedido"
 				className="modal-custom"
-				onCancel={() => setVisible(false)}
+				onCancel={guardando ? null : () => setVisible(false)}
 			>
 				<Row justify="space-between" style={{ marginTop: 10, marginLeft: 0, marginRight: 20 }}>
 					<Col span={24}>
@@ -114,7 +116,7 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-										onClick={() => setVisibleModalMedicos(true)}
+										onClick={guardando ? null : () => setVisibleModalMedicos(true)}
 									>
 										Ingreso Médico
 									</Button>
@@ -124,7 +126,7 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-										onClick={() => setVisibleModalPacientes(true)}
+										onClick={guardando ? null : () => setVisibleModalPacientes(true)}
 									>
 										Ingreso paciente
 									</Button>
@@ -134,7 +136,7 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-										onClick={handleLimpiar}
+										onClick={guardando ? null : handleLimpiar}
 									>
 										Limpiar
 									</Button>
@@ -144,13 +146,39 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-                    // disabled={!clienteCurrent.key || !medicoCurrent.key || !pacienteCurrent.key}
-										onClick={() => {
-                      if (grabarPedido)
-                        guardarDatosPedidoCabecera();
-                      else
-                        visibleDatosPedidoAceptar();
-                    }}
+										// disabled={!clienteCurrent.key || !medicoCurrent.key || !pacienteCurrent.key}
+										onClick={
+											guardando
+												? null
+												: () => {
+														if (grabarPedido) {
+															const fun = async () => {
+																setGuardando(true);
+																console.log('grabando');
+																console.log(pacienteCurrent, medicoCurrent, clienteCurrent);
+																if (
+																	pacienteCurrent.COD_PACIENTE &&
+																	medicoCurrent.key &&
+																	clienteCurrent.key
+																) {
+																	await guardarDatosPedidoCabecera();
+																} else {
+																	openNotification(
+																		'error',
+																		'Debe ingresar un paciente, médico y cliente',
+																		'Alerta'
+																	);
+																}
+																console.log('grabado');
+																setGuardando(false);
+															};
+															fun();
+														} else {
+															setVisible(false);
+															// visibleDatosPedidoAceptar();
+														}
+												  }
+										}
 									>
 										Aceptar
 									</Button>
@@ -160,7 +188,7 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-										onClick={() => setVisible(false)}
+										onClick={guardando ? null : () => setVisible(false)}
 									>
 										Cerrar
 									</Button>

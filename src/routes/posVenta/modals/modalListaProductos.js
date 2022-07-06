@@ -28,6 +28,7 @@ function ModalListaProductos({
 	setMedicoCurrent,
 	clienteCurrent,
 	setClienteCurrent,
+	datosPedidoAceptar,
 }) {
 	const [data, setData] = useState([]);
 	const { confirm, warning } = Modal;
@@ -426,8 +427,11 @@ function ModalListaProductos({
 				setProductoCurrent={setProductoCurrent}
 			/>
 			<ModalDatosPedido
+				// grabarPedido
+				// guardarDatosPedidoCabecera
 				visible={visibleModalDatosPedido}
 				setVisible={setVisibleModalDatosPedido}
+				visibleDatosPedidoAceptar={datosPedidoAceptar}
 				pacienteCurrent={pacienteCurrent}
 				setPacienteCurrent={setPacienteCurrent}
 				medicoCurrent={medicoCurrent}

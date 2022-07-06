@@ -33,6 +33,8 @@ function GenerarPedido() {
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
 	const [visibleModalDetailsDatos, setVisibleModalDetailsDatos] = useState(true);
 
+	const [cNumPedVta_in, setCNumPedVta_in] = useState(null);
+
 	const {
 		authUser: { data: user },
 	} = useAuth();
@@ -45,19 +47,20 @@ function GenerarPedido() {
 		codLocal: '001',
 	};
 
+	const COD_NUMERA_PEDIDO = '007';
 	const COD_NUMERA_PEDIDO_DIARIO = '009';
 	const TIPO_PEDIDO_VENTA_MESON = '01';
 	const TIPO_COMP_PEDIDO = '01';
 	const TIPO_CONVENIO = 'N';
 	const DISTRIBUCION_GRATUITA = 'N';
 	const ESTADO_PEDIDO_PENDIENTE = 'P';
-  const ESTADO_PEDIDO_DETALLE_ACTIVO = 'A';
+	const ESTADO_PEDIDO_DETALLE_ACTIVO = 'A';
 	const VALOR_TIPO_CAMBIO = 3.34;
-  const IND_PROD_SIMPLE = 1;
-  const IND_PROD_PROM = 2;
-  const RES_ORIG_PROD = 19;
-  const RES_CANT_XDIA = 23;
-  const RES_CANT_DIAS = 24;
+	const IND_PROD_SIMPLE = 1;
+	const IND_PROD_PROM = 2;
+	const RES_ORIG_PROD = 19;
+	const RES_CANT_XDIA = 23;
+	const RES_CANT_DIAS = 24;
 
 	// ESTADOS DEL MODAL DATOS PEDIDOS
 	const [pacienteCurrent, setPacienteCurrent] = useState({});
@@ -126,38 +129,38 @@ function GenerarPedido() {
 		cCodPedidoReserva: 'N',
 	};
 
-  const dataFetchDetalle = {
-    cCodGrupoCia_in: '001',
-    cCodLocal_in: '001',
-    cNumPedVta_in: '',
-    nSecPedVtaDet_in: '',
-    cCodProd_in: '',
-    nCantAtendida_in: '',
-    nValPrecVta_in: '',
-    nValPrecTotal_in: '',
-    nPorcDcto1_in: '',
-    nPorcDcto2_in: '0.0',
-    nPorcDcto3_in: '0.0',
-    nPorcDctoTotal_in: '',
-    cEstPedVtaDet_in: ESTADO_PEDIDO_DETALLE_ACTIVO,
-    nValTotalBono_in: '',
-    nValFrac_in: '',
-    nSecCompPago_in: '',
-    cSecUsuLocal_in: '001',
-    nValPrecLista_in: '',
-    nValIgv_in: '',
-    cUnidVta_in: '',
-    cNumTelRecarga_in: '',
-    cUsuCreaPedVtaDet_in: user.login_usu,
-    nValPrecPub: '',
-    cCodProm_in: '',
-    cIndOrigen_in: RES_ORIG_PROD,
-    nCantxDia_in: RES_CANT_XDIA,
-    nCantDias_in: RES_CANT_DIAS,
-    nAhorroPack: '',
-    cSecResp_in: '',
-    vNumLoteProd_in: '',
-  }
+	const dataFetchDetalle = {
+		cCodGrupoCia_in: '001',
+		cCodLocal_in: '001',
+		cNumPedVta_in: '',
+		nSecPedVtaDet_in: '',
+		cCodProd_in: '',
+		nCantAtendida_in: '',
+		nValPrecVta_in: '',
+		nValPrecTotal_in: '',
+		nPorcDcto1_in: '',
+		nPorcDcto2_in: '0.0',
+		nPorcDcto3_in: '0.0',
+		nPorcDctoTotal_in: '',
+		cEstPedVtaDet_in: ESTADO_PEDIDO_DETALLE_ACTIVO,
+		nValTotalBono_in: '',
+		nValFrac_in: '',
+		nSecCompPago_in: '',
+		cSecUsuLocal_in: user.sec_usu_local,
+		nValPrecLista_in: '',
+		nValIgv_in: '',
+		cUnidVta_in: '',
+		cNumTelRecarga_in: '',
+		cUsuCreaPedVtaDet_in: user.login_usu,
+		nValPrecPub: '',
+		cCodProm_in: '',
+		cIndOrigen_in: '1', // RES_ORIG_PROD,
+		nCantxDia_in: '', //RES_CANT_XDIA,
+		nCantDias_in: '', //RES_CANT_DIAS,
+		nAhorroPack: '',
+		cSecResp_in: '',
+		vNumLoteProd_in: '',
+	};
 
 	const guardarDatosPedidoCabecera = async () => {
 		try {
@@ -176,11 +179,13 @@ function GenerarPedido() {
 			// dataLocalCabecera.nValRedondeoPedVta_in = 0.0;
 			// dataLocalCabecera.nValIgvPedVta_in = Number(dataDetallesFinally.total) * 0.18;
 			// dataLocalCabecera.nValDctoPedVta_in = 0.0;
-      dataLocalCabecera.nValBrutoPedVta_in = await getPrecioRedondeado(0.0);
-      dataLocalCabecera.nValNetoPedVta_in = await getPrecioRedondeado(dataDetallesFinally.total);
-      dataLocalCabecera.nValRedondeoPedVta_in = await getPrecioRedondeado(0.0);
-      dataLocalCabecera.nValIgvPedVta_in = await getPrecioRedondeado(Number(dataDetallesFinally.total) * 0.18);
-      dataLocalCabecera.nValDctoPedVta_in = await getPrecioRedondeado(0.0);
+			dataLocalCabecera.nValBrutoPedVta_in = await getPrecioRedondeado(0.0);
+			dataLocalCabecera.nValNetoPedVta_in = await getPrecioRedondeado(dataDetallesFinally.total);
+			dataLocalCabecera.nValRedondeoPedVta_in = await getPrecioRedondeado(0.0);
+			dataLocalCabecera.nValIgvPedVta_in = await getPrecioRedondeado(
+				Number(dataDetallesFinally.total) * 0.18
+			);
+			dataLocalCabecera.nValDctoPedVta_in = await getPrecioRedondeado(0.0);
 			dataLocalCabecera.nCantItemsPedVta_in = data.length;
 
 			// Datos cliente
@@ -209,59 +214,119 @@ function GenerarPedido() {
 
 			console.log(dataLocalCabecera);
 
-      data.forEach((item, index) => {
-        guardarPedidoDetalle(item, index, IND_PROD_SIMPLE, dataLocalCabecera.cNumPedVta_in)
-      })
+			await grabarPedidoFinally(dataLocalCabecera);
 
-      // await grabarPedidoFinally(dataLocalCabecera);
-      setVisibleModalDatosPedido(false);
-      datosPedidoAceptar();
+			// data.forEach((item, index) => {
+
+			// });
+			let index = 0;
+			for (const item of data) {
+				guardarPedidoDetalle(item, index, IND_PROD_SIMPLE, dataLocalCabecera.cNumPedVta_in);
+				index++;
+			}
+
+			//----------------------------------------------------
+			updateNumeracionSinComit(COD_NUMERA_PEDIDO);
+			updateNumeracionSinComit(COD_NUMERA_PEDIDO_DIARIO);
+			// ---
+			validarValorVentaNeto(dataLocalCabecera.cNumPedVta_in);
+			// --
+			procesaPedidoEspecialidad(dataLocalCabecera.cNumPedVta_in);
+			setCNumPedVta_in(dataLocalCabecera.cNumPedVta_in);
+			datosPedidoAceptar();
 		} catch (e) {
 			console.error(e);
 		}
 	};
 
-  const guardarPedidoDetalle = async (item, pFila, tipo, cNumPedVta_in) => {
-    const dataLocalDetalle = {
-      ...dataFetchDetalle
-    }
-    // TODO: En desarrollo
-    dataLocalDetalle.cNumPedVta_in = cNumPedVta_in;
-    dataLocalDetalle.nSecPedVtaDet_in = String(pFila + 1);
-    dataLocalDetalle.cCodProd_in = item.CODIGO;
-    dataLocalDetalle.nCantAtendida_in = item.cantidad;
-    dataLocalDetalle.nValPrecTotal_in = item.total;
-    dataLocalDetalle.nValPrecVta_in = df.format(item.PRECIO);
+	const updateNumeracionSinComit = async cod_numera => {
+		try {
+			const {
+				data: { success, message },
+			} = await httpClient.post('/posventa/updateNumeracionSinCommit', {
+				...dataFetch,
+				pCoNumeracion: cod_numera,
+				vIdUsu: user.sec_usu_local,
+			});
+			if (success) console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
-    dataLocalDetalle.nPorcDcto1_in = '0.0';
-    dataLocalDetalle.nPorcDctoTotal_in = '0.0';
-    dataLocalDetalle.nValTotalBono_in = '0';
+	const validarValorVentaNeto = async cNumPedVta_in => {
+		try {
+			const {
+				data: { success, message },
+			} = await httpClient.post('/posventa/validarValorVentaNeto', {
+				...dataFetch,
+				is_cotizacion: false,
+				cNumPedVta_in,
+			});
+			if (success) console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
-    dataLocalDetalle.nValFrac_in = item.VAL_FRAC.trim();
-    dataLocalDetalle.nValPrecLista_in = item.PRECIO_LISTA;
-    dataLocalDetalle.nValIgv_in = ''; // TODO: falta sacar
-    dataLocalDetalle.cUnidVta_in = item.UNIDAD;
+	const procesaPedidoEspecialidad = async cNumPedVta_in => {
+		try {
+			const {
+				data: { success, message },
+			} = await httpClient.post('/posventa/procesaPedidoEspecialidad', {
+				...dataFetch,
+				cNumPedVta_in,
+			});
+			if (success) console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
-    let posSevRespaldo = 0;
-    if (tipo === IND_PROD_SIMPLE) posSevRespaldo = 26;
-    else if (tipo === IND_PROD_PROM) posSevRespaldo = 24;
+	const guardarPedidoDetalle = async (item, pFila, tipo, cNumPedVta_in) => {
+		console.log('producto', item);
+		const dataLocalDetalle = {
+			...dataFetchDetalle,
+		};
+		// TODO: En desarrollo
+		dataLocalDetalle.cNumPedVta_in = cNumPedVta_in;
+		dataLocalDetalle.nSecPedVtaDet_in = String(pFila + 1);
+		dataLocalDetalle.cCodProd_in = item.CODIGO;
+		dataLocalDetalle.nCantAtendida_in = item.cantidad;
+		dataLocalDetalle.nValPrecTotal_in = item.total;
+		dataLocalDetalle.nValPrecVta_in = df.format(item.PRECIO);
 
-    dataLocalDetalle.nValPrecPub = df.format(item.PRECIO);
-    dataLocalDetalle.cSecResp_in = posSevRespaldo;
-    dataLocalDetalle.vNumLoteProd_in = 'S/L';
+		dataLocalDetalle.nPorcDcto1_in = '0.0';
+		dataLocalDetalle.nPorcDctoTotal_in = '0.0';
+		dataLocalDetalle.nValTotalBono_in = '0';
 
-    console.log(dataLocalDetalle);
-    await grabarPedidoDetalle(data);
-  }
+		dataLocalDetalle.nValFrac_in = item.VAL_FRAC.trim();
+		dataLocalDetalle.nValPrecLista_in = item.PRECIO_LISTA.trim();
+		dataLocalDetalle.nValIgv_in = '18';
+		dataLocalDetalle.cUnidVta_in = item.UNIDAD.trim();
 
-  const grabarPedidoDetalle = async (data) => {
-    try {
-      const { data: { success, message } } = await httpClient.post('posventa/grabarPedidoDetalle', data);
-      if (success) console.log(message);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+		let posSevRespaldo = 0;
+		if (tipo === IND_PROD_SIMPLE) posSevRespaldo = 26;
+		else if (tipo === IND_PROD_PROM) posSevRespaldo = 24;
+
+		dataLocalDetalle.nValPrecPub = df.format(item.PRECIO);
+		dataLocalDetalle.cSecResp_in = posSevRespaldo;
+		dataLocalDetalle.vNumLoteProd_in = 'S/L';
+
+		console.log(dataLocalDetalle);
+		await grabarPedidoDetalle(dataLocalDetalle);
+	};
+
+	const grabarPedidoDetalle = async data => {
+		try {
+			const {
+				data: { success, message },
+			} = await httpClient.post('posventa/grabarPedidoDetalle', data);
+			if (success) console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
 	const getNuSecNumeracion = async (pCoNumeracion, pLength) => {
 		try {
@@ -292,22 +357,24 @@ function GenerarPedido() {
 			} else {
 				openNotification('Cabecera', message, 'warning');
 			}
-      console.log(message);
+			console.log(message);
 		} catch (e) {
 			console.error(e);
 		}
 	};
 
-  const getPrecioRedondeado = async (valorPrecio) => {
-    try {
-      const { data: { data, success } } = await httpClient.post('posventa/getPrecioRedondeado', {
-        valorPrecio
-      })
-      return data;
-    } catch (e) {
-      console.error(e);
-    }
-  }
+	const getPrecioRedondeado = async valorPrecio => {
+		try {
+			const {
+				data: { data, success },
+			} = await httpClient.post('posventa/getPrecioRedondeado', {
+				valorPrecio,
+			});
+			return data;
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
 	const obtenerMovApertura = async () => {
 		try {
@@ -577,7 +644,6 @@ function GenerarPedido() {
 	};
 
 	const datosPedidoAceptar = () => {
-		setVisibleModalDatosPedido(false);
 		info({
 			title: 'Mensaje del Sistema',
 			width: 500,
@@ -613,6 +679,9 @@ function GenerarPedido() {
 			),
 			centered: true,
 			okText: 'Aceptar',
+			onOk: () => {
+				setVisibleModalCobrarPedido(true);
+			},
 			okButtonProps: {
 				style: {
 					background: '#0169aa',
@@ -716,10 +785,9 @@ function GenerarPedido() {
 									marginTop: '10px',
 								}}
 								onClick={() => {
-                    setGrabarPedido(false);
-                    setVisibleModalDatosPedido(true);
-                  }
-                }
+									setGrabarPedido(false);
+									setVisibleModalDatosPedido(true);
+								}}
 								disabled={disabledAll}
 							>
 								Datos Atención
@@ -802,9 +870,9 @@ function GenerarPedido() {
 						}}
 						// onClick={handleGrabarPedido}
 						onClick={() => {
-              setGrabarPedido(true);
-              setVisibleModalDatosPedido(true);
-            }}
+							setGrabarPedido(true);
+							setVisibleModalDatosPedido(true);
+						}}
 					>
 						Grabar
 					</Button>
@@ -846,6 +914,7 @@ function GenerarPedido() {
 				medicoCurrent={medicoCurrent}
 				setMedicoCurrent={setMedicoCurrent}
 				clienteCurrent={clienteCurrent}
+				datosPedidoAceptar={datosPedidoAceptar}
 				setClienteCurrent={setClienteCurrent}
 			/>
 			<ModalDatosPedido
@@ -858,8 +927,8 @@ function GenerarPedido() {
 				setMedicoCurrent={setMedicoCurrent}
 				clienteCurrent={clienteCurrent}
 				setClienteCurrent={setClienteCurrent}
-        grabarPedido={grabarPedido}
-        guardarDatosPedidoCabecera={guardarDatosPedidoCabecera}
+				grabarPedido={grabarPedido}
+				guardarDatosPedidoCabecera={guardarDatosPedidoCabecera}
 			/>
 			<ModalCobrarPedido
 				setVisible={setVisibleModalCobrarPedido}
@@ -871,6 +940,8 @@ function GenerarPedido() {
 				clienteCurrent={clienteCurrent}
 				setClienteCurrent={setClienteCurrent}
 				productos={data}
+				dataFetch={dataFetch}
+				cNumPedVta_in={cNumPedVta_in}
 			/>
 			{contextHolder}
 		</>
