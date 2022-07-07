@@ -4,8 +4,6 @@ import {
 	Form,
 	AutoComplete,
 	Button,
-	Input,
-	Space,
 	Table,
 	Divider,
 	Row,
@@ -31,9 +29,10 @@ function GenerarPedido() {
 	const [data, setData] = useState([]);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
-	const [visibleModalDetailsDatos, setVisibleModalDetailsDatos] = useState(true);
+  const [loadingGrabarPedido,setLoadingGrabarPedido] = useState(false);
 
-	const [cNumPedVta_in, setCNumPedVta_in] = useState(null);
+	const [cNumPedVta_in, setCNumPedVta_in] = useState('');
+  const [tipoVenta, setTipoVenta] = useState('01');
 
 	const {
 		authUser: { data: user },
@@ -76,7 +75,7 @@ function GenerarPedido() {
 		tipoCambio: 3.34,
 	});
 
-	const dataFetchCabecera = {
+	const [dataFetchCabecera, setDataFetchCabecera] = useState({
 		cCodGrupoCia_in: '001',
 		cCodLocal_in: '001',
 		cNumPedVta_in: '',
@@ -127,7 +126,7 @@ function GenerarPedido() {
 		cCodCiaReserva: 'N',
 		cCodLocalReserva: 'N',
 		cCodPedidoReserva: 'N',
-	};
+	});
 
 	const dataFetchDetalle = {
 		cCodGrupoCia_in: '001',
@@ -163,6 +162,7 @@ function GenerarPedido() {
 	};
 
 	const guardarDatosPedidoCabecera = async () => {
+    setLoadingGrabarPedido(true);
 		try {
 			const dataLocalCabecera = {
 				...dataFetchCabecera,
@@ -215,10 +215,7 @@ function GenerarPedido() {
 			console.log(dataLocalCabecera);
 
 			await grabarPedidoFinally(dataLocalCabecera);
-
-			// data.forEach((item, index) => {
-
-			// });
+      setDataFetchCabecera(dataLocalCabecera);
 			let index = 0;
 			for (const item of data) {
 				guardarPedidoDetalle(item, index, IND_PROD_SIMPLE, dataLocalCabecera.cNumPedVta_in);
@@ -234,6 +231,7 @@ function GenerarPedido() {
 			procesaPedidoEspecialidad(dataLocalCabecera.cNumPedVta_in);
 			setCNumPedVta_in(dataLocalCabecera.cNumPedVta_in);
 			datosPedidoAceptar();
+      setLoadingGrabarPedido(false);
 		} catch (e) {
 			console.error(e);
 		}
@@ -637,12 +635,6 @@ function GenerarPedido() {
 		}
 	};
 
-	const handleGrabarPedido = () => {
-		if (!clienteCurrent && !medicoCurrent.key && !pacienteCurrent.key)
-			setVisibleModalCobrarPedido(true);
-		else setVisibleModalDatosPedido(true);
-	};
-
 	const datosPedidoAceptar = () => {
 		info({
 			title: 'Mensaje del Sistema',
@@ -680,7 +672,7 @@ function GenerarPedido() {
 			centered: true,
 			okText: 'Aceptar',
 			onOk: () => {
-				setVisibleModalCobrarPedido(true);
+				if (grabarPedido) setVisibleModalCobrarPedido(true);
 			},
 			okButtonProps: {
 				style: {
@@ -929,6 +921,9 @@ function GenerarPedido() {
 				setClienteCurrent={setClienteCurrent}
 				grabarPedido={grabarPedido}
 				guardarDatosPedidoCabecera={guardarDatosPedidoCabecera}
+        loadingGrabarPedido={loadingGrabarPedido}
+        tipoVenta={tipoVenta}
+        setTipoVenta={setTipoVenta}
 			/>
 			<ModalCobrarPedido
 				setVisible={setVisibleModalCobrarPedido}
@@ -942,6 +937,8 @@ function GenerarPedido() {
 				productos={data}
 				dataFetch={dataFetch}
 				cNumPedVta_in={cNumPedVta_in}
+        dataCabeceraPed={dataFetchCabecera}
+        tipoVenta={tipoVenta}
 			/>
 			{contextHolder}
 		</>

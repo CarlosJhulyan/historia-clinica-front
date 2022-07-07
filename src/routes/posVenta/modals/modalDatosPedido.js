@@ -1,30 +1,42 @@
 import React, { useState } from 'react';
-import { Form, Button, Row, Input, Col, Modal, Divider, DatePicker, Radio, Space } from 'antd';
+import {
+  Form,
+  Button,
+  Row,
+  Input,
+  Col,
+  Modal,
+  Divider,
+  Radio,
+  Space
+} from 'antd';
 
 import Doctor from '../../../assets/posventa/doctor.png';
 import Paciente from '../../../assets/posventa/paciente.png';
 import ModalListaMedicos from './modalListaMedicos';
 import ModalListaPacientes from './modalListaPacientes';
 import ModalListaClientes from './modalListaClientes';
-import { notificaciones, openNotification } from '../../../util/util';
+import { openNotification } from '../../../util/util';
 
 function ModalDatosPedido({
-	visible,
-	setVisible,
-	pacienteCurrent,
-	setPacienteCurrent,
-	medicoCurrent,
-	setMedicoCurrent,
-	clienteCurrent,
-	setClienteCurrent,
-	visibleDatosPedidoAceptar,
-	grabarPedido,
-	guardarDatosPedidoCabecera,
+                              visible,
+                              setVisible,
+                              pacienteCurrent,
+                              setPacienteCurrent,
+                              medicoCurrent,
+                              setMedicoCurrent,
+                              clienteCurrent,
+                              setClienteCurrent,
+                              visibleDatosPedidoAceptar,
+                              grabarPedido,
+                              guardarDatosPedidoCabecera,
+                              loadingGrabarPedido,
+                              tipoVenta,
+                              setTipoVenta
 }) {
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
-	const [tipoVenta, setTipoVenta] = useState(2);
 	const [guardando, setGuardando] = useState(false);
 
 	const handleLimpiar = () => {
@@ -146,7 +158,7 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-										// disabled={!clienteCurrent.key || !medicoCurrent.key || !pacienteCurrent.key}
+										disabled={!clienteCurrent.key || !medicoCurrent.key || !pacienteCurrent.NUM_DOCUMENTO}
 										onClick={
 											guardando
 												? null
@@ -175,10 +187,11 @@ function ModalDatosPedido({
 															fun();
 														} else {
 															setVisible(false);
-															// visibleDatosPedidoAceptar();
+															visibleDatosPedidoAceptar();
 														}
 												  }
 										}
+                    loading={loadingGrabarPedido}
 									>
 										Aceptar
 									</Button>
@@ -208,11 +221,11 @@ function ModalDatosPedido({
 								<Form>
 									<Radio.Group value={tipoVenta} onChange={e => setTipoVenta(e.target.value)}>
 										<Space direction="vertical">
-											<Radio disabled value={1}>
+											<Radio disabled value='05'>
 												Ticket
 											</Radio>
-											<Radio value={2}>Boleta</Radio>
-											<Radio value={3}>Factura</Radio>
+											<Radio value='01'>Boleta</Radio>
+											<Radio value='02'>Factura</Radio>
 										</Space>
 									</Radio.Group>
 								</Form>

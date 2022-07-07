@@ -20,43 +20,140 @@ import Paciente from '../../../assets/posventa/paciente.png';
 import { httpClient } from '../../../util/Api';
 
 function ModalCobrarPedido({
-	visible,
-	setVisible,
-	medicoCurrent,
-	clienteCurrent,
-	pacienteCurrent,
-	setClienteCurrent,
-	setMedicoCurrent,
-	setPacienteCurrent,
-	productos,
-	dataFetch,
-	cNumPedVta_in,
+                              visible,
+                              setVisible,
+                              medicoCurrent,
+                              clienteCurrent,
+                              pacienteCurrent,
+                              setClienteCurrent,
+                              setMedicoCurrent,
+                              setPacienteCurrent,
+                              productos,
+                              dataFetch,
+                              cNumPedVta_in,
+                              dataCabeceraPed,
+                              tipoVenta
 }) {
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
-	const [dataFormaPago, setDataFormaPago] = useState([
-		'EFECTIVO SOLES',
-		'VISA POS',
-		'MASTERCARD POS',
-	]);
+	const [dataMontos, setDataMontos] = useState([]);
+  const [formaPagoCurrent, setFormaPagoCurrent] = useState({});
+  const [montoCurrent, setMontoCurrent] = useState(0.00);
+  const [totalMonto, setTotalMonto] = useState(0.00);
+  const [numeroOperacion, setNumeroOperacion] = useState('');
+
+  const dataInitFetch = {
+    codGrupoCia: '001',
+    codLocal: '001',
+  };
 
 	const [listaCajaEspecialidad, setListaCajaEspecialidad] = useState(null);
 	const [listaCajaDetEspecialidad, setListaCajaDetEspecialidad] = useState(null);
-	const [formasPagoSinConvenio, setFormasPagoSinConvenio] = useState(null);
+	const [formasPagoSinConvenio, setFormasPagoSinConvenio] = useState([{}]);
+
+  const [loadingCobrar, setLoadingCobrar] = useState(false);
 
 	useEffect(() => {
 		inicializar();
-	}, []);
+	}, [cNumPedVta_in]);
+
+  useEffect(() => {
+    const total = dataMontos.reduce((prev, current) => {
+      if (current.monto) return Number(current.monto) + prev;
+      else return  0 + prev;
+    }, 0);
+    setTotalMonto(total);
+  }, [dataMontos])
 
 	const inicializar = async () => {
-		const promesas = [];
 		await procesaPedidoEspecialidad();
-		promesas.push(cargaListaCajaEspecialidad);
-		promesas.push(cargaListaCajaDetEspecialidad);
-		promesas.push(getFormasPagoSinConvenio);
-		await Promise.all(promesas);
+    await cargaListaCajaDetEspecialidad();
+    await getFormasPagoSinConvenio();
+    await cargaListaCajaEspecialidad();
 	};
+
+  const handleCobrarPedido = async () => {
+    const stockValido = await validarStockPedido();
+    if (stockValido === 'S') {
+      await grabarInicioCobro();
+
+      const isFacturaElectronica = await validaSiFacturaElectronica();
+
+      if (isFacturaElectronica === 'S') {
+        const estadoPedido = await verificaEstadoPedido();
+      }
+    }
+
+    // TODO: Continuar con el cobro de pedido
+  }
+
+  const grabarInicioCobro = async () => {
+    try {
+      const {
+        data: { success, message }
+      } = await httpClient.post('posventa/grabaInicioCobro', {
+        ...dataInitFetch,
+        numPedido: dataCabeceraPed.cNumPedVta_in,
+        tipoTmp: 'I'
+      })
+      if (success) {
+        console.log(message);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const validaSiFacturaElectronica = async () => {
+    try {
+      const {
+        data: { success, message, data }
+      } = await httpClient.post('posventa/validaSiFacturaElectronica', {
+        ...dataInitFetch
+      })
+      if (success) {
+        console.log(message);
+        return data;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const verificaEstadoPedido = async () => {
+    try {
+      const {
+        data: { success, message, data }
+      } = await httpClient.post('posventa/verificaEstadoPedido', {
+        ...dataInitFetch,
+        numPedido: dataCabeceraPed.cNumPedVta_in,
+      })
+      if (success) {
+        console.log(message);
+        return data;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const validarStockPedido = async () => {
+    try {
+      const {
+        data: { success, message, data }
+      } = await httpClient.post('posventa/validaStockPedido', {
+        ...dataInitFetch,
+        numPedido: dataCabeceraPed.cNumPedVta_in
+      })
+      if (success) {
+        console.log(message);
+        return data;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
 	const procesaPedidoEspecialidad = async () => {
 		try {
@@ -113,7 +210,10 @@ function ModalCobrarPedido({
 				codCliente: clienteCurrent.COD_CLI,
 				numPed: cNumPedVta_in,
 			});
-			if (success) setFormasPagoSinConvenio(data);
+      console.log(data, message);
+			if (success) {
+        setFormasPagoSinConvenio(data);
+      }
 			else console.log(message);
 		} catch (e) {
 			console.error(e);
@@ -130,7 +230,7 @@ function ModalCobrarPedido({
 				cNumPedVta_in: '',
 				cSecMovCaja_in: '',
 				cCodNumera_in: '',
-				cTipCompPago_in: '',
+				cTipCompPago_in: tipoVenta,
 				cCodMotKardex_in: '',
 				cTipDocKardex_in: '',
 				cCodNumeraKardex_in: '',
@@ -169,19 +269,18 @@ function ModalCobrarPedido({
 	const columnsFormaPago = [
 		{
 			title: 'Forma de Pago',
-			dataIndex: 'ESPECIALIDAD',
-			key: 'ESPECIALIDAD',
+			dataIndex: 'forma',
+			key: 'forma',
 		},
 		{
 			title: 'Total',
-			dataIndex: 'P',
-			key: 'P',
+			dataIndex: 'monto',
+			key: 'monto',
 		},
 		{
 			title: 'Nº Operación',
-			dataIndex: 'TOTAL',
-			key: 'TOTAL',
-			align: 'right',
+			dataIndex: 'opera',
+			key: 'opera',
 		},
 	];
 
@@ -247,13 +346,21 @@ function ModalCobrarPedido({
 					<Col span={16}>
 						<Table
 							columns={columnsProductos}
-							dataSource={productos}
+							dataSource={productos.length === 0 ? [{}]: productos}
 							// pagination={false}
 							size="small"
 							bordered
+              pagination={{
+                pageSize: 4
+              }}
 						/>
 					</Col>
 				</Row>
+        <Row style={{background: '#0169aa', margin:0}} justify='center'>
+          <Col span={20} style={{color: '#0169aa'}}>
+            s
+          </Col>
+        </Row>
 				<Row style={{ marginLeft: 0, marginRight: 0, marginTop: 10 }}>
 					<Col span={11}>
 						<Row>
@@ -343,55 +450,112 @@ function ModalCobrarPedido({
 						</Row>
 					</Col>
 					<Col span={13}>
-						<Row>
-							<Descriptions>
-								<Descriptions.Item span={1} label="BOLETA"></Descriptions.Item>
+						<Row style={{marginBottom: 5}}>
+							<Descriptions className='description-boleta'>
+								<Descriptions.Item  span={1} label="BOLETA"></Descriptions.Item>
 								<Descriptions.Item span={2} label="RUC">
-									20786785672
+                  {dataCabeceraPed.cRucCliPedVta_in}
 								</Descriptions.Item>
 								<Descriptions.Item span={4} label="Cliente">
-									{clienteCurrent.CLIENTE}
+									{dataCabeceraPed.cNomCliPedVta_in}
 								</Descriptions.Item>
 								<Descriptions.Item span={1} label="Pedido">
-									<Input size="small" style={{ width: 100 }} />
+									<Input size="small" style={{ width: 100 }} value={dataCabeceraPed.cNumPedDiario_in} />
 								</Descriptions.Item>
-								<Descriptions.Item label="TOTAL VENTA S/.">12.00</Descriptions.Item>
-								<Descriptions.Item label="US$">3.6</Descriptions.Item>
+								<Descriptions.Item label="TOTAL VENTA S/.">{Number(dataCabeceraPed.nValNetoPedVta_in).toFixed(2)}</Descriptions.Item>
+								<Descriptions.Item label="US$">{(dataCabeceraPed.nValTipCambioPedVta_in * dataCabeceraPed.nValNetoPedVta_in).toFixed(2)}</Descriptions.Item>
 							</Descriptions>
 						</Row>
-						<Divider />
+            <Row className='div-tipo-cambio'>
+              <Col span={12}>
+                Formas de Pago
+              </Col>
+              <Col span={12}>
+                Tipo de cambio 3.34
+              </Col>
+            </Row>
 						<Row>
-							<Col span={8}>
+							<Col span={8} style={{padding:0, paddingRight:10}}>
 								<List
 									size="small"
-									header={<div>Formas de Pagos</div>}
 									bordered
-									style={{ height: 150, overflowY: 'auto' }}
-									dataSource={dataFormaPago}
-									renderItem={item => <List.Item>{item}</List.Item>}
+									style={{ height: 140, overflowY: 'auto', margin: 0 }}
+									dataSource={formasPagoSinConvenio}
+									renderItem={item =>
+                    <List.Item
+                      key={item.key}
+                      onClick={() => {
+                        setFormaPagoCurrent(item);
+                        if ((item.COD_FORMA_PAGO === '00003' || item.COD_FORMA_PAGO === '00006') && totalMonto < Number(dataCabeceraPed.nValNetoPedVta_in)) {
+                          const total = dataMontos.reduce((prev, current) => {
+                            if (current.monto) return Number(current.monto) + prev;
+                            else return  0 + prev;
+                          }, 0);
+                          setTotalMonto(total);
+                          setMontoCurrent(Number(dataCabeceraPed.nValNetoPedVta_in) - total);
+                        } else {
+                          setMontoCurrent(0)
+                        }
+                      }}
+                      style={{
+                        cursor: 'pointer',
+                        color: formaPagoCurrent.COD_FORMA_PAGO === item.COD_FORMA_PAGO ? '#0169aa' : '#000',
+                        background: formaPagoCurrent.COD_FORMA_PAGO === item.COD_FORMA_PAGO ? 'rgba(1,105,170,0.12)' : '#fff'
+                    }}
+                    >
+                      {item.DESC_CORTA_FORMA_PAGO}
+                    </List.Item>}
 								/>
 							</Col>
 							<Col span={16}>
 								<Form>
-									<Row>
+									<Row style={{marginTop:10}}>
 										<Col span={10} style={{ marginRight: 10 }}>
 											<Form.Item label="Moneda">
-												<Input disabled />
+												<Input disabled value={'SOLES'} />
 											</Form.Item>
 										</Col>
 										<Col span={13}>
 											<Form.Item label="Nº Operación">
-												<Input />
+												<Input value={numeroOperacion} onChange={e => setNumeroOperacion(e.target.value)} />
 											</Form.Item>
 										</Col>
 									</Row>
 									<Row>
 										<Col span={10} style={{ marginRight: 10 }}>
 											<Form.Item label="Monto">
-												<Input type="number" value="0.00" />
+												<Input
+                          min={0}
+                          type="number"
+                          value={montoCurrent}
+                          disabled={!formaPagoCurrent.key}
+                          onChange={e => setMontoCurrent(e.target.value)}
+                        />
 											</Form.Item>
 										</Col>
 									</Row>
+                  <Row>
+                    <Col span={10} style={{ marginRight: 10 }}>
+                      <Form.Item>
+                        <Button
+                          onClick={() => {
+                          setDataMontos([...dataMontos, {
+                              monto: montoCurrent,
+                              forma: formaPagoCurrent.DESC_CORTA_FORMA_PAGO,
+                              key: formaPagoCurrent.key,
+                              opera: numeroOperacion
+                            }]);
+                            setMontoCurrent(0);
+                            setNumeroOperacion('');
+                          }}
+                          block
+                          disabled={montoCurrent <= 0}
+                        >
+                          Adicionar
+                        </Button>
+                      </Form.Item>
+                    </Col>
+                  </Row>
 								</Form>
 							</Col>
 						</Row>
@@ -401,26 +565,33 @@ function ModalCobrarPedido({
 									columns={columnsFormaPago}
 									size="small"
 									pagination={false}
-									dataSource={[{}]}
+									dataSource={dataMontos}
 								/>
 							</Col>
-							<Col span={10}>
-								<Card>
-									<Descriptions>
-										<Descriptions.Item span={3} label="TOTAL A PAGAR S/.">
-											12.00
-										</Descriptions.Item>
-										<Descriptions.Item span={3} label="Vuelto S/.">
-											0.00
-										</Descriptions.Item>
-									</Descriptions>
-								</Card>
+							<Col span={10} style={{marginBottom:20}}>
+                <Descriptions className='total-pagar-desc' style={{height: '100%'}}>
+                  <Descriptions.Item span={3} label="TOTAL A PAGAR S/.">
+                    {dataCabeceraPed.nValNetoPedVta_in}
+                  </Descriptions.Item>
+                  <Descriptions.Item span={3} label="Vuelto S/.">
+                    {totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in) >= 0 ? (totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in)).toFixed(2) : (0).toFixed(2)}
+                  </Descriptions.Item>
+                </Descriptions>
 							</Col>
 							<Col span={24}>
 								<Row justify="end" style={{ marginRight: 5 }}>
 									<Button>% Descuento</Button>
-									<Button>Limpiar</Button>
-									<Button style={{ backgroundColor: '#0169aa', color: 'white' }}>Aceptar</Button>
+									<Button onClick={() => {
+                    setDataMontos([]);
+                  }}>Limpiar</Button>
+									<Button
+                    style={{ backgroundColor: '#0169aa', color: 'white' }}
+                    disabled={totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in) < 0}
+                    loading={loadingCobrar}
+                    onClick={handleCobrarPedido}
+                  >
+                    Aceptar
+                  </Button>
 								</Row>
 							</Col>
 						</Row>
