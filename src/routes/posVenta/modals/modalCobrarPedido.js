@@ -98,10 +98,21 @@ function ModalCobrarPedido({
 			const estadoPedido = await verificaEstadoPedido();
 
 			if (estadoPedido === 'P') {
-
-
+				for (const item of dataMontos) {
+					await cajGrabNewFormPagoPedio(item); // TODO: FALTA ORDENAR NO SE SABE EN QUE MOMENTO SE EJECUTA ESTA FUNCION
+					const validar = await cajFVerificaPedForPag(); // TODO: ESTA FUNCION VA JUNTO CON LA DE ARRIBA
+					if (validar === 'ERROR') {
+						openNotification(
+							'error',
+							'Error',
+							'El pedido no puede ser cobrado.\n Los totales de formas de pago y cabecera no coinciden. \n Comuníquese con el Operador de Sistemas inmediatamente.\n NO CIERRE LA VENTANA.'
+						);
+						return;
+					}
+				}
 			}
 
+			// TODO: SE QUITO LA FACTURA ELECTRONICA POR QUE AL PARECER NO SE USARA ESA VALIDACION
 			// const isFacturaElectronica = await validaSiFacturaElectronica();
 
 			// if (isFacturaElectronica === 'S') {
@@ -213,6 +224,8 @@ function ModalCobrarPedido({
 		}
 	};
 
+	// TODO: FALTAN PROBAR ----------------------------------------------------
+
 	const cajCobraPedido = async () => {
 		try {
 			const {
@@ -220,24 +233,108 @@ function ModalCobrarPedido({
 			} = await httpClient.post('/posventa/cajCobraPedido', {
 				...dataInitFetch,
 				numPedido: dataCabeceraPed.cNumPedVta_in,
-				// secMovCaja,
+				secMovCaja: await getSecuenciaMovCaja(),
 				codNumera: COD_NUMERA_SEC_COMP_PAGO,
 				tipCompPago: tipoVenta,
 				codMotKardex: MOT_KARDEX_VENTA_NORMAL,
 				tipDocKardex: TIP_DOC_KARDEX_VENTA,
 				codNumeraKardex: COD_NUMERA_SEC_KARDEX,
-				usuCreaCompPago:user.sec_usu_local,
-				// descDetalleForPago,
-				// permiteCampana,
-				// dni,
-				// numCompPagoImpr,
+				usuCreaCompPago: user.usu_mod_usu_local,
+				// descDetalleForPago, // TODO: FALTA MAPEAR
+				// permiteCampana, // TODO: FALTA	MAPEAR
+				// dni, // TODO: FALTA MAPEAR
+				// numCompPagoImpr, // TODO: FALTA MAPEAR
 			});
-			if (success) setListaCajaEspecialidad(data);
+			if (success) return data;
 			else console.log(message);
 		} catch (e) {
 			console.error(e);
 		}
 	};
+
+	const getSecuenciaMovCaja = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('/posventa/getSecuenciaMovCaja', {
+				...dataInitFetch,
+				numCajaPago: await getCajaDispoUsuario(),
+			});
+			if (success) return data;
+			else console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const getCajaDispoUsuario = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('/posventa/getCajaDispoUsuario', {
+				...dataInitFetch,
+				secUsu: user.sec_usu_local,
+			});
+			if (success) return data;
+			else console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const cajGrabNewFormPagoPedio = async item => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('/posventa/cajGrabNewFormPagoPedio', {
+				...dataInitFetch,
+				codFormaPago: item.key,
+				numPedido: cNumPedVta_in,
+				imPago: item.monto,
+				tipMoneda: '01',
+				valTipCambio: 3.34,
+				valVuelto:
+					item.key === '00001'
+						? (totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in)).toFixed(2)
+						: 0,
+				imTotalPago:
+					item.key !== '00001'
+						? item.monto
+						: item.monto - (totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in)).toFixed(2),
+				numTarj: '',
+				fecVencTarj: '',
+				nomTarj: '',
+				canCupon: '0',
+				usuCreaFormaPagoPed: user.usu_mod_usu_local,
+				dni: '',
+				codAtori: '',
+				lote: '.',
+				numOperacion: '.',
+				secFormaPago: '1',
+			});
+			if (success) return data;
+			else console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const cajFVerificaPedForPag = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('/posventa/cajFVerificaPedForPag', {
+				...dataFetch,
+				cNumPedVta: cNumPedVta_in,
+			});
+			if (success) return data;
+			else console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	// TODO: ----------------------------------------------------
 
 	const cargaListaCajaDetEspecialidad = async () => {
 		try {
