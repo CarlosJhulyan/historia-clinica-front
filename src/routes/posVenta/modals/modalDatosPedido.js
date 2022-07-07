@@ -32,7 +32,7 @@ function ModalDatosPedido({
                               guardarDatosPedidoCabecera,
                               loadingGrabarPedido,
                               tipoVenta,
-                              setTipoVenta
+                              setTipoVenta,
 }) {
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);

@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-	Card,
-	Form,
-	AutoComplete,
-	Button,
-	Table,
-	Divider,
-	Row,
-	Modal,
-	Descriptions,
-} from 'antd';
+import { Card, Form, AutoComplete, Button, Table, Divider, Row, Modal, Descriptions } from 'antd';
 import moment from 'moment';
 import ModalListaProductos from './modals/modalListaProductos';
 import { httpClient } from '../../util/Api';
@@ -29,10 +19,10 @@ function GenerarPedido() {
 	const [data, setData] = useState([]);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
-  const [loadingGrabarPedido,setLoadingGrabarPedido] = useState(false);
+	const [loadingGrabarPedido, setLoadingGrabarPedido] = useState(false);
 
 	const [cNumPedVta_in, setCNumPedVta_in] = useState('');
-  const [tipoVenta, setTipoVenta] = useState('01');
+	const [tipoVenta, setTipoVenta] = useState('01');
 
 	const {
 		authUser: { data: user },
@@ -162,8 +152,13 @@ function GenerarPedido() {
 	};
 
 	const guardarDatosPedidoCabecera = async () => {
-    setLoadingGrabarPedido(true);
+		setLoadingGrabarPedido(true);
 		try {
+			const cajaAbierta = await getFechaMovCaja();
+			if (!cajaAbierta) {
+				console.log('No hay caja abierta');
+			}
+			console.log('caja abierta');
 			const dataLocalCabecera = {
 				...dataFetchCabecera,
 			};
@@ -215,7 +210,7 @@ function GenerarPedido() {
 			console.log(dataLocalCabecera);
 
 			await grabarPedidoFinally(dataLocalCabecera);
-      setDataFetchCabecera(dataLocalCabecera);
+			setDataFetchCabecera(dataLocalCabecera);
 			let index = 0;
 			for (const item of data) {
 				guardarPedidoDetalle(item, index, IND_PROD_SIMPLE, dataLocalCabecera.cNumPedVta_in);
@@ -231,9 +226,10 @@ function GenerarPedido() {
 			procesaPedidoEspecialidad(dataLocalCabecera.cNumPedVta_in);
 			setCNumPedVta_in(dataLocalCabecera.cNumPedVta_in);
 			datosPedidoAceptar();
-      setLoadingGrabarPedido(false);
+			setLoadingGrabarPedido(false);
 		} catch (e) {
 			console.error(e);
+			setLoadingGrabarPedido(false);
 		}
 	};
 
@@ -549,6 +545,8 @@ function GenerarPedido() {
 	};
 
 	const getFechaMovCaja = async () => {
+		let respuesta;
+
 		const codGrupoCia = '001';
 		const codLocal = '001';
 		setLoadingData(true);
@@ -581,13 +579,18 @@ function GenerarPedido() {
 						'Debe CERRAR su caja para empezar un NUEVO DIA.\n La fecha actual no coincide con la Fecha de Apertura de Caja.'
 					);
 					setDisabledAll(true);
+					respuesta = false;
 				} else {
 					setDisabledAll(false);
 					setVisibleModal(true);
+					respuesta = true;
 				}
 				setFechaSistema(fechaSistema);
 				setLoadingData(false);
 				setNumCaja(result);
+				return respuesta;
+			} else {
+				return false;
 			}
 		} catch (e) {
 			showModal('Error al obtener la fecha de movimiento de caja');
@@ -908,6 +911,8 @@ function GenerarPedido() {
 				clienteCurrent={clienteCurrent}
 				datosPedidoAceptar={datosPedidoAceptar}
 				setClienteCurrent={setClienteCurrent}
+				tipoVenta={tipoVenta}
+				setTipoVenta={setTipoVenta}
 			/>
 			<ModalDatosPedido
 				visibleDatosPedidoAceptar={datosPedidoAceptar}
@@ -921,9 +926,9 @@ function GenerarPedido() {
 				setClienteCurrent={setClienteCurrent}
 				grabarPedido={grabarPedido}
 				guardarDatosPedidoCabecera={guardarDatosPedidoCabecera}
-        loadingGrabarPedido={loadingGrabarPedido}
-        tipoVenta={tipoVenta}
-        setTipoVenta={setTipoVenta}
+				loadingGrabarPedido={loadingGrabarPedido}
+				tipoVenta={tipoVenta}
+				setTipoVenta={setTipoVenta}
 			/>
 			<ModalCobrarPedido
 				setVisible={setVisibleModalCobrarPedido}
@@ -937,8 +942,8 @@ function GenerarPedido() {
 				productos={data}
 				dataFetch={dataFetch}
 				cNumPedVta_in={cNumPedVta_in}
-        dataCabeceraPed={dataFetchCabecera}
-        tipoVenta={tipoVenta}
+				dataCabeceraPed={dataFetchCabecera}
+				tipoVenta={tipoVenta}
 			/>
 			{contextHolder}
 		</>

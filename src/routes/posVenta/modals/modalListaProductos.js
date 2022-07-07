@@ -29,6 +29,8 @@ function ModalListaProductos({
 	clienteCurrent,
 	setClienteCurrent,
 	datosPedidoAceptar,
+	tipoVenta,
+	setTipoVenta,
 }) {
 	const [data, setData] = useState([]);
 	const { confirm, warning } = Modal;
@@ -438,6 +440,8 @@ function ModalListaProductos({
 				setMedicoCurrent={setMedicoCurrent}
 				clienteCurrent={clienteCurrent}
 				setClienteCurrent={setClienteCurrent}
+				tipoVenta={tipoVenta}
+				setTipoVenta={setTipoVenta}
 			/>
 		</>
 	);
