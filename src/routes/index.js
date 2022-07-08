@@ -128,7 +128,7 @@ const App = ({ match }) => {
 				items.push(<Route key={19} path={`${match.url}historicoPreTriaje`} component={HistoricoPreTriaje} />);
 			}
 			if (token.modulos.includes('20')) {
-				items.push(<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />);
+				// items.push(<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />);
 			}
 		}
 
@@ -162,6 +162,7 @@ const App = ({ match }) => {
     if (token?.data) {
       items.push(<Route key={30} path={`${match.url}generarPedido`} component={GenerarPedido} />);
       items.push(<Route key={31} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />);
+      items.push(<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />);
     }
 
 		return items;

@@ -17,6 +17,7 @@ import ModalListaMedicos from './modalListaMedicos';
 import ModalListaPacientes from './modalListaPacientes';
 import ModalListaClientes from './modalListaClientes';
 import { openNotification } from '../../../util/util';
+import ModalLoading from '../../../util/modalLoading';
 
 function ModalDatosPedido({
                               visible,
@@ -310,6 +311,7 @@ function ModalDatosPedido({
 				setVisible={setVisibleModalCliente}
 				setClienteCurrent={setClienteCurrent}
 			/>
+      {guardando ? <ModalLoading></ModalLoading> : null}
 		</>
 	);
 }

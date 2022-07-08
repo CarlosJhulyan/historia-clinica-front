@@ -72,6 +72,15 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item>
         </SubMenu>
       );
+
+      menuItems.push(
+        <Menu.Item key="ingresoAtenciones">
+          <Link to="/ingresoAtenciones">
+            <i className="icon icon-auth-screen" />
+            <span>Ingreso Atenciones</span>
+          </Link>
+        </Menu.Item>
+      );
     }
 
 		if (token?.modulos && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) {
@@ -144,14 +153,14 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 			}
 
 			if (token.modulos.includes('20')) {
-				menuItems.push(
-					<Menu.Item key="ingresoAtenciones">
-						<Link to="/ingresoAtenciones">
-							<i className="icon icon-auth-screen" />
-							<span>Ingreso Atenciones</span>
-						</Link>
-					</Menu.Item>
-				);
+				// menuItems.push(
+				// 	<Menu.Item key="ingresoAtenciones">
+				// 		<Link to="/ingresoAtenciones">
+				// 			<i className="icon icon-auth-screen" />
+				// 			<span>Ingreso Atenciones</span>
+				// 		</Link>
+				// 	</Menu.Item>
+				// );
 			}
 
 			if (token.modulos.includes('14')) {

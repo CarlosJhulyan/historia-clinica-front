@@ -8,6 +8,7 @@ import ModalCobrarPedido from './modals/modalCobrarPedido';
 import { openNotification } from '../../util/util';
 import { useAuth } from '../../authentication';
 import DecimalFormat from 'decimal-format';
+import ModalLoading from '../../util/modalLoading';
 
 function GenerarPedido() {
 	const { info } = Modal;
@@ -20,6 +21,9 @@ function GenerarPedido() {
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
 	const [loadingGrabarPedido, setLoadingGrabarPedido] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [productosDetalles, setProductosDetalles] = useState([]);
+  const [productosCurrent, setProductosCurrent] = useState([]);
 
 	const [cNumPedVta_in, setCNumPedVta_in] = useState('');
 	const [tipoVenta, setTipoVenta] = useState('01');
@@ -213,17 +217,17 @@ function GenerarPedido() {
 			setDataFetchCabecera(dataLocalCabecera);
 			let index = 0;
 			for (const item of data) {
-				guardarPedidoDetalle(item, index, IND_PROD_SIMPLE, dataLocalCabecera.cNumPedVta_in);
+				await guardarPedidoDetalle(item, index, IND_PROD_SIMPLE, dataLocalCabecera.cNumPedVta_in);
 				index++;
 			}
 
 			//----------------------------------------------------
-			updateNumeracionSinComit(COD_NUMERA_PEDIDO);
-			updateNumeracionSinComit(COD_NUMERA_PEDIDO_DIARIO);
+			await updateNumeracionSinComit(COD_NUMERA_PEDIDO);
+			await updateNumeracionSinComit(COD_NUMERA_PEDIDO_DIARIO);
 			// ---
-			validarValorVentaNeto(dataLocalCabecera.cNumPedVta_in);
+			await validarValorVentaNeto(dataLocalCabecera.cNumPedVta_in);
 			// --
-			procesaPedidoEspecialidad(dataLocalCabecera.cNumPedVta_in);
+			await procesaPedidoEspecialidad(dataLocalCabecera.cNumPedVta_in);
 			setCNumPedVta_in(dataLocalCabecera.cNumPedVta_in);
 			datosPedidoAceptar();
 			setLoadingGrabarPedido(false);
@@ -617,6 +621,17 @@ function GenerarPedido() {
 		}),
 	};
 
+  const clearDataFinally = () => {
+    setData([]);
+    setCNumPedVta_in('');
+    setSelectedRowKeys([]);
+    setVisibleModal(false);
+    setTipoVenta('01');
+    setVisibleModalDatosPedido(false);
+    setProductosDetalles([]);
+    setProductosCurrent([]);
+  }
+
 	const validaOperacionCaja = async tipOp => {
 		try {
 			const {
@@ -834,6 +849,9 @@ function GenerarPedido() {
 					className="gx-table-responsive"
 					columns={columns}
 					dataSource={data}
+          pagination={{
+            pageSize: 5
+          }}
 					footer={() => (
 						<Row
 							justify="start"
@@ -913,6 +931,12 @@ function GenerarPedido() {
 				setClienteCurrent={setClienteCurrent}
 				tipoVenta={tipoVenta}
 				setTipoVenta={setTipoVenta}
+        selectedRowKeys={selectedRowKeys}
+        setSelectedRowKeys={setSelectedRowKeys}
+        productosDetalles={productosDetalles}
+        setProductosDetalles={setProductosDetalles}
+        productosCurrent={productosCurrent}
+        setProductosCurrent={setProductosCurrent}
 			/>
 			<ModalDatosPedido
 				visibleDatosPedidoAceptar={datosPedidoAceptar}
@@ -945,6 +969,8 @@ function GenerarPedido() {
 					dataCabeceraPed={dataFetchCabecera}
 					tipoVenta={tipoVenta}
 					getFechaMovCaja={getFechaMovCaja}
+          setTipoVenta={setTipoVenta}
+          clearDataFinallyMain={clearDataFinally}
 				/>
 			) : null}
 			{contextHolder}

@@ -31,6 +31,12 @@ function ModalListaProductos({
 	datosPedidoAceptar,
 	tipoVenta,
 	setTipoVenta,
+  selectedRowKeys,
+  setSelectedRowKeys,
+  productosDetalles,
+  setProductosDetalles,
+  productosCurrent,
+  setProductosCurrent
 }) {
 	const [data, setData] = useState([]);
 	const { confirm, warning } = Modal;
@@ -40,12 +46,11 @@ function ModalListaProductos({
 	const [especialidad, setEspecialidad] = useState('');
 	const [textSearch, settextSearch] = useState('');
 	const [productoCurrent, setProductoCurrent] = useState({});
-	const [productosCurrent, setProductosCurrent] = useState([]);
-	const [productosDetalles, setProductosDetalles] = useState([]);
 	const [visibleModalCantidad, setVisibleModalCantidad] = useState(false);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
+  const [totalLabel, setTotalLabel] = useState(0);
+  const [dataCurrentLabel, setDataCurrentLabel] = useState({});
 
-	const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 	const [state, setState] = useState();
 	const [dataList, setDataList] = useState([]);
 	const formRefEspe = useRef();
@@ -232,6 +237,23 @@ function ModalListaProductos({
 		getListaEspecialidades();
 	}, []);
 
+  useEffect(() => {
+    const total = productosDetalles.reduce((previus, current) => parseFloat(current.total) + previus, 0);
+    console.log(productosDetalles);
+    setTotalLabel(total);
+    if (productosDetalles.length >= 1) {
+      setDataCurrentLabel({
+        precio: productosDetalles[productosDetalles.length - 1].pu,
+        unidad: productosDetalles[productosDetalles.length - 1].UNIDAD
+      });
+    } else {
+      setDataCurrentLabel({
+        precio: 0,
+        unidad: ''
+      });
+    }
+  }, [selectedRowKeys, productosDetalles]);
+
 	return (
 		<>
 			<Modal
@@ -297,11 +319,11 @@ function ModalListaProductos({
 						<Row justify="space-between">
 							<Col span={13}>
 								<Row justify="space-between" style={{ margin: 0 }}>
-									Unidad: {moment().format('DD/MM/yyyy')}
+									Unidad: {dataCurrentLabel.unidad}
 								</Row>
 								<Row justify="space-between">
 									<Col span={12}>
-										<span>Precio: S/. 50.00</span>
+										<span>Precio: S/. {Number(dataCurrentLabel.precio).toFixed(2)}</span>
 									</Col>
 									<Col span={12}>
 										<Input size="small" placeholder="Stock adic.:" />
@@ -316,7 +338,7 @@ function ModalListaProductos({
 								</Row>
 								<Row justify="space-between" style={{ margin: 0 }}>
 									<span>Total Venta: S/.</span>
-									<span>0.00</span>
+									<span>{totalLabel.toFixed(2)}</span>
 								</Row>
 							</Col>
 						</Row>
@@ -369,7 +391,7 @@ function ModalListaProductos({
 							>
 								Aceptar
 							</Button>
-							<Button type="default">Ver Campañas</Button>
+							{/*<Button type="default">Ver Campañas</Button>*/}
 							<Button form="my-form" htmlType="reset" type="default" onClick={resetEspecialidades}>
 								Limpiar Filtro
 							</Button>
