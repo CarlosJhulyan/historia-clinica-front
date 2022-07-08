@@ -930,21 +930,23 @@ function GenerarPedido() {
 				tipoVenta={tipoVenta}
 				setTipoVenta={setTipoVenta}
 			/>
-			<ModalCobrarPedido
-				setVisible={setVisibleModalCobrarPedido}
-				visible={visibleModalCobrarPedido}
-				pacienteCurrent={pacienteCurrent}
-				setPacienteCurrent={setPacienteCurrent}
-				medicoCurrent={medicoCurrent}
-				setMedicoCurrent={setMedicoCurrent}
-				clienteCurrent={clienteCurrent}
-				setClienteCurrent={setClienteCurrent}
-				dataFetch={dataFetch}
-				cNumPedVta_in={cNumPedVta_in}
-				dataCabeceraPed={dataFetchCabecera}
-				tipoVenta={tipoVenta}
-        getFechaMovCaja={getFechaMovCaja}
-			/>
+			{visibleModalCobrarPedido ? (
+				<ModalCobrarPedido
+					setVisible={setVisibleModalCobrarPedido}
+					visible={visibleModalCobrarPedido}
+					pacienteCurrent={pacienteCurrent}
+					setPacienteCurrent={setPacienteCurrent}
+					medicoCurrent={medicoCurrent}
+					setMedicoCurrent={setMedicoCurrent}
+					clienteCurrent={clienteCurrent}
+					setClienteCurrent={setClienteCurrent}
+					dataFetch={dataFetch}
+					cNumPedVta_in={cNumPedVta_in}
+					dataCabeceraPed={dataFetchCabecera}
+					tipoVenta={tipoVenta}
+					getFechaMovCaja={getFechaMovCaja}
+				/>
+			) : null}
 			{contextHolder}
 		</>
 	);

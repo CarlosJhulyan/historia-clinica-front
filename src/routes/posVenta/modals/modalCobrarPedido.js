@@ -20,6 +20,7 @@ import Paciente from '../../../assets/posventa/paciente.png';
 import { httpClient } from '../../../util/Api';
 import { openNotification } from '../../../util/util';
 import { useAuth } from '../../../authentication';
+import ModalLoading from '../../../util/modalLoading';
 
 function ModalCobrarPedido({
 	visible,
@@ -34,9 +35,9 @@ function ModalCobrarPedido({
 	cNumPedVta_in,
 	dataCabeceraPed,
 	tipoVenta,
-  getFechaMovCaja
+	getFechaMovCaja,
 }) {
-  const { info } = Modal;
+	const { info } = Modal;
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
@@ -86,103 +87,122 @@ function ModalCobrarPedido({
 	};
 
 	const handleCobrarPedido = async () => {
-    setLoadingCobrar(true);
+		setLoadingCobrar(true);
 		const stockValido = await validarStockPedido();
 
 		if (stockValido === 'S') {
 			await grabarInicioFinCobro('I');
+
+			// Validar si la caja de usuario esta acorde a la fecha
+			const isFechaValida = await getFechaMovCaja();
+
+			if (!isFechaValida) {
+				showModalInfo(
+					'Ud ha esperado mucho tiempo, ya es un NUEVO DIA, vuelva a abrir una NUEVA CAJA.',
+					async () => {
+						await anularPedidoPendiente();
+						clearDataAll();
+					}
+				);
+				setLoadingCobrar(false);
+				return;
+			}
+
+			// Si pedido mayor a 1 o menor a 1 no pasa si es 1 PASA
+			const infoPedidoCurrrent = await obtenerInfoPedido();
+			if (infoPedidoCurrrent.length < 1) {
+				showModalInfo('El Pedido No existe o No se encuentra pendiente de pago', async () => {
+					clearDataAll();
+				});
+				setLoadingCobrar(false);
+				return;
+			} else if (infoPedidoCurrrent.length > 1) {
+				showModalInfo(
+					'Se encontro mas de un pedido.\n Ponganse en contacto con el area de Sistemas.',
+					async () => {
+						clearDataAll();
+					}
+				);
+				setLoadingCobrar(false);
+				return;
+			}
+
 			/**
 			 * SI EL ESTADO DEL PEDIDO ES C -> MENSAJE PEDIDO COBRADO
 			 * SI EL ESTADO DEL PEDIDO ES N -> MENSAJE PEDIDO ANULADO
 			 * SI EL ESTADO DEL PEDIDO ES S -> MENSAJE PEDIDO PENDIENTE DE IMPRESION
 			 * SI EL ESTADO DEL PEDIDO ES P -> PASAR AL SIGUIENTE FLUJO
 			 */
-
-      // Validar si la caja de usuario esta acorde a la fecha
-      const isFechaValida = await getFechaMovCaja();
-
-      if (!isFechaValida) {
-        showModalInfo('Ud ha esperado mucho tiempo, ya es un NUEVO DIA, vuelva a abrir una NUEVA CAJA.', async () => {
-          await anularPedidoPendiente();
-          clearDataAll();
-        })
-        return;
-      }
-
-      // Si pedido mayor a 1 o menor a 1 no pasa si es 1 PASA
-      const infoPedidoCurrrent = await obtenerInfoPedido();
-      if (infoPedidoCurrrent.length < 1) {
-        showModalInfo('El Pedido No existe o No se encuentra pendiente de pago', async () => {
-          clearDataAll();
-        });
-        return;
-      } else if (infoPedidoCurrrent.length > 1) {
-        showModalInfo('Se encontro mas de un pedido.\n Ponganse en contacto con el area de Sistemas.', async () => {
-          clearDataAll();
-        });
-        return;
-      }
-
-      // Verificar el estado del pedido
+			// Verificar el estado del pedido
 			const estadoPedido = await verificaEstadoPedido();
 
 			if (estadoPedido === 'P') {
-        // TODO: Validar las formas de pago que existan
-        // const formasPago = await  getFormasPagoSinConvenio();
-        // for (const item of formasPago) {
-        //   const formaValid = dataMontos.some(x => x.key === item.key);
-        //   if (!formaValid) {
-        //     console.log('No paso la validacion de', item.key);
-        //     setLoadingCobrar(false);
-        //     return;
-        //   }
-        // }
+				// TODO: Validar las formas de pago que existan
+				// const formasPago = await  getFormasPagoSinConvenio();
+				// for (const item of formasPago) {
+				//   const formaValid = dataMontos.some(x => x.key === item.key);
+				//   if (!formaValid) {
+				//     console.log('No paso la validacion de', item.key);
+				//     setLoadingCobrar(false);
+				//     return;
+				//   }
+				// }
 
-        // Valida monto ingresado que no sea letra o que no se a 0
-        const montoValidado = validarMontoTotal();
+				// Valida monto ingresado que no sea letra o que no se a 0
+				const montoValidado = validarMontoTotal();
 
-        if (!montoValidado) return;
+				if (!montoValidado) return;
 
 				for (const item of dataMontos) {
-					await cajGrabNewFormPagoPedio(item); // TODO: FALTA MAPEAR VARIABLES Y QUE FUNCIONE
+					await cajGrabNewFormPagoPedido(item);
 					const validar = await cajFVerificaPedForPag();
 					if (validar === 'ERROR') {
 						openNotification(
-							'error',
 							'Error',
-							'El pedido no puede ser cobrado.\n Los totales de formas de pago y cabecera no coinciden. \n Comuníquese con el Operador de Sistemas inmediatamente.\n NO CIERRE LA VENTANA.'
+							'El pedido no puede ser cobrado.\n Los totales de formas de pago y cabecera no coinciden. \n Comuníquese con el Operador de Sistemas inmediatamente.\n NO CIERRE LA VENTANA.',
+							'Alerta'
 						);
+						setLoadingCobrar(false);
 						return;
 					}
 				}
 
-        // Valida caja abierta
-        const isCajaAbierta = await getFechaMovCaja();
-        if (!isCajaAbierta) {
-          showModalInfo('La fecha de apertura y la fecha del sistema no concuerdan, ABRA UNA NUEVO DIA', async () => {
-            await anularPedidoPendiente();
-            clearDataAll();
-          })
-          return;
-        }
+				// // Valida caja abierta
+				// const isCajaAbierta = await getFechaMovCaja();
+				// if (!isCajaAbierta) {
+				//   showModalInfo('La fecha de apertura y la fecha del sistema no concuerdan, ABRA UNA NUEVO DIA', async () => {
+				//     await anularPedidoPendiente();
+				//     clearDataAll();
+				//   })
+				//   return;
+				// }
 
-        // Actualiza los datos del pedido para el cliente
-        await actualizaCliPedido();
+				// Actualiza los datos del pedido para el cliente
+				await actualizaCliPedido();
 
-        // Graba el pedido
-        await cajCobraPedido();
-        await grabarInicioFinCobro('F');
+				// Graba el pedido
+				const response = await cajCobraPedido();
 
+				if (response.trim() === 'EXITO') {
+					// TODO
+				} else {
+					// TODO
+				}
+
+				await grabarInicioFinCobro('F');
 			} else if (estadoPedido === 'C') {
-        showModalInfo('Pedido ya cobrado');
-        return;
-      } else if (estadoPedido === 'N') {
-        showModalInfo('Pedido ya anulado');
-        return;
-      } else if (estadoPedido === 'S') {
-        showModalInfo('Pedido pendiente de impresión');
-        return;
-      }
+				showModalInfo('Pedido ya cobrado');
+				setLoadingCobrar(false);
+				return;
+			} else if (estadoPedido === 'N') {
+				showModalInfo('Pedido ya anulado');
+				setLoadingCobrar(false);
+				return;
+			} else if (estadoPedido === 'S') {
+				showModalInfo('Pedido pendiente de impresión');
+				setLoadingCobrar(false);
+				return;
+			}
 		} else {
 			openNotification(
 				'Error',
@@ -190,118 +210,114 @@ function ModalCobrarPedido({
 				'Alerta'
 			);
 		}
-    setLoadingCobrar(false);
-	}
+		setLoadingCobrar(false);
+	};
 
-  const validarMontoTotal = () => {
-    if (String(totalMonto).length == 0 || totalMonto <= 0 || String(totalMonto).trim() === '') {
-      openNotification('Monto', 'Ingrese un monto valido', 'warning');
-      setDataMontos([]);
-      return false;
-    } else
-      return true;
-  }
+	const validarMontoTotal = () => {
+		if (String(totalMonto).length == 0 || totalMonto <= 0 || String(totalMonto).trim() === '') {
+			openNotification('Monto', 'Ingrese un monto valido', 'warning');
+			setDataMontos([]);
+			return false;
+		} else return true;
+	};
 
-  const showModalInfo = (message, callback) => {
-    info({
-      title: 'Mensaje del Sistema',
-      width: 500,
-      content: message,
-      centered: true,
-      okText: 'Aceptar',
-      onOk: async () => {
-        await callback();
-        setLoadingCobrar(false);
-      },
-      okButtonProps: {
-        style: {
-          background: '#0169aa',
-          color: '#fff',
-        },
-      },
-    });
-  }
+	const showModalInfo = (message, callback) => {
+		info({
+			title: 'Mensaje del Sistema',
+			width: 500,
+			content: message,
+			centered: true,
+			okText: 'Aceptar',
+			onOk: async () => {
+				await callback();
+				setLoadingCobrar(false);
+			},
+			okButtonProps: {
+				style: {
+					background: '#0169aa',
+					color: '#fff',
+				},
+			},
+		});
+	};
 
-	const grabarInicioFinCobro = async (tipoTmp) => {
+	const grabarInicioFinCobro = async tipoTmp => {
 		try {
 			const {
 				data: { success, message },
 			} = await httpClient.post('posventa/grabaInicioFinCobro', {
 				...dataInitFetch,
 				numPedido: dataCabeceraPed.cNumPedVta_in,
-        tipoTmp,
+				tipoTmp,
 			});
 			if (success) {
-
 			}
-      console.log(message);
+			console.log(message);
 		} catch (e) {
 			console.error(e);
 		}
 	};
 
-  const actualizaCliPedido = async () => {
-    try {
-      const {
-        data: { success, message },
-      } = await httpClient.post('posventa/actualizaCliPedido', {
-        ...dataInitFetch,
-        cNumPedVta_in: dataCabeceraPed.cNumPedVta_in,
-        cCodCliLocal_in: clienteCurrent.COD_CLI,
-        cNomCliPed_in: clienteCurrent.CLIENTE,
-        cDirCliLocal_in: clienteCurrent.DIRECCION,
-        cRucCliPed_in: clienteCurrent.NUM_DOCUMENTO,
-        cUsuModPedVtaCab_in: user.login_usu,
-      });
-      if (success) {
+	const actualizaCliPedido = async () => {
+		try {
+			const {
+				data: { success, message },
+			} = await httpClient.post('posventa/actualizaCliPedido', {
+				...dataInitFetch,
+				cNumPedVta_in: dataCabeceraPed.cNumPedVta_in,
+				cCodCliLocal_in: clienteCurrent.COD_CLI,
+				cNomCliPed_in: clienteCurrent.CLIENTE,
+				cDirCliLocal_in: clienteCurrent.DIRECCION,
+				cRucCliPed_in: clienteCurrent.NUM_DOCUMENTO,
+				cUsuModPedVtaCab_in: user.login_usu,
+			});
+			if (success) {
+			}
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
-      }
-      console.log(message);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+	const anularPedidoPendiente = async () => {
+		try {
+			const {
+				data: { success, message },
+			} = await httpClient.post('posventa/anulaPedidoPendiente', {
+				...dataInitFetch,
+				cNumPedVta: dataCabeceraPed.cNumPedVta_in,
+				vIdUsu_in: '',
+				cModulo_in: '',
+			});
+			if (success) {
+			}
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
-  const anularPedidoPendiente = async () => {
-    try {
-      const {
-        data: { success, message },
-      } = await httpClient.post('posventa/anulaPedidoPendiente', {
-        ...dataInitFetch,
-        cNumPedVta: dataCabeceraPed.cNumPedVta_in,
-        vIdUsu_in: '',
-        cModulo_in: '',
-      });
-      if (success) {
+	const obtenerInfoPedido = async () => {
+		try {
+			const {
+				data: { success, message, data },
+			} = await httpClient.post('posventa/obtenerInfoPedido', {
+				...dataInitFetch,
+				cNumPedDiario_in: dataCabeceraPed.cNumPedDiario_in,
+				cFecPedVta_in: '',
+			});
+			if (success) {
+				return data;
+			}
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
-      }
-      console.log(message);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  const obtenerInfoPedido = async () => {
-    try {
-      const {
-        data: { success, message, data },
-      } = await httpClient.post('posventa/obtenerInfoPedido', {
-        ...dataInitFetch,
-        cNumPedDiario_in: dataCabeceraPed.cNumPedDiario_in,
-        cFecPedVta_in: '',
-      });
-      if (success) {
-        return data;
-      }
-      console.log(message);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  const clearDataAll = () => {
-    // TODO: eliminar toda las datas locales y ocular los modals menos el de seleccion de productos
-  }
+	const clearDataAll = () => {
+		// TODO: eliminar toda las datas locales y ocular los modals menos el de seleccion de productos
+	};
 
 	// const validaSiFacturaElectronica = async () => {
 	// 	try {
@@ -375,22 +391,20 @@ function ModalCobrarPedido({
 				...dataFetch,
 				cNumPedVta_in,
 			});
-			if (success) setListaCajaEspecialidad(data.map((item, index) => {
-        return {
-          ...item,
-          key: index
-        }
-      }));
+			if (success)
+				setListaCajaEspecialidad(
+					data.map((item, index) => {
+						return {
+							...item,
+							key: index,
+						};
+					})
+				);
 			else console.log(message);
 		} catch (e) {
 			console.error(e);
 		}
 	};
-
-	// TODO: Error en la peticion
-  //  ORA-06550: line 1, column 18:
-  // PLS-00306: wrong number or types of arguments in call to 'CAJ_COBRA_PEDIDO'
-  // ORA-06550: line 1, column 7:
 
 	const cajCobraPedido = async () => {
 		try {
@@ -403,17 +417,18 @@ function ModalCobrarPedido({
 				codNumera: COD_NUMERA_SEC_COMP_PAGO,
 				tipCompPago: tipoVenta,
 				codMotKardex: MOT_KARDEX_VENTA_NORMAL,
-				tipDocKardex: TIP_DOC_KARDEX_VENTA,
+				tipDocKardex: '01',
 				codNumeraKardex: COD_NUMERA_SEC_KARDEX,
 				usuCreaCompPago: user.usu_mod_usu_local,
-				descDetalleForPago: 'Codigo , Descripcion , Moneda , Monto , Total , Vuelto <BR>00001 , EFECTIVO SOLES , SOLES , 90.00 , 90.00 , 0.00<BR>',
+				// descDetalleForPago: 'Codigo , Descripcion , Moneda , Monto , Total , Vuelto <BR>00001 , EFECTIVO SOLES , SOLES , 90.00 , 90.00 , 0.00<BR>'
+				descDetalleForPago: '',
 				permiteCampana: 'N',
 				dni: dataCabeceraPed.cRucCliPedVta_in,
 				numCompPagoImpr: '',
 			});
 			if (success) return data;
 			else console.log(message);
-      console.log(message)
+			console.log(message);
 		} catch (e) {
 			console.error(e);
 		}
@@ -449,34 +464,34 @@ function ModalCobrarPedido({
 		}
 	};
 
-	const cajGrabNewFormPagoPedio = async item => {
+	const cajGrabNewFormPagoPedido = async item => {
 		try {
 			const {
 				data: { data, success, message },
-			} = await httpClient.post('/posventa/cajGrabNewFormPagoPedio', {
+			} = await httpClient.post('/posventa/cajGrabNewFormPagoPedido', {
 				...dataInitFetch,
 				codFormaPago: item.key,
 				numPedido: cNumPedVta_in,
-				imPago: item.monto,
+				imPago:
+					item.key !== '00001'
+						? item.monto
+						: item.monto - (totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in)).toFixed(2),
 				tipMoneda: '01',
 				valTipCambio: dataCabeceraPed.nValTipCambioPedVta_in,
 				valVuelto:
 					item.key === '00001'
 						? (totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in)).toFixed(2)
 						: 0,
-				imTotalPago:
-					item.key !== '00001'
-						? item.monto
-						: item.monto - (totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in)).toFixed(2),
+				imTotalPago: item.monto,
 				numTarj: '',
 				fecVencTarj: '',
 				nomTarj: '',
 				canCupon: '0',
 				usuCreaFormaPagoPed: user.usu_mod_usu_local,
-				dni: dataCabeceraPed.cRucCliPedVta_in, // TODO: falta mapear
+				dni: '',
 				codAtori: '',
 				lote: '.',
-				numOperacion: item.opera,
+				numOperacion: '.',
 				secFormaPago: '1',
 			});
 			if (success) return data;
@@ -500,8 +515,6 @@ function ModalCobrarPedido({
 			console.error(e);
 		}
 	};
-
-	// TODO: ----------------------------------------------------
 
 	const cargaListaCajaDetEspecialidad = async () => {
 		try {
@@ -532,7 +545,7 @@ function ModalCobrarPedido({
 			console.log(data, message);
 			if (success) {
 				setFormasPagoSinConvenio(data);
-        return data;
+				return data;
 			} else console.log(message);
 		} catch (e) {
 			console.error(e);
@@ -650,12 +663,12 @@ function ModalCobrarPedido({
 						<Table
 							columns={columnsEspecialidad}
 							dataSource={listaCajaEspecialidad}
-							pagination={false}
+							// pagination={false}
 							size="small"
 							bordered
-              pagination={{
-                pageSize: 2,
-              }}
+							pagination={{
+								pageSize: 2,
+							}}
 						/>
 					</Col>
 					<Col span={16}>
@@ -873,15 +886,26 @@ function ModalCobrarPedido({
 											<Form.Item>
 												<Button
 													onClick={() => {
-														setDataMontos([
-															...dataMontos,
-															{
-																monto: montoCurrent,
-																forma: formaPagoCurrent.DESC_CORTA_FORMA_PAGO,
-																key: formaPagoCurrent.key,
-																opera: numeroOperacion,
-															},
-														]);
+														setDataMontos(oldData => {
+															let existe = false;
+															oldData.forEach(item => {
+																if (item.key === formaPagoCurrent.key) {
+																	item.monto = parseInt(item.monto) + parseInt(montoCurrent);
+																	existe = true;
+																}
+															});
+
+															if (!existe) {
+																const temp = {
+																	monto: montoCurrent,
+																	forma: formaPagoCurrent.DESC_CORTA_FORMA_PAGO,
+																	key: formaPagoCurrent.key,
+																	opera: numeroOperacion,
+																};
+																return [...oldData, temp];
+															}
+															return [...oldData];
+														});
 														setMontoCurrent(0);
 														setNumeroOperacion('');
 													}}
@@ -962,6 +986,7 @@ function ModalCobrarPedido({
 					setClienteCurrent={setClienteCurrent}
 				/>
 			) : null}
+			{loadingCobrar ? <ModalLoading></ModalLoading> : null}
 		</>
 	);
 }
