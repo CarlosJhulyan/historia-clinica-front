@@ -939,11 +939,11 @@ function GenerarPedido() {
 				setMedicoCurrent={setMedicoCurrent}
 				clienteCurrent={clienteCurrent}
 				setClienteCurrent={setClienteCurrent}
-				productos={data}
 				dataFetch={dataFetch}
 				cNumPedVta_in={cNumPedVta_in}
 				dataCabeceraPed={dataFetchCabecera}
 				tipoVenta={tipoVenta}
+        getFechaMovCaja={getFechaMovCaja}
 			/>
 			{contextHolder}
 		</>
