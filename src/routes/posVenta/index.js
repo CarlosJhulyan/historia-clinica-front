@@ -8,7 +8,6 @@ import ModalCobrarPedido from './modals/modalCobrarPedido';
 import { openNotification } from '../../util/util';
 import { useAuth } from '../../authentication';
 import DecimalFormat from 'decimal-format';
-import ModalLoading from '../../util/modalLoading';
 
 function GenerarPedido() {
 	const { info } = Modal;
@@ -21,9 +20,9 @@ function GenerarPedido() {
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
 	const [loadingGrabarPedido, setLoadingGrabarPedido] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [productosDetalles, setProductosDetalles] = useState([]);
-  const [productosCurrent, setProductosCurrent] = useState([]);
+	const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+	const [productosDetalles, setProductosDetalles] = useState([]);
+	const [productosCurrent, setProductosCurrent] = useState([]);
 
 	const [cNumPedVta_in, setCNumPedVta_in] = useState('');
 	const [tipoVenta, setTipoVenta] = useState('01');
@@ -621,16 +620,16 @@ function GenerarPedido() {
 		}),
 	};
 
-  const clearDataFinally = () => {
-    setData([]);
-    setCNumPedVta_in('');
-    setSelectedRowKeys([]);
-    setVisibleModal(false);
-    setTipoVenta('01');
-    setVisibleModalDatosPedido(false);
-    setProductosDetalles([]);
-    setProductosCurrent([]);
-  }
+	const clearDataFinally = () => {
+		setData([]);
+		setCNumPedVta_in('');
+		setSelectedRowKeys([]);
+		setVisibleModal(false);
+		setTipoVenta('01');
+		setVisibleModalDatosPedido(false);
+		setProductosDetalles([]);
+		setProductosCurrent([]);
+	};
 
 	const validaOperacionCaja = async tipOp => {
 		try {
@@ -849,9 +848,9 @@ function GenerarPedido() {
 					className="gx-table-responsive"
 					columns={columns}
 					dataSource={data}
-          pagination={{
-            pageSize: 5
-          }}
+					pagination={{
+						pageSize: 5,
+					}}
 					footer={() => (
 						<Row
 							justify="start"
@@ -931,12 +930,12 @@ function GenerarPedido() {
 				setClienteCurrent={setClienteCurrent}
 				tipoVenta={tipoVenta}
 				setTipoVenta={setTipoVenta}
-        selectedRowKeys={selectedRowKeys}
-        setSelectedRowKeys={setSelectedRowKeys}
-        productosDetalles={productosDetalles}
-        setProductosDetalles={setProductosDetalles}
-        productosCurrent={productosCurrent}
-        setProductosCurrent={setProductosCurrent}
+				selectedRowKeys={selectedRowKeys}
+				setSelectedRowKeys={setSelectedRowKeys}
+				productosDetalles={productosDetalles}
+				setProductosDetalles={setProductosDetalles}
+				productosCurrent={productosCurrent}
+				setProductosCurrent={setProductosCurrent}
 			/>
 			<ModalDatosPedido
 				visibleDatosPedidoAceptar={datosPedidoAceptar}
@@ -969,8 +968,8 @@ function GenerarPedido() {
 					dataCabeceraPed={dataFetchCabecera}
 					tipoVenta={tipoVenta}
 					getFechaMovCaja={getFechaMovCaja}
-          setTipoVenta={setTipoVenta}
-          clearDataFinallyMain={clearDataFinally}
+					setTipoVenta={setTipoVenta}
+					clearDataFinallyMain={clearDataFinally}
 				/>
 			) : null}
 			{contextHolder}

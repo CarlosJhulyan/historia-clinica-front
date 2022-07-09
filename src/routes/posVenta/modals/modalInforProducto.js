@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Col, Form, Input, Modal, Row, Table } from 'antd';
+import { Button, Col, Modal, Row, Table } from 'antd';
 import { httpClient } from '../../../util/Api';
 
 function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
@@ -26,7 +26,7 @@ function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
 		httpClient
 			.post('posventa/getPrincActProd', {
 				codGrupoCia: '001',
-				codProd: productoCurrent.codProducto,
+				codProd: productoCurrent.CODIGO,
 			})
 			.then(response => {
 				if (response.data.success && response.data.data) setDetalles(response.data.data);
@@ -42,7 +42,7 @@ function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
 				codGrupoCia: '001',
 				codLocal: '001',
 				cIndVerificaSug: 'S',
-				codProd: productoCurrent.codProducto,
+				codProd: productoCurrent.CODIGO,
 			})
 			.then(response => {
 				if (response.data.success) setProducto(response.data.data[0]);
@@ -52,9 +52,11 @@ function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
 	};
 
 	useEffect(() => {
-		if (visible) {
-			getPrincActProd();
-			getInfoComplProd();
+		if (productoCurrent.CODIGO) {
+			if (visible) {
+				getPrincActProd();
+				getInfoComplProd();
+			}
 		}
 	}, [visible]);
 
@@ -98,20 +100,20 @@ function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
 						justify="space-between"
 						style={{ marginBottom: 20, marginLeft: 10, marginRight: 10 }}
 					>
-						<Col>Código: {productoCurrent && productoCurrent.codProducto}</Col>
+						<Col>Código: {productoCurrent && productoCurrent.CODIGO}</Col>
 						<Col>Zan: {producto && producto.indZan}</Col>
 					</Row>
 					<Row
 						justify="space-between"
 						style={{ marginBottom: 20, marginLeft: 10, marginRight: 10 }}
 					>
-						<Col>Descripción: {productoCurrent && productoCurrent.descripcion}</Col>
+						<Col>Descripción: {productoCurrent && productoCurrent.DESCRIPCION}</Col>
 					</Row>
 					<Row
 						justify="space-between"
 						style={{ marginBottom: 20, marginLeft: 10, marginRight: 10 }}
 					>
-						<Col>Laboratorio: {productoCurrent && productoCurrent.laboratorio}</Col>
+						<Col>Laboratorio: {productoCurrent && productoCurrent.MARCA}</Col>
 					</Row>
 					<Row
 						justify="space-between"

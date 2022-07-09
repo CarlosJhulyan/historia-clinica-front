@@ -25,6 +25,7 @@ import { httpClient } from '../../../util/Api';
 import { openNotification } from '../../../util/util';
 import { useAuth } from '../../../authentication';
 import ModalLoading from '../../../util/modalLoading';
+import ModalTicket from './modalTicket';
 
 function ModalCobrarPedido({
 	visible,
@@ -47,6 +48,7 @@ function ModalCobrarPedido({
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
+	const [visibleModalTicket, setVisibleModalTicket] = useState(false);
 	const [dataMontos, setDataMontos] = useState([]);
 	const [formaPagoCurrent, setFormaPagoCurrent] = useState({});
 	const [montoCurrent, setMontoCurrent] = useState(0.0);
@@ -204,7 +206,7 @@ function ModalCobrarPedido({
 					await setDatosCompElectronico();
 					await asignarHoraSugerida();
 					openNotification('Cobro de pedido', 'Se realizó con éxito el cobro');
-					clearDataAll();
+					setVisibleModalTicket(true);
 				}
 			} else if (estadoPedido === 'C') {
 				showModalInfo('Pedido ya cobrado', setLoadingCobrar(false));
@@ -1111,6 +1113,15 @@ function ModalCobrarPedido({
 				/>
 			) : null}
 			{loadingCobrar || loadingDataInitial ? <ModalLoading></ModalLoading> : null}
+			{visibleModalTicket ? (
+				<ModalTicket
+					visible={visibleModalTicket}
+					setVisible={setVisibleModalTicket}
+					numPedVta={cNumPedVta_in}
+					secCompPago={secCompPago}
+					clearDataAll={clearDataAll}
+				></ModalTicket>
+			) : null}
 		</>
 	);
 }

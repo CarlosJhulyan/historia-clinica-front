@@ -259,6 +259,8 @@ function ModalListaProductos({
 		}
 	}, [selectedRowKeys, productosDetalles]);
 
+	console.log('dataList', dataList);
+
 	return (
 		<>
 			<Modal
@@ -456,15 +458,13 @@ function ModalListaProductos({
 				productosCurrent={productosCurrent}
 				setProductoCurrent={setProductoCurrent}
 			/>
-			<ModalInfoProducto
-				visible={visibleModalInfoProducto}
-				setVisible={setVisibleModalInfoProducto}
-				productoCurrent={{
-					codProducto: '001182',
-					laboratorio: 'TRAUMATOLOGIA',
-					descripcion: 'TENORAFIA TENDON FLEXOR MANO',
-				}}
-			/>
+			{visibleModalInfoProducto ? (
+				<ModalInfoProducto
+					visible={visibleModalInfoProducto}
+					setVisible={setVisibleModalInfoProducto}
+					productoCurrent={productosCurrent[0]}
+				/>
+			) : null}
 			<ModalDatosPedido
 				// grabarPedido
 				// guardarDatosPedidoCabecera
