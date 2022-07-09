@@ -228,8 +228,8 @@ const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll
 					</Col>
 				</Row>
 				<div>----------------------------------------------------------------</div>
-				{dataDetalle.map(element => (
-					<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
+				{dataDetalle.map((element, index) => (
+					<Row key={index} style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 						<Col xs={4} style={{ padding: 0 }}>
 							{element.COD_PROD}
 						</Col>
@@ -317,6 +317,8 @@ const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll
 					Cambio de mercadería solo en esta permitido en las 48 horas siguientes a la compra.
 					Indispensable presentar este documento.
 				</div>
+				<br />
+				<div>{dataImprimir.length > 0 ? dataImprimir[dataImprimir.length - 1].VALOR : ''} </div>
 			</div>
 			<div style={{ margin: 10, display: 'flex', justifyContent: 'center' }}>
 				<Button

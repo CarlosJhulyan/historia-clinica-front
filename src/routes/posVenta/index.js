@@ -906,7 +906,7 @@ function GenerarPedido() {
 					>
 						Borrar
 					</Button>
-					<Button
+					{/* <Button
 						disabled={disabledAll}
 						style={{
 							backgroundColor: '#0169aa',
@@ -914,7 +914,7 @@ function GenerarPedido() {
 						}}
 					>
 						Cotizar
-					</Button>
+					</Button> */}
 				</div>
 			</Card>
 			<ModalListaProductos
