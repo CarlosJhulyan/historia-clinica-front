@@ -17,6 +17,7 @@ import { httpClient } from '../../../util/Api';
 import ModalSeleccionProducto from './modalSeleccionProducto';
 import { ExclamationCircleOutlined, MinusOutlined } from '@ant-design/icons';
 import ModalDatosPedido from './modalDatosPedido';
+import ModalInfoProducto from './modalInforProducto';
 
 function ModalListaProductos({
 	visible,
@@ -48,6 +49,7 @@ function ModalListaProductos({
 	const [productoCurrent, setProductoCurrent] = useState({});
 	const [visibleModalCantidad, setVisibleModalCantidad] = useState(false);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
+	const [visibleModalInfoProducto, setVisibleModalInfoProducto] = useState(false);
 	const [totalLabel, setTotalLabel] = useState(0);
 	const [dataCurrentLabel, setDataCurrentLabel] = useState({});
 
@@ -372,7 +374,7 @@ function ModalListaProductos({
 									backgroundColor: '#0169aa',
 									color: 'white',
 								}}
-								onClick={() => {}}
+								onClick={() => setVisibleModalInfoProducto(true)}
 							>
 								Info Prod.
 							</Button>
@@ -453,6 +455,15 @@ function ModalListaProductos({
 				productoCurrent={productoCurrent}
 				productosCurrent={productosCurrent}
 				setProductoCurrent={setProductoCurrent}
+			/>
+			<ModalInfoProducto
+				visible={visibleModalInfoProducto}
+				setVisible={setVisibleModalInfoProducto}
+				productoCurrent={{
+					codProducto: '001182',
+					laboratorio: 'TRAUMATOLOGIA',
+					descripcion: 'TENORAFIA TENDON FLEXOR MANO',
+				}}
 			/>
 			<ModalDatosPedido
 				// grabarPedido
