@@ -31,12 +31,12 @@ function ModalListaProductos({
 	datosPedidoAceptar,
 	tipoVenta,
 	setTipoVenta,
-  selectedRowKeys,
-  setSelectedRowKeys,
-  productosDetalles,
-  setProductosDetalles,
-  productosCurrent,
-  setProductosCurrent
+	selectedRowKeys,
+	setSelectedRowKeys,
+	productosDetalles,
+	setProductosDetalles,
+	productosCurrent,
+	setProductosCurrent,
 }) {
 	const [data, setData] = useState([]);
 	const { confirm, warning } = Modal;
@@ -48,8 +48,8 @@ function ModalListaProductos({
 	const [productoCurrent, setProductoCurrent] = useState({});
 	const [visibleModalCantidad, setVisibleModalCantidad] = useState(false);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
-  const [totalLabel, setTotalLabel] = useState(0);
-  const [dataCurrentLabel, setDataCurrentLabel] = useState({});
+	const [totalLabel, setTotalLabel] = useState(0);
+	const [dataCurrentLabel, setDataCurrentLabel] = useState({});
 
 	const [state, setState] = useState();
 	const [dataList, setDataList] = useState([]);
@@ -237,22 +237,25 @@ function ModalListaProductos({
 		getListaEspecialidades();
 	}, []);
 
-  useEffect(() => {
-    const total = productosDetalles.reduce((previus, current) => parseFloat(current.total) + previus, 0);
-    console.log(productosDetalles);
-    setTotalLabel(total);
-    if (productosDetalles.length >= 1) {
-      setDataCurrentLabel({
-        precio: productosDetalles[productosDetalles.length - 1].pu,
-        unidad: productosDetalles[productosDetalles.length - 1].UNIDAD
-      });
-    } else {
-      setDataCurrentLabel({
-        precio: 0,
-        unidad: ''
-      });
-    }
-  }, [selectedRowKeys, productosDetalles]);
+	useEffect(() => {
+		const total = productosDetalles.reduce(
+			(previus, current) => parseFloat(current.total) + previus,
+			0
+		);
+		console.log(productosDetalles);
+		setTotalLabel(total);
+		if (productosDetalles.length >= 1) {
+			setDataCurrentLabel({
+				precio: productosDetalles[productosDetalles.length - 1].pu,
+				unidad: productosDetalles[productosDetalles.length - 1].UNIDAD,
+			});
+		} else {
+			setDataCurrentLabel({
+				precio: 0,
+				unidad: '',
+			});
+		}
+	}, [selectedRowKeys, productosDetalles]);
 
 	return (
 		<>
@@ -369,6 +372,7 @@ function ModalListaProductos({
 									backgroundColor: '#0169aa',
 									color: 'white',
 								}}
+								onClick={() => {}}
 							>
 								Info Prod.
 							</Button>
