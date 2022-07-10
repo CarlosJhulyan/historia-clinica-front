@@ -1098,7 +1098,7 @@ function ModalCobrarPedido({
 					setMedicoCurrent={setMedicoCurrent}
 				/>
 			) : null}
-			{visibleModalCliente ? (
+			{visibleModalPacientes ? (
 				<ModalListaPacientes
 					visible={visibleModalPacientes}
 					setVisible={setVisibleModalPacientes}
@@ -1120,6 +1120,7 @@ function ModalCobrarPedido({
 					numPedVta={cNumPedVta_in}
 					secCompPago={secCompPago}
 					clearDataAll={clearDataAll}
+          clienteCurrent={clienteCurrent}
 				></ModalTicket>
 			) : null}
 		</>

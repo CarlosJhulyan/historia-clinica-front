@@ -3,8 +3,8 @@ import {
     // baseUrlDavid,
     baseUrl,
     baseUrlNew,
-    baseUrlReports,
-    baseUrlReportsNew
+    // baseUrlReports,
+    // baseUrlReportsNew
 } from "../config/backend";
 
 export const httpClient = axios.create({
@@ -15,7 +15,7 @@ export const httpClient = axios.create({
 });
 
 export const httpClientReports = axios.create({
-    baseURL: baseUrlReports, //YOUR_API_URL HERE
+    baseURL: baseUrl, //YOUR_API_URL HERE
     headers: {
         'Content-Type': 'application/json',
     },

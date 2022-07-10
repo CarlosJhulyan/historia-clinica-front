@@ -13,7 +13,6 @@ import {
 import { openNotification } from '../../util/util';
 import { httpClient } from '../../util/Api';
 
-import ModalListaEspera from './modalListaEspera';
 import ModalAtencionMedica from './modalAtencionMedica';
 import ModalBusquedaPedido from './modalBusquedaPedido';
 import ModalBusquedaComprobante from './modalBusquedaComprobante';
@@ -24,20 +23,15 @@ function AdmisionConsulta() {
   const [abrirModalOrden, setAbrirModalOrden] = useState(false);
   const [abrirModalPedido, setAbrirModalPedido] = useState(false);
   const [abrirModalConsulta, setAbrirModalConsulta] = useState(false);
-  const [abrirModalListaEspera, setAbrirModalListaEspera] = useState(false);
 
   const [dataCabecera, setDataCabecera] = useState([{}]);
   const [dataDetalles, setDataDetalles] = useState([{}]);
   const [dataComprobantesPago, setDataComprobantesPago] = useState([]);
   const [dataEspecialidades, setDataEspecialidades] = useState([]);
   const [dataConsultorios, setDataConsultorios] = useState(['1']);
-
   const [pedidoFound, setPedidoFound] = useState(false);
-  // const [consultaConfirmada, setConsultaConfirmada] = useState(true);
-
   const [loadingData, setLoadingData] = useState(false);
   const [loadingDataConsultorio, setLoadingDataConsultorio] = useState(false);
-  // const [loadingConfirmar, setLoadingConfirmar] = useState(false);
 
   const [dataSend, setDataSend] = useState({
     NUM_PEDIDO: '',
@@ -53,7 +47,7 @@ function AdmisionConsulta() {
     COD_BUS: '1',
     COD_MEDICO: '',
     NOM_MEDICO: '',
-    USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+    USU_CREA: JSON.parse(localStorage.getItem('token')).data?.login_usu,
     ESTADO: 'T'
   });
 
@@ -247,7 +241,7 @@ function AdmisionConsulta() {
               gridRowGap: '0px'
             }}
           >
-            <div style={{ gridArea: '1 / 1 / 2 / 2', fontSize: '22px', paddingTop: '20px' }}>Admisión Consulta</div>
+            <div style={{ gridArea: '1 / 1 / 2 / 2', fontSize: '22px', paddingTop: '20px' }}>Ingreso Atenciones</div>
             <div
               style={{
                 gridArea: '1 / 2 / 2 / 3',

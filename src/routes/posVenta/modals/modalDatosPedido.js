@@ -35,19 +35,24 @@ function ModalDatosPedido({
                               tipoVenta,
                               setTipoVenta,
 }) {
+  const { confirm } = Modal;
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
 	const [guardando, setGuardando] = useState(false);
 
 	const handleLimpiar = () => {
-		console.log('limpiar');
-		// LIMIPIAMOS MEDICO
-		setMedicoCurrent({});
-		// LIMIPAMOS PACIENTE
-		setPacienteCurrent({});
-		// LIMIPAMOS CLIENTE
-		setClienteCurrent({});
+    confirm({
+      content: '¿Esta seguro de limpiar los Datos de pedido?',
+      onOk:() => {
+        setMedicoCurrent({});
+        setPacienteCurrent({});
+        setClienteCurrent({});
+      },
+      centered: true,
+      okText: 'Continuar',
+      cancelText: 'Cancelar',
+    });
 	};
 
 	return (
@@ -149,6 +154,7 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
+                    disabled={!clienteCurrent.key || !medicoCurrent.key || !pacienteCurrent.NUM_DOCUMENTO}
 										onClick={guardando ? null : handleLimpiar}
 									>
 										Limpiar
@@ -301,16 +307,20 @@ function ModalDatosPedido({
 					setMedicoCurrent={setMedicoCurrent}
 				/>
 			) : null}
-			<ModalListaPacientes
-				visible={visibleModalPacientes}
-				setVisible={setVisibleModalPacientes}
-				setPacienteCurrent={setPacienteCurrent}
-			/>
-			<ModalListaClientes
-				visible={visibleModalCliente}
-				setVisible={setVisibleModalCliente}
-				setClienteCurrent={setClienteCurrent}
-			/>
+      {visibleModalPacientes && (
+        <ModalListaPacientes
+          visible={visibleModalPacientes}
+          setVisible={setVisibleModalPacientes}
+          setPacienteCurrent={setPacienteCurrent}
+        />
+      )}
+      {visibleModalCliente && (
+        <ModalListaClientes
+          visible={visibleModalCliente}
+          setVisible={setVisibleModalCliente}
+          setClienteCurrent={setClienteCurrent}
+        />
+      )}
       {guardando ? <ModalLoading></ModalLoading> : null}
 		</>
 	);

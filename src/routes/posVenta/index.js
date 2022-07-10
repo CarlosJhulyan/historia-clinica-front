@@ -21,6 +21,7 @@ function GenerarPedido() {
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
 	const [loadingGrabarPedido, setLoadingGrabarPedido] = useState(false);
 	const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
 	const [productosDetalles, setProductosDetalles] = useState([]);
 	const [productosCurrent, setProductosCurrent] = useState([]);
 
@@ -30,6 +31,7 @@ function GenerarPedido() {
 	const {
 		authUser: { data: user },
 	} = useAuth();
+  const { confirm } = Modal;
 	const [numCaja, setNumCaja] = useState('');
 	const [grabarPedido, setGrabarPedido] = useState(false);
 	const [fechaSistema, setFechaSistema] = useState(false);
@@ -612,23 +614,21 @@ function GenerarPedido() {
 	const rowSelection = {
 		onChange: (selectedRowKeys, selectedRows) => {
 			console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      setSelectedRows(selectedRows);
 		},
-		getCheckboxProps: record => ({
-			disabled: record.name === 'Disabled User',
-			// Column configuration not to be checked
-			name: record.name,
-		}),
+    selectedRowKeys: selectedRows.map(item => {return item.key})
 	};
 
 	const clearDataFinally = () => {
-		setData([]);
 		setCNumPedVta_in('');
-		setSelectedRowKeys([]);
 		setVisibleModal(false);
 		setTipoVenta('01');
 		setVisibleModalDatosPedido(false);
 		setProductosDetalles([]);
 		setProductosCurrent([]);
+    setSelectedRowKeys([]);
+    setData([]);
+    setSelectedRows([]);
 	};
 
 	const validaOperacionCaja = async tipOp => {
@@ -875,7 +875,7 @@ function GenerarPedido() {
 					}}
 				>
 					<Button
-						disabled={disabledAll}
+						disabled={disabledAll || data.length <= 0}
 						style={{
 							backgroundColor: '#0169aa',
 							color: '#fff',
@@ -889,20 +889,41 @@ function GenerarPedido() {
 						Grabar
 					</Button>
 					<Button
-						disabled={disabledAll}
+						disabled={disabledAll || data.length <= 0 || selectedRows.length === 0}
 						style={{
 							backgroundColor: '#0169aa',
 							color: '#fff',
 						}}
+            onClick={() => {
+              // TODO: Cambiar cantidad
+            }}
 					>
 						Cambiar Cantidad
 					</Button>
 					<Button
-						disabled={disabledAll}
+						disabled={disabledAll || data.length <= 0}
 						style={{
 							backgroundColor: '#0169aa',
 							color: '#fff',
 						}}
+            onClick={() => {
+              confirm({
+                content: '¿Esta seguro de borrar los datos y seleccionar otros productos?',
+                onOk:() => {
+                  setProductosDetalles([]);
+                  setProductosCurrent([]);
+                  setSelectedRowKeys([]);
+                  setData([]);
+                  setClienteCurrent({});
+                  setPacienteCurrent({});
+                  setMedicoCurrent({});
+                  setSelectedRows([]);
+                },
+                centered: true,
+                okText: 'Continuar',
+                cancelText: 'Cancelar',
+              })
+            }}
 					>
 						Borrar
 					</Button>

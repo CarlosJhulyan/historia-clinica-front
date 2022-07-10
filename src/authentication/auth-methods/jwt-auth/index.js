@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoginLoading, setLoginAdminLoading, setLoginReportsLoading } from '../../../appRedux/actions/Setting';
 import { httpClient, httpClientReports } from "../../../util/Api";
-import log from 'd3-scale/src/log';
 
 export const useProvideAuth = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -205,8 +204,8 @@ export const useProvideAuth = () => {
   const reportsLogin = (user, callbackFun) => {
     dispatch(setLoginReportsLoading(true));
     fetchStartReports();
-    httpClientReports
-      .post(`/login`, user)
+    httpClient
+      .post(`/loginUsuLocal`, user)
       .then(({ data }) => {
         if (data.success) {
           fetchSuccessReports();

@@ -47,6 +47,7 @@ function ModalListaProductos({
 	const [especialidad, setEspecialidad] = useState('');
 	const [textSearch, settextSearch] = useState('');
 	const [productoCurrent, setProductoCurrent] = useState({});
+  const [productoCurrentDetails, setProductoCurrentDetails] = useState({});
 	const [visibleModalCantidad, setVisibleModalCantidad] = useState(false);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalInfoProducto, setVisibleModalInfoProducto] = useState(false);
@@ -173,7 +174,22 @@ function ModalListaProductos({
 			dataIndex: 'PRECIO',
 			key: 'PRECIO',
 		},
+    {
+      title: '',
+      dataIndex: 'key',
+      key: 'key',
+      render: (_, record) => (
+        <>
+          <a onClick={() => handleSelectDetails(record)}>Detalles</a>
+        </>
+      )
+    }
 	];
+
+  const handleSelectDetails = record => {
+    setProductoCurrentDetails(record);
+    setVisibleModalInfoProducto(true);
+  }
 
 	const handleSelectEspecialidad = value => {
 		setEspecialidad(value);
@@ -258,8 +274,6 @@ function ModalListaProductos({
 			});
 		}
 	}, [selectedRowKeys, productosDetalles]);
-
-	console.log('dataList', dataList);
 
 	return (
 		<>
@@ -371,15 +385,15 @@ function ModalListaProductos({
 								marginTop: 20,
 							}}
 						>
-							<Button
-								style={{
-									backgroundColor: '#0169aa',
-									color: 'white',
-								}}
-								onClick={() => setVisibleModalInfoProducto(true)}
-							>
-								Info Prod.
-							</Button>
+							{/*<Button*/}
+							{/*	style={{*/}
+							{/*		backgroundColor: '#0169aa',*/}
+							{/*		color: 'white',*/}
+							{/*	}}*/}
+							{/*	onClick={() => setVisibleModalInfoProducto(true)}*/}
+							{/*>*/}
+							{/*	Info Prod.*/}
+							{/*</Button>*/}
 							{/*<Button type='primary'>*/}
 							{/*  Cotizar*/}
 							{/*</Button>*/}
@@ -449,20 +463,22 @@ function ModalListaProductos({
 					</Col>
 				</Row>
 			</Modal>
-			<ModalSeleccionProducto
-				cancelProductoSelected={cancelProductoSelected}
-				aceptedProductoSelected={aceptedProductoSelected}
-				visible={visibleModalCantidad}
-				setVisible={setVisibleModalCantidad}
-				productoCurrent={productoCurrent}
-				productosCurrent={productosCurrent}
-				setProductoCurrent={setProductoCurrent}
-			/>
+      {visibleModalCantidad && (
+        <ModalSeleccionProducto
+          cancelProductoSelected={cancelProductoSelected}
+          aceptedProductoSelected={aceptedProductoSelected}
+          visible={visibleModalCantidad}
+          setVisible={setVisibleModalCantidad}
+          productoCurrent={productoCurrent}
+          productosCurrent={productosCurrent}
+          setProductoCurrent={setProductoCurrent}
+        />
+      )}
 			{visibleModalInfoProducto ? (
 				<ModalInfoProducto
 					visible={visibleModalInfoProducto}
 					setVisible={setVisibleModalInfoProducto}
-					productoCurrent={productosCurrent[0]}
+					productoCurrent={productoCurrentDetails}
 				/>
 			) : null}
 			<ModalDatosPedido

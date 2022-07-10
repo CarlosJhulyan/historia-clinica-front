@@ -5,9 +5,12 @@ import { httpClient } from '../../../util/Api';
 import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import QRCode from 'react-qr-code';
 
+import logoHeader from '../../../assets/posventa/biensalud-logo.png';
+import { numberToLetter } from '../../../util/numberToletters';
+
 const pageStyle = `
 @page {
-	
+
 	margin: 2.5;
 }
 
@@ -24,11 +27,12 @@ const pageStyle = `
 }
 `;
 
-const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll }) => {
+const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll, clienteCurrent }) => {
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataDetalle, setDataDetalle] = useState([]);
+  const [dataMetodosPago, setDataMetodosPago] = useState([]);
 	const impresionRef = useRef();
-
+  console.log(dataMetodosPago);
 	const handlePrint = useReactToPrint({
 		content: () => impresionRef.current,
 		pageStyle: pageStyle,
@@ -91,6 +95,24 @@ const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll
 		}
 	};
 
+  const getMetodosPago = async () => {
+    try {
+      const {
+        data: { data, success, message },
+      } = await httpClient.post('posventa/getMetodosPagoImprimir', {
+        codGrupoCia: '001',
+        codLocal: '001',
+        numPedVta,
+      });
+      if (success) {
+        return data;
+      }
+      console.log(message);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
 	const clearCacheImprimirWs = async idDocumento => {
 		try {
 			const {
@@ -112,6 +134,8 @@ const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll
 		setDataImprimir(dataImp);
 		const detalle = await imprimirDetalle();
 		setDataDetalle(detalle);
+    const metodosPago = await getMetodosPago();
+    setDataMetodosPago(metodosPago);
 		await clearCacheImprimirWs(idDocumento);
 	};
 
@@ -125,12 +149,12 @@ const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll
 	const [opGrabada, setOpGrabada] = useState('');
 	const [igv, setIgv] = useState('');
 	const [importeTotal, setImporteTotal] = useState('');
-	const [efectivoSoles, setEfectivoSoles] = useState('');
-	const [vuelto, setVuelto] = useState('');
-	const [texto, setTexto] = useState('');
-	const [nombreCliente, setNombreCliente] = useState('');
-	const [dni, setDni] = useState('');
-	const [direccion, setDireccion] = useState('');
+	// const [efectivoSoles, setEfectivoSoles] = useState('');
+	// const [vuelto, setVuelto] = useState('');
+	// const [texto, setTexto] = useState('');
+	// const [nombreCliente, setNombreCliente] = useState('');
+	// const [dni, setDni] = useState('');
+	// const [direccion, setDireccion] = useState('');
 	const [qr, setQr] = useState('');
 
 	useEffect(() => {
@@ -155,12 +179,12 @@ const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll
 			setOpGrabada(dataTotales[3].split('S/')[1].trim());
 			setIgv(dataTotales[4].split('S/')[1].trim());
 			setImporteTotal(dataTotales[5].split('S/')[1].trim());
-			setEfectivoSoles(dataTotales[7].split('SOLES')[1].trim());
-			setVuelto(dataTotales[8].split('S/')[1].trim());
-			setTexto(dataTotales[10].trim());
-			setNombreCliente(dataTotales[11].trim());
-			setDni(dataTotales[12].trim());
-			setDireccion(dataTotales[13].trim() + ' ' + dataTotales[14].trim());
+			// setEfectivoSoles(dataTotales[7].split('SOLES')[1].trim());
+			// setVuelto(dataTotales[8].split('S/')[1].trim());
+			// setTexto(dataTotales[10].trim());
+			// setNombreCliente(dataTotales[11].trim());
+			// setDni(dataTotales[12].trim());
+			// setDireccion(dataTotales[13].trim() + ' ' + dataTotales[14].trim());
 			dataImprimir.forEach(element => {
 				if (element.VALOR.split('|').length > 3) {
 					setQr(element.VALOR.trim());
@@ -176,15 +200,19 @@ const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll
 			width={270}
 			footer={false}
 			visible={visible}
-			title="Ticket"
+			title="Boleta electrónica"
 			className="modal-custom"
 			onCancel={() => {}}
+      closable={false}
 		>
 			<div
 				ref={impresionRef}
 				style={{ display: 'flex', flexDirection: 'column', padding: 10, fontSize: 10 }}
 			>
 				{/* {imprimir} */}
+        <div style={{ width: '100%', textAlign: 'center', marginBottom:10 }}>
+          <img src={logoHeader} alt='lopotipo-biensalud' />
+        </div>
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					CONSORCIO SALUD LIMA SUR - RUC: 20555875828
 				</div>
@@ -286,27 +314,53 @@ const ModalTicket = ({ visible, setVisible, numPedVta, secCompPago, clearDataAll
 					</Col>
 				</Row>
 				<div>----------------------------------------------------------------</div>
-				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
-					<Col xs={18} style={{ padding: 0 }}>
-						EFECTIVO SOLES
-					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
-						{efectivoSoles}
-					</Col>
-				</Row>
-				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
-					<Col xs={18} style={{ padding: 0 }}>
-						VUELTO: S/
-					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
-						{vuelto}
-					</Col>
-				</Row>
+        {dataMetodosPago.map(item => (
+          <>
+            <Row key={item.COD_FORMA_PAGO} style={{ width: '100%', margin: 0, textAlign: 'end' }}>
+              <Col xs={18} style={{ padding: 0 }}>
+                {item.DESC_FORMA_PAGO}
+              </Col>
+              <Col xs={6} style={{ padding: 0 }}>
+                {item.IMP_PAGO}
+              </Col>
+            </Row>
+          </>
+        ))}
+				{/*<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>*/}
+				{/*	<Col xs={18} style={{ padding: 0 }}>*/}
+				{/*		EFECTIVO SOLES*/}
+				{/*	</Col>*/}
+				{/*	<Col xs={6} style={{ padding: 0 }}>*/}
+				{/*		{efectivoSoles}*/}
+				{/*	</Col>*/}
+				{/*</Row>*/}
+        <Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
+          <Col xs={18} style={{ padding: 0 }}>
+            VUELTO: S/
+          </Col>
+          <Col xs={6} style={{ padding: 0 }}>
+            {Number(dataMetodosPago.reduce((prev, current) => {
+              return Number(current.VUELTO) + prev;
+            }, 0)).toFixed(2)}
+          </Col>
+        </Row>
+				{/*<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>*/}
+				{/*	<Col xs={18} style={{ padding: 0 }}>*/}
+				{/*		VUELTO: S/*/}
+				{/*	</Col>*/}
+				{/*	<Col xs={6} style={{ padding: 0 }}>*/}
+				{/*		{vuelto}*/}
+				{/*	</Col>*/}
+				{/*</Row>*/}
 				<br />
-				<div>{dataImprimir.length > 0 ? texto : ''} </div>
-				<div>{dataImprimir.length > 0 ? nombreCliente : ''} </div>
-				<div>{dataImprimir.length > 0 ? dni : ''} </div>
-				<div>{dataImprimir.length > 0 ? direccion : ''} </div>
+				{/*<div>{dataImprimir.length > 0 ? texto : ''} </div>*/}
+        <div>SON: {numberToLetter(Number(importeTotal))}</div>
+				{/*<div>{dataImprimir.length > 0 ? nombreCliente : ''} </div>*/}
+				{/*<div>{dataImprimir.length > 0 ? dni : ''} </div>*/}
+				{/*<div>{dataImprimir.length > 0 ? direccion : ''} </div>*/}
+        <div>NOMBRE DE CLIENTE: {clienteCurrent.CLIENTE}</div>
+        <div>DNI CLIENTE: {clienteCurrent.NUM_DOCUMENTO}</div>
+        <div>DIRECCION: {clienteCurrent.DIRECCION}</div>
 				<br />
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					{dataImprimir.length > 0 ? <QRCode key={qr} value={qr} size={100} /> : ''}{' '}
