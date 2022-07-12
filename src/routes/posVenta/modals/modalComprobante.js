@@ -35,7 +35,7 @@ const ModalComprobante = ({
 	numPedVta,
 	secCompPago,
 	clienteCurrent,
-                       tipoVenta
+	tipoVenta,
 }) => {
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataDetalle, setDataDetalle] = useState([]);
@@ -142,10 +142,10 @@ const ModalComprobante = ({
 	const inicial = async () => {
 		setIniciando(true);
 		const idDocumento = await impCompElectWS();
-    if (!idDocumento) {
-      setIniciando(false);
-      return;
-    }
+		if (!idDocumento) {
+			setIniciando(false);
+			return;
+		}
 		const dataImp = await obtieneDocImprimirWs(idDocumento);
 		setDataImprimir(dataImp);
 		const detalle = await imprimirDetalle();
@@ -160,8 +160,6 @@ const ModalComprobante = ({
 		inicial();
 	}, []);
 
-	console.log('dataImprimir', dataImprimir);
-
 	const [totalPagar, setTotalPagar] = useState('');
 	const [opGrabada, setOpGrabada] = useState('');
 	const [igv, setIgv] = useState('');
@@ -175,6 +173,7 @@ const ModalComprobante = ({
 	const [qr, setQr] = useState('');
 
 	useEffect(() => {
+		console.log('dataImprimir', dataImprimir);
 		const posicion = 3;
 		const hasta = 14;
 		const dataTotales = [];
@@ -249,12 +248,12 @@ const ModalComprobante = ({
 					001 - Humanidad SUR
 				</div>
 				<br />
-        {dataImprimir && (
-          <>
-            <div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
-            <div>{dataImprimir.length > 0 ? dataImprimir[8].VALOR : ''} </div>
-          </>
-        )}
+				{dataImprimir && (
+					<>
+						<div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
+						<div>{dataImprimir.length > 0 ? dataImprimir[8].VALOR : ''} </div>
+					</>
+				)}
 				<div>----------------------------------------------------------------</div>
 				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 					<Col xs={4} style={{ padding: 0 }}>
@@ -388,11 +387,9 @@ const ModalComprobante = ({
 				<div>DIRECCION: {clienteCurrent.DIRECCION}</div>
 				<br />
 				<div style={{ width: '100%', textAlign: 'center' }}>
-          {dataImprimir && (
-            <>
-              {dataImprimir.length > 0 ? <QRCode key={qr} value={qr} size={100} /> : ''}{' '}
-            </>
-          )}
+					{dataImprimir && (
+						<>{dataImprimir.length > 0 ? <QRCode key={qr} value={qr} size={100} /> : ''} </>
+					)}
 				</div>
 				<br />
 				<div style={{ textAlign: 'justify' }}>
@@ -402,11 +399,9 @@ const ModalComprobante = ({
 				</div>
 				<br />
 				<div style={{ width: '100%', textAlign: 'center' }}>
-          {dataImprimir && (
-            <>
-              {dataImprimir.length > 0 ? dataImprimir[dataImprimir.length - 1].VALOR : ''}{' '}
-            </>
-          )}
+					{dataImprimir && (
+						<>{dataImprimir.length > 0 ? dataImprimir[dataImprimir.length - 1].VALOR : ''} </>
+					)}
 				</div>
 			</div>
 			<div style={{ margin: 10, display: 'flex', justifyContent: 'center' }}>
@@ -414,7 +409,7 @@ const ModalComprobante = ({
 					disabled={iniciando}
 					type="primary"
 					onClick={() => {
-            setVisible(false);
+						setVisible(false);
 						handlePrint();
 					}}
 				>

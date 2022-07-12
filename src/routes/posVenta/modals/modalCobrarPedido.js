@@ -49,8 +49,8 @@ function ModalCobrarPedido({
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
-  const [visibleModalSeleccion, setVisibleModalSeleccion] = useState(false);
-  const [visibleModalComprobante, setVisibleModalComprobante] = useState(false);
+	const [visibleModalSeleccion, setVisibleModalSeleccion] = useState(false);
+	const [visibleModalComprobante, setVisibleModalComprobante] = useState(false);
 	const [visibleModalTicket, setVisibleModalTicket] = useState(false);
 	const [dataMontos, setDataMontos] = useState([]);
 	const [formaPagoCurrent, setFormaPagoCurrent] = useState({});
@@ -427,7 +427,7 @@ function ModalCobrarPedido({
 	const clearDataAll = () => {
 		// TODO: eliminar toda las datas locales y ocular los modals menos el de seleccion de productos
 		setVisible(false);
-    setVisibleModalSeleccion(false);
+		setVisibleModalSeleccion(false);
 		setClienteCurrent({});
 		setMedicoCurrent({});
 		setPacienteCurrent({});
@@ -1123,61 +1123,60 @@ function ModalCobrarPedido({
 					setVisible={setVisibleModalComprobante}
 					numPedVta={cNumPedVta_in}
 					secCompPago={secCompPago}
-          clienteCurrent={clienteCurrent}
-          tipoVenta={tipoVenta}
+					clienteCurrent={clienteCurrent}
+					tipoVenta={tipoVenta}
 				></ModalComprobante>
 			) : null}
 
-      {visibleModalTicket ? (
-        <ModalTicket
-          visible={visibleModalTicket}
-          setVisible={setVisibleModalTicket}
-          numPedVta={cNumPedVta_in}
-          secCompPago={secCompPago}
-          clienteCurrent={clienteCurrent}
-        ></ModalTicket>
-      ) : null}
+			{visibleModalTicket ? (
+				<ModalTicket
+					visible={visibleModalTicket}
+					setVisible={setVisibleModalTicket}
+					numPedVta={cNumPedVta_in}
+					secCompPago={secCompPago}
+					clienteCurrent={clienteCurrent}
+					medicoCurrent={medicoCurrent}
+					pacienteCurrent={pacienteCurrent}
+					user={user}
+				></ModalTicket>
+			) : null}
 
-      <Modal
-        centered
-        closable={false}
-        visible={visibleModalSeleccion}
-        title='Impresión'
-        footer={[
-          <Button onClick={() => {
-            confirm({
-              content: '¿Quiere salir? Asegurese de haber impreso sus comprobantes.',
-              okText: 'Salir',
-              cancelText: 'Cancelar',
-              onOk: () => {
-                clearDataAll();
-              },
-              centered: true
-            });
-          }}>
-            Salir
-          </Button>
-        ]}
-      >
-        <Row justify='space-between'>
-          <Col span={11}>
-            <Button
-              onClick={() => setVisibleModalComprobante(true)}
-              block
-            >
-              {tipoVenta === '01' ? 'Boleta' : 'Factura'} electrónica
-            </Button>
-          </Col>
-          <Col span={11}>
-            <Button
-              onClick={() => setVisibleModalTicket(true)}
-              block
-            >
-              Ticket de atención
-            </Button>
-          </Col>
-        </Row>
-      </Modal>
+			<Modal
+				centered
+				closable={false}
+				visible={visibleModalSeleccion}
+				title="Impresión"
+				footer={[
+					<Button
+						onClick={() => {
+							confirm({
+								content: '¿Quiere salir? Asegurese de haber impreso sus comprobantes.',
+								okText: 'Salir',
+								cancelText: 'Cancelar',
+								onOk: () => {
+									clearDataAll();
+								},
+								centered: true,
+							});
+						}}
+					>
+						Salir
+					</Button>,
+				]}
+			>
+				<Row justify="space-between">
+					<Col span={11}>
+						<Button onClick={() => setVisibleModalComprobante(true)} block>
+							{tipoVenta === '01' ? 'Boleta' : 'Factura'} electrónica
+						</Button>
+					</Col>
+					<Col span={11}>
+						<Button onClick={() => setVisibleModalTicket(true)} block>
+							Ticket de atención
+						</Button>
+					</Col>
+				</Row>
+			</Modal>
 		</>
 	);
 }

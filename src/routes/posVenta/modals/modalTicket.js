@@ -35,12 +35,15 @@ const ModalTicket = ({
 	numPedVta,
 	secCompPago,
 	clienteCurrent,
+	medicoCurrent,
+	pacienteCurrent,
+	user,
 }) => {
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataDetalle, setDataDetalle] = useState([]);
-	const [dataMetodosPago, setDataMetodosPago] = useState([]);
 	const impresionRef = useRef();
 	const [iniciando, setIniciando] = useState(true);
+	const [codigo, setCodigo] = useState('');
 	const handlePrint = useReactToPrint({
 		content: () => impresionRef.current,
 		pageStyle: pageStyle,
@@ -48,7 +51,7 @@ const ModalTicket = ({
 
 	const df = new DecimalFormat('#,##0.00');
 
-	const impCompElect = async (numOrden) => {
+	const impCompElect = async numOrden => {
 		try {
 			const {
 				data: { data, success, message },
@@ -61,7 +64,7 @@ const ModalTicket = ({
 				reimpresion: 'N',
 				valorAhorro: '',
 				docTarjetaPtos: '',
-        numOrden
+				numOrden,
 			});
 			if (success) {
 				return data;
@@ -103,34 +106,53 @@ const ModalTicket = ({
 		}
 	};
 
-  const getnumOrdenVta = async () => {
-    try {
-      const {
-        data: { success, message, data },
-      } = await httpClient.post('posventa/getnumOrdenVta', {
-        codGrupoCia: '001',
-        codLocal: '001',
-        numPedVta,
-      });
-      if (success) return data.NUM_ORDEN;
-      console.log(message);
-    } catch (e) {
-      console.error(e);
-    }
-  };
+	const getnumOrdenVta = async () => {
+		try {
+			const {
+				data: { success, message, data },
+			} = await httpClient.post('posventa/getnumOrdenVta', {
+				codGrupoCia: '001',
+				codLocal: '001',
+				numPedVta,
+			});
+			if (success) return data.NUM_ORDEN;
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const imprimirDetalle = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('posventa/imprimirDetalle', {
+				codGrupoCia: '001',
+				codLocal: '001',
+				numPedVta,
+				secCompPago,
+			});
+			if (success) {
+				return data;
+			}
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
 
 	const inicial = async () => {
 		setIniciando(true);
-    const numOrden = await getnumOrdenVta();
+		const numOrden = await getnumOrdenVta();
 		const idDocumento = await impCompElect(numOrden);
-    if (!idDocumento) {
-      setIniciando(false);
-      return;
-    }
+		if (!idDocumento) {
+			setIniciando(false);
+			return;
+		}
 		const dataImp = await obtieneDocImprimirWs(idDocumento);
 		setDataImprimir(dataImp);
-		// const detalle = await imprimirDetalle();
-		// setDataDetalle(detalle);
+		const detalle = await imprimirDetalle();
+		setDataDetalle(detalle);
 		// const metodosPago = await getMetodosPago();
 		// setDataMetodosPago(metodosPago);
 		setIniciando(false);
@@ -141,42 +163,34 @@ const ModalTicket = ({
 		inicial();
 	}, []);
 
-	const [totalPagar, setTotalPagar] = useState('');
-	const [opGrabada, setOpGrabada] = useState('');
-	const [igv, setIgv] = useState('');
-	const [importeTotal, setImporteTotal] = useState('');
-	const [qr, setQr] = useState('');
+	console.log('dataImprimir', dataImprimir);
+	console.log('medicoCurrent', medicoCurrent);
+	console.log('pacienteCurrent', pacienteCurrent);
+	console.log('user', user);
 
 	useEffect(() => {
-		const posicion = 3;
-		const hasta = 14;
-		const dataTotales = [];
-		let iii = 0;
-		let ii = 0;
-
-		dataImprimir.forEach(element => {
-			if (element.VALOR === '---------------------------------------------------------------') {
-				ii++;
-			}
-			if (ii >= posicion && iii <= hasta) {
-				dataTotales.push(element.VALOR);
-				iii++;
-			}
-		});
-
-		if (dataTotales.length > 0) {
-			setTotalPagar(dataTotales[1].split('S/')[1].trim());
-			setOpGrabada(dataTotales[3].split('S/')[1].trim());
-			setIgv(dataTotales[4].split('S/')[1].trim());
-			setImporteTotal(dataTotales[5].split('S/')[1].trim());
+		if (dataImprimir.length > 0) {
+			const respuesta = [];
+			let point = false;
 			dataImprimir.forEach(element => {
-				if (element.VALOR.split('|').length > 3) {
-					setQr(element.VALOR.trim());
+				if (element.VALOR.split('Atendido por :')[1]) {
+					point = true;
 				}
+				if (point) respuesta.push(element);
 			});
+			console.log('respuesta', respuesta);
+			setCodigo(respuesta[2].VALOR);
 		}
-		console.log('dataTotales', dataTotales);
 	}, [dataImprimir]);
+
+	const dia = pacienteCurrent.FEC_NAC_CLI.substring(0, 2);
+	const mes = pacienteCurrent.FEC_NAC_CLI.substring(3, 5);
+	const anio = pacienteCurrent.FEC_NAC_CLI.substring(6, 10);
+	const fechaNacimiento = new Date(mes + '/' + dia + '/' + anio);
+	console.log(fechaNacimiento);
+	const fechaActual = new Date();
+	// restar años completos
+	const edad = Math.floor((fechaActual - fechaNacimiento) / (1000 * 60 * 60 * 24 * 365));
 
 	return (
 		<Modal
@@ -194,34 +208,26 @@ const ModalTicket = ({
 				style={{ display: 'flex', flexDirection: 'column', padding: 10, fontSize: 10 }}
 			>
 				{/* {imprimir} */}
-				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+				{/* <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
 					<img src={logoHeader} alt="lopotipo-biensalud" />
-				</div>
-				<div style={{ width: '100%', textAlign: 'center' }}>
-					CONSORCIO SALUD LIMA SUR - RUC: 20555875828
-				</div>
-				<div style={{ width: '100%', textAlign: 'center' }}>PR GRAL MIGUEL IGLESIAS NRO. 997</div>
-				<div style={{ width: '100%', textAlign: 'center' }}>
-					LIMA - LIMA - SAN JUAN DE MIRAFLORES
-				</div>
-				<div style={{ width: '100%', textAlign: 'center' }}>TELF.: 7178060</div>
-				<div
-					style={{
-						width: '100%',
-						textAlign: 'center',
-						textDecoration: 'underline',
-						fontWeight: 600,
-					}}
-				>
-					001 - Humanidad SUR
-				</div>
+				</div> */}
+				<div style={{ width: '100%', textAlign: 'center' }}>ENTREGAR PARA SU ATENCION</div>
 				<br />
-        {dataImprimir && (
-          <>
-            <div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
-            <div>{dataImprimir.length > 0 ? dataImprimir[8].VALOR : ''} </div>
-          </>
-        )}
+				<div>
+					{dataImprimir && (
+						<>
+							<div>{dataImprimir.length > 0 ? dataImprimir[4].VALOR : ''} </div>
+							<div>{dataImprimir.length > 0 ? dataImprimir[5].VALOR : ''} </div>
+							<br />
+							<div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
+							<br />
+							<div>{dataImprimir.length > 0 ? dataImprimir[9].VALOR : ''} </div>
+							<div>{dataImprimir.length > 0 ? dataImprimir[10].VALOR : ''} </div>
+							<div>{dataImprimir.length > 0 ? dataImprimir[11].VALOR : ''} </div>
+						</>
+					)}
+				</div>
+
 				<div>----------------------------------------------------------------</div>
 				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 					<Col xs={4} style={{ padding: 0 }}>
@@ -267,121 +273,105 @@ const ModalTicket = ({
 					</Row>
 				))}
 				<div>----------------------------------------------------------------</div>
-				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
-					<Col xs={18} style={{ padding: 0 }}>
-						TOTAL A PAGAR: S/
-					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
-						{totalPagar}
-					</Col>
-				</Row>
-				<div>----------------------------------------------------------------</div>
-
-				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
-					<Col xs={18} style={{ padding: 0 }}>
-						OP.GRAVADAS: S/
-					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
-						{opGrabada}
-					</Col>
-				</Row>
-				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
-					<Col xs={18} style={{ padding: 0 }}>
-						IGV-18%: S/
-					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
-						{igv}
-					</Col>
-				</Row>
-				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
-					<Col xs={18} style={{ padding: 0 }}>
-						IMPORTE TOTAL: S/
-					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
-						{importeTotal}
-					</Col>
-				</Row>
-				<div>----------------------------------------------------------------</div>
-				{dataMetodosPago.map(item => (
-					<>
-						<Row key={item.COD_FORMA_PAGO} style={{ width: '100%', margin: 0, textAlign: 'end' }}>
-							<Col xs={18} style={{ padding: 0 }}>
-								{item.DESC_FORMA_PAGO}
-							</Col>
-							<Col xs={6} style={{ padding: 0 }}>
-								{item.IMP_PAGO}
-							</Col>
-						</Row>
-					</>
-				))}
-				{/*<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>*/}
-				{/*	<Col xs={18} style={{ padding: 0 }}>*/}
-				{/*		EFECTIVO SOLES*/}
-				{/*	</Col>*/}
-				{/*	<Col xs={6} style={{ padding: 0 }}>*/}
-				{/*		{efectivoSoles}*/}
-				{/*	</Col>*/}
-				{/*</Row>*/}
-				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
-					<Col xs={18} style={{ padding: 0 }}>
-						VUELTO: S/
-					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
-						{df.format(
-							Number(
-								dataMetodosPago.reduce((prev, current) => {
-									return Number(current.VUELTO.replace(',', '')) + prev;
-								}, 0)
-							)
-						)}
-					</Col>
-				</Row>
-				{/*<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>*/}
-				{/*	<Col xs={18} style={{ padding: 0 }}>*/}
-				{/*		VUELTO: S/*/}
-				{/*	</Col>*/}
-				{/*	<Col xs={6} style={{ padding: 0 }}>*/}
-				{/*		{vuelto}*/}
-				{/*	</Col>*/}
-				{/*</Row>*/}
 				<br />
-				{/*<div>{dataImprimir.length > 0 ? texto : ''} </div>*/}
-				<div>SON: {numberToLetter(Number(importeTotal))}</div>
-				{/*<div>{dataImprimir.length > 0 ? nombreCliente : ''} </div>*/}
-				{/*<div>{dataImprimir.length > 0 ? dni : ''} </div>*/}
-				{/*<div>{dataImprimir.length > 0 ? direccion : ''} </div>*/}
 				<div>NOMBRE DE CLIENTE: {clienteCurrent.CLIENTE}</div>
 				<div>DNI CLIENTE: {clienteCurrent.NUM_DOCUMENTO}</div>
 				<div>DIRECCION: {clienteCurrent.DIRECCION}</div>
 				<br />
-				<div style={{ width: '100%', textAlign: 'center' }}>
-          {dataImprimir && (
-            <>
-              {dataImprimir.length > 0 ? <QRCode key={qr} value={qr} size={100} /> : ''}{' '}
-            </>
-          )}
+				<div>--- DATOS DE MEDICO ---</div>
+				<br />
+				<div>{medicoCurrent.CMP + ' - ' + medicoCurrent.NOMBRE_COMPLETO}</div>
+				<br />
+				<div>--- DATOS DE PACIENTE ---</div>
+				<br />
+				<div>N° HC {pacienteCurrent.COD_PACIENTE}</div>
+				<div>DNI - {pacienteCurrent.NUM_DOCUMENTO}</div>
+				<div>
+					{pacienteCurrent.NOMBRE} {pacienteCurrent.APE_PATERNO} {pacienteCurrent.APE_MATERNO}
+				</div>
+				<div>FECHA NACIMIENTO : {pacienteCurrent.FEC_NAC_CLI}</div>
+				<div>EDAD - {edad} años</div>
+				<br />
+				<div>----------------------------------------------------------------</div>
+				<div
+					style={{ width: '100%', textAlign: 'center', marginBottom: 10, padding: 0, margin: 0 }}
+				>
+					ATENDIDO POR : {user.nom_usu.trim()}
+				</div>
+				<div>----------------------------------------------------------------</div>
+				<div style={{ width: '100%', textAlign: 'center' }}>{codigo}</div>
+				<div>----------------------------------------------------------------</div>
+				<br />
+				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+					Entregar esta orden a la técnica responsable de cada consultorio
 				</div>
 				<br />
-				<div style={{ textAlign: 'justify' }}>
-					Conserve su impresion de la BOLETA ELECTRONICA. No se aceptan devoluciones de dinero.
-					Cambio de mercadería solo en esta permitido en las 48 horas siguientes a la compra.
-					Indispensable presentar este documento.
+				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+					OBS: Debido al COVID19, el aforo de HUMANIDAD SUR está siendo modificado. Espere con
+					calma, pronto el doctor atenderá su consulta a detalle.
 				</div>
 				<br />
-				<div style={{ width: '100%', textAlign: 'center' }}>
-          {dataImprimir && (
-            <>
-              {dataImprimir.length > 0 ? dataImprimir[dataImprimir.length - 1].VALOR : ''}{' '}
-            </>
-          )}
-				</div>
+				<div>----------------------------------------------------------------</div>
+				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>DATOS DE TRIAJE</div>
+				<br />
+				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
+					<Col xs={12} style={{ padding: 0 }}>
+						Temperatura:
+					</Col>
+					<Col xs={11} style={{ padding: 0, textAlign: 'end' }}>
+						__________ C°
+					</Col>
+				</Row>
+				<br />
+				<br />
+				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
+					<Col xs={9} style={{ padding: 0 }}>
+						Presión Arterial :
+					</Col>
+					<Col xs={14} style={{ padding: 0, textAlign: 'end' }}>
+						__________ / _________ MMHG.
+					</Col>
+				</Row>
+				<br />
+				<br />
+				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
+					<Col xs={12} style={{ padding: 0 }}>
+						Peso:
+					</Col>
+					<Col xs={11} style={{ padding: 0, textAlign: 'end' }}>
+						__________ Kg.
+					</Col>
+				</Row>
+				<br />
+				<br />
+				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
+					<Col xs={12} style={{ padding: 0 }}>
+						Saturación de Oxígeno:
+					</Col>
+					<Col xs={11} style={{ padding: 0, textAlign: 'end' }}>
+						___________ %
+					</Col>
+				</Row>
+				<br />
+				<br />
+				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
+					<Col xs={12} style={{ padding: 0 }}>
+						Frecuencia Cardiáca :
+					</Col>
+					<Col xs={11} style={{ padding: 0, textAlign: 'end' }}>
+						___________ X°
+					</Col>
+				</Row>
+				<div> </div>
+				<br />
+				<br />
 			</div>
 			<div style={{ margin: 10, display: 'flex', justifyContent: 'center' }}>
 				<Button
 					disabled={iniciando}
 					type="primary"
 					onClick={() => {
-            setVisible(false);
+						setVisible(false);
 						handlePrint();
 					}}
 				>
