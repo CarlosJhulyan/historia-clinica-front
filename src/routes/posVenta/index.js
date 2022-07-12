@@ -8,6 +8,7 @@ import ModalCobrarPedido from './modals/modalCobrarPedido';
 import { openNotification } from '../../util/util';
 import { useAuth } from '../../authentication';
 import DecimalFormat from 'decimal-format';
+import ModalSeleccionProducto from './modals/modalSeleccionProducto';
 
 function GenerarPedido() {
 	const { info } = Modal;
@@ -19,6 +20,7 @@ function GenerarPedido() {
 	const [data, setData] = useState([]);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
+  const [visibleModalCambiarCantidad, setVisibleModalCambiarCantidad] = useState(false);
 	const [loadingGrabarPedido, setLoadingGrabarPedido] = useState(false);
 	const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 	const [selectedRows, setSelectedRows] = useState([]);
@@ -702,6 +704,30 @@ function GenerarPedido() {
 		});
 	};
 
+  const cancelProductoSelected = () => {
+    setVisibleModalCambiarCantidad(false);
+  };
+
+  const aceptedProductoSelected = (key, newData) => {
+    const newDataFormat = data.map(item => {
+      if (key === item.key) return {
+        ...item,
+        ...newData,
+        total: parseFloat(newData.total).toFixed(2),
+      }
+      else return item;
+    })
+    setData(newDataFormat);
+    const total = newDataFormat.reduce((previus, current) => parseFloat(current.total) + previus, 0);
+    setDataDetallesFinally({
+      tipoCambio: 3.34,
+      items: newDataFormat.length,
+      total,
+      totalDolar: total / 3.34,
+    });
+    setVisibleModalCambiarCantidad(false);
+  }
+
 	useEffect(() => {
 		const chargeDataAsync = async () => {
 			const valido = await validaOperacionCaja('MA');
@@ -809,7 +835,23 @@ function GenerarPedido() {
 									color: 'white',
 									marginTop: '10px',
 								}}
-								onClick={() => setVisibleModal(true)}
+								onClick={() => {
+                  if (data.length > 0) confirm({
+                    content: (
+                      <>
+                        <p>Aun mantiene sus productos seleccinados anteriormente.</p>
+                        <p>Si acepta el cambio se sobrescribirá el resumen de productos.</p>
+                      </>
+                    ),
+                    onOk: () => {
+                      setVisibleModal(true);
+                    },
+                    cancelText: 'Cancelar',
+                    okText: 'Continuar',
+                    centered: true
+                  })
+                  else setVisibleModal(true);
+                }}
 								disabled={disabledAll}
 								loading={loadingData}
 							>
@@ -897,29 +939,31 @@ function GenerarPedido() {
 							color: '#fff',
 						}}
 						onClick={() => {
-							// TODO: Cambiar cantidad
+							setVisibleModalCambiarCantidad(true);
 						}}
 					>
 						Cambiar Cantidad
 					</Button>
 					<Button
-						disabled={disabledAll || data.length <= 0}
+            disabled={disabledAll || data.length <= 0 || selectedRows.length === 0}
 						style={{
 							backgroundColor: '#0169aa',
 							color: '#fff',
 						}}
 						onClick={() => {
 							confirm({
-								content: '¿Esta seguro de borrar los datos y seleccionar otros productos?',
+								content: '¿Esta seguro de borrar el producto?',
 								onOk: () => {
-									setProductosDetalles([]);
-									setProductosCurrent([]);
-									setSelectedRowKeys([]);
-									setData([]);
-									setClienteCurrent({});
-									setPacienteCurrent({});
-									setMedicoCurrent({});
-									setSelectedRows([]);
+                  const newData = data.filter(item => item.key !== selectedRows[0].key);
+                  setData(newData);
+                  const total = newData.reduce((previus, current) => parseFloat(current.total) + previus, 0);
+                  setDataDetallesFinally({
+                    tipoCambio: 3.34,
+                    items: newData.length,
+                    total,
+                    totalDolar: total / 3.34,
+                  });
+                  setSelectedRows([]);
 								},
 								centered: true,
 								okText: 'Continuar',
@@ -995,6 +1039,16 @@ function GenerarPedido() {
 					clearDataFinallyMain={clearDataFinally}
 				/>
 			) : null}
+
+      {visibleModalCambiarCantidad && (
+        <ModalSeleccionProducto
+          visible={visibleModalCambiarCantidad}
+          productoCurrent={selectedRows[0]}
+          setVisible={setVisibleModalCambiarCantidad}
+          cancelProductoSelected={cancelProductoSelected}
+          aceptedProductoSelected={aceptedProductoSelected}
+        />
+      )}
 			{contextHolder}
 		</>
 	);
