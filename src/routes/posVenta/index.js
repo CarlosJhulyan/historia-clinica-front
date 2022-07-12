@@ -21,7 +21,7 @@ function GenerarPedido() {
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
 	const [loadingGrabarPedido, setLoadingGrabarPedido] = useState(false);
 	const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
+	const [selectedRows, setSelectedRows] = useState([]);
 	const [productosDetalles, setProductosDetalles] = useState([]);
 	const [productosCurrent, setProductosCurrent] = useState([]);
 
@@ -31,7 +31,7 @@ function GenerarPedido() {
 	const {
 		authUser: { data: user },
 	} = useAuth();
-  const { confirm } = Modal;
+	const { confirm } = Modal;
 	const [numCaja, setNumCaja] = useState('');
 	const [grabarPedido, setGrabarPedido] = useState(false);
 	const [fechaSistema, setFechaSistema] = useState(false);
@@ -614,9 +614,11 @@ function GenerarPedido() {
 	const rowSelection = {
 		onChange: (selectedRowKeys, selectedRows) => {
 			console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      setSelectedRows(selectedRows);
+			setSelectedRows(selectedRows);
 		},
-    selectedRowKeys: selectedRows.map(item => {return item.key})
+		selectedRowKeys: selectedRows.map(item => {
+			return item.key;
+		}),
 	};
 
 	const clearDataFinally = () => {
@@ -626,9 +628,9 @@ function GenerarPedido() {
 		setVisibleModalDatosPedido(false);
 		setProductosDetalles([]);
 		setProductosCurrent([]);
-    setSelectedRowKeys([]);
-    setData([]);
-    setSelectedRows([]);
+		setSelectedRowKeys([]);
+		setData([]);
+		setSelectedRows([]);
 	};
 
 	const validaOperacionCaja = async tipOp => {
@@ -894,9 +896,9 @@ function GenerarPedido() {
 							backgroundColor: '#0169aa',
 							color: '#fff',
 						}}
-            onClick={() => {
-              // TODO: Cambiar cantidad
-            }}
+						onClick={() => {
+							// TODO: Cambiar cantidad
+						}}
 					>
 						Cambiar Cantidad
 					</Button>
@@ -906,24 +908,24 @@ function GenerarPedido() {
 							backgroundColor: '#0169aa',
 							color: '#fff',
 						}}
-            onClick={() => {
-              confirm({
-                content: '¿Esta seguro de borrar los datos y seleccionar otros productos?',
-                onOk:() => {
-                  setProductosDetalles([]);
-                  setProductosCurrent([]);
-                  setSelectedRowKeys([]);
-                  setData([]);
-                  setClienteCurrent({});
-                  setPacienteCurrent({});
-                  setMedicoCurrent({});
-                  setSelectedRows([]);
-                },
-                centered: true,
-                okText: 'Continuar',
-                cancelText: 'Cancelar',
-              })
-            }}
+						onClick={() => {
+							confirm({
+								content: '¿Esta seguro de borrar los datos y seleccionar otros productos?',
+								onOk: () => {
+									setProductosDetalles([]);
+									setProductosCurrent([]);
+									setSelectedRowKeys([]);
+									setData([]);
+									setClienteCurrent({});
+									setPacienteCurrent({});
+									setMedicoCurrent({});
+									setSelectedRows([]);
+								},
+								centered: true,
+								okText: 'Continuar',
+								cancelText: 'Cancelar',
+							});
+						}}
 					>
 						Borrar
 					</Button>

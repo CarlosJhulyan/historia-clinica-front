@@ -46,42 +46,70 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const createMenuItem = () => {
 		const menuItems = [];
 
-    if (token?.data && token.data.login_usu) {
-      menuItems.push(
-        <SubMenu
-          key="posVentaG"
-          popupClassName={getNavStyleSubMenuClass(navStyle)}
-          title={
-            <span>
-						{' '}
-              <i className="icon icon-icon" />
-						<span>Pos Venta</span>
-					</span>
-          }>
-          <Menu.Item key="generarPedido">
-            <Link to="/generarPedido">
-              <i className="icon icon-icon" />
-              <span>Generar Pedido</span>
-            </Link>
-          </Menu.Item>
-          <Menu.Item key="movimientosCaja">
+		if (token?.data && token.data.login_usu) {
+			menuItems.push(
+				<SubMenu
+					key="posVentaG"
+					popupClassName={getNavStyleSubMenuClass(navStyle)}
+					title={
+						<span>
+							{' '}
+							<i className="icon icon-icon" />
+							<span>Pos Venta</span>
+						</span>
+					}
+				>
+					<Menu.Item key="generarPedido">
+						<Link to="/generarPedido">
+							<i className="icon icon-icon" />
+							<span>Generar Pedido</span>
+						</Link>
+					</Menu.Item>
+					<Menu.Item key="movimientosCaja">
 						<Link to="/movimientosCaja">
 							<i className="icon icon-icon" />
 							<span>Movimientos de Caja</span>
 						</Link>
 					</Menu.Item>
-        </SubMenu>
-      );
+				</SubMenu>
+			);
 
-      menuItems.push(
-        <Menu.Item key="ingresoAtenciones">
-          <Link to="/ingresoAtenciones">
-            <i className="icon icon-auth-screen" />
-            <span>Ingreso Atenciones</span>
-          </Link>
-        </Menu.Item>
-      );
-    }
+			menuItems.push(
+				<Menu.Item key="ingresoAtenciones">
+					<Link to="/ingresoAtenciones">
+						<i className="icon icon-auth-screen" />
+						<span>Ingreso Atenciones</span>
+					</Link>
+				</Menu.Item>
+			);
+
+			menuItems.push(
+				<SubMenu
+					key="horario"
+					popupClassName={getNavStyleSubMenuClass(navStyle)}
+					title={
+						<span>
+							{' '}
+							<i className="icon icon-icon" />
+							<span>Horario</span>
+						</span>
+					}
+				>
+					<Menu.Item key="horario/asignar">
+						<Link to="/horario/asignar">
+							<i className="icon icon-icon" />
+							<span>Mantenedor de Horario</span>
+						</Link>
+					</Menu.Item>
+					<Menu.Item key="horario/consultar">
+						<Link to="/horario/consultar">
+							<i className="icon icon-icon" />
+							<span>Horario</span>
+						</Link>
+					</Menu.Item>
+				</SubMenu>
+			);
+		}
 
 		if (token?.modulos && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) {
 			if (token.modulos.includes('16') || token.modulos.includes('17')) {
@@ -95,25 +123,24 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 								<i className="icon icon-icon" />
 								<span>Evolución de Enfermería</span>
 							</span>
-						}>
-							{
-								token.modulos.includes('16') &&
-									<Menu.Item key="ingresoEvolucionEnfermeria">
-										<Link to="/ingresoEvolucionEnfermeria">
-											<i className="icon icon-icon" />
-											<span>Agregar Evolución de Enfermería</span>
-										</Link>
-									</Menu.Item>
-							}
-							{
-								token.modulos.includes('17') &&
-									<Menu.Item key="historialEvolucionEnfermeria">
-										<Link to="/historialEvolucionEnfermeria">
-											<i className="icon icon-icon" />
-											<span>Historial Evolución de Enfermería</span>
-										</Link>
-									</Menu.Item>
-							}
+						}
+					>
+						{token.modulos.includes('16') && (
+							<Menu.Item key="ingresoEvolucionEnfermeria">
+								<Link to="/ingresoEvolucionEnfermeria">
+									<i className="icon icon-icon" />
+									<span>Agregar Evolución de Enfermería</span>
+								</Link>
+							</Menu.Item>
+						)}
+						{token.modulos.includes('17') && (
+							<Menu.Item key="historialEvolucionEnfermeria">
+								<Link to="/historialEvolucionEnfermeria">
+									<i className="icon icon-icon" />
+									<span>Historial Evolución de Enfermería</span>
+								</Link>
+							</Menu.Item>
+						)}
 					</SubMenu>
 				);
 			}
@@ -129,25 +156,24 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 								<i className="icon icon-icon" />
 								<span>Pre triaje</span>
 							</span>
-						}>
-							{
-								token.modulos.includes('18') &&
-									<Menu.Item key="tomaPreTriaje">
-										<Link to="/tomaPreTriaje">
-											<i className="icon icon-icon" />
-											<span>Toma de Pre triaje</span>
-										</Link>
-									</Menu.Item>
-							}
-							{
-								token.modulos.includes('19') &&
-									<Menu.Item key="historicoPreTriaje">
-										<Link to="/historicoPreTriaje">
-											<i className="icon icon-icon" />
-											<span>Historico de Pre triaje</span>
-										</Link>
-									</Menu.Item>
-							}
+						}
+					>
+						{token.modulos.includes('18') && (
+							<Menu.Item key="tomaPreTriaje">
+								<Link to="/tomaPreTriaje">
+									<i className="icon icon-icon" />
+									<span>Toma de Pre triaje</span>
+								</Link>
+							</Menu.Item>
+						)}
+						{token.modulos.includes('19') && (
+							<Menu.Item key="historicoPreTriaje">
+								<Link to="/historicoPreTriaje">
+									<i className="icon icon-icon" />
+									<span>Historico de Pre triaje</span>
+								</Link>
+							</Menu.Item>
+						)}
 					</SubMenu>
 				);
 			}
@@ -176,30 +202,30 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 
 			if (token.modulos.includes('1')) {
 				menuItems.push(
-          <SubMenu
-            key="pacientes"
-            popupClassName={getNavStyleSubMenuClass(navStyle)}
-            title={
-              <span>
+					<SubMenu
+						key="pacientes"
+						popupClassName={getNavStyleSubMenuClass(navStyle)}
+						title={
+							<span>
 								{' '}
-                <i className="icon icon-auth-screen" />
+								<i className="icon icon-auth-screen" />
 								<span>Pacientes</span>
 							</span>
-            }
-          >
-            <Menu.Item key="listaPaciente">
-              <Link to="/listaPaciente">
-                <i className="icon icon-auth-screen" />
-                <span>Lista de Pacientes</span>
-              </Link>
-            </Menu.Item>
-            <Menu.Item key="listaEspera">
-              <Link to="/listaEspera">
-                <i className="icon icon-auth-screen" />
-                <span>Lista de Espera</span>
-              </Link>
-            </Menu.Item>
-          </SubMenu>
+						}
+					>
+						<Menu.Item key="listaPaciente">
+							<Link to="/listaPaciente">
+								<i className="icon icon-auth-screen" />
+								<span>Lista de Pacientes</span>
+							</Link>
+						</Menu.Item>
+						<Menu.Item key="listaEspera">
+							<Link to="/listaEspera">
+								<i className="icon icon-auth-screen" />
+								<span>Lista de Espera</span>
+							</Link>
+						</Menu.Item>
+					</SubMenu>
 				);
 			}
 
@@ -514,9 +540,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					<UserProfile />
 					{/* <AppsNavigation /> */}
 				</div>
-				<CustomScrollbars
-					className={`gx-layout-sider-scrollbar ${anexo.tipo === 'N' && 'mitema'}`}
-				>
+				<CustomScrollbars className={`gx-layout-sider-scrollbar ${anexo.tipo === 'N' && 'mitema'}`}>
 					<Menu
 						defaultOpenKeys={[defaultOpenKeys]}
 						selectedKeys={[selectedKeys]}
