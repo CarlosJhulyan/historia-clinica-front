@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Button } from 'antd';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import { Spin } from 'antd';
 import moment from 'moment';
+import { httpClient } from '../../../../util/Api';
 
 const localizer = momentLocalizer(moment);
 //Cambiar el idioma
@@ -28,38 +28,68 @@ const messages = {
 
 const ConsultarHorario = () => {
 	const [events, setEvents] = useState([]);
-	const [data, setData] = useState([]);
 
 	const agregarEvento = data => {
 		var aux = [];
-		data.map(element => {
-			var f = new Date(moment(element.fecha_programada).format('YYYY,MM,DD'));
+		data.forEach(element => {
+			var start = new Date(
+				moment(element.fecha).format('YYYY'),
+				Number(moment(element.fecha).format('MM')) - 1,
+				moment(element.fecha).format('DD'),
+				element.hora_inicio.split(':')[0],
+				element.hora_inicio.split(':')[1]
+			);
+			var end = new Date(
+				moment(element.fecha).format('YYYY'),
+				Number(moment(element.fecha).format('MM')) - 1,
+				moment(element.fecha).format('DD'),
+				element.hora_fin.split(':')[0],
+				element.hora_fin.split(':')[1]
+			);
 			aux.push({
 				...element,
-				title: element.actividad,
-				start: f,
-				end: f,
+				title: (
+					<>
+						<div
+							style={{
+								textOverflow: 'ellipsis',
+								display: 'block',
+								whiteSpace: 'nowrap',
+								overflow: 'hidden',
+							}}
+						>
+							{element.nombre_medico}
+						</div>
+						<p>{element.hora_inicio + ' - ' + element.hora_fin}</p>
+					</>
+				),
+				start,
+				end,
+				id: element.id_horario,
 			});
 		});
-		setEvents(aux);
+		setEvents([...aux]);
 	};
 
-	// const mostrarModalDetalle = record => {
-	// 	setAbrirModal(true);
-	// 	setDatosModal(record);
-	// };
+	const mostrarModalDetalle = record => {
+		// TODO: MOSTRAR EL MODAL DE DETALLE
+		console.log(record);
+	};
 
-	// useEffect(() => {
-	// 	if (state.data.length > 0) {
-	// 		setData(state.data);
-	// 	}
-	// }, [state]);
+	const traerData = async mes => {
+		const response = await httpClient.post('/horarios/getHorarioFecha', {
+			mes,
+		});
+
+		console.log(response.data.data);
+		agregarEvento(response.data.data);
+	};
 
 	useEffect(() => {
-		if (data.length >= 1) {
-			agregarEvento(data);
-		}
-	}, [data]);
+		traerData(moment().month() + 1);
+	}, []);
+
+	console.log('events', events);
 
 	return (
 		<Card
@@ -78,7 +108,7 @@ const ConsultarHorario = () => {
 							marginTop: '15px',
 						}}
 					>
-						Mantenedor de Horario
+						Horario
 					</div>
 					<div
 						style={{
@@ -87,7 +117,7 @@ const ConsultarHorario = () => {
 							justifyContent: 'right',
 						}}
 					>
-						<Button
+						{/* <Button
 							// loading={loading}
 							style={{
 								backgroundColor: '#04B0AD',
@@ -98,30 +128,27 @@ const ConsultarHorario = () => {
 							// disabled={btnBuscar}
 						>
 							Guardar
-						</Button>
+						</Button> */}
 					</div>
 				</div>
 			}
 		>
 			<div className="gx-main-content">
 				<div className="gx-rbc-calendar">
-					{/* {state.loading ? (
-						<div style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-							<Spin tip="Cargando" />
-						</div>
-					) : ( */}
 					<Calendar
 						popup
-						events={events}
+						events={[...events]}
 						toolbar={true}
 						step={60}
 						messages={messages}
 						localizer={localizer}
+						onNavigate={date => {
+							traerData(date.getMonth() + 1);
+						}}
 						views={{ month: true }}
-						// onSelectEvent={event => mostrarModalDetalle(event)}
+						onSelectEvent={event => mostrarModalDetalle(event)}
 						defaultDate={new Date()}
 					/>
-					{/* )} */}
 				</div>
 			</div>
 		</Card>
