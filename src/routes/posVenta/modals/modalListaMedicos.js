@@ -83,12 +83,22 @@ function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
 				onCancel={() => setVisible(false)}
 				footer={[
 					<Button
+						style={{
+							background: "#36AE7C"
+						}}
+
 						onClick={() => {
 							setVisibleModalUpsertMedico(true);
 							setEditarMedico(false);
 						}}
 					>
-						Crear
+						<p
+							style={{
+								color: "white"
+							}}
+						>
+							Crear
+						</p>
 					</Button>,
 					<Button
 						onClick={() => {
@@ -102,7 +112,18 @@ function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
 					<Button disabled={!cmpCurrent} onClick={handleAcepted}>
 						Seleccionar
 					</Button>,
-					<Button onClick={() => setVisible(false)}>Cerrar</Button>,
+					<Button
+					style={{
+						background: '#EB5353'
+					}}
+					 onClick={() => setVisible(false)}>
+						<p style={{
+							color: "white"
+						}}>
+						Cerrar
+
+						</p>
+						</Button>,
 				]}
 			>
 				<Row>

@@ -259,11 +259,23 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent }) => {
         className='modal-custom'
         onCancel={() => setVisible(false)}
         footer={[
-          <Button onClick={() => mostrarModal()}>Nuevo Paciente</Button>,
+          <Button
+          style={{
+            background: "#36AE7C"
+          }}
+
+           onClick={() => mostrarModal()}>
+            <p style={{color: "white"}}>Nuevo Paciente</p>
+            </Button>,
           <Button disabled={!codEditarPaciente} onClick={() => mostrarModalEditar()}>Modificar Paciente</Button>,
           // <Button disabled={!codEditarPaciente} onClick={() => setAbrirModalTriaje(true)}>Editar Pre Triaje</Button>,
           <Button loading={loadingDataSelect} disabled={!codEditarPaciente} onClick={() => traerDatosPaciente()}>Seleccionar Paciente</Button>,
-          <Button onClick={() => setVisible(false)}>Cerrar</Button>
+          <Button style={{
+            background: "#EB5353"
+          }} 
+          onClick={() => setVisible(false)}>
+            <p style={{color: "white"}}>Cerrar</p>
+            </Button>
         ]}
       >
         <Form layout="vertical" ref={formRef} onSubmitCapture={handleSearch}>

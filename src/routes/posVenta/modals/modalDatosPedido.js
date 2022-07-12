@@ -162,7 +162,7 @@ function ModalDatosPedido({
 									<Button
 										block
 										style={{
-											backgroundColor: '#0169aa',
+											backgroundColor: '#36AE7C',
 											color: 'white',
 										}}
 										disabled={!clienteCurrent.key || !medicoCurrent.key || !pacienteCurrent.NUM_DOCUMENTO}
