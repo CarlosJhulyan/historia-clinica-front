@@ -75,9 +75,16 @@ function ModalBusquedaOrden({
           </Form.Item>
           <Form.Item>
             <Button
+            style={{
+              background: "#36AE7C"
+            }}
               loading={loadingData} 
               onClick={() => traerOrden()}>
+                <p style={{
+                  color: "white"
+                }}>
                 Buscar Orden
+                </p>                
             </Button>
           </Form.Item>
         </Col>

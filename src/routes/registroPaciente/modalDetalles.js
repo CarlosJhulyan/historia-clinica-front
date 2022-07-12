@@ -346,6 +346,7 @@ const ModaDetalles = (props) => {
 								name='numeroDoc'
 								rules={[
 									{
+										required: true,
 										pattern: DNI_REGEX,
 										message: 'Ingrese un DNI válido',
 									},
@@ -366,7 +367,7 @@ const ModaDetalles = (props) => {
 								label="Fecha de Nacimiento"
 								rules={[
 									{
-										required: false,
+										required: true,
 										message: 'Ingrese una fecha de nacimiento',
 									},
 								]}
@@ -435,7 +436,7 @@ const ModaDetalles = (props) => {
 								label="Apellido Paterno"
 								rules={[
 									{
-										required: false,
+										required: true,
 										pattern: TEXTO_REGEX,
 										message: 'Ingrese un nombre válido',
 									},
@@ -455,7 +456,7 @@ const ModaDetalles = (props) => {
 								label="Apellido Materno"
 								rules={[
 									{
-										required: false,
+										required: true,
 										pattern: TEXTO_REGEX,
 										message: 'Ingrese un nombre válido',
 									},
@@ -475,7 +476,7 @@ const ModaDetalles = (props) => {
 								label="Nombres"
 								rules={[
 									{
-										required: false,
+										required: true,
 										pattern: TEXTO_REGEX,
 										message: 'Ingrese un nombre válido',
 									},
@@ -602,7 +603,7 @@ const ModaDetalles = (props) => {
 								label="Departamento"
 								rules={[
 									{
-										required: false,
+										required: true,
 										message: 'Seleccione el departamento',
 									},
 								]}
@@ -633,7 +634,7 @@ const ModaDetalles = (props) => {
 								label="Provincia"
 								rules={[
 									{
-										required: false,
+										required: true,
 										message: 'Seleccione una provincia',
 									},
 								]}
@@ -664,7 +665,7 @@ const ModaDetalles = (props) => {
 								label="Distrito"
 								rules={[
 									{
-										required: false,
+										required: true,
 										message: 'Seleccione un distrito',
 									},
 								]}
@@ -695,6 +696,7 @@ const ModaDetalles = (props) => {
 								label="Dirección"
 								rules={[
 									{
+										required:true,
 										pattern: TEXTO_REGEX,
 										message: 'Ingrese una dirección',
 									},
