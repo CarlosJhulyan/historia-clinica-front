@@ -29,12 +29,13 @@ const pageStyle = `
 }
 `;
 
-const ModalTicket = ({
+const ModalComprobante = ({
 	visible,
 	setVisible,
 	numPedVta,
 	secCompPago,
 	clienteCurrent,
+                       tipoVenta
 }) => {
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataDetalle, setDataDetalle] = useState([]);
@@ -48,11 +49,11 @@ const ModalTicket = ({
 
 	const df = new DecimalFormat('#,##0.00');
 
-	const impCompElect = async (numOrden) => {
+	const impCompElectWS = async tipoTmp => {
 		try {
 			const {
 				data: { data, success, message },
-			} = await httpClient.post('posventa/impCompElect', {
+			} = await httpClient.post('posventa/impCompElectWS', {
 				codGrupoCia: '001',
 				codLocal: '001',
 				numPedVta,
@@ -61,7 +62,6 @@ const ModalTicket = ({
 				reimpresion: 'N',
 				valorAhorro: '',
 				docTarjetaPtos: '',
-        numOrden
 			});
 			if (success) {
 				return data;
@@ -71,7 +71,6 @@ const ModalTicket = ({
 			console.error(e);
 		}
 	};
-
 	const obtieneDocImprimirWs = async idDocumento => {
 		try {
 			const {
@@ -82,6 +81,43 @@ const ModalTicket = ({
 			if (success) {
 				return data;
 			} else openNotification('Comprobante electronico', message, 'Warning');
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const imprimirDetalle = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('posventa/imprimirDetalle', {
+				codGrupoCia: '001',
+				codLocal: '001',
+				numPedVta,
+				secCompPago,
+			});
+			if (success) {
+				return data;
+			}
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const getMetodosPago = async () => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('posventa/getMetodosPagoImprimir', {
+				codGrupoCia: '001',
+				codLocal: '001',
+				numPedVta,
+			});
+			if (success) {
+				return data;
+			}
 			console.log(message);
 		} catch (e) {
 			console.error(e);
@@ -103,36 +139,19 @@ const ModalTicket = ({
 		}
 	};
 
-  const getnumOrdenVta = async () => {
-    try {
-      const {
-        data: { success, message, data },
-      } = await httpClient.post('posventa/getnumOrdenVta', {
-        codGrupoCia: '001',
-        codLocal: '001',
-        numPedVta,
-      });
-      if (success) return data.NUM_ORDEN;
-      console.log(message);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
 	const inicial = async () => {
 		setIniciando(true);
-    const numOrden = await getnumOrdenVta();
-		const idDocumento = await impCompElect(numOrden);
+		const idDocumento = await impCompElectWS();
     if (!idDocumento) {
       setIniciando(false);
       return;
     }
 		const dataImp = await obtieneDocImprimirWs(idDocumento);
 		setDataImprimir(dataImp);
-		// const detalle = await imprimirDetalle();
-		// setDataDetalle(detalle);
-		// const metodosPago = await getMetodosPago();
-		// setDataMetodosPago(metodosPago);
+		const detalle = await imprimirDetalle();
+		setDataDetalle(detalle);
+		const metodosPago = await getMetodosPago();
+		setDataMetodosPago(metodosPago);
 		setIniciando(false);
 		await clearCacheImprimirWs(idDocumento);
 	};
@@ -141,10 +160,18 @@ const ModalTicket = ({
 		inicial();
 	}, []);
 
+	console.log('dataImprimir', dataImprimir);
+
 	const [totalPagar, setTotalPagar] = useState('');
 	const [opGrabada, setOpGrabada] = useState('');
 	const [igv, setIgv] = useState('');
 	const [importeTotal, setImporteTotal] = useState('');
+	// const [efectivoSoles, setEfectivoSoles] = useState('');
+	// const [vuelto, setVuelto] = useState('');
+	// const [texto, setTexto] = useState('');
+	// const [nombreCliente, setNombreCliente] = useState('');
+	// const [dni, setDni] = useState('');
+	// const [direccion, setDireccion] = useState('');
 	const [qr, setQr] = useState('');
 
 	useEffect(() => {
@@ -169,6 +196,12 @@ const ModalTicket = ({
 			setOpGrabada(dataTotales[3].split('S/')[1].trim());
 			setIgv(dataTotales[4].split('S/')[1].trim());
 			setImporteTotal(dataTotales[5].split('S/')[1].trim());
+			// setEfectivoSoles(dataTotales[7].split('SOLES')[1].trim());
+			// setVuelto(dataTotales[8].split('S/')[1].trim());
+			// setTexto(dataTotales[10].trim());
+			// setNombreCliente(dataTotales[11].trim());
+			// setDni(dataTotales[12].trim());
+			// setDireccion(dataTotales[13].trim() + ' ' + dataTotales[14].trim());
 			dataImprimir.forEach(element => {
 				if (element.VALOR.split('|').length > 3) {
 					setQr(element.VALOR.trim());
@@ -184,7 +217,7 @@ const ModalTicket = ({
 			width={270}
 			footer={false}
 			visible={visible}
-			title={`Ticket de atención`}
+			title={`${tipoVenta === '01' ? 'Boleta' : 'Factura'} electrónica`}
 			className="modal-custom"
 			onCancel={() => {}}
 			closable={false}
@@ -392,4 +425,4 @@ const ModalTicket = ({
 	);
 };
 
-export default ModalTicket;
+export default ModalComprobante;

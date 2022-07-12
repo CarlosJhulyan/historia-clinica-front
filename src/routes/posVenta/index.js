@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Form, AutoComplete, Button, Table, Divider, Row, Modal, Descriptions } from 'antd';
+import { Card, Form, AutoComplete, Button, Table, Divider, Row, Modal, Descriptions, Col } from 'antd';
 import moment from 'moment';
 import ModalListaProductos from './modals/modalListaProductos';
 import { httpClient } from '../../util/Api';
@@ -170,7 +170,7 @@ function GenerarPedido() {
 			// Cargando los numeros de pedido
 			dataLocalCabecera.cNumPedVta_in = await getNuSecNumeracion('007', 10);
 			dataLocalCabecera.cCodCliLocal_in = clienteCurrent.COD_CLI;
-
+      dataLocalCabecera.cTipCompPago_in = tipoVenta;
 			dataLocalCabecera.cNumPedDiario_in = await getNumeraPedidoDiario(false, false);
 			dataLocalCabecera.cSecMovCaja_in = await obtenerMovApertura();
 			// Valores de pedido

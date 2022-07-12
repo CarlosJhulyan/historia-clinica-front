@@ -25,6 +25,7 @@ import { httpClient } from '../../../util/Api';
 import { openNotification } from '../../../util/util';
 import { useAuth } from '../../../authentication';
 import ModalLoading from '../../../util/modalLoading';
+import ModalComprobante from './modalComprobante';
 import ModalTicket from './modalTicket';
 
 function ModalCobrarPedido({
@@ -48,6 +49,8 @@ function ModalCobrarPedido({
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
+  const [visibleModalSeleccion, setVisibleModalSeleccion] = useState(false);
+  const [visibleModalComprobante, setVisibleModalComprobante] = useState(false);
 	const [visibleModalTicket, setVisibleModalTicket] = useState(false);
 	const [dataMontos, setDataMontos] = useState([]);
 	const [formaPagoCurrent, setFormaPagoCurrent] = useState({});
@@ -206,7 +209,7 @@ function ModalCobrarPedido({
 					await setDatosCompElectronico();
 					await asignarHoraSugerida();
 					openNotification('Cobro de pedido', 'Se realizó con éxito el cobro');
-					setVisibleModalTicket(true);
+					setVisibleModalSeleccion(true);
 				}
 			} else if (estadoPedido === 'C') {
 				showModalInfo('Pedido ya cobrado', setLoadingCobrar(false));
@@ -285,7 +288,7 @@ function ModalCobrarPedido({
 					...dataInitFetch,
 					numPed: dataCabeceraPed.cNumPedVta_in,
 					secCompPago: item.SEC_COMP_PAGO,
-					secImprLocal: '7',
+					secImprLocal: tipoVenta === '01' ? '7' : '9',
 				});
 				if (success) {
 					// return data;
@@ -424,6 +427,7 @@ function ModalCobrarPedido({
 	const clearDataAll = () => {
 		// TODO: eliminar toda las datas locales y ocular los modals menos el de seleccion de productos
 		setVisible(false);
+    setVisibleModalSeleccion(false);
 		setClienteCurrent({});
 		setMedicoCurrent({});
 		setPacienteCurrent({});
@@ -1073,7 +1077,7 @@ function ModalCobrarPedido({
 												onCancel: () => {},
 											});
 										}}
-										disabled={dataMontos.length === 0}
+										disabled={dataMontos.length === 0 || cNumPedVta_in.trim() === ''}
 									>
 										Limpiar
 									</Button>
@@ -1113,16 +1117,67 @@ function ModalCobrarPedido({
 				/>
 			) : null}
 			{loadingCobrar || loadingDataInitial ? <ModalLoading></ModalLoading> : null}
-			{visibleModalTicket ? (
-				<ModalTicket
-					visible={visibleModalTicket}
-					setVisible={setVisibleModalTicket}
+			{visibleModalComprobante ? (
+				<ModalComprobante
+					visible={visibleModalComprobante}
+					setVisible={setVisibleModalComprobante}
 					numPedVta={cNumPedVta_in}
 					secCompPago={secCompPago}
-					clearDataAll={clearDataAll}
           clienteCurrent={clienteCurrent}
-				></ModalTicket>
+          tipoVenta={tipoVenta}
+				></ModalComprobante>
 			) : null}
+
+      {visibleModalTicket ? (
+        <ModalTicket
+          visible={visibleModalTicket}
+          setVisible={setVisibleModalTicket}
+          numPedVta={cNumPedVta_in}
+          secCompPago={secCompPago}
+          clienteCurrent={clienteCurrent}
+        ></ModalTicket>
+      ) : null}
+
+      <Modal
+        centered
+        closable={false}
+        visible={visibleModalSeleccion}
+        title='Impresión'
+        footer={[
+          <Button onClick={() => {
+            confirm({
+              content: '¿Quiere salir? Asegurese de haber impreso sus comprobantes.',
+              okText: 'Salir',
+              cancelText: 'Cancelar',
+              onOk: () => {
+                clearDataAll();
+              },
+              centered: true
+            });
+          }}>
+            Salir
+          </Button>
+        ]}
+      >
+        <Row justify='space-between'>
+          <Col span={11}>
+            <Button
+              onClick={() => setVisibleModalComprobante(true)}
+              block
+            >
+              {tipoVenta === '01' ? 'Boleta' : 'Factura'} electrónica
+            </Button>
+          </Col>
+          <Col span={11}>
+            <Button
+              onClick={() => setVisibleModalTicket(true)}
+              block
+            >
+              Ticket de atención
+            </Button>
+          </Col>
+        </Row>
+      </Modal>
 		</>
 	);
 }
