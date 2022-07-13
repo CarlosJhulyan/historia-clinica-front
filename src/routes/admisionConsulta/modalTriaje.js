@@ -14,11 +14,12 @@ import { openNotification } from '../../util/util';
 function ModalTriaje({
   setAbrirModal,
   abrirModal,
-  numAtencionMedica, traerListaEspera
+  numAtencionMedica, traerListaEspera,
+  usuario
 }) {
   const [datosEnviar, setDatosEnviar] = useState({
     NUM_ATENCION: '',
-    USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+    USU_CREA: usuario,
     PA1: '',
     PA2: '',
     FR: '',

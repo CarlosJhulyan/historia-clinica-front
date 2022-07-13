@@ -477,7 +477,6 @@ function ModalListaProductos({
 					cancelProductoSelected={cancelProductoSelected}
 					aceptedProductoSelected={aceptedProductoSelected}
 					visible={visibleModalCantidad}
-					setVisible={setVisibleModalCantidad}
 					productoCurrent={productoCurrent}
 					productosCurrent={productosCurrent}
 					setProductoCurrent={setProductoCurrent}

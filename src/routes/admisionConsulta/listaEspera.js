@@ -16,11 +16,14 @@ import ModalTriaje from './modalTriaje';
 
 function ListaEspera() {
   const { Option } = Select;
+  const medico = JSON.parse(localStorage.getItem('token')).usuario;
+  const personal = JSON.parse(localStorage.getItem('token')).data.login_usu;
+  const usuario = personal ? personal : medico;
+
   const [loadingData, setLoadingData] = useState(false);
   const [dataListaEspera, setDataListaEspera] = useState([]);
   const [abrirModalTriaje, setAbrirModalTriaje] = useState(false);
   const [dataSend, setDataSend] = useState({
-    // codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
     codEstado: '1',
     consultorio: '',
     bus: ''
@@ -130,7 +133,7 @@ function ListaEspera() {
     setLoadingAnular(true);
     try {
       const { data: { success, message } } = await httpClient.post('atencionMedica/setAnular', {
-        USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+        USU_CREA: usuario,
         NUM_ATENCION: numHCSelection[0]
       });
       if (success) {
@@ -148,7 +151,7 @@ function ListaEspera() {
     setLoadingActualizar(true);
     try {
       const { data: { success, message } } = await httpClient.post('atencionMedica/updateAtencion', {
-        USU_CREA: JSON.parse(localStorage.getItem('token')).usuario,
+        USU_CREA: usuario,
         NUM_ATENCION: numHCSelection[0],
         ESTADO: 'C'
       });
@@ -344,6 +347,7 @@ function ListaEspera() {
         </Row>
       </Card>
       <ModalTriaje
+        usuario={usuario}
         traerListaEspera={traerListaEspera}
         numAtencionMedica={numHCSelection[0]}
         setAbrirModal={setAbrirModalTriaje}

@@ -213,7 +213,7 @@ function ModalSeleccionProducto({
                     total: 0
                   });
                   setListaFrac([]);
-                  setProductoCurrent({});
+                  if (setProductoCurrent) setProductoCurrent({});
                 }}
               >
                 Aceptar

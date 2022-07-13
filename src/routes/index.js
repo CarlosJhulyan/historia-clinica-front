@@ -226,6 +226,9 @@ const App = ({ match }) => {
 			items.push(
 				<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />
 			);
+      items.push(
+        <Route key={1} path={`${match.url}listaEspera`} component={ListaEspera} />
+      );
 		}
 
 		return items;

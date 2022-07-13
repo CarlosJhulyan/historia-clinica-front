@@ -109,6 +109,27 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item>
 				</SubMenu>
 			);
+
+      menuItems.push(
+        <SubMenu
+          key="pacientes"
+          popupClassName={getNavStyleSubMenuClass(navStyle)}
+          title={
+            <span>
+								{' '}
+              <i className="icon icon-auth-screen" />
+								<span>Pacientes</span>
+							</span>
+          }
+        >
+          <Menu.Item key="listaEspera">
+            <Link to="/listaEspera">
+              <i className="icon icon-auth-screen" />
+              <span>Lista de Espera</span>
+            </Link>
+          </Menu.Item>
+        </SubMenu>
+      )
 		}
 
 		if (token?.modulos && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) {

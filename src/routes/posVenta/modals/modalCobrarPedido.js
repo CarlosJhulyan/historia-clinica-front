@@ -51,7 +51,7 @@ function ModalCobrarPedido({
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
 	const [visibleModalSeleccion, setVisibleModalSeleccion] = useState(false);
 	const [visibleModalComprobante, setVisibleModalComprobante] = useState(false);
-	const [visibleModalTicket, setVisibleModalTicket] = useState(false);
+	const [visibleModalOrdenes, setVisibleModalOrdenes] = useState(false);
 	const [dataMontos, setDataMontos] = useState([]);
 	const [formaPagoCurrent, setFormaPagoCurrent] = useState({});
 	const [montoCurrent, setMontoCurrent] = useState(0.0);
@@ -1128,57 +1128,186 @@ function ModalCobrarPedido({
 				></ModalComprobante>
 			) : null}
 
-			{visibleModalTicket ? (
-				<ModalTicket
-					visible={visibleModalTicket}
-					setVisible={setVisibleModalTicket}
-					numPedVta={cNumPedVta_in}
-					secCompPago={secCompPago}
-					clienteCurrent={clienteCurrent}
-					medicoCurrent={medicoCurrent}
-					pacienteCurrent={pacienteCurrent}
-					user={user}
-				></ModalTicket>
-			) : null}
-
-			<Modal
-				centered
-				closable={false}
-				visible={visibleModalSeleccion}
-				title="Impresión"
-				footer={[
-					<Button
-						onClick={() => {
-							confirm({
-								content: '¿Quiere salir? Asegurese de haber impreso sus comprobantes.',
-								okText: 'Salir',
-								cancelText: 'Cancelar',
-								onOk: () => {
-									clearDataAll();
-								},
-								centered: true,
-							});
-						}}
-					>
-						Salir
-					</Button>,
-				]}
-			>
-				<Row justify="space-between">
-					<Col span={11}>
-						<Button onClick={() => setVisibleModalComprobante(true)} block>
-							{tipoVenta === '01' ? 'Boleta' : 'Factura'} electrónica
-						</Button>
-					</Col>
-					<Col span={11}>
-						<Button onClick={() => setVisibleModalTicket(true)} block>
-							Ticket de atención
-						</Button>
-					</Col>
-				</Row>
-			</Modal>
+      {visibleModalSeleccion && (
+        <ModalSeleccionImpresion
+          tipoVenta={tipoVenta}
+          visibleModalSeleccion={visibleModalSeleccion}
+          setVisibleModalComprobante={setVisibleModalComprobante}
+          clearDataAll={clearDataAll}
+          setVisibleModalOrdenes={setVisibleModalOrdenes}
+          visibleModalOrdenes={visibleModalOrdenes}
+          user={user}
+          pacienteCurrent={pacienteCurrent}
+          secCompPago={secCompPago}
+          clienteCurrent={clienteCurrent}
+          medicoCurrent={medicoCurrent}
+          cNumPedVta_in={cNumPedVta_in}
+        />
+      )}
 		</>
 	);
+}
+
+const ModalSeleccionImpresion = ({ visibleModalSeleccion,
+                                   clearDataAll,
+                                   setVisibleModalComprobante,
+                                   tipoVenta,
+                                   setVisibleModalOrdenes,
+                                   visibleModalOrdenes,
+                                   user,
+                                   pacienteCurrent,
+                                   secCompPago,
+                                   clienteCurrent,
+                                   medicoCurrent,
+                                   cNumPedVta_in,
+}) => {
+  const { confirm } = Modal;
+
+  return (
+    <>
+      <Modal
+        centered
+        closable={false}
+        visible={visibleModalSeleccion}
+        title="Impresión"
+        footer={[
+          <Button
+            onClick={() => {
+              confirm({
+                content: '¿Quiere salir? Asegurese de haber impreso sus comprobantes.',
+                okText: 'Salir',
+                cancelText: 'Cancelar',
+                onOk: () => {
+                  clearDataAll();
+                },
+                centered: true,
+              });
+            }}
+          >
+            Salir
+          </Button>,
+        ]}
+      >
+        <Row justify="space-between">
+          <Col span={11}>
+            <Button onClick={() => setVisibleModalComprobante(true)} block>
+              {tipoVenta === '01' ? 'Boleta' : 'Factura'} electrónica
+            </Button>
+          </Col>
+          <Col span={11}>
+            <Button onClick={() => setVisibleModalOrdenes(true)} block>
+              Ticket de atención
+            </Button>
+          </Col>
+        </Row>
+      </Modal>
+
+      {visibleModalOrdenes && (
+        <ModalOrdenes
+          visible={visibleModalOrdenes}
+          setVisible={setVisibleModalOrdenes}
+          user={user}
+          pacienteCurrent={pacienteCurrent}
+          secCompPago={secCompPago}
+          clienteCurrent={clienteCurrent}
+          medicoCurrent={medicoCurrent}
+          cNumPedVta_in={cNumPedVta_in}
+        />
+      )}
+    </>
+  )
+}
+
+const ModalOrdenes = ({
+                        visible,
+                        setVisible,
+                        cNumPedVta_in,
+                        user,
+                        pacienteCurrent,
+                        secCompPago,
+                        clienteCurrent,
+                        medicoCurrent
+}) => {
+  const [numOrdenes, setNumOrdenes] = useState([]);
+  const [numOrdenCurrent, setNumOrdenCurrent] = useState();
+  const [visibleModal,  setVisibleModal] = useState(false);
+  const [loadingData,  setLoadintData] = useState(false);
+
+  const getnumOrdenVta = async () => {
+    setLoadintData(true);
+    try {
+      const {
+        data: { success, message, data },
+      } = await httpClient.post('posventa/getnumOrdenVta', {
+        codGrupoCia: '001',
+        codLocal: '001',
+        numPedVta: cNumPedVta_in,
+      });
+      if (success) setNumOrdenes(data);
+      console.log(message);
+    } catch (e) {
+      console.error(e);
+    }
+    setLoadintData(false);
+  };
+
+  useEffect(() => {
+    getnumOrdenVta();
+  }, [])
+
+  return (
+    <>
+      <Modal
+        centered
+        closable={false}
+        visible={visible}
+        title="Tickets de atención"
+        onCancel={() => {
+          if (!loadingData) setVisible(false)
+        }}
+        footer={[
+          <Button
+            disabled={loadingData}
+            onClick={() => setVisible(false)}
+          >
+            Salir
+          </Button>,
+        ]}
+      >
+        <Row justify="space-between">
+          {numOrdenes.map(item => (
+            <>
+              <Col span={12} key={item.NUM_ORDEN_VTA}>
+                <Button
+                  onClick={() => {
+                    setNumOrdenCurrent(item.NUM_ORDEN_VTA);
+                    setVisibleModal(true);
+                  }}
+                  block
+                >
+                  Orden # {item.NUM_ORDEN_VTA}
+                </Button>
+              </Col>
+            </>
+          ))}
+        </Row>
+
+        {visibleModal ? (
+          <ModalTicket
+            numOrdenVta={numOrdenCurrent}
+            visible={visibleModal}
+            setVisible={setVisibleModal}
+            numPedVta={cNumPedVta_in}
+            secCompPago={secCompPago}
+            clienteCurrent={clienteCurrent}
+            medicoCurrent={medicoCurrent}
+            pacienteCurrent={pacienteCurrent}
+            user={user}
+          />
+        ) : null}
+      </Modal>
+    </>
+  );
 }
 
 export default ModalCobrarPedido;

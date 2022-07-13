@@ -30,14 +30,15 @@ const pageStyle = `
 `;
 
 const ModalTicket = ({
-	visible,
-	setVisible,
-	numPedVta,
-	secCompPago,
-	clienteCurrent,
-	medicoCurrent,
-	pacienteCurrent,
-	user,
+                       visible,
+                       setVisible,
+                       numPedVta,
+                       numOrdenVta,
+                       secCompPago,
+                       clienteCurrent,
+                       medicoCurrent,
+                       pacienteCurrent,
+                       user,
 }) => {
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataDetalle, setDataDetalle] = useState([]);
@@ -49,7 +50,7 @@ const ModalTicket = ({
 		pageStyle: pageStyle,
 	});
 
-	const df = new DecimalFormat('#,##0.00');
+	//const df = new DecimalFormat('#,##0.00');
 
 	const impCompElect = async numOrden => {
 		try {
@@ -143,8 +144,8 @@ const ModalTicket = ({
 
 	const inicial = async () => {
 		setIniciando(true);
-		const numOrden = await getnumOrdenVta();
-		const idDocumento = await impCompElect(numOrden);
+		// const numOrden = await getnumOrdenVta();
+		const idDocumento = await impCompElect(numOrdenVta);
 		if (!idDocumento) {
 			setIniciando(false);
 			return;
@@ -161,12 +162,7 @@ const ModalTicket = ({
 
 	useEffect(() => {
 		inicial();
-	}, []);
-
-	console.log('dataImprimir', dataImprimir);
-	console.log('medicoCurrent', medicoCurrent);
-	console.log('pacienteCurrent', pacienteCurrent);
-	console.log('user', user);
+	}, [numOrdenVta]);
 
 	useEffect(() => {
 		if (dataImprimir.length > 0) {
@@ -218,12 +214,15 @@ const ModalTicket = ({
 						<>
 							<div>{dataImprimir.length > 0 ? dataImprimir[4].VALOR : ''} </div>
 							<div>{dataImprimir.length > 0 ? dataImprimir[5].VALOR : ''} </div>
+              <div>{dataImprimir.length > 0 ? dataImprimir[6].VALOR : ''} </div>
 							<br />
 							<div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
+              <div>{dataImprimir.length > 0 ? dataImprimir[8].VALOR : ''} </div>
 							<br />
 							<div>{dataImprimir.length > 0 ? dataImprimir[9].VALOR : ''} </div>
 							<div>{dataImprimir.length > 0 ? dataImprimir[10].VALOR : ''} </div>
 							<div>{dataImprimir.length > 0 ? dataImprimir[11].VALOR : ''} </div>
+              <div>{dataImprimir.length > 0 ? dataImprimir[12].VALOR : ''} </div>
 						</>
 					)}
 				</div>
