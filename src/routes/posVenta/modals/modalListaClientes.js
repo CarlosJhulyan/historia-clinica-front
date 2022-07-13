@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Form, Input, Modal, Row, Table } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones, openNotification } from '../../../util/util';
@@ -13,6 +13,7 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 	const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 	const [visibleModalUpsertCliente, setVisibleModalUpsertCliente] = useState(false);
 	const [tipo, setTipo] = useState('');
+	const buttonRef = useRef();
 
 	const columns = [
 		{
@@ -119,12 +120,22 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 				onCancel={() => setVisible(false)}
 				footer={[
 					<Button
+						style={{
+							background: "#36AE7C"
+						}}
 						onClick={() => {
 							setVisibleModalUpsertCliente(true);
 							setTipo('crear');
 						}}
 					>
-						Crear
+						<p
+							style={{
+								color: "white"
+							}}
+						>
+
+							Crear
+						</p>
 					</Button>,
 					<Button
 						disabled={!clienteKeyCurrent}
@@ -138,7 +149,17 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					<Button disabled={!clienteKeyCurrent} onClick={handleAcepted}>
 						Seleccionar
 					</Button>,
-					<Button onClick={() => setVisible(false)}>Cerrar</Button>,
+					<Button
+						style={{
+							background: "#EB5353"
+						}}
+						onClick={() => setVisible(false)}>
+						<p style={{
+							color: "white"
+						}}>
+							Cerrar
+						</p>
+					</Button>,
 				]}
 			>
 				<Row>
@@ -148,10 +169,16 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 								onChange={e => setClienteSearch(e.target.value)}
 								value={clienteSearch}
 								disabled={loadingData}
+								onKeyUp={e => {
+									if (e.key === 'Enter') {
+										buttonRef.current.click();
+									}
+								}}
 							/>
 						</Form.Item>
 					</Col>
 					<Button
+						ref={buttonRef}
 						disabled={loadingData || clienteSearch.trim() === ''}
 						style={{ marginTop: 5, background: '#0169aa', color: '#fff' }}
 						loading={loadingData}
@@ -162,7 +189,7 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					<Button
 						disabled={loadingData}
 						style={{ marginTop: 5, background: '#0169aa', color: '#fff' }}
-						// onClick={traerDataClientesPorNombre}
+					// onClick={traerDataClientesPorNombre}
 					>
 						Sin Docume...
 					</Button>
@@ -262,7 +289,7 @@ function ModalMantenimientoCliente({
 			}
 		}
 
-		let funGuardar = () => {};
+		let funGuardar = () => { };
 
 		if (tipo === 'editar') {
 			funGuardar = async () => {
