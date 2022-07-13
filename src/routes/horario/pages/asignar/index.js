@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import locale from 'antd/es/date-picker/locale/es_ES';
 
 import {
 	Card,
@@ -133,6 +134,7 @@ const AsignarHorario = ({ visibleModal, setVisibleModal, traerData }) => {
 							<Col span={24}>
 								<Form.Item name="fecha" label="Fecha">
 									<DatePicker
+										locale={locale}
 										style={{ width: '100%' }}
 										onChange={data => {
 											console.log('data', data);
@@ -146,6 +148,7 @@ const AsignarHorario = ({ visibleModal, setVisibleModal, traerData }) => {
 							<Col xs={24}>
 								<Form.Item name="horario" label="Horario">
 									<TimePicker.RangePicker
+										placeholder={["Inicio","Fin"]}
 										format="HH:mm"
 										style={{ width: '100%' }}
 										onChange={data => {
