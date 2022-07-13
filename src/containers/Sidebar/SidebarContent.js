@@ -95,12 +95,12 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						</span>
 					}
 				>
-					<Menu.Item key="horario/asignar">
+					{/* <Menu.Item key="horario/asignar">
 						<Link to="/horario/asignar">
 							<i className="icon icon-icon" />
 							<span>Mantenedor de Horario</span>
 						</Link>
-					</Menu.Item>
+					</Menu.Item> */}
 					<Menu.Item key="horario/consultar">
 						<Link to="/horario/consultar">
 							<i className="icon icon-icon" />
