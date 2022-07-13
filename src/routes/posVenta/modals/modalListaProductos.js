@@ -47,7 +47,7 @@ function ModalListaProductos({
 	const [especialidad, setEspecialidad] = useState('');
 	const [textSearch, settextSearch] = useState('');
 	const [productoCurrent, setProductoCurrent] = useState({});
-  const [productoCurrentDetails, setProductoCurrentDetails] = useState({});
+	const [productoCurrentDetails, setProductoCurrentDetails] = useState({});
 	const [visibleModalCantidad, setVisibleModalCantidad] = useState(false);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalInfoProducto, setVisibleModalInfoProducto] = useState(false);
@@ -59,6 +59,7 @@ function ModalListaProductos({
 	const formRefEspe = useRef();
 	const buttonReset = useRef();
 	const buttonByEspecialidad = useRef();
+	const buttonRef = useRef();
 
 	const handleReset = () => {
 		setEspecialidad('');
@@ -174,22 +175,22 @@ function ModalListaProductos({
 			dataIndex: 'PRECIO',
 			key: 'PRECIO',
 		},
-    {
-      title: '',
-      dataIndex: 'key',
-      key: 'key',
-      render: (_, record) => (
-        <>
-          <a onClick={() => handleSelectDetails(record)}>Detalles</a>
-        </>
-      )
-    }
+		{
+			title: '',
+			dataIndex: 'key',
+			key: 'key',
+			render: (_, record) => (
+				<>
+					<a onClick={() => handleSelectDetails(record)}>Detalles</a>
+				</>
+			)
+		}
 	];
 
-  const handleSelectDetails = record => {
-    setProductoCurrentDetails(record);
-    setVisibleModalInfoProducto(true);
-  }
+	const handleSelectDetails = record => {
+		setProductoCurrentDetails(record);
+		setVisibleModalInfoProducto(true);
+	}
 
 	const handleSelectEspecialidad = value => {
 		setEspecialidad(value);
@@ -304,12 +305,20 @@ function ModalListaProductos({
 										value={textSearch}
 										disabled={loadingProductos}
 										placeholder="Ejm: CORONA METAL PORCELANA II"
+										onKeyUp={e => {
+											if (e.key === 'Enter') {
+												console.log(e.target.value);
+												buttonRef.current.click();
+
+											}
+										}}
 									/>
 								</Form.Item>
 							</Col>
 							<Col span={6}>
 								<Row style={{ flexDirection: 'column' }}>
 									<Button
+										ref={buttonRef}
 										htmlType="submit"
 										form="my-form"
 										size="small"
@@ -320,7 +329,7 @@ function ModalListaProductos({
 											margin: 0,
 											marginBottom: 5,
 										}}
-										// onClick={handleSearch}
+									// onClick={handleSearch}
 									>
 										Buscar
 									</Button>
@@ -463,17 +472,17 @@ function ModalListaProductos({
 					</Col>
 				</Row>
 			</Modal>
-      {visibleModalCantidad && (
-        <ModalSeleccionProducto
-          cancelProductoSelected={cancelProductoSelected}
-          aceptedProductoSelected={aceptedProductoSelected}
-          visible={visibleModalCantidad}
-          setVisible={setVisibleModalCantidad}
-          productoCurrent={productoCurrent}
-          productosCurrent={productosCurrent}
-          setProductoCurrent={setProductoCurrent}
-        />
-      )}
+			{visibleModalCantidad && (
+				<ModalSeleccionProducto
+					cancelProductoSelected={cancelProductoSelected}
+					aceptedProductoSelected={aceptedProductoSelected}
+					visible={visibleModalCantidad}
+					setVisible={setVisibleModalCantidad}
+					productoCurrent={productoCurrent}
+					productosCurrent={productosCurrent}
+					setProductoCurrent={setProductoCurrent}
+				/>
+			)}
 			{visibleModalInfoProducto ? (
 				<ModalInfoProducto
 					visible={visibleModalInfoProducto}

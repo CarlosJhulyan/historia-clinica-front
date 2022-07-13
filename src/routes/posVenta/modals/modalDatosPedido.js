@@ -205,7 +205,7 @@ function ModalDatosPedido({
 									<Button
 										block
 										style={{
-											backgroundColor: '#0169aa',
+											backgroundColor: "#EB5353",
 											color: 'white',
 										}}
 										onClick={guardando ? null : () => setVisible(false)}

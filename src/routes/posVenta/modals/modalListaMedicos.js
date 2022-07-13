@@ -14,6 +14,8 @@ function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
 	const [visibleModalUpsertMedico, setVisibleModalUpsertMedico] = useState(false);
 	const [editarMedico, setEditarMedico] = useState(false);
 
+	const buttonRef = useRef();
+
 	const columns = [
 		{
 			title: 'CMP',
@@ -134,14 +136,21 @@ function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
 								style={{ width: 380 }}
 								value={nombreCmp}
 								disabled={loadingData}
+								onKeyUp={e=>{
+									if (e.key === 'Enter') {
+										buttonRef.current.click();
+										//console.log(e.key);
+									}
+								}}
 							/>
 						</Form.Item>
 					</Col>
 					<Col span={4}>
 						<Button
+						ref={buttonRef}
 							disabled={loadingData}
 							style={{ marginTop: 5, background: '#0169aa', color: '#fff' }}
-							onClick={handleFilter}
+							onClick={handleFilter}							
 						>
 							Filtrar
 						</Button>
