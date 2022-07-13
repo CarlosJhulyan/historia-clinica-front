@@ -135,6 +135,7 @@ const AsignarHorario = ({ visibleModal, setVisibleModal, traerData }) => {
 									<DatePicker
 										style={{ width: '100%' }}
 										onChange={data => {
+											console.log('data', data);
 											setFecha(data);
 										}}
 									/>
