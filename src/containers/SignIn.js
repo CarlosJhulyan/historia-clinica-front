@@ -19,9 +19,9 @@ const SignIn = () => {
 		userLogin(values);
 	};
 
-  const onFinishUsuario = values => {
-    usuarioLogin(values);
-  };
+	const onFinishUsuario = values => {
+		usuarioLogin(values);
+	};
 
 	return (
 		<div className="gx-app-login-wrap" /* style={{ backgroundImage: `url(${fondo})` }} */>
@@ -35,20 +35,20 @@ const SignIn = () => {
 						onFinishFailed={onFinishFailed}
 						isLoading={isLoading}
 						error={error}
-            onFinishUsuario={onFinishUsuario}
+						onFinishUsuario={onFinishUsuario}
 					/>
 				</Spin>
 			) : (
-        <SignInScreen
-          anexo={anexo}
-          logo={logo}
-          logo2={logo2}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          isLoading={isLoading}
-          error={error}
-          onFinishUsuario={onFinishUsuario}
-        />
+				<SignInScreen
+					anexo={anexo}
+					logo={logo}
+					logo2={logo2}
+					onFinish={onFinish}
+					onFinishFailed={onFinishFailed}
+					isLoading={isLoading}
+					error={error}
+					onFinishUsuario={onFinishUsuario}
+				/>
 			)}
 		</div>
 	);

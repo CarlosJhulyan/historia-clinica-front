@@ -17,7 +17,7 @@ import ModalTriaje from './modalTriaje';
 function ListaEspera() {
   const { Option } = Select;
   const medico = JSON.parse(localStorage.getItem('token')).usuario;
-  const personal = JSON.parse(localStorage.getItem('token')).data.login_usu;
+  const personal = JSON.parse(localStorage.getItem('token')).data?.login_usu;
   const usuario = personal ? personal : medico;
 
   const [loadingData, setLoadingData] = useState(false);

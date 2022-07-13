@@ -66,6 +66,7 @@ import CabeceraInformacion from './cabeceraInformacion';
 
 import { ModalImpresionReceta } from './modalImpresion';
 import { ModalImpresionA4 } from './modalImpresionA4';
+import { baseUrlImage } from '../../../config/backend';
 
 const DetallesPaciente = ({ datosModal }) => {
 	const dispatch = useDispatch();
@@ -169,11 +170,11 @@ const DetallesPaciente = ({ datosModal }) => {
 		if (data.success) {
 			setCmp(data.data[0].num_cmp);
 		}
-	}
+	};
 
 	useEffect(() => {
 		getCMP();
-	}, [])
+	}, []);
 
 	const abc = key => {
 		switch (key) {
@@ -630,7 +631,7 @@ const DetallesPaciente = ({ datosModal }) => {
 			});
 
 			if (data.data.url_firma) {
-				setFirma(data.data.url_firma);
+				setFirma(baseUrlImage + '/' + data.data.url_firma);
 			} else {
 				// firma por dafault cuando no se encuentra una firma en la db
 				setFirma(
@@ -809,23 +810,23 @@ const DetallesPaciente = ({ datosModal }) => {
 			>
 				{opcion === 1
 					? state.boton_1.map(pane => (
-						<TabPane tab={pane.title} key={pane.key}>
-							{pane.content}
-						</TabPane>
-					))
-					: opcion === 2
-						? state.boton_2.map(pane => (
 							<TabPane tab={pane.title} key={pane.key}>
 								{pane.content}
 							</TabPane>
-						))
-						: opcion === 3
-							? state.boton_3.map(pane => (
-								<TabPane tab={pane.title} key={pane.key}>
-									{pane.content}
-								</TabPane>
-							))
-							: null}
+					  ))
+					: opcion === 2
+					? state.boton_2.map(pane => (
+							<TabPane tab={pane.title} key={pane.key}>
+								{pane.content}
+							</TabPane>
+					  ))
+					: opcion === 3
+					? state.boton_3.map(pane => (
+							<TabPane tab={pane.title} key={pane.key}>
+								{pane.content}
+							</TabPane>
+					  ))
+					: null}
 			</Tabs>
 			<Modal
 				maskClosable={false}
@@ -992,8 +993,6 @@ const DetallesPaciente = ({ datosModal }) => {
 					datosModal={datosModal}
 				/>
 			) : null}
-
-
 
 			<div hidden={opacity} className="asd" />
 		</>
