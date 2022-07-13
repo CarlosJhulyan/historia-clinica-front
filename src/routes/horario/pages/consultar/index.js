@@ -3,7 +3,8 @@ import { Card, Button } from 'antd';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import { httpClient } from '../../../../util/Api';
-import AsignarHorario from '../asignar';
+import ModalAsignar from './ModalAsignar';
+import ModalEditar from './ModalEditar';
 
 const localizer = momentLocalizer(moment);
 //Cambiar el idioma
@@ -29,8 +30,10 @@ const messages = {
 
 const ConsultarHorario = () => {
 	const [events, setEvents] = useState([]);
-	const [visibleModal, setVisibleModal] = useState(false);
+	const [visibleModalAsignar, setVisibleModalAsignar] = useState(false);
+	const [visibleModalEditar, setVisibleModalEditar] = useState(false);
 	const [currentMes, setCurrentMes] = useState(moment().month() + 1);
+	const [medico, setMedico] = useState({});
 
 	const agregarEvento = data => {
 		var aux = [];
@@ -76,6 +79,8 @@ const ConsultarHorario = () => {
 
 	const mostrarModalDetalle = record => {
 		// TODO: MOSTRAR EL MODAL DE DETALLE
+		setMedico(record);
+		setVisibleModalEditar(true);
 		console.log(record);
 	};
 
@@ -124,18 +129,15 @@ const ConsultarHorario = () => {
 							justifyContent: 'right',
 						}}
 					>
-						{/* <Button
-							// loading={loading}
+						<Button
 							style={{
-								backgroundColor: '#04B0AD',
+								backgroundColor: 'blue',
 								color: 'white',
 								marginTop: '10px',
 							}}
-							// onClick={() => buscarHistorial()}
-							// disabled={btnBuscar}
 						>
-							Guardar
-						</Button> */}
+							Exportar
+						</Button>
 						<Button
 							style={{
 								backgroundColor: '#04B0AD',
@@ -143,7 +145,7 @@ const ConsultarHorario = () => {
 								marginTop: '10px',
 							}}
 							onClick={() => {
-								setVisibleModal(true);
+								setVisibleModalAsignar(true);
 							}}
 						>
 							Agregar Disponibildiad
@@ -169,10 +171,18 @@ const ConsultarHorario = () => {
 						defaultDate={new Date()}
 					/>
 				</div>
-				{visibleModal ? (
-					<AsignarHorario
-						visibleModal={visibleModal}
-						setVisibleModal={setVisibleModal}
+				{visibleModalAsignar ? (
+					<ModalAsignar
+						visibleModal={visibleModalAsignar}
+						setVisibleModal={setVisibleModalAsignar}
+						traerData={traerData}
+					/>
+				) : null}
+				{visibleModalEditar ? (
+					<ModalEditar
+						medico={medico}
+						visibleModal={visibleModalEditar}
+						setVisibleModal={setVisibleModalEditar}
 						traerData={traerData}
 					/>
 				) : null}

@@ -33,7 +33,6 @@ import { useAuth } from '../authentication';
 import { tablasPrincipales } from '../constants/TablasPrincipales';
 import { httpClientReports } from '../util/Api';
 import GenerarPedido from './posVenta';
-import AsignarHorario from './horario/pages/asignar';
 import ConsultarHorario from './horario/pages/consultar';
 import MovimientosCaja from './posVenta/movimientosCaja';
 import ListaEspera from './admisionConsulta/listaEspera';
@@ -218,17 +217,12 @@ const App = ({ match }) => {
 				<Route key={31} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />
 			);
 			items.push(
-				<Route key={32} path={`${match.url}horario/asignar`} component={AsignarHorario} />
-			);
-			items.push(
 				<Route key={32} path={`${match.url}horario/consultar`} component={ConsultarHorario} />
 			);
 			items.push(
 				<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />
 			);
-      items.push(
-        <Route key={1} path={`${match.url}listaEspera`} component={ListaEspera} />
-      );
+			items.push(<Route key={1} path={`${match.url}listaEspera`} component={ListaEspera} />);
 		}
 
 		return items;

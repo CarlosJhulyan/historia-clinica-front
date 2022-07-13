@@ -17,7 +17,7 @@ import {
 import { openNotification } from '../../../../util/util';
 import { httpClient } from '../../../../util/Api';
 
-const AsignarHorario = ({ visibleModal, setVisibleModal, traerData }) => {
+const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 	const [horario, setHorario] = useState();
 	const [fecha, setFecha] = useState();
 	const [guardando, setGuardando] = useState(false);
@@ -165,4 +165,4 @@ const AsignarHorario = ({ visibleModal, setVisibleModal, traerData }) => {
 	);
 };
 
-export default AsignarHorario;
+export default ModalAsignar;
