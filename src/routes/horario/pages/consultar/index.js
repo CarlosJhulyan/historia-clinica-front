@@ -3,6 +3,7 @@ import { Card, Button } from 'antd';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import { httpClient } from '../../../../util/Api';
+import AsignarHorario from '../asignar';
 
 const localizer = momentLocalizer(moment);
 //Cambiar el idioma
@@ -26,8 +27,10 @@ const messages = {
 	next: 'Siguiente',
 };
 
-const ConsultarHorario = ({defV}) => {
+const ConsultarHorario = () => {
 	const [events, setEvents] = useState([]);
+	const [visibleModal, setVisibleModal] = useState(false);
+	const [currentMes, setCurrentMes] = useState(moment().month() + 1);
 
 	const agregarEvento = data => {
 		var aux = [];
@@ -76,9 +79,9 @@ const ConsultarHorario = ({defV}) => {
 		console.log(record);
 	};
 
-	const traerData = async mes => {
+	const traerData = async () => {
 		const response = await httpClient.post('/horarios/getHorarioFecha', {
-			mes,
+			mes: currentMes,
 		});
 
 		console.log(response.data.data);
@@ -86,7 +89,11 @@ const ConsultarHorario = ({defV}) => {
 	};
 
 	useEffect(() => {
-		traerData(moment().month() + 1);
+		traerData();
+	}, [currentMes]);
+
+	useEffect(() => {
+		traerData();
 	}, []);
 
 	console.log('events', events);
@@ -135,13 +142,12 @@ const ConsultarHorario = ({defV}) => {
 								color: 'white',
 								marginTop: '10px',
 							}}
-							onClick={defV}							
+							onClick={() => {
+								setVisibleModal(true);
+							}}
 						>
 							Agregar Disponibildiad
-
 						</Button>
-
-
 					</div>
 				</div>
 			}
@@ -156,13 +162,20 @@ const ConsultarHorario = ({defV}) => {
 						messages={messages}
 						localizer={localizer}
 						onNavigate={date => {
-							traerData(date.getMonth() + 1);
+							setCurrentMes(date.getMonth() + 1);
 						}}
 						views={{ month: true }}
 						onSelectEvent={event => mostrarModalDetalle(event)}
 						defaultDate={new Date()}
 					/>
 				</div>
+				{visibleModal ? (
+					<AsignarHorario
+						visibleModal={visibleModal}
+						setVisibleModal={setVisibleModal}
+						traerData={traerData}
+					/>
+				) : null}
 			</div>
 		</Card>
 	);
