@@ -7,6 +7,7 @@ import {
 	Button,
 	AutoComplete,
 	Col,
+	Modal,
 	Input,
 	TimePicker,
 	DatePicker,
@@ -15,8 +16,10 @@ import {
 import { openNotification } from '../../../../util/util';
 import { httpClient } from '../../../../util/Api';
 import { Option } from 'antd/lib/mentions';
+import ConsultarHorario from '../consultar';
 
 const AsignarHorario = () => {
+	const [visibleModal, setVisibleModal]= useState(false);
 	const [horario, setHorario] = useState();
 	const [fecha, setFecha] = useState();
 	const [guardando, setGuardando] = useState(false);
@@ -26,6 +29,11 @@ const AsignarHorario = () => {
 	const [currentMedico, setCurrentMedico] = useState('');
 
 	const [form] = Form.useForm();
+
+	const defVisible=()=>{
+		console.log("Ingresando al def")
+		setVisibleModal(true);
+	}
 
 	const guardarHorario = async () => {
 		setGuardando(true);
@@ -90,102 +98,112 @@ const AsignarHorario = () => {
 	}, []);
 
 	return (
-		<Card
-			title={
-				<div
-					style={{
-						display: 'flex',
-						flexDirection: 'row',
-						gap: '10px',
-					}}
-				>
-					<div
-						style={{
-							width: '50%',
-							fontSize: '22px',
-							marginTop: '15px',
-						}}
-					>
-						Mantenedor de Horario
-					</div>
-					<div
-						style={{
-							width: '50%',
-							display: 'flex',
-							justifyContent: 'right',
-						}}
-					>
-						<Button
-							loading={guardando}
+		<>
+			<Modal 
+			visible={visibleModal}
+			>
+
+				<Card
+					title={
+						<div
 							style={{
-								backgroundColor: '#04B0AD',
-								color: 'white',
-								marginTop: '10px',
+								display: 'flex',
+								flexDirection: 'row',
+								gap: '10px',
 							}}
-							onClick={() => guardarHorario()}
 						>
-							Guardar
-						</Button>
+							<div
+								style={{
+									width: '50%',
+									fontSize: '22px',
+									marginTop: '15px',
+								}}
+							>
+								Mantenedor de Horario
+							</div>
+							<div
+								style={{
+									width: '50%',
+									display: 'flex',
+									justifyContent: 'right',
+								}}
+							>
+								<Button
+									loading={guardando}
+									style={{
+										backgroundColor: '#04B0AD',
+										color: 'white',
+										marginTop: '10px',
+									}}
+									onClick={() =>{ guardarHorario();
+										setVisibleModal(false);
+									}}
+								>
+									Guardar
+								</Button>
+							</div>
+						</div>
+					}
+				>
+					<div style={{ padding: 10 }}>
+						<Form {...layout} form={form} style={{ paddingLeft: 20, paddingRight: 20 }}>
+							<Row>
+								<Col span={12}>
+									<Form.Item name="especialidad" label="Especialidad">
+										<Select onChange={setCurrentEspecialidad} value={currentEspecialidad}>
+											{dataEspecialidades.map(item => (
+												<Select.Option key={item.key} value={item.value}>
+													{item.descripcion}
+												</Select.Option>
+											))}
+										</Select>
+									</Form.Item>
+								</Col>
+							</Row>
+							<Row>
+								<Col span={12}>
+									<Form.Item name="medico" label="Medico">
+										<Select onChange={setCurrentMedico} value={currentMedico}>
+											{dataMedicos.map(item => (
+												<Select.Option key={item.num_cmp} value={item.num_cmp}>
+													{item.des_nom_medico} {item.des_ape_medico}
+												</Select.Option>
+											))}
+										</Select>
+									</Form.Item>
+								</Col>
+							</Row>
+							<Row>
+								<Col span={12}>
+									<Form.Item name="fecha" label="Fecha">
+										<DatePicker
+											style={{ width: '100%' }}
+											onChange={data => {
+												setFecha(data);
+											}}
+										/>
+									</Form.Item>
+								</Col>
+							</Row>
+							<Row>
+								<Col xs={12}>
+									<Form.Item name="horario" label="Horario">
+										<TimePicker.RangePicker
+											format="HH:mm"
+											style={{ width: '100%' }}
+											onChange={data => {
+												setHorario(data);
+											}}
+										/>
+									</Form.Item>
+								</Col>
+							</Row>
+						</Form>
 					</div>
-				</div>
-			}
-		>
-			<div style={{ padding: 10 }}>
-				<Form {...layout} form={form} style={{ paddingLeft: 20, paddingRight: 20 }}>
-					<Row>
-						<Col span={12}>
-							<Form.Item name="especialidad" label="Especialidad">
-								<Select onChange={setCurrentEspecialidad} value={currentEspecialidad}>
-									{dataEspecialidades.map(item => (
-										<Select.Option key={item.key} value={item.value}>
-											{item.descripcion}
-										</Select.Option>
-									))}
-								</Select>
-							</Form.Item>
-						</Col>
-					</Row>
-					<Row>
-						<Col span={12}>
-							<Form.Item name="medico" label="Medico">
-								<Select onChange={setCurrentMedico} value={currentMedico}>
-									{dataMedicos.map(item => (
-										<Select.Option key={item.num_cmp} value={item.num_cmp}>
-											{item.des_nom_medico} {item.des_ape_medico}
-										</Select.Option>
-									))}
-								</Select>
-							</Form.Item>
-						</Col>
-					</Row>
-					<Row>
-						<Col span={12}>
-							<Form.Item name="fecha" label="Fecha">
-								<DatePicker
-									style={{ width: '100%' }}
-									onChange={data => {
-										setFecha(data);
-									}}
-								/>
-							</Form.Item>
-						</Col>
-					</Row>
-					<Row>
-						<Col xs={12}>
-							<Form.Item name="horario" label="Horario">
-								<TimePicker.RangePicker
-									format="HH:mm"
-									style={{ width: '100%' }}
-									onChange={data => {
-										setHorario(data);
-									}}
-								/>
-							</Form.Item>
-						</Col>
-					</Row>
-				</Form>
-			</div>
-		</Card>
+				</Card>
+			</Modal>
+				<ConsultarHorario defV={defVisible}></ConsultarHorario>
+		</>
 	);
 };
 

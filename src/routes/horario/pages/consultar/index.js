@@ -26,7 +26,7 @@ const messages = {
 	next: 'Siguiente',
 };
 
-const ConsultarHorario = () => {
+const ConsultarHorario = ({defV}) => {
 	const [events, setEvents] = useState([]);
 
 	const agregarEvento = data => {
@@ -129,6 +129,19 @@ const ConsultarHorario = () => {
 						>
 							Guardar
 						</Button> */}
+						<Button
+							style={{
+								backgroundColor: '#04B0AD',
+								color: 'white',
+								marginTop: '10px',
+							}}
+							onClick={defV}							
+						>
+							Agregar Disponibildiad
+
+						</Button>
+
+
 					</div>
 				</div>
 			}
