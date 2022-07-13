@@ -58,6 +58,7 @@ import { setClearUI, setMsgRequired } from '../../../appRedux/actions/ui';
 
 import { ModalImpresionReceta } from './modal/modalImpresion';
 import { ModalImpresionA4 } from './modal/modalImpresionA4';
+import { baseUrlImage } from '../../../config/backend';
 
 const InformacionPaciente = ({
 	datosModal,
@@ -98,7 +99,7 @@ const InformacionPaciente = ({
 				codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
 			});
 			console.log('FIRMA', data.data.url_firma);
-			setFirma(data.data.url_firma);
+			setFirma(baseUrlImage + data.data.url_firma);
 		} catch (e) {
 			console.log(e);
 		}
@@ -161,7 +162,10 @@ const InformacionPaciente = ({
 		const interconsulta = estadoRedux.procedimientoInterconsulta;
 
 		const data = {
-			nomMedico: JSON.parse(localStorage.getItem('token')).des_ape_medico.trim() + ', ' + JSON.parse(localStorage.getItem('token')).des_nom_medico.trim(),
+			nomMedico:
+				JSON.parse(localStorage.getItem('token')).des_ape_medico.trim() +
+				', ' +
+				JSON.parse(localStorage.getItem('token')).des_nom_medico.trim(),
 			nomPaciente: `${estado.NOMBRE} ${estado.APE_PATERNO} ${estado.APE_MATERNO}`,
 			especialidad: JSON.parse(localStorage.getItem('token')).des_especialidad,
 			codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
@@ -280,20 +284,19 @@ const InformacionPaciente = ({
 		setModalGuardar(true);
 	};
 
-	const getCMP = async (codMedico) => {
+	const getCMP = async codMedico => {
 		const { data } = await httpClient.post('/getCMP', {
-			codMedico
+			codMedico,
 		});
 
 		if (data.success) {
 			setCmp(data.data[0].num_cmp);
 		}
-	}
+	};
 
 	useEffect(() => {
 		getCMP(enviarData.codMedico);
 	}, [enviarData.codMedico]);
-	
 
 	const impresionRef = useRef();
 	const estados = store.getState();
