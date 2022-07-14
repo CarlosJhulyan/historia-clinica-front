@@ -47,6 +47,25 @@ const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 		traerData();
 	};
 
+	const eliminarHorario = async () => {
+		setGuardando(true);
+
+		const response = await httpClient.post('/horarios/eliminarHorario', {
+			id: medico.id_horario,
+		});
+		if (response.data.success) {
+			openNotification('Exito', 'Horario eliminado correctamente');
+		} else {
+			openNotification('Error', response.data.message, 'Alerta');
+		}
+		form.resetFields();
+		setHorario(null);
+		setFecha(null);
+		setGuardando(false);
+		setVisibleModal(false);
+		traerData();
+	};
+
 	const [form] = Form.useForm();
 
 	return (
@@ -57,29 +76,33 @@ const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 					setVisibleModal(false);
 				}
 			}}
-      footer={[
-        <Button
-          onClick={() => {
-              if (!guardando) {
-                setVisibleModal(false);
-              }
-            }
-          }
-        >
-          Cancelar
-        </Button>,
-        <Button danger>
-          Eliminar
-        </Button>,
-        <Button
-          onClick={() => {
-            guardarHorario();
-          }}
-          type='primary'
-        >
-          OK
-        </Button>
-      ]}
+			footer={[
+				<Button
+					onClick={() => {
+						if (!guardando) {
+							setVisibleModal(false);
+						}
+					}}
+				>
+					Cancelar
+				</Button>,
+				<Button
+					danger
+					onClick={() => {
+						eliminarHorario();
+					}}
+				>
+					Eliminar
+				</Button>,
+				<Button
+					onClick={() => {
+						guardarHorario();
+					}}
+					type="primary"
+				>
+					OK
+				</Button>,
+			]}
 			title="Editar Horario"
 		>
 			<div style={{ padding: 10 }}>
