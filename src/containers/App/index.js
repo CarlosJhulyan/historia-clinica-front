@@ -26,6 +26,7 @@ import { useAuth } from "../../authentication";
 import { httpClient } from "../../util/Api";
 import SignInAdmin from "../SignInAdmin";
 import SignInReports from "../SignInReport";
+import { getThemeDesignLookGlobal } from '../../routes/listaPaciente/datosPaciente/apis';
 
 const RestrictedRoute = ({ component: Component, location, authUser, authAdmin, authReports, ...rest }) =>
   <Route
@@ -79,10 +80,11 @@ const App = () => {
   const themeType = useSelector(({ settings }) => settings.themeType);
   const isDirectionRTL = useSelector(({ settings }) => settings.isDirectionRTL);
   const initURL = useSelector(({ settings }) => settings.initURL);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
-  const { 
-    authUser, 
-    isLoadingUser, 
+  const {
+    authUser,
+    isLoadingUser,
     userSignOut,
     loadingAdmin,
     authAdmin,
@@ -124,6 +126,11 @@ const App = () => {
   });
 
   useEffect(() => {
+    const favicon = document.querySelector('link[rel="shortcut icon"]');
+    favicon.href = `${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.LOGO.split('.')[0] + '.ico'}`;
+  }, [themeSettingsGlobal])
+
+  useEffect(() => {
      if (!isLoadingUser || !loadingAdmin || !loadingReports) {
       if (!authAdmin && initURL.includes('/hc-admin')) {
         history.push('/hc-admin/signin');
@@ -155,30 +162,31 @@ const App = () => {
   useEffect(() => {
     if (localStorage.getItem('version')) {
       httpClient
-      .post('sistema/getVersion')
-      .then(({ data: { data, success, message } }) => {
-        if (success && localStorage.getItem('version') === data.num_version) {
-          console.log('Stable version', data.num_version);
-        } else {
-          modal.info({
-            title: 'Versión de Sistema',
-            content: (
-              <>
-                {message} Debe iniciar sesión nuevamente. Acepte para volver a logearse.
-              </>
-            ),
-            onOk: () => {
-              userSignOut();
-            },
-            okText: 'Aceptar',
-            centered: true
-          });
-        }
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
+        .post('sistema/getVersion')
+        .then(({ data: { data, success, message } }) => {
+          if (success && localStorage.getItem('version') === data.num_version) {
+            console.log('Stable version', data.num_version);
+          } else {
+            modal.info({
+              title: 'Versión de Sistema',
+              content: (
+                <>
+                  {message} Debe iniciar sesión nuevamente. Acepte para volver a logearse.
+                </>
+              ),
+              onOk: () => {
+                userSignOut();
+              },
+              okText: 'Aceptar',
+              centered: true
+            });
+          }
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
     }
+    getThemeDesignLookGlobal();
   }, [])
 
   const currentAppLocale = AppLocale[locale.locale];

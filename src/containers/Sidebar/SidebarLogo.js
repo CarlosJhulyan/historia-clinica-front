@@ -9,23 +9,19 @@ import {
   TAB_SIZE,
   THEME_TYPE_LITE
 } from "../../constants/ThemeSetting";
-import Image from '../../assets/images/biensalud-logo.ico'
-import ImageLocal from '../../assets/images/logo.png';
 import './styles.css';
 
 const SidebarLogo = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 
-  const { width, themeType } = useSelector(({ settings }) => settings);
+  const { width, themeType, themeSettingsGlobal } = useSelector(({ settings }) => settings);
   let navStyle = useSelector(({ settings }) => settings.navStyle);
-  const anexo = useSelector(state => state.anexo);
-
 
   if (width < TAB_SIZE && navStyle === NAV_STYLE_FIXED) {
     navStyle = NAV_STYLE_DRAWER;
   }
 
   return (
-    <div className={`${anexo.tipo === "N" && "mitema"}`}>
+    <div style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1 }}>
       <div className="gx-layout-sider-header">
         {(navStyle === NAV_STYLE_FIXED || navStyle === NAV_STYLE_MINI_SIDEBAR) ? <div className="gx-linebar">
           <i
@@ -38,21 +34,19 @@ const SidebarLogo = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 
         <Link to="/" className="gx-site-logo">
           {navStyle === NAV_STYLE_NO_HEADER_MINI_SIDEBAR && width >= TAB_SIZE ?
-            <img alt="lo" src={("/assets/images/w-logo.png")} /> :
+            <img alt="lo" src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.LOGO}`} /> :
             themeType === THEME_TYPE_LITE ?
-              <img alt="logo1" src={("/assets/images/logoP.jpeg")} /> :
-
-              anexo.tipo === "N"
-                ? <div>
-                  <img alt="logoHC" style={{ float: "left", width: " 25%" }} src={ImageLocal} />
-                  <h1 style={{ color: "white", float: "right", width: " 70%", fontSize: "18px", paddingTop: "8px" }}>Historia Clinica</h1>
-                </div>
-                : <div>
-                  <img alt="logoHC" style={{ float: "left", width: " 25%" }} src={Image} />
-                  <h1 style={{ color: "white", float: "right", width: " 70%", fontSize: "18px", paddingTop: "8px" }}>Historia Clinica</h1>
-                </div>
+              <img alt="logo1" src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.LOGO}`} /> :
+              <div style={{display: 'flex', alignItems: 'center', gap: 5}}>
+                <img
+                  alt="logoHC"
+                  style={{ float: "left", width: " 25%" }} src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.LOGO}`}
+                  title={themeSettingsGlobal.COMPANIA}
+                />
+                <h1 style={{ color: "white", float: "right", width: " 70%", fontSize: "18px", paddingTop: "8px" }}>Historia Clínica</h1>
+              </div>
           }
-
+          {/*<img alt="lo" src={ImageLocal} />*/}
         </Link>
       </div>
     </div>

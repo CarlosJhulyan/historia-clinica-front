@@ -13,16 +13,12 @@ import {
 	TAB_SIZE,
 	THEME_TYPE_LITE,
 } from '../../constants/ThemeSetting';
-import iconFavicon from '../../assets/images/logo.png';
-import iconFavicon2 from '../../assets/images/biensalud-logo.ico';
-// import './styles.css';
 
 const { Sider } = Layout;
 
 const Sidebar = () => {
 	let [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-	const { themeType, navStyle } = useSelector(({ settings }) => settings);
-	const anexo = useSelector(state => state.anexo);
+	const { themeType, navStyle, themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const navCollapsed = useSelector(({ common }) => common.navCollapsed);
 	const width = useSelector(({ common }) => common.width);
 	const dispatch = useDispatch();
@@ -56,20 +52,19 @@ const Sidebar = () => {
 	) {
 		drawerStyle = 'gx-collapsed-sidebar';
 	}
-
-	if (anexo.tipo === 'N') {
-		// modificar favicon
-		const favicon = document.querySelector('link[rel="shortcut icon"]');
-		favicon.href = iconFavicon;
-	} else if (anexo.tipo === 'S') {
-    const favicon = document.querySelector('link[rel="shortcut icon"]');
-		favicon.href = iconFavicon2;
-  }
+	// if (anexo.tipo === 'N') {
+	// 	// modificar favicon
+	// 	const favicon = document.querySelector('link[rel="shortcut icon"]');
+	// 	favicon.href = iconFavicon;
+	// } else if (anexo.tipo === 'S') {
+  //   const favicon = document.querySelector('link[rel="shortcut icon"]');
+	// 	favicon.href = iconFavicon2;
+  // }
 
 	return (
 		<Sider
 			className={`gx-app-sidebar ${drawerStyle} ${themeType !== THEME_TYPE_LITE ? 'gx-layout-sider-dark' : null}`}
-			style={anexo.tipo === 'N' ? { backgroundColor: '#e20612' } : {}}
+      style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1 }}
 			trigger={null}
 			collapsed={width < TAB_SIZE ? false : sidebarCollapsed || navStyle === NAV_STYLE_NO_HEADER_MINI_SIDEBAR}
 			theme={themeType === THEME_TYPE_LITE ? 'lite' : 'dark'}

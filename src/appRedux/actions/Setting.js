@@ -1,5 +1,17 @@
-import { INIT_URL, SWITCH_LANGUAGE, TOGGLE_COLLAPSED_NAV, WINDOW_WIDTH } from "../../constants/ActionTypes";
-import { LAYOUT_TYPE, NAV_STYLE, THEME_COLOR, THEME_TYPE, UPDATE_RTL_STATUS } from "../../constants/ThemeSetting";
+import {
+  INIT_URL,
+  SWITCH_LANGUAGE,
+  TOGGLE_COLLAPSED_NAV,
+  WINDOW_WIDTH
+} from "../../constants/ActionTypes";
+import {
+  LAYOUT_TYPE,
+  NAV_STYLE,
+  THEME_COLOR,
+  THEME_TYPE,
+  UPDATE_RTL_STATUS,
+  THEME_DESIGN_LOOK_GLOBAL
+} from "../../constants/ThemeSetting";
 
 export function toggleCollapsedSideNav(navCollapsed) {
   return { type: TOGGLE_COLLAPSED_NAV, navCollapsed };
@@ -82,5 +94,12 @@ export const setHoraImprimible = (data) => {
   return {
     type: '[SET] Hora imprimible',
     payload: data
+  };
+}
+
+export const setThemeDesignLook = (themeData) => {
+  return {
+    type: THEME_DESIGN_LOOK_GLOBAL,
+    payload: themeData
   };
 }

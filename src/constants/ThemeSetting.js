@@ -65,3 +65,6 @@ export const LIGHT_PURPLE_2_DARK_TEXT_COLOR = '#5782BB';
 export const ACTIVE_COLOR_OPTION = '#ffffff';
 
 export const TAB_SIZE = 992;
+
+
+export const THEME_DESIGN_LOOK_GLOBAL = 'THEME_DESIGN_LOOK_GLOBAL';

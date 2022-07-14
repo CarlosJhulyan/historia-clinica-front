@@ -9,7 +9,6 @@ import { useHistory } from 'react-router-dom';
 const SignInAdmin = () => {
 	const { loadingAdmin, errorAdmin, adminLogin } = useAuth();
 	const settings = useSelector(state => state.settings);
-	const history = useHistory();
 
 	const onFinishFailed = errorInfo => {};
 

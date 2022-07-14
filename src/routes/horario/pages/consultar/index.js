@@ -229,6 +229,7 @@ const ConsultarHorario = () => {
 								backgroundColor: '#04B0AD',
 								color: 'white',
 								marginTop: '10px',
+                marginLeft: 20
 							}}
 							onClick={() => {
 								setVisibleModalAsignar(true);
