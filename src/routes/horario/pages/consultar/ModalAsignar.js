@@ -45,7 +45,7 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 			fecha: fecha,
 			horaInicio: horario[0].format('HH:mm'),
 			horaFin: horario[1].format('HH:mm'),
-			especialidad: medico.des_especialidad,
+			especialidad: medico.des_especialidad === '' ? medico.descripcion : medico.des_especialidad,
 			idEspecialidad: medico.id_consultorio,
 		});
 		if (response.data.success) {
@@ -148,7 +148,7 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 							<Col xs={24}>
 								<Form.Item name="horario" label="Horario">
 									<TimePicker.RangePicker
-										placeholder={["Inicio","Fin"]}
+										placeholder={['Inicio', 'Fin']}
 										format="HH:mm"
 										style={{ width: '100%' }}
 										onChange={data => {
