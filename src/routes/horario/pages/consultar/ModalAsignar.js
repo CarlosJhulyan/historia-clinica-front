@@ -24,6 +24,7 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 	const [dataEspecialidades, setDataEspecialidades] = useState([]);
 	const [dataMedicos, setDataMedicos] = useState([]);
 	const [currentEspecialidad, setCurrentEspecialidad] = useState('');
+	const [mensaje, setMensaje] = useState('');
 	const [currentMedico, setCurrentMedico] = useState('');
 
 	const [form] = Form.useForm();
@@ -74,6 +75,11 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 			especialidad_id: currentEspecialidad,
 		});
 		if (response.data.success) {
+			if (response.data.data && !response.data.data.length > 0) {
+				setMensaje('No hay medicos disponibles para esta especialidad');
+			} else {
+				setMensaje('');
+			}
 			setDataMedicos(response.data.data);
 		}
 	};
@@ -120,13 +126,18 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 						<Row>
 							<Col span={24}>
 								<Form.Item name="medico" label="Medico">
-									<Select onChange={setCurrentMedico} value={currentMedico}>
+									<Select
+										onChange={setCurrentMedico}
+										value={currentMedico}
+										disabled={mensaje !== ''}
+									>
 										{dataMedicos.map(item => (
 											<Select.Option key={item.num_cmp} value={item.num_cmp}>
 												{item.des_nom_medico} {item.des_ape_medico}
 											</Select.Option>
 										))}
 									</Select>
+									{mensaje && <div style={{ color: 'red', marginTop: '10px' }}>{mensaje}</div>}
 								</Form.Item>
 							</Col>
 						</Row>
