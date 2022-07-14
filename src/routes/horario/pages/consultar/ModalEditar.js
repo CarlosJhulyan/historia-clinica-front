@@ -1,3 +1,4 @@
+/* eslint-disable default-case */
 import { TextField } from '@mui/material';
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select, TimePicker } from 'antd';
 import { useEffect, useState } from 'react';
@@ -5,6 +6,8 @@ import locale from 'antd/es/date-picker/locale/es_ES';
 import moment from 'moment';
 import { openNotification } from '../../../../util/util';
 import { httpClient } from '../../../../util/Api';
+import confirm from 'antd/lib/modal/confirm';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 	const [guardando, setGuardando] = useState(false);
@@ -19,6 +22,28 @@ const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 		}),
 	]);
 	const [fecha, setFecha] = useState(moment(medico.fecha));
+
+	const confirmar = tipo => {
+		confirm({
+			title: '¿Está seguro de aplicar el cambio?',
+			icon: <ExclamationCircleOutlined />,
+
+			onOk() {
+				switch (tipo) {
+					case 'delete':
+						eliminarHorario();
+						break;
+					case 'save':
+						guardarHorario();
+						break;
+				}
+			},
+
+			onCancel() {
+				console.log('Cancel');
+			},
+		});
+	};
 
 	const guardarHorario = async () => {
 		setGuardando(true);
@@ -89,18 +114,18 @@ const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 				<Button
 					danger
 					onClick={() => {
-						eliminarHorario();
+						confirmar('delete');
 					}}
 				>
 					Eliminar
 				</Button>,
 				<Button
 					onClick={() => {
-						guardarHorario();
+						confirmar('save');
 					}}
 					type="primary"
 				>
-					OK
+					Aceptar
 				</Button>,
 			]}
 			title="Editar Horario"
