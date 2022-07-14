@@ -338,7 +338,7 @@ const ModalComprobante = ({
 					<>
 						<Row key={item.COD_FORMA_PAGO} style={{ width: '100%', margin: 0, textAlign: 'end' }}>
 							<Col xs={18} style={{ padding: 0 }}>
-								{item.DESC_FORMA_PAGO}
+								{item.DESC_FORMA_PAGO}:S/
 							</Col>
 							<Col xs={6} style={{ padding: 0 }}>
 								{item.IMP_PAGO}

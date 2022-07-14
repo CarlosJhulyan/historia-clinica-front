@@ -171,7 +171,7 @@ function ModalListaProductos({
 					: '',
 		},
 		{
-			title: 'Precio',
+			title: 'Precio(S/)',
 			dataIndex: 'PRECIO',
 			key: 'PRECIO',
 		},
