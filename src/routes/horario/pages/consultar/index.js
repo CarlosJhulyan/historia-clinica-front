@@ -280,6 +280,7 @@ const ConsultarHorario = () => {
 							localizer={localizer}
 							onNavigate={date => {
 								setCurrentMes(date.getMonth() + 1);
+								setDatePicker(new Date(moment(date).format('YYYY-MM-DD')));
 							}}
 							views={{ month: true }}
 							onSelectEvent={event => mostrarModalDetalle(event)}
