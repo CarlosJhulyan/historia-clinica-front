@@ -98,30 +98,19 @@ export const useProvideAuth = () => {
 		dispatch(setLoginLoading(true));
 		fetchStart();
 		httpClient
-			.post(`/loginUsuLocal`, user)
-			.then(({ data: dataLogin }) => {
-				if (dataLogin.success) {
-					httpClient
-						.post('/login/getUsuario', user)
-						.then(({ data }) => {
-							dispatch(setLoginLoading(false));
-							fetchSuccess();
-							localStorage.setItem(
-								'token',
-								JSON.stringify({
-									...dataLogin,
-									data: data.data,
-								})
-							);
-							getAuthUser({
-								...dataLogin,
-								data: data.data,
-							});
-							if (callbackFun) callbackFun();
-						})
-						.catch(function (error) {});
+			.post(`/loginPersonal`, user)
+			.then(({ data }) => {
+				if (data.success) {
+          dispatch(setLoginLoading(false));
+          fetchSuccess();
+          localStorage.setItem(
+            'token',
+            JSON.stringify(data)
+          );
+          getAuthUser(data);
+          if (callbackFun) callbackFun();
 				} else {
-					fetchError(dataLogin.message);
+					fetchError(data.message);
 				}
 			})
 			.catch(function (error) {

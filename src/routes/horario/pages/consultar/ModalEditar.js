@@ -1,5 +1,5 @@
 import { TextField } from '@mui/material';
-import { Col, DatePicker, Form, Input, Modal, Row, Select, TimePicker } from 'antd';
+import { Button, Col, DatePicker, Form, Input, Modal, Row, Select, TimePicker } from 'antd';
 import { useEffect, useState } from 'react';
 import locale from 'antd/es/date-picker/locale/es_ES';
 import moment from 'moment';
@@ -57,9 +57,29 @@ const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 					setVisibleModal(false);
 				}
 			}}
-			onOk={() => {
-				guardarHorario();
-			}}
+      footer={[
+        <Button
+          onClick={() => {
+              if (!guardando) {
+                setVisibleModal(false);
+              }
+            }
+          }
+        >
+          Cancelar
+        </Button>,
+        <Button danger>
+          Eliminar
+        </Button>,
+        <Button
+          onClick={() => {
+            guardarHorario();
+          }}
+          type='primary'
+        >
+          OK
+        </Button>
+      ]}
 			title="Editar Horario"
 		>
 			<div style={{ padding: 10 }}>

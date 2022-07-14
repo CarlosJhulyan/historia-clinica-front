@@ -6,6 +6,12 @@ import { httpClient } from '../../../../util/Api';
 import ModalAsignar from './ModalAsignar';
 import ModalEditar from './ModalEditar';
 
+import ReactExport  from "react-export-excel";
+
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
+
 const localizer = momentLocalizer(moment);
 //Cambiar el idioma
 moment.locale('es', {
@@ -30,6 +36,7 @@ const messages = {
 
 const ConsultarHorario = () => {
 	const [events, setEvents] = useState([]);
+  const [dataFormat, setDataFormat] = useState({});
 	const [visibleModalAsignar, setVisibleModalAsignar] = useState(false);
 	const [visibleModalEditar, setVisibleModalEditar] = useState(false);
 	const [currentMes, setCurrentMes] = useState(moment().month() + 1);
@@ -38,6 +45,7 @@ const ConsultarHorario = () => {
 	const agregarEvento = data => {
 		var aux = [];
 		data.forEach(element => {
+      // console.log(element);
 			var start = new Date(
 				moment(element.fecha).format('YYYY'),
 				Number(moment(element.fecha).format('MM')) - 1,
@@ -52,6 +60,7 @@ const ConsultarHorario = () => {
 				element.hora_fin.split(':')[0],
 				element.hora_fin.split(':')[1]
 			);
+
 			aux.push({
 				...element,
 				title: (
@@ -72,6 +81,20 @@ const ConsultarHorario = () => {
 				start,
 				end,
 				id: element.id_horario,
+        turno: () => {
+          const horaInicio = Number(moment(element.hora_inicio, 'HH:mm').format('H'));
+          const horaFin = Number(moment(element.hora_fin, 'HH:mm').format('H'));
+          let horaInicioLabel = '';
+          let horaFinLabel = '';
+
+          if (horaInicio >= 0 && horaInicio < 8) horaInicioLabel = 'Mañana';
+          else if (horaInicio >= 8 && horaInicio < 16) horaInicioLabel = 'Tarde';
+          else if (horaInicio >= 16 && horaInicio < 24) horaInicioLabel = 'Noche';
+          if (horaFin >= 0 && horaFin < 8) horaFinLabel = 'Mañana';
+          else if (horaFin >= 8 && horaFin < 16) horaFinLabel = 'Tarde';
+          else if (horaFin >= 16 && horaFin < 24) horaFinLabel = 'Noche';
+          return horaInicioLabel === horaFinLabel ? horaInicioLabel : `${horaInicioLabel} - ${horaFinLabel}`;
+        }
 			});
 		});
 		setEvents([...aux]);
@@ -81,7 +104,7 @@ const ConsultarHorario = () => {
 		// TODO: MOSTRAR EL MODAL DE DETALLE
 		setMedico(record);
 		setVisibleModalEditar(true);
-		console.log(record);
+		// console.log(record);
 	};
 
 	const traerData = async () => {
@@ -89,7 +112,7 @@ const ConsultarHorario = () => {
 			mes: currentMes,
 		});
 
-		console.log(response.data.data);
+		// console.log(response.data.data);
 		agregarEvento(response.data.data);
 	};
 
@@ -101,7 +124,18 @@ const ConsultarHorario = () => {
 		traerData();
 	}, []);
 
-	console.log('events', events);
+  useEffect(() => {
+    const dataNew = {};
+    events.forEach(item => {
+      if (Object.keys(dataNew).find(x => x === item.especialidad)) {
+        dataNew[item.especialidad] = [...dataNew[item.especialidad], item];
+      } else {
+        dataNew[item.especialidad] = [item];
+      }
+    });
+    console.log(dataNew);
+    setDataFormat(dataNew);
+  }, [events])
 
 	return (
 		<Card
@@ -129,15 +163,40 @@ const ConsultarHorario = () => {
 							justifyContent: 'right',
 						}}
 					>
-						<Button
-							style={{
-								backgroundColor: 'blue',
-								color: 'white',
-								marginTop: '10px',
-							}}
-						>
-							Exportar
-						</Button>
+						{/*<Button*/}
+
+            {/*  onClick={handleExportExcel}*/}
+						{/*>*/}
+						{/*	Exportar*/}
+						{/*</Button>*/}
+            <ExcelFile element={<Button style={{
+              backgroundColor: 'blue',
+              color: 'white',
+              marginTop: '10px',
+            }}>Exportar</Button>}>
+              {Object.keys(dataFormat).map(item => (
+                <ExcelSheet
+                  data={dataFormat[item]}
+                  name={item}
+                >
+                  <ExcelColumn label="ESPECIALIDAD" value="especialidad"/>
+                  <ExcelColumn label="DOCTOR A CARGO" value="nombre_medico"/>
+                  <ExcelColumn label="HORARIO DE ATENCIÓN" value={(col) => `${moment(col.hora_inicio, 'HH:mm').format('hh a')} a ${moment(col.hora_fin, 'HH:mm').format('hh a')}`} />
+                  <ExcelColumn
+                    label="TURNO"
+                    value={(col) => `${col.turno()}`}
+                    style={{
+                      alignment: {
+                        vertical: 'center',
+                        horizontal: 'center'
+                      },
+                      font: { sz: "12", bold: true }
+                    }}
+                  />
+                  {/*<ExcelColumn label="REQUISITOS PARA CONSULTAS" value={(col) => ``}/>*/}
+                </ExcelSheet>
+              ))}
+            </ExcelFile>
 						<Button
 							style={{
 								backgroundColor: '#04B0AD',

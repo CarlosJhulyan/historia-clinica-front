@@ -229,7 +229,7 @@ const App = ({ match }) => {
 	};
 
 	useEffect(() => {
-		if (token && (!token.modulos || token?.modulos.length <= 0)) {
+		if (token && (!token.modulos || token?.modulos.length <= 0) && !token.data) {
 			modal.info({
 				title: 'Modulos de Sistema',
 				content: <>No cuenta con modulos a su disposición. Contactese con el administrador.</>,
