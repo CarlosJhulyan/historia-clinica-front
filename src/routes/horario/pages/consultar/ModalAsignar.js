@@ -46,7 +46,7 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 			fecha: fecha,
 			horaInicio: horario[0].format('HH:mm'),
 			horaFin: horario[1].format('HH:mm'),
-			especialidad: medico.des_especialidad === '' ? medico.descripcion : medico.des_especialidad,
+			especialidad: medico.descripcion,
 			idEspecialidad: medico.id_consultorio,
 		});
 		if (response.data.success) {

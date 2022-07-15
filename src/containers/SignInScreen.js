@@ -2,31 +2,17 @@ import React from 'react';
 import { Button, Form, Input, Tabs } from 'antd';
 import AppNotificationContainer from '../components/AppNotificationContainer';
 
-import iconFavicon from '../assets/images/logo.png';
-import iconFavicon2 from '../assets/images/biensalud-logo.ico';
 import { useSelector } from 'react-redux';
 
 export const SignInScreen = ({
-	anexo,
-	logo,
-	logo2,
 	onFinish,
 	onFinishFailed,
 	isLoading,
 	error,
 	onFinishUsuario,
 }) => {
-	const anexo1 = useSelector(state => state.anexo);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const { TabPane } = Tabs;
-
-	if (anexo1.tipo === 'N') {
-		// modificar favicon
-		const favicon = document.querySelector('link[rel="shortcut icon"]');
-		favicon.href = iconFavicon;
-	} else if (anexo1.tipo === 'S') {
-		const favicon = document.querySelector('link[rel="shortcut icon"]');
-		favicon.href = iconFavicon2;
-	}
 
 	return (
 		<div className="gx-app-login-container">
@@ -39,9 +25,10 @@ export const SignInScreen = ({
                     </div> */}
 							<div className="gx-app-logo-wid">
 								<img
-									src={anexo.tipo === 'N' ? logo : logo2}
+									src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.LOGO}`}
 									style={{ borderRadius: 50 }}
-									alt="Neature"
+                  alt={themeSettingsGlobal.COMPANIA}
+                  title={themeSettingsGlobal.COMPANIA}
 								/>
 							</div>
 							{/*   <div className="gx-app-logo">
@@ -87,9 +74,8 @@ export const SignInScreen = ({
                         </Form.Item> */}
 									<Form.Item>
 										<Button
-											type="primary"
 											className="gx-mb-0"
-											style={{ width: '85%', marginLeft: '50px' }}
+											style={{ width: '85%', marginLeft: '50px', background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
 											htmlType="submit"
 										>
 											Ingresar
@@ -111,9 +97,10 @@ export const SignInScreen = ({
 						<div className="gx-app-logo-content">
 							<div className="gx-app-logo-wid">
 								<img
-									src={anexo.tipo === 'N' ? logo : logo2}
+									src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.LOGO}`}
 									style={{ borderRadius: 50 }}
-									alt="Neature"
+									alt={themeSettingsGlobal.COMPANIA}
+                  title={themeSettingsGlobal.COMPANIA}
 								/>
 							</div>
 						</div>
@@ -148,9 +135,8 @@ export const SignInScreen = ({
 									</Form.Item>
 									<Form.Item>
 										<Button
-											type="primary"
 											className="gx-mb-0"
-											style={{ width: '85%', marginLeft: '50px' }}
+											style={{ width: '85%', marginLeft: '50px', background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
 											htmlType="submit"
 										>
 											Ingresar

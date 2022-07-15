@@ -11,7 +11,7 @@ export const ModalCerrarSesion = ({ modalCerar, setModalCerrar }) => {
 
     const { userSignOut } = useAuth();
     const history = useHistory();
-  
+
 
     const onConfirmAtendido = () => {
         setModalCerrar(false)
@@ -40,7 +40,6 @@ export const ModalCerrarSesion = ({ modalCerar, setModalCerrar }) => {
                 confirmBtnText= "¡Irme de paseo!"
                 onConfirm={() => onLogoutClick()}>
                 ¡SI DESEA PUEDE PERMANCES EN LA PAGINA!
-
             </SweetAlert>
         </>
     )

@@ -834,6 +834,7 @@ function GenerarPedido() {
 									backgroundColor: '#0169aa',
 									color: 'white',
 									marginTop: '10px',
+                  marginRight: 20
 								}}
 								onClick={() => {
                   if (data.length > 0) confirm({

@@ -72,6 +72,7 @@ import { setTratamientoCabeceraDetalleKardex } from '../../../appRedux/actions/k
 import { setDiagnosticoActionKardex } from '../../../appRedux/actions/kardex/DiagnosticoKardex';
 import { setExamenKardex } from '../../../appRedux/actions/kardex/ExamenKardex';
 import { setInterconsultaKardex } from '../../../appRedux/actions/kardex/InterconsultaKardex';
+import { setThemeDesignLook } from '../../../appRedux/actions';
 
 const codMedico = JSON.parse(localStorage.getItem('token'));
 
@@ -1044,6 +1045,17 @@ export const getComboEspecialidades = async datos => {
 
 	return data;
 };
+
+export const getThemeDesignLookGlobal = async () => {
+  try {
+    const { data: { data, success, message } } = await httpClient.get('/sistema/getThemeDesign');
+    if (success) {
+      store.dispatch(setThemeDesignLook(data));
+    } else console.log('GET_THEME_DESIGN_GLOBAL', message);
+  } catch (e) {
+    console.error('GET_THEME_DESIGN_GLOBAL', e);
+  }
+}
 
 // ---------------------------- LUIS GRABADO -----------------------------------
 //Separar funciones Pestañas.

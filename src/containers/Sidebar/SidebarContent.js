@@ -15,9 +15,8 @@ import './styles.css';
 import SubMenu from 'antd/lib/menu/SubMenu';
 
 const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
-	const { navStyle, themeType } = useSelector(({ settings }) => settings);
+	const { navStyle, themeType, themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const pathname = useSelector(({ common }) => common.pathname);
-	const anexo = useSelector(state => state.anexo);
 	const token = JSON.parse(localStorage.getItem('token'));
 	const tokenAdmin = JSON.parse(localStorage.getItem('token-admin'));
 	const tokenReports = JSON.parse(localStorage.getItem('token-reports'));
@@ -46,7 +45,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const createMenuItem = () => {
 		const menuItems = [];
 
-		if (token?.data && token.data.login_usu) {
+		if (token?.data && token.data.login_usu && !initURL.includes('/hc-admin')) {
 			menuItems.push(
 				<SubMenu
 					key="posVentaG"
@@ -567,12 +566,15 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					<UserProfile />
 					{/* <AppsNavigation /> */}
 				</div>
-				<CustomScrollbars className={`gx-layout-sider-scrollbar ${anexo.tipo === 'N' && 'mitema'}`}>
+				<CustomScrollbars
+          className={`gx-layout-sider-scrollbar`}
+          style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1 }}
+        >
 					<Menu
 						defaultOpenKeys={[defaultOpenKeys]}
 						selectedKeys={[selectedKeys]}
-						style={anexo.tipo === 'N' ? { backgroundColor: '#e20612' } : {}}
-						theme={themeType === THEME_TYPE_LITE ? 'lite' : 'dark'}
+            style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1 }}
+            theme={themeType === THEME_TYPE_LITE ? 'lite' : 'dark'}
 						mode="inline"
 					>
 						{menuItems.map(item => item)}

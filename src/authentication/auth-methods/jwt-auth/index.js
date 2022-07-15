@@ -5,7 +5,7 @@ import {
 	setLoginAdminLoading,
 	setLoginReportsLoading,
 } from '../../../appRedux/actions/Setting';
-import { httpClient, httpClientReports } from '../../../util/Api';
+import { httpClient } from '../../../util/Api';
 
 export const useProvideAuth = () => {
 	const [authUser, setAuthUser] = useState(null);
