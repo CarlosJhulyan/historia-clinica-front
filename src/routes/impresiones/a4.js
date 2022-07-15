@@ -1,6 +1,4 @@
 import { Row, Col, Divider } from 'antd';
-import rojo from '../../assets/impresiones/rojo.jpg';
-import azul from '../../assets/impresiones/azul.jpg';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import {
@@ -16,8 +14,10 @@ import { useEffect } from 'react';
 export const ImpresionA4 = ({ datosModal, firma }) => {
 	const fuente = 17;
 	const espacios = 35;
-	const backgroundRojo = '#FF9999';
-	const backgroundAzul = '#CCCCCC';
+	const backgroundRojo = '#FFFFFF';
+	const backgroundAzul = '#FFFFFF';
+
+	const { themeSettingsGlobal } = useSelector(state => state.settings);
 
 	console.log('DAAAAAATAAAAAAAAAAAA7777777777:', datosModal);
 	console.log('FIIIIIIIIIIIIIIIRMAA4:', firma);
@@ -111,7 +111,10 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 			{/* <div hidden></div> */}
 			<div id="pagina1">
 				<div style={{ position: 'relative' }}>
-					<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul}></img>
+					<img
+						alt="hoja membreatada"
+						src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.FORMATO_A4}`}
+					></img>
 
 					<div
 						style={{
@@ -162,7 +165,10 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								<strong>DNI :</strong> {datosModal.estado.NUM_DOCUMENTO}
 							</Col>
 							<Col xs={7}>
-								<strong>FECHA NACIMIENTO :</strong> {datosModal.estado.FEC_NAC_CLI._i ? datosModal.estado.FEC_NAC_CLI._i : datosModal.estado.FEC_NAC_CLI}
+								<strong>FECHA NACIMIENTO :</strong>{' '}
+								{datosModal.estado.FEC_NAC_CLI._i
+									? datosModal.estado.FEC_NAC_CLI._i
+									: datosModal.estado.FEC_NAC_CLI}
 							</Col>
 							<Col xs={3}>
 								<strong>EDAD :</strong> {datosModal.estado.EDAD}
@@ -172,8 +178,8 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								{datosModal.estado.SEXO_CLI === 'M'
 									? 'MASCULINO'
 									: datosModal.estado.SEXO_CLI === 'F'
-										? 'FEMENINO'
-										: ''}
+									? 'FEMENINO'
+									: ''}
 							</Col>
 							<Col xs={6}>
 								<strong>TELEFONO :</strong> {datosModal.estado.FONO_CLI}
@@ -223,19 +229,19 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								<strong style={{ fontWeight: 600 }}>HÁBITOS: </strong>
 								{antecedentesGenerales.habitos.length > 0
 									? antecedentesGenerales.habitos.map((habito, index) => {
-										return (
-											<span key={index}>
-												{habitosNocivos
-													.filter(h => h.CODIGO == habito)
-													.map(habitosNocivos => {
-														return (
-															<span key={habitosNocivos.CODIGO}>{habitosNocivos.ETIQUETA}</span>
-														);
-													})}
-												{index !== antecedentesGenerales.habitos.length - 1 ? ', ' : ''}
-											</span>
-										);
-									})
+											return (
+												<span key={index}>
+													{habitosNocivos
+														.filter(h => h.CODIGO == habito)
+														.map(habitosNocivos => {
+															return (
+																<span key={habitosNocivos.CODIGO}>{habitosNocivos.ETIQUETA}</span>
+															);
+														})}
+													{index !== antecedentesGenerales.habitos.length - 1 ? ', ' : ''}
+												</span>
+											);
+									  })
 									: sinRegistro}
 							</Col>
 						</Row>
@@ -255,17 +261,17 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								<strong style={{ fontWeight: 600 }}>PRENATALES: </strong>
 								{antecedentesFisiologicos.prenatales.length > 0
 									? antecedentesFisiologicos.prenatales.map((prenatal, index) => {
-										return (
-											<span key={index}>
-												{prenatales
-													.filter(h => h.CODIGO == prenatal)
-													.map(prenatales => {
-														return <span key={prenatales.CODIGO}>{prenatales.ETIQUETA}</span>;
-													})}
-												{index !== antecedentesFisiologicos.prenatales.length - 1 ? ', ' : ''}
-											</span>
-										);
-									})
+											return (
+												<span key={index}>
+													{prenatales
+														.filter(h => h.CODIGO == prenatal)
+														.map(prenatales => {
+															return <span key={prenatales.CODIGO}>{prenatales.ETIQUETA}</span>;
+														})}
+													{index !== antecedentesFisiologicos.prenatales.length - 1 ? ', ' : ''}
+												</span>
+											);
+									  })
 									: sinRegistro}
 							</Col>
 						</Row>
@@ -300,19 +306,19 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								<strong style={{ fontWeight: 600 }}>INMUNIZACIONES: </strong>
 								{antecedentesFisiologicos.inmunizaciones.length > 0
 									? antecedentesFisiologicos.inmunizaciones.map((inmunizacion, index) => {
-										return (
-											<span key={index}>
-												{inmunizaciones
-													.filter(h => h.CODIGO == inmunizacion)
-													.map(inmunizaciones => {
-														return (
-															<span key={inmunizaciones.CODIGO}>{inmunizaciones.ETIQUETA}</span>
-														);
-													})}
-												{index !== antecedentesFisiologicos.inmunizaciones.length - 1 ? ', ' : ''}
-											</span>
-										);
-									})
+											return (
+												<span key={index}>
+													{inmunizaciones
+														.filter(h => h.CODIGO == inmunizacion)
+														.map(inmunizaciones => {
+															return (
+																<span key={inmunizaciones.CODIGO}>{inmunizaciones.ETIQUETA}</span>
+															);
+														})}
+													{index !== antecedentesFisiologicos.inmunizaciones.length - 1 ? ', ' : ''}
+												</span>
+											);
+									  })
 									: sinRegistro}
 							</Col>
 						</Row>
@@ -437,7 +443,10 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 			</div>
 			<div id="pagina2" style={{ marginTop: -1 }}>
 				<div style={{ position: 'relative' }}>
-					<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul}></img>
+					<img
+						alt="hoja membreatada"
+						src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.FORMATO_A4}`}
+					></img>
 
 					<div
 						style={{
@@ -469,19 +478,19 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								<Col xs={24}>
 									{antecedentesPatologicos.length > 0
 										? antecedentesPatologicos.map((item, index) => {
-											return (
-												<Row key={index} style={{ marginTop: espacios - 20 }}>
-													<Col xs={4}>
-														<strong style={{ fontWeight: 600 }}>CIE 10 :</strong>{' '}
-														{item.cod_cie_10}
-													</Col>
-													<Col xs={20}>
-														<strong style={{ fontWeight: 600 }}>DIAGNOSTICO :</strong>{' '}
-														{item.des_diagnostico}
-													</Col>
-												</Row>
-											);
-										})
+												return (
+													<Row key={index} style={{ marginTop: espacios - 20 }}>
+														<Col xs={4}>
+															<strong style={{ fontWeight: 600 }}>CIE 10 :</strong>{' '}
+															{item.cod_cie_10}
+														</Col>
+														<Col xs={20}>
+															<strong style={{ fontWeight: 600 }}>DIAGNOSTICO :</strong>{' '}
+															{item.des_diagnostico}
+														</Col>
+													</Row>
+												);
+										  })
 										: null}
 								</Col>
 							</Row>
@@ -683,10 +692,10 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								{estadoFisico.estadoGeneral === 'B'
 									? ' APARENTA BUENO'
 									: estadoFisico.estadoGeneral === 'R'
-										? ' APARENTA REGULAR'
-										: estadoFisico.estadoGeneral === 'M'
-											? ' APARENTA MALO'
-											: sinRegistro}
+									? ' APARENTA REGULAR'
+									: estadoFisico.estadoGeneral === 'M'
+									? ' APARENTA MALO'
+									: sinRegistro}
 							</Col>
 							<Col xs={12}>
 								<strong style={{ fontWeight: 600 }}>ESTADO CONCIENCIA: </strong>
@@ -706,7 +715,10 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 
 			<div id="pagina3" style={{ marginTop: -1 }}>
 				<div style={{ position: 'relative' }}>
-					<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul}></img>
+					<img
+						alt="hoja membreatada"
+						src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.FORMATO_A4}`}
+					></img>
 
 					<div
 						style={{
@@ -738,15 +750,17 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 						<Row style={{ marginTop: espacios - 10, marginLeft: 10 }}>
 							<Col xs={12}>
 								<strong style={{ fontWeight: 600 }}>MOTIVO CONSULTA : </strong>
-								{enfermedadActual.motivoConsulta !== "" ? enfermedadActual.motivoConsulta : sinRegistro}
+								{enfermedadActual.motivoConsulta !== ''
+									? enfermedadActual.motivoConsulta
+									: sinRegistro}
 							</Col>
 							<Col xs={12}>
 								<strong style={{ fontWeight: 600 }}>CURSO : </strong>
 								{enfermedadActual.curso === '1'
 									? ' ESTACIONARIO'
 									: enfermedadActual.curso === '2'
-										? ' PROGRESIVO'
-										: sinRegistro}
+									? ' PROGRESIVO'
+									: sinRegistro}
 							</Col>
 						</Row>
 						<Row style={{ marginTop: espacios - 20, marginLeft: 10 }}>
@@ -761,10 +775,10 @@ export const ImpresionA4 = ({ datosModal, firma }) => {
 								{enfermedadActual.tipoInformante === 'D'
 									? ' DIRECTA'
 									: enfermedadActual.tipoInformante === 'I'
-										? ' INDIRECTA'
-										: enfermedadActual.tipoInformante === 'M'
-											? ' MIXTA'
-											: sinRegistro}
+									? ' INDIRECTA'
+									: enfermedadActual.tipoInformante === 'M'
+									? ' MIXTA'
+									: sinRegistro}
 							</Col>
 						</Row>
 						<Row style={{ marginTop: espacios - 20, marginLeft: 10 }}>

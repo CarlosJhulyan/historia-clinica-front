@@ -1,18 +1,18 @@
 import { Row, Col, Divider } from 'antd';
-import rojo from '../../assets/impresiones/rojo.jpg';
-import azul from '../../assets/impresiones/azul.jpg';
 import { useSelector } from 'react-redux';
 
 export const ImpresionImagen = ({ datosModal, firma, cmp }) => {
 	const fuente = 17;
 	const espacios = 35;
-	const backgroundRojo = '#FF9999';
-	const backgroundAzul = '#CCCCCC';
+	const backgroundRojo = '#FFFFFF';
+	const backgroundAzul = '#FFFFFF';
 
 	console.log('DAAAAAATAAAAAAAAAAAA7777777777:', datosModal);
 	console.log('FIIIIIIIIIIIIIIIRMAA4:', firma);
 
 	const sinRegistro = 'No hay indicaciones';
+
+	const { themeSettingsGlobal } = useSelector(state => state.settings);
 
 	//Data del Redux
 	const { tipo } = useSelector(state => state.anexo);
@@ -23,7 +23,10 @@ export const ImpresionImagen = ({ datosModal, firma, cmp }) => {
 		<div>
 			<div id="pagina1">
 				<div style={{ position: 'relative' }}>
-					<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul}></img>
+					<img
+						alt="hoja membreatada"
+						src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.FORMATO_A4}`}
+					></img>
 
 					<div
 						style={{
@@ -169,7 +172,10 @@ export const ImpresionImagen = ({ datosModal, firma, cmp }) => {
 			{dataProcedimiento.length > 8 && (
 				<div id="pagina2">
 					<div style={{ position: 'relative' }}>
-						<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul} />
+						<img
+							alt="hoja membreatada"
+							src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.FORMATO_A4}`}
+						/>
 						<div
 							style={{
 								position: 'absolute',
@@ -274,7 +280,10 @@ export const ImpresionImagen = ({ datosModal, firma, cmp }) => {
 			{dataProcedimiento.length > 18 && (
 				<div id="pagina3">
 					<div style={{ position: 'relative' }}>
-						<img alt="hoja membreatada" src={tipo === 'N' ? rojo : azul} />
+						<img
+							alt="hoja membreatada"
+							src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.FORMATO_A4}`}
+						/>
 						<div
 							style={{
 								position: 'absolute',
