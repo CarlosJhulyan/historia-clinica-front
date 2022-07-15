@@ -39,6 +39,11 @@ const GestionarMedicos = () => {
             dataIndex:'TIP_REFERENCIA',
             key:'TIP_REFERENCIA',
             
+        },
+        {
+            title: 'Estado',
+            dataIndex: 'state',
+            
         }
 
     ]
