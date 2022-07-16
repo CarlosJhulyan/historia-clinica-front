@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button, DatePicker, Spin } from 'antd';
+import { Card, Button, DatePicker, Spin, Input, Form, Row, Col, Select, Tooltip } from 'antd';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import { httpClient } from '../../../../util/Api';
 import ModalAsignar from './ModalAsignar';
 import ModalEditar from './ModalEditar';
-import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import ReactExport from 'react-export-excel';
-import { baseUrl, baseUrlImage } from '../../../../config/backend';
+import { ClearOutlined } from '@ant-design/icons';
 
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
@@ -45,6 +44,37 @@ const ConsultarHorario = () => {
 	const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
 	const [datePicker, setDatePicker] = useState(new Date());
 	const [medico, setMedico] = useState({});
+	const [currentEspecialidad, setCurrentEspecialidad] = useState('');
+	const [dataEspecialidades, setDataEspecialidades] = useState([]);
+	const [currentMedico, setCurrentMedico] = useState('');
+	const [dataMedicos, setDataMedicos] = useState([]);
+	const [mensaje, setMensaje] = useState('');
+
+	const traerEspeciliades = async () => {
+		const response = await httpClient.post('horarios/obtenerEspecialidad');
+		if (response.data.success) {
+			setDataEspecialidades(response.data.data);
+		}
+	};
+
+	const traerMedicos = async () => {
+		const response = await httpClient.post('horarios/getMedicoByEspecialidad', {
+			especialidad_id: currentEspecialidad,
+		});
+		if (response.data.success) {
+			if (response.data.data && !response.data.data.length > 0) {
+				setMensaje('No hay medicos disponibles para esta especialidad');
+			} else {
+				setMensaje('');
+			}
+			setDataMedicos(response.data.data);
+		}
+	};
+
+	useEffect(() => {
+		traerMedicos();
+	}, [currentEspecialidad]);
+
 	console.log(fechaSeleccionada);
 	const agregarEvento = data => {
 		var aux = [];
@@ -79,7 +109,8 @@ const ConsultarHorario = () => {
 						>
 							{element.nombre_medico}
 						</div>
-						<p>{element.hora_inicio + ' - ' + element.hora_fin}</p>
+						<p style={{ margin: 0 }}>{element.especialidad}</p>
+						<p style={{ margin: 0 }}>{element.hora_inicio + ' - ' + element.hora_fin}</p>
 					</>
 				),
 				start,
@@ -117,6 +148,8 @@ const ConsultarHorario = () => {
 		setLoading(true);
 		const response = await httpClient.post('/horarios/getHorarioFecha', {
 			mes: currentMes,
+			medico: currentMedico,
+			especialidad: currentEspecialidad,
 		});
 
 		// console.log(response.data.data);
@@ -124,9 +157,9 @@ const ConsultarHorario = () => {
 		setLoading(false);
 	};
 
-	useEffect(() => {
-		traerData();
-	}, [currentMes]);
+	// useEffect(() => {
+	// 	traerData();
+	// }, [currentMes]);
 
 	useEffect(() => {
 		if (datePicker) {
@@ -137,6 +170,7 @@ const ConsultarHorario = () => {
 
 	useEffect(() => {
 		traerData();
+		traerEspeciliades();
 	}, []);
 
 	useEffect(() => {
@@ -148,9 +182,17 @@ const ConsultarHorario = () => {
 				dataNew[item.especialidad] = [item];
 			}
 		});
-		console.log(dataNew);
+		console.log('dataNew', dataNew);
 		setDataFormat(dataNew);
 	}, [events]);
+
+	const [form] = Form.useForm();
+
+	useEffect(() => {
+		form.setFieldsValue({ fecha: moment(datePicker) });
+		traerData();
+		console.log('aaaaaa');
+	}, [currentMedico, currentEspecialidad, currentMes]);
 
 	return (
 		<Card
@@ -195,6 +237,7 @@ const ConsultarHorario = () => {
 								<ExcelSheet data={dataFormat[item]} name={item}>
 									<ExcelColumn label="ESPECIALIDAD" value="especialidad" />
 									<ExcelColumn label="DOCTOR A CARGO" value="nombre_medico" />
+									<ExcelColumn label="FECHA" value="fecha" />
 									<ExcelColumn
 										label="HORARIO DE ATENCIÓN"
 										value={col =>
@@ -239,20 +282,92 @@ const ConsultarHorario = () => {
 			<div className="gx-main-content">
 				<div
 					style={{
-						display: 'flex',
-						flexDirection: 'row-reverse',
 						width: '100%',
 						marginBottom: '20px',
 					}}
 				>
-					<DatePicker
-						picker={'month'}
-						style={{ width: '200px' }}
-						value={moment(datePicker)}
-						onChange={e => {
-							setDatePicker(new Date(e.format('YYYY-MM-DD')));
-						}}
-					/>
+					<Form form={form}>
+						<Row>
+							<Col xs={24} md={12} xxl={8} style={{ paddingLeft: 30, paddingRight: 30 }}>
+								<Form.Item name="fecha" label="Mes">
+									<DatePicker
+										picker={'month'}
+										style={{ width: '100%' }}
+										value={moment(datePicker)}
+										onChange={e => {
+											setDatePicker(new Date(e.format('YYYY-MM-DD')));
+										}}
+									/>
+								</Form.Item>
+							</Col>
+							<Col xs={24} md={12} xxl={8} style={{ paddingLeft: 30, paddingRight: 30 }}>
+								<Row>
+									<Col xs={20}>
+										<Form.Item name="especialidad" label="Especialidad">
+											<Select
+												onChange={value => {
+													setCurrentEspecialidad(value);
+													setCurrentMedico('');
+													setDataMedicos([]);
+												}}
+												value={currentEspecialidad}
+											>
+												{dataEspecialidades.map(item => (
+													<Select.Option key={item.key} value={item.value}>
+														{item.descripcion}
+													</Select.Option>
+												))}
+											</Select>
+										</Form.Item>
+									</Col>
+									<Col xs={4}>
+										<Tooltip title="Limpiar">
+											<Button
+												icon={<ClearOutlined />}
+												onClick={() => {
+													setCurrentEspecialidad('');
+													setCurrentMedico('');
+													setDataMedicos([]);
+													form.setFieldsValue({ especialidad: '', medico: '' });
+												}}
+											/>
+										</Tooltip>
+									</Col>
+								</Row>
+							</Col>
+							<Col xs={24} md={12} xxl={8} style={{ paddingLeft: 30, paddingRight: 30 }}>
+								<Row>
+									<Col xs={20}>
+										<Form.Item name="medico" label="Medico">
+											<Select
+												onChange={setCurrentMedico}
+												value={currentMedico}
+												disabled={mensaje !== ''}
+											>
+												{dataMedicos.map(item => (
+													<Select.Option key={item.num_cmp} value={item.num_cmp}>
+														{item.des_nom_medico} {item.des_ape_medico}
+													</Select.Option>
+												))}
+											</Select>
+											{mensaje && <div style={{ color: 'red', marginTop: '10px' }}>{mensaje}</div>}
+										</Form.Item>
+									</Col>
+									<Col xs={4}>
+										<Tooltip title="Limpiar">
+											<Button
+												icon={<ClearOutlined />}
+												onClick={() => {
+													setCurrentMedico('');
+													form.setFieldsValue({ medico: '' });
+												}}
+											/>
+										</Tooltip>
+									</Col>
+								</Row>
+							</Col>
+						</Row>
+					</Form>
 				</div>
 				<div className="gx-rbc-calendar">
 					{loading ? (
