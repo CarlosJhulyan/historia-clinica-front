@@ -27,7 +27,7 @@ import { useAuth } from '../../../authentication';
 import ModalLoading from '../../../util/modalLoading';
 import ModalComprobante from './modalComprobante';
 import ModalTicket from './modalTicket';
-import { baseUrlImage } from '../../../config/backend';
+import { baseUrl, baseUrlImage } from '../../../config/backend';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 function ModalCobrarPedido({
@@ -1240,7 +1240,11 @@ const ModalComprobanteMenu = ({
 	const [loadingData, setLoadingData] = useState(false);
 
 	async function modifyPdf(url, detalles) {
-		const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+		const nombre = url.split('/');
+
+		const existingPdfBytes = await fetch(
+			baseUrl + '/posventa/downloadComprobante?nombreArchivo=' + nombre[nombre.length - 1]
+		).then(res => res.arrayBuffer());
 
 		const pdfDoc = await PDFDocument.load(existingPdfBytes);
 		const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -1345,7 +1349,7 @@ const ModalComprobanteMenu = ({
 		// link.click();
 
 		const data = new FormData();
-		const nombre = url.split('/');
+
 		data.append('nombreComprobante', nombre[nombre.length - 1]);
 		data.append('pdf', blob);
 
