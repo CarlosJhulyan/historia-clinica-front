@@ -6,7 +6,7 @@ import BalanceHidrico from './balanceHidrico';
 import HistorialBalanceHidrico from './historialBalanceHidrico';
 
 import AsignacionModulos from './configuraciones/asignacionModulos';
-import GestionarMedicos from	'./configuraciones/gestionarMedicos';
+import GestionarMedicos from './configuraciones/gestionarMedicos';
 import ConfiguracionCamas from './configuraciones/camas';
 import ConfiguracionFirmas from './configuraciones/firma';
 import listaPaciente from './listaPaciente';
@@ -37,6 +37,7 @@ import GenerarPedido from './posVenta';
 import ConsultarHorario from './horario/pages/consultar';
 import MovimientosCaja from './posVenta/movimientosCaja';
 import ListaEspera from './admisionConsulta/listaEspera';
+import AnulacionPedidosCompletos from './anulacionPedidosCompletos';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -220,9 +221,7 @@ const App = ({ match }) => {
 		}
 
 		if (token?.data) {
-			items.push(
-				<Route key={33} path={`${match.url}generarPedido`} component={GenerarPedido} />
-			);
+			items.push(<Route key={33} path={`${match.url}generarPedido`} component={GenerarPedido} />);
 			items.push(
 				<Route key={34} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />
 			);
@@ -231,6 +230,13 @@ const App = ({ match }) => {
 			);
 			items.push(
 				<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />
+			);
+			items.push(
+				<Route
+					key={36}
+					path={`${match.url}anulacionPedidosCompletos`}
+					component={AnulacionPedidosCompletos}
+				/>
 			);
 			items.push(<Route key={1} path={`${match.url}listaEspera`} component={ListaEspera} />);
 		}

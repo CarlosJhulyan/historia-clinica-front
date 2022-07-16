@@ -83,6 +83,15 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 			);
 
 			menuItems.push(
+				<Menu.Item key="anulacionPedidosCompletos">
+					<Link to="/anulacionPedidosCompletos">
+						<i className="icon icon-auth-screen" />
+						<span>Anulación de Pedidos Completos</span>
+					</Link>
+				</Menu.Item>
+			);
+
+			menuItems.push(
 				<SubMenu
 					key="horario"
 					popupClassName={getNavStyleSubMenuClass(navStyle)}
@@ -109,26 +118,26 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 				</SubMenu>
 			);
 
-      menuItems.push(
-        <SubMenu
-          key="pacientes"
-          popupClassName={getNavStyleSubMenuClass(navStyle)}
-          title={
-            <span>
-								{' '}
-              <i className="icon icon-auth-screen" />
-								<span>Pacientes</span>
-							</span>
-          }
-        >
-          <Menu.Item key="listaEspera">
-            <Link to="/listaEspera">
-              <i className="icon icon-auth-screen" />
-              <span>Lista de Espera</span>
-            </Link>
-          </Menu.Item>
-        </SubMenu>
-      )
+			menuItems.push(
+				<SubMenu
+					key="pacientes"
+					popupClassName={getNavStyleSubMenuClass(navStyle)}
+					title={
+						<span>
+							{' '}
+							<i className="icon icon-auth-screen" />
+							<span>Pacientes</span>
+						</span>
+					}
+				>
+					<Menu.Item key="listaEspera">
+						<Link to="/listaEspera">
+							<i className="icon icon-auth-screen" />
+							<span>Lista de Espera</span>
+						</Link>
+					</Menu.Item>
+				</SubMenu>
+			);
 		}
 
 		if (token?.modulos && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) {
@@ -506,12 +515,12 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 							<span>Gestionar Médicos</span>
 						</Link>
 					</Menu.Item>
-          {/*<Menu.Item key="configuraciones/asignaciones">*/}
-          {/*  <Link to="/hc-admin/configuraciones/asignaciones">*/}
-          {/*    <i className="icon icon-widgets" />*/}
-          {/*    <span>Gestionar Referencias</span>*/}
-          {/*  </Link>*/}
-          {/*</Menu.Item>*/}
+					{/*<Menu.Item key="configuraciones/asignaciones">*/}
+					{/*  <Link to="/hc-admin/configuraciones/asignaciones">*/}
+					{/*    <i className="icon icon-widgets" />*/}
+					{/*    <span>Gestionar Referencias</span>*/}
+					{/*  </Link>*/}
+					{/*</Menu.Item>*/}
 					<Menu.Item key="configuraciones/camas">
 						<Link to="/hc-admin/configuraciones/camas">
 							<i className="icon icon-company" />
@@ -573,14 +582,14 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					{/* <AppsNavigation /> */}
 				</div>
 				<CustomScrollbars
-          className={`gx-layout-sider-scrollbar`}
-          style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1 }}
-        >
+					className={`gx-layout-sider-scrollbar`}
+					style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1 }}
+				>
 					<Menu
 						defaultOpenKeys={[defaultOpenKeys]}
 						selectedKeys={[selectedKeys]}
-            style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1 }}
-            theme={themeType === THEME_TYPE_LITE ? 'lite' : 'dark'}
+						style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1 }}
+						theme={themeType === THEME_TYPE_LITE ? 'lite' : 'dark'}
 						mode="inline"
 					>
 						{menuItems.map(item => item)}
