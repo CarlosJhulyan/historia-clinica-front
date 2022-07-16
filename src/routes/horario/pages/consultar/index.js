@@ -152,118 +152,6 @@ const ConsultarHorario = () => {
 		setDataFormat(dataNew);
 	}, [events]);
 
-	async function modifyPdf(url) {
-		const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
-
-		const pdfDoc = await PDFDocument.load(existingPdfBytes);
-		const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-		const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-		const fontSize = 8;
-
-		const pages = pdfDoc.getPages();
-		const firstPage = pages[0];
-		const { width, height } = firstPage.getSize();
-		const text = '1';
-		const textWidth = helveticaFont.widthOfTextAtSize(text, fontSize);
-		const text1 = '32.00';
-		const textWidth1 = helveticaFont.widthOfTextAtSize(text, fontSize);
-		const text2 = 'UND';
-		const textWidth2 = helveticaFont.widthOfTextAtSize(text, fontSize);
-		const text3 = 'PROCEDIMIENTO MENOR';
-		const textWidth3 = helveticaFont.widthOfTextAtSize(text, fontSize);
-		const text4 = '110.17';
-		const textWidth4 = helveticaFont.widthOfTextAtSize(text, fontSize);
-		const text5 = '3,254.24';
-		const textWidth5 = helveticaFont.widthOfTextAtSize(text, fontSize);
-
-		// firstPage.drawRectangle({
-		// 	x: 25,
-		// 	y: 590,
-		// 	width: 18,
-		// 	height: 15,
-		// 	borderColor: rgb(1, 0, 0),
-		// });
-
-		firstPage.drawText(text, {
-			x: 25 + 19 - textWidth,
-			y: 590,
-			size: fontSize,
-			font: helveticaFont,
-			color: rgb(0, 0, 0),
-			maxWidth: 19,
-			lineHeight: 10,
-		});
-
-		firstPage.drawText(text1, {
-			x: 70 + 19 - textWidth1,
-			y: 590,
-			size: fontSize,
-			font: helveticaFont,
-			color: rgb(0, 0, 0),
-			maxWidth: 19,
-			lineHeight: 10,
-		});
-
-		firstPage.drawText(text2, {
-			x: 125 + 19 - textWidth2,
-			y: 590,
-			size: fontSize,
-			font: helveticaFont,
-			color: rgb(0, 0, 0),
-			maxWidth: 19,
-			lineHeight: 10,
-		});
-		
-		firstPage.drawText(text3, {
-			x: 190,
-			y: 590,
-			size: fontSize,
-			font: helveticaFont,
-			color: rgb(0, 0, 0),
-			maxWidth: 220,
-			lineHeight: 10,
-		});
-
-		firstPage.drawText(text4, {
-			x: 460 + 19 - textWidth4,
-			y: 590,
-			size: fontSize,
-			font: helveticaFont,
-			color: rgb(0, 0, 0),
-			maxWidth: 19,
-			lineHeight: 10,
-		});
-
-		firstPage.drawText(text5, {
-			x: 512 + 19 - textWidth5,
-			y: 590,
-			size: fontSize,
-			font: helveticaFont,
-			color: rgb(0, 0, 0),
-			maxWidth: 19,
-			lineHeight: 10,
-		});
-
-		const pdfBytes = await pdfDoc.save();
-		const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-		const u = URL.createObjectURL(blob);
-		// descargar el pdf
-		const link = document.createElement('a');
-		link.href = u;
-		link.download = 'test.pdf';
-		link.click();
-	}
-
-	const abc = async () => {
-		const response = await httpClient.post('/posventa/generarReporte', {
-			codGrupoCia: '001',
-			codLocal: '001',
-			numPedVta: '0000558952',
-		});
-		console.log(response.data.data);
-		modifyPdf(baseUrlImage + '/documentos/' + response.data.data);
-	};
-
 	return (
 		<Card
 			title={
@@ -290,13 +178,6 @@ const ConsultarHorario = () => {
 							justifyContent: 'right',
 						}}
 					>
-						{/* <Button
-							onClick={() => {
-								abc();
-							}}
-						>
-							abc
-						</Button> */}
 						<ExcelFile
 							element={
 								<Button

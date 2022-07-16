@@ -27,6 +27,8 @@ import { useAuth } from '../../../authentication';
 import ModalLoading from '../../../util/modalLoading';
 import ModalComprobante from './modalComprobante';
 import ModalTicket from './modalTicket';
+import { baseUrlImage } from '../../../config/backend';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 function ModalCobrarPedido({
 	visible,
@@ -1128,186 +1130,378 @@ function ModalCobrarPedido({
 				></ModalComprobante>
 			) : null}
 
-      {visibleModalSeleccion && (
-        <ModalSeleccionImpresion
-          tipoVenta={tipoVenta}
-          visibleModalSeleccion={visibleModalSeleccion}
-          setVisibleModalComprobante={setVisibleModalComprobante}
-          clearDataAll={clearDataAll}
-          setVisibleModalOrdenes={setVisibleModalOrdenes}
-          visibleModalOrdenes={visibleModalOrdenes}
-          user={user}
-          pacienteCurrent={pacienteCurrent}
-          secCompPago={secCompPago}
-          clienteCurrent={clienteCurrent}
-          medicoCurrent={medicoCurrent}
-          cNumPedVta_in={cNumPedVta_in}
-        />
-      )}
+			{visibleModalSeleccion && (
+				<ModalSeleccionImpresion
+					tipoVenta={tipoVenta}
+					visibleModalSeleccion={visibleModalSeleccion}
+					setVisibleModalComprobante={setVisibleModalComprobante}
+					clearDataAll={clearDataAll}
+					setVisibleModalOrdenes={setVisibleModalOrdenes}
+					visibleModalOrdenes={visibleModalOrdenes}
+					user={user}
+					pacienteCurrent={pacienteCurrent}
+					secCompPago={secCompPago}
+					clienteCurrent={clienteCurrent}
+					medicoCurrent={medicoCurrent}
+					cNumPedVta_in={cNumPedVta_in}
+				/>
+			)}
 		</>
 	);
 }
 
-const ModalSeleccionImpresion = ({ visibleModalSeleccion,
-                                   clearDataAll,
-                                   setVisibleModalComprobante,
-                                   tipoVenta,
-                                   setVisibleModalOrdenes,
-                                   visibleModalOrdenes,
-                                   user,
-                                   pacienteCurrent,
-                                   secCompPago,
-                                   clienteCurrent,
-                                   medicoCurrent,
-                                   cNumPedVta_in,
+const ModalSeleccionImpresion = ({
+	visibleModalSeleccion,
+	clearDataAll,
+	tipoVenta,
+	setVisibleModalOrdenes,
+	visibleModalOrdenes,
+	user,
+	pacienteCurrent,
+	secCompPago,
+	clienteCurrent,
+	medicoCurrent,
+	cNumPedVta_in,
+	setVisibleModalComprobante,
 }) => {
-  const { confirm } = Modal;
+	const { confirm } = Modal;
+	const [visibleModalComprobanteMenu, setVisibleModalComprobanteMenu] = useState(false);
 
-  return (
-    <>
-      <Modal
-        centered
-        closable={false}
-        visible={visibleModalSeleccion}
-        title="Impresión"
-        footer={[
-          <Button
-            onClick={() => {
-              confirm({
-                content: '¿Quiere salir? Asegurese de haber impreso sus comprobantes.',
-                okText: 'Salir',
-                cancelText: 'Cancelar',
-                onOk: () => {
-                  clearDataAll();
-                },
-                centered: true,
-              });
-            }}
-          >
-            Salir
-          </Button>,
-        ]}
-      >
-        <Row justify="space-between">
-          <Col span={11}>
-            <Button onClick={() => setVisibleModalComprobante(true)} block>
-              {tipoVenta === '01' ? 'Boleta' : 'Factura'} electrónica
-            </Button>
-          </Col>
-          <Col span={11}>
-            <Button onClick={() => setVisibleModalOrdenes(true)} block>
-              Ticket de atención
-            </Button>
-          </Col>
-        </Row>
-      </Modal>
+	return (
+		<>
+			<Modal
+				centered
+				closable={false}
+				visible={visibleModalSeleccion}
+				title="Impresión"
+				footer={[
+					<Button
+						onClick={() => {
+							confirm({
+								content: '¿Quiere salir? Asegurese de haber impreso sus comprobantes.',
+								okText: 'Salir',
+								cancelText: 'Cancelar',
+								onOk: () => {
+									clearDataAll();
+								},
+								centered: true,
+							});
+						}}
+					>
+						Salir
+					</Button>,
+				]}
+			>
+				<Row justify="space-between">
+					<Col span={11}>
+						<Button onClick={() => setVisibleModalComprobanteMenu(true)} block>
+							{tipoVenta === '01' ? 'Boleta' : 'Factura'} electrónica
+						</Button>
+					</Col>
+					<Col span={11}>
+						<Button onClick={() => setVisibleModalOrdenes(true)} block>
+							Ticket de atención
+						</Button>
+					</Col>
+				</Row>
+			</Modal>
 
-      {visibleModalOrdenes && (
-        <ModalOrdenes
-          visible={visibleModalOrdenes}
-          setVisible={setVisibleModalOrdenes}
-          user={user}
-          pacienteCurrent={pacienteCurrent}
-          secCompPago={secCompPago}
-          clienteCurrent={clienteCurrent}
-          medicoCurrent={medicoCurrent}
-          cNumPedVta_in={cNumPedVta_in}
-        />
-      )}
-    </>
-  )
-}
+			{visibleModalOrdenes && (
+				<ModalOrdenes
+					visible={visibleModalOrdenes}
+					setVisible={setVisibleModalOrdenes}
+					user={user}
+					pacienteCurrent={pacienteCurrent}
+					secCompPago={secCompPago}
+					clienteCurrent={clienteCurrent}
+					medicoCurrent={medicoCurrent}
+					cNumPedVta_in={cNumPedVta_in}
+				/>
+			)}
+
+			{visibleModalComprobanteMenu && (
+				<ModalComprobanteMenu
+					setVisible={setVisibleModalComprobanteMenu}
+					cNumPedVta_in={cNumPedVta_in}
+					visible={visibleModalComprobanteMenu}
+					setVisibleModalComprobante={setVisibleModalComprobante}
+				></ModalComprobanteMenu>
+			)}
+		</>
+	);
+};
+
+const ModalComprobanteMenu = ({
+	visible,
+	setVisible,
+	setVisibleModalComprobante,
+	cNumPedVta_in,
+}) => {
+	const [loadingData, setLoadingData] = useState(false);
+
+	async function modifyPdf(url, detalles) {
+		const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer());
+
+		const pdfDoc = await PDFDocument.load(existingPdfBytes);
+		const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+		const fontSize = 8;
+
+		const pages = pdfDoc.getPages();
+		const firstPage = pages[0];
+		// const { width, height } = firstPage.getSize();
+		let inicio = 590;
+
+		detalles.forEach((item, index) => {
+			let tam = 15;
+
+			if (item[3].length > 49) {
+				tam = 25;
+			}
+
+			const text = item[0];
+			const textWidth = helveticaFont.widthOfTextAtSize(text, fontSize);
+			const text1 = item[1];
+			const textWidth1 = helveticaFont.widthOfTextAtSize(text, fontSize);
+			const text2 = item[2];
+			const textWidth2 = helveticaFont.widthOfTextAtSize(text, fontSize);
+			const text3 = item[3];
+			const textWidth3 = helveticaFont.widthOfTextAtSize(text, fontSize);
+			const text4 = item[4];
+			const textWidth4 = helveticaFont.widthOfTextAtSize(text, fontSize);
+			const text5 = item[5];
+			const textWidth5 = helveticaFont.widthOfTextAtSize(text, fontSize);
+
+			firstPage.drawText(text, {
+				x: 25 + 19 - textWidth,
+				y: inicio,
+				size: fontSize,
+				font: helveticaFont,
+				color: rgb(0, 0, 0),
+				maxWidth: 19,
+				lineHeight: 10,
+			});
+
+			firstPage.drawText(text1, {
+				x: 70 + 19 - textWidth1,
+				y: inicio,
+				size: fontSize,
+				font: helveticaFont,
+				color: rgb(0, 0, 0),
+				maxWidth: 19,
+				lineHeight: 10,
+			});
+
+			firstPage.drawText(text2, {
+				x: 125 + 19 - textWidth2,
+				y: inicio,
+				size: fontSize,
+				font: helveticaFont,
+				color: rgb(0, 0, 0),
+				maxWidth: 19,
+				lineHeight: 10,
+			});
+
+			firstPage.drawText(text3, {
+				x: 190,
+				y: inicio,
+				size: fontSize,
+				font: helveticaFont,
+				color: rgb(0, 0, 0),
+				maxWidth: 220,
+				lineHeight: 10,
+			});
+
+			firstPage.drawText(text4, {
+				x: 460 + 19 - textWidth4,
+				y: inicio,
+				size: fontSize,
+				font: helveticaFont,
+				color: rgb(0, 0, 0),
+				maxWidth: 19,
+				lineHeight: 10,
+			});
+
+			firstPage.drawText(text5, {
+				x: 512 + 19 - textWidth5,
+				y: inicio,
+				size: fontSize,
+				font: helveticaFont,
+				color: rgb(0, 0, 0),
+				maxWidth: 19,
+				lineHeight: 10,
+			});
+
+			inicio = inicio - tam;
+		});
+
+		const pdfBytes = await pdfDoc.save();
+		const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+		// DESCARGAR EL PDF
+		// const u = URL.createObjectURL(blob);
+		// const link = document.createElement('a');
+		// link.href = u;
+		// link.download = 'test.pdf';
+		// link.click();
+
+		const data = new FormData();
+		const nombre = url.split('/');
+		data.append('nombreComprobante', nombre[nombre.length - 1]);
+		data.append('pdf', blob);
+
+		await httpClient.post('/posventa/subirComprobante', data);
+
+		window.open(url, '_blank');
+	}
+
+	const generarComprobante = async () => {
+		setLoadingData(true);
+		const response = await httpClient.post('/posventa/generarReporte', {
+			codGrupoCia: '001',
+			codLocal: '001',
+			numPedVta: cNumPedVta_in,
+		});
+
+		const detalles = await httpClient.post('/posventa/impDetalle', {
+			codGrupoCia: '001',
+			codLocal: '001',
+			numPedVta: cNumPedVta_in,
+		});
+
+		console.log(response.data.data);
+		await modifyPdf(baseUrlImage + '/documentos/' + response.data.data, detalles.data.data);
+		setLoadingData(false);
+	};
+
+	return (
+		<Modal
+			centered
+			closable={false}
+			visible={visible}
+			title="Comprobantes"
+			onCancel={() => {
+				if (!loadingData) setVisible(false);
+			}}
+			footer={[
+				<Button disabled={loadingData} onClick={() => setVisible(false)}>
+					Salir
+				</Button>,
+			]}
+		>
+			<Row justify="space-between">
+				<Col span={12}>
+					<Button
+						onClick={() => {
+							generarComprobante();
+						}}
+						block
+					>
+						Formato A4
+					</Button>
+				</Col>
+				<Col span={12}>
+					<Button
+						onClick={() => {
+							setVisibleModalComprobante(true);
+						}}
+						block
+					>
+						Formato Ticket
+					</Button>
+				</Col>
+			</Row>
+			{loadingData ? <ModalLoading></ModalLoading> : null}
+		</Modal>
+	);
+};
 
 const ModalOrdenes = ({
-                        visible,
-                        setVisible,
-                        cNumPedVta_in,
-                        user,
-                        pacienteCurrent,
-                        secCompPago,
-                        clienteCurrent,
-                        medicoCurrent
+	visible,
+	setVisible,
+	cNumPedVta_in,
+	user,
+	pacienteCurrent,
+	secCompPago,
+	clienteCurrent,
+	medicoCurrent,
 }) => {
-  const [numOrdenes, setNumOrdenes] = useState([]);
-  const [numOrdenCurrent, setNumOrdenCurrent] = useState();
-  const [visibleModal,  setVisibleModal] = useState(false);
-  const [loadingData,  setLoadintData] = useState(false);
+	const [numOrdenes, setNumOrdenes] = useState([]);
+	const [numOrdenCurrent, setNumOrdenCurrent] = useState();
+	const [visibleModal, setVisibleModal] = useState(false);
+	const [loadingData, setLoadintData] = useState(false);
 
-  const getnumOrdenVta = async () => {
-    setLoadintData(true);
-    try {
-      const {
-        data: { success, message, data },
-      } = await httpClient.post('posventa/getnumOrdenVta', {
-        codGrupoCia: '001',
-        codLocal: '001',
-        numPedVta: cNumPedVta_in,
-      });
-      if (success) setNumOrdenes(data);
-      console.log(message);
-    } catch (e) {
-      console.error(e);
-    }
-    setLoadintData(false);
-  };
+	const getnumOrdenVta = async () => {
+		setLoadintData(true);
+		try {
+			const {
+				data: { success, message, data },
+			} = await httpClient.post('posventa/getnumOrdenVta', {
+				codGrupoCia: '001',
+				codLocal: '001',
+				numPedVta: cNumPedVta_in,
+			});
+			if (success) setNumOrdenes(data);
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+		setLoadintData(false);
+	};
 
-  useEffect(() => {
-    getnumOrdenVta();
-  }, [])
+	useEffect(() => {
+		getnumOrdenVta();
+	}, []);
 
-  return (
-    <>
-      <Modal
-        centered
-        closable={false}
-        visible={visible}
-        title="Tickets de atención"
-        onCancel={() => {
-          if (!loadingData) setVisible(false)
-        }}
-        footer={[
-          <Button
-            disabled={loadingData}
-            onClick={() => setVisible(false)}
-          >
-            Salir
-          </Button>,
-        ]}
-      >
-        <Row justify="space-between">
-          {numOrdenes.map(item => (
-            <>
-              <Col span={12} key={item.NUM_ORDEN_VTA}>
-                <Button
-                  onClick={() => {
-                    setNumOrdenCurrent(item.NUM_ORDEN_VTA);
-                    setVisibleModal(true);
-                  }}
-                  block
-                >
-                  Orden # {item.NUM_ORDEN_VTA}
-                </Button>
-              </Col>
-            </>
-          ))}
-        </Row>
+	return (
+		<>
+			<Modal
+				centered
+				closable={false}
+				visible={visible}
+				title="Tickets de atención"
+				onCancel={() => {
+					if (!loadingData) setVisible(false);
+				}}
+				footer={[
+					<Button disabled={loadingData} onClick={() => setVisible(false)}>
+						Salir
+					</Button>,
+				]}
+			>
+				<Row justify="space-between">
+					{numOrdenes.map(item => (
+						<>
+							<Col span={12} key={item.NUM_ORDEN_VTA}>
+								<Button
+									onClick={() => {
+										setNumOrdenCurrent(item.NUM_ORDEN_VTA);
+										setVisibleModal(true);
+									}}
+									block
+								>
+									Orden # {item.NUM_ORDEN_VTA}
+								</Button>
+							</Col>
+						</>
+					))}
+				</Row>
 
-        {visibleModal ? (
-          <ModalTicket
-            numOrdenVta={numOrdenCurrent}
-            visible={visibleModal}
-            setVisible={setVisibleModal}
-            numPedVta={cNumPedVta_in}
-            secCompPago={secCompPago}
-            clienteCurrent={clienteCurrent}
-            medicoCurrent={medicoCurrent}
-            pacienteCurrent={pacienteCurrent}
-            user={user}
-          />
-        ) : null}
-      </Modal>
-    </>
-  );
-}
+				{visibleModal ? (
+					<ModalTicket
+						numOrdenVta={numOrdenCurrent}
+						visible={visibleModal}
+						setVisible={setVisibleModal}
+						numPedVta={cNumPedVta_in}
+						secCompPago={secCompPago}
+						clienteCurrent={clienteCurrent}
+						medicoCurrent={medicoCurrent}
+						pacienteCurrent={pacienteCurrent}
+						user={user}
+					/>
+				) : null}
+			</Modal>
+		</>
+	);
+};
 
 export default ModalCobrarPedido;
