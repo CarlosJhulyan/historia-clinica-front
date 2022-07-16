@@ -1,7 +1,7 @@
 import React, { useState, createRef, useMemo } from 'react';
 import { Checkbox, Col, Modal, Row, Form, AutoComplete, notification, Divider, Radio } from 'antd';
 import { httpClient } from '../../../util/Api';
-import { notificaciones } from '../../../util/util';
+import { notificaciones, openNotification } from '../../../util/util';
 import axios from 'axios';
 
 const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traerUsuarios }) => {
@@ -11,15 +11,16 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 		console.log(e);
 		setValores(e);
 	};
-	
+
+  const [numDocumento, setNumDocumento] = useState('');
 	const [valores, setValores] = useState(filaActual ? obtenerValores(filaActual.modulos) : []);
 	const [loading, setLoading] = useState(false);
-	
+
 	const [valueCMP, setValueCMP] = useState('');
 	const [optionsCMP, setOptionsCMP] = useState([]);
 	const [valueNOM, setValueNOM] = useState('');
 	const [optionsNOM, setOptionsNOM] = useState([]);
-	
+
 	const [areaDesignada, setAreaDesignada] = useState('1');
 	const opcionesHC = crearOpcionesHC(modulos);
 	const opcionesHospi = crearOpcionesHospi(modulos);
@@ -117,11 +118,16 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 
 	const onSelectCMP = data => {
 		optionsCMP.forEach(element => {
+      if (element.num_doc_iden || element.num_doc_iden === null || element.num_doc_iden.trim() !== '') {
+        openNotification('Asignación de modulos', 'El médico no cuenta con un número de documento de identidad asignado.', 'Warning');
+        setNumDocumento('');
+      }
 			if (element.key === data) {
 				formRef.current.setFieldsValue({
 					num_cmp: element.num_cmp,
 					des_nom_medico: `${element.des_nom_medico + ' ' + element.des_ape_medico}`,
 				});
+        setNumDocumento(element.num_doc_iden);
 			}
 		});
 		setCod(data);
@@ -130,11 +136,16 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 
 	const onSelectNOM = data => {
 		optionsNOM.forEach(element => {
+      if (element.num_doc_iden || element.num_doc_iden === null || element.num_doc_iden.trim() !== '') {
+        openNotification('Asignación de modulos', 'El médico no cuenta con un número de documento de identidad asignado.', 'Warning');
+        setNumDocumento('');
+      }
 			if (element.key === data) {
 				formRef.current.setFieldsValue({
 					num_cmp: element.num_cmp,
 					des_nom_medico: `${element.des_nom_medico + ' ' + element.des_ape_medico}`,
 				});
+        setNumDocumento(element.num_doc_iden);
 			}
 		});
 		setCod(data);
@@ -176,36 +187,38 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 			}
 			visible={abrirModal}
 			onOk={async () => {
-				if (filaActual) {
-					if (valores.length >= 1) {
-						setLoading(true);
-						await guardarAssignacion();
-						await traerUsuarios();
-						setLoading(false);
-					} else {
-						notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
-					}
-				} else {
-					if (cod !== '') {
-						if (valores.length >= 1) {
-							setLoading(true);
-							const respuesta = await guardarAssignacion();
-							if (respuesta?.success) {
-								await traerUsuarios();
-								setLoading(false);
-								setAbrirModal(false);
-								notificaciones('Completado!');
-							} else {
-								notificaciones('El codigo del medico es incorrecto.', 'Alerta');
-								setLoading(false);
-							}
-						} else {
-							notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
-						}
-					} else {
-						notificaciones('Debe ingresar un código de médico', 'Alerta');
-					}
-				}
+        if (numDocumento) {
+          if (filaActual) {
+            if (valores.length >= 1) {
+              setLoading(true);
+              await guardarAssignacion();
+              await traerUsuarios();
+              setLoading(false);
+            } else {
+              notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
+            }
+          } else {
+            if (cod !== '') {
+              if (valores.length >= 1) {
+                setLoading(true);
+                const respuesta = await guardarAssignacion();
+                if (respuesta?.success) {
+                  await traerUsuarios();
+                  setLoading(false);
+                  setAbrirModal(false);
+                  notificaciones('Completado!');
+                } else {
+                  notificaciones('El codigo del medico es incorrecto.', 'Alerta');
+                  setLoading(false);
+                }
+              } else {
+                notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
+              }
+            } else {
+              notificaciones('Debe ingresar un código de médico', 'Alerta');
+            }
+          }
+        } else notificaciones('Se debe asignar un número de documento al médico', 'Alerta');
 			}}
 			onCancel={() => setAbrirModal(false)}
 		>
@@ -247,7 +260,7 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 			)}
 			<div style={{ textAlign: 'center', marginBottom: 30 }}>
 				<Radio.Group
-					value={areaDesignada} 
+					value={areaDesignada}
 					// size="small"
 					onChange={handleChangeAreaDesignada}
 					buttonStyle="solid">

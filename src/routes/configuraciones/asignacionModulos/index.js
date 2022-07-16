@@ -13,13 +13,11 @@ const AsignacionModulos = () => {
 
 	const traerUsuarios = async () => {
 		const respuesta = await httpClient.post('modulos/getMedicosModulos');
-		console.log(respuesta.data.data);
 		setData(respuesta.data.data);
 	};
 
 	const traerModulos = async () => {
 		const respuesta = await httpClient.post('modulos/getModulos');
-		console.log(respuesta.data.data);
 		setModulos(respuesta.data.data);
 	};
 

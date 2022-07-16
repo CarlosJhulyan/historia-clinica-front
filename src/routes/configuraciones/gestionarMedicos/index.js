@@ -1,70 +1,99 @@
-import { Button, Card, Input, Table, Space } from 'antd';
-import Title from 'antd/lib/skeleton/Title';
+import { Button, Card, Form, Input, Row, Switch, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { httpClient } from '../../../util/Api';
+import ModalUpsertMedico from './modalUpsertMedico';
+import { SearchOutlined } from '@ant-design/icons';
 
 const GestionarMedicos = () => {
-    const [data, setData] = useState();
+  const [data, setData] = useState();
+  const [loadingData, setLoadingData] = useState(false);
+  const [visibleModalUpsert, setVisibleModalUpsert] = useState(false);
 
-    const defMedicos = async()=>{
-        const respuesta = await httpClient.get('posventa/getMedicosPosVenta');
-        console.log(respuesta);
-        setData(respuesta.data.data);
+  const defMedicos = async()=>{
+    setLoadingData(true);
+    const respuesta = await httpClient.get('posventa/getMedicosPosVenta');
+    console.log(respuesta);
+    setData(respuesta.data.data);
+    setLoadingData(false);
+  }
+
+  const columns=[
+    {
+      title: 'CMP',
+      dataIndex: 'CMP',
+      key: 'CMP',
+    },
+    {
+      title: 'NOMBRE',
+      dataIndex: 'NOMBRE',
+      key:'NOMBRE',
+    },
+    {
+      title: 'AP. PATERNO',
+      dataIndex: 'APE_PAT',
+      key:'APE_PAT',
+    },
+    {
+      title: 'AP. MATERNO',
+      dataIndex: 'APE_MAT',
+      key: 'APE_MAT',
+    },
+    {
+      title: 'ESPECIALIDAD',
+      dataIndex:'DESC_REFERENCIA',
+      key:'DESC_REFERENCIA',
+    },
+    {
+      title: 'Estado',
+      dataIndex: 'state',
+      key: 'estado',
+      render: (estado) => (
+        <Switch  />
+      )
     }
+  ]
 
-    const columns=[
-        {
-            title: 'CMP',
-            dataIndex: 'CMP',
-            key: 'CMP',
-        },
-        {
-            title: 'AP. PATERNO',
-            dataIndex: 'APE_PAT',
-            key:'APE_PAT',
-        },
-        {
+  useEffect(()=>{
+      defMedicos();
+  },[]);
 
-            title: 'AP. MATERNO',
-            dataIndex: 'APE_MAT',
-            key: 'APE_MAT',
-        },
-        {
-            title: 'REFERENCIA',
-            dataIndex:'DESC_REFERENCIA',
-            key:'DESC_REFERENCIA',
-        },
-        {
-            title: 'REFERENCIA 2',
-            dataIndex:'TIP_REFERENCIA',
-            key:'TIP_REFERENCIA',
-            
-        },
-        {
-            title: 'Estado',
-            dataIndex: 'state',
-            
+  return (
+    <>
+      <Card
+        title='Gestionar Médicos'
+        extra={
+          <>
+            <Button
+              type='primary'
+              onClick={() => setVisibleModalUpsert(true)}
+            >
+              <SearchOutlined />
+            </Button>
+            <Button
+              type='primary'
+              onClick={() => setVisibleModalUpsert(true)}
+            >
+              Crear
+            </Button>
+          </>
         }
+      >
+        <Table
+          className="gx-table-responsive"
+          columns={columns}
+          dataSource={data}
+          loading={loadingData}
+        />
+      </Card>
 
-    ]
-
-    useEffect(()=>{        
-        defMedicos();
-    },[]);
-
-    return (
-        <>
-
-            <Table
-                className="gx-table-responsive"
-                columns={columns}
-                dataSource={data}
-            />
-
-            
-
-        </>
-    );
+      {visibleModalUpsert &&
+        <ModalUpsertMedico
+          visible={visibleModalUpsert}
+          setVisible={setVisibleModalUpsert}
+        />
+      }
+    </>
+  );
 }
 
 

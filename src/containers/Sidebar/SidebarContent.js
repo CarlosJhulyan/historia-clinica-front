@@ -503,9 +503,15 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					<Menu.Item key="configuraciones/medicos">
 						<Link to="/hc-admin/configuraciones/medicos">
 							<i className="icon icon-widgets" />
-							<span>Gestionar Médicos </span>
+							<span>Gestionar Médicos</span>
 						</Link>
 					</Menu.Item>
+          {/*<Menu.Item key="configuraciones/asignaciones">*/}
+          {/*  <Link to="/hc-admin/configuraciones/asignaciones">*/}
+          {/*    <i className="icon icon-widgets" />*/}
+          {/*    <span>Gestionar Referencias</span>*/}
+          {/*  </Link>*/}
+          {/*</Menu.Item>*/}
 					<Menu.Item key="configuraciones/camas">
 						<Link to="/hc-admin/configuraciones/camas">
 							<i className="icon icon-company" />

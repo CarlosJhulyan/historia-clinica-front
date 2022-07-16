@@ -93,7 +93,7 @@ const ConfiguracionFirmas = () => {
       key: 'nombres',
       render: (text, record) => (
         <>{record.nombres} {record.apellidos}</>
-      )
+      ),
     },
     {
       title: 'Fecha firma',
