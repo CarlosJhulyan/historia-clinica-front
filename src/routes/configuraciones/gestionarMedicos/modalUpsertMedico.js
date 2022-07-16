@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from 'antd';
 import { httpClient } from '../../../util/Api';
-import { notificaciones } from '../../../util/util';
+import { notificaciones, openNotification } from '../../../util/util';
 import moment from 'moment';
 
 const ModalUpsertMedico = ({
                              visible,
                              setVisible,
-                             filaActual,
-                             editarMedico
+                             currentMedico
 }) => {
   const [dataListTipoColegio, setDataListTipoColegio] = useState([]);
   const [dataListEspecialidad, setDataListEspecialidad] = useState([]);
+  const [newEspecialidad, setNewEspecialidad] = useState('');
+  const [loadingSave, setLoadingSave] = useState(false);
   const [refForm] = Form.useForm();
 
   const traerListaTipoColegio = () => {
@@ -36,36 +37,48 @@ const ModalUpsertMedico = ({
     traerListaTipoColegio();
     traerListaEspecialidad();
 
-    if (editarMedico) {
+    if (currentMedico) {
+      const apellidos = {
+        apellidoP: currentMedico.APELLIDOS.trim().split(' ')[0],
+        apellidoM: currentMedico.APELLIDOS.trim().split(' ')[1],
+      }
+      if (currentMedico.APELLIDOS.trim().split(' ').length === 3) {
+        apellidos.apellidoM = currentMedico.APELLIDOS.trim().split(' ')[2]
+      }
+
       refForm.setFieldsValue({
-        cmp: filaActual.CMP,
-        nombre: filaActual.NOMBRE,
-        apellidoP: filaActual.APE_PAT,
-        apellidoM: filaActual.APE_MAT,
-        referencia: filaActual.DESC_REFERENCIA,
+        cmp: currentMedico.CMP,
+        nombre: currentMedico.NOMBRES,
+        referencia: currentMedico.DESC_REFERENCIA,
+        sexo: currentMedico.COD_SEXO,
+        direccion: currentMedico.DIRECCION,
+        numDoc: currentMedico.NUM_DOC,
+        especialidad: currentMedico.ESPECIALIDAD,
+        tipoColegio: currentMedico.COD_TIPO_COLEGIO,
+        codUsu: currentMedico.USUARIO,
+        fecNac: moment(currentMedico.FEC_NAC),
+        ...apellidos
       });
-    } else {
-      refForm.setFieldsValue({ referencia: '', nombre: '', apellidoP: '', cmp: '', apellidoM: '' });
     }
   }, []);
 
-  const guardar = async (data) => {
+  const guardar = async (values) => {
+    setLoadingSave(true);
     const dataFormat = {
-      ...data,
-      fechaNac: moment(data.fechaNac).format('YYYY-MM-DD'),
-      apellidos: data.apellidoP + ' ' + data.apellidoM
+      ...values,
+      fecNac: moment(values.fecNac).format('DD/MM/yyyy'),
+      apellidos: values.apellidoP + ' ' + values.apellidoM,
     }
 
-    const funGuardar = async () => {
-      await httpClient.post('/admin/createMedico', dataFormat);
+    const { data: { success, message } } = await httpClient.post('/admin/createMedico', dataFormat);
+
+    if (success) {
+      openNotification('Médico', message);
       setVisible(false);
-    };
-    notificaciones('', 'Promesa', {
-      pendiente: 'Guardando...',
-      ok: 'Guardado correctamente',
-      error: 'Error al guardar',
-      promesa: funGuardar,
-    });
+    } else {
+      openNotification('Médico', message, 'warning');
+    }
+    setLoadingSave(false);
   };
 
   return (
@@ -77,13 +90,19 @@ const ModalUpsertMedico = ({
         title="Mantenimiento Médico"
         onCancel={() => setVisible(false)}
         footer={[
-          <Button onClick={() => setVisible(false)}>Cerrar</Button>,
+          <Button
+            onClick={() => setVisible(false)}
+            disabled={loadingSave}
+          >
+            Cerrar
+          </Button>,
           <Button
             htmlType='submit'
             type='primary'
             form='form-create-doctor'
+            loading={loadingSave}
           >
-            Grabar
+            {currentMedico ? 'Actualizar' : 'Grabar'}
           </Button>,
         ]}
       >
@@ -153,7 +172,7 @@ const ModalUpsertMedico = ({
               </Form.Item>
 
               <Form.Item
-                name="fechaNac"
+                name="fecNac"
                 label="Fecha Nac"
                 rules={[{ required: true }]}
               >
@@ -190,7 +209,7 @@ const ModalUpsertMedico = ({
               <Form.Item
                 name="codUsu"
                 label="Usuario"
-                rules={[{ required: true }]}
+                rules={[{ required: true, len: 5 }]}
               >
                 <Input />
               </Form.Item>
@@ -200,7 +219,13 @@ const ModalUpsertMedico = ({
                 label="Especialidad"
                 rules={[{ required: true }]}
               >
-                <Select placeholder="Seleccionar especialidad">
+                <Select
+                  placeholder="Seleccionar especialidad"
+                  showSearch
+                  onSearch={e => {
+                    setNewEspecialidad(e.toUpperCase());
+                  }}
+                >
                   {dataListEspecialidad.map((item, index) => {
                     return (
                       <Select.Option value={item.value} key={index}>
@@ -208,6 +233,7 @@ const ModalUpsertMedico = ({
                       </Select.Option>
                     );
                   })}
+                  <Select.Option value={newEspecialidad}>{newEspecialidad}</Select.Option>
                 </Select>
               </Form.Item>
             </Col>
