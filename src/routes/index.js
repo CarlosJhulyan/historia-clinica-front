@@ -38,6 +38,7 @@ import ConsultarHorario from './horario/pages/consultar';
 import MovimientosCaja from './posVenta/movimientosCaja';
 import ListaEspera from './admisionConsulta/listaEspera';
 import AnulacionPedidosCompletos from './anulacionPedidosCompletos';
+import AsignacionMedicos from './configuraciones/asignacionMedicos';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -193,20 +194,27 @@ const App = ({ match }) => {
 			items.push(
 				<Route
 					key={26}
+					path={`${match.url}hc-admin/configuraciones/asignacionbusmedicos`}
+					component={AsignacionMedicos}
+				/>
+			);
+			items.push(
+				<Route
+					key={27}
 					path={`${match.url}hc-admin/configuraciones/modulos`}
 					component={AsignacionModulos}
 				/>
 			);
 			items.push(
 				<Route
-					key={27}
+					key={28}
 					path={`${match.url}hc-admin/configuraciones/firmas`}
 					component={ConfiguracionFirmas}
 				/>
 			);
 			items.push(
 				<Route
-					key={28}
+					key={29}
 					path={`${match.url}hc-admin/configuraciones/camas`}
 					component={ConfiguracionCamas}
 				/>
@@ -214,19 +222,19 @@ const App = ({ match }) => {
 		}
 
 		if (tokenReports && dataPrincial) {
-			items.push(<Route key={29} path={`${match.url}reportes/reporte1`} component={Reporte1} />);
-			items.push(<Route key={30} path={`${match.url}reportes/reporte2`} component={Reporte2} />);
-			items.push(<Route key={31} path={`${match.url}reportes/reporte3`} component={Reporte3} />);
-			items.push(<Route key={32} path={`${match.url}reportes/reporte4`} component={Reporte4} />);
+			items.push(<Route key={30} path={`${match.url}reportes/reporte1`} component={Reporte1} />);
+			items.push(<Route key={31} path={`${match.url}reportes/reporte2`} component={Reporte2} />);
+			items.push(<Route key={32} path={`${match.url}reportes/reporte3`} component={Reporte3} />);
+			items.push(<Route key={33} path={`${match.url}reportes/reporte4`} component={Reporte4} />);
 		}
 
 		if (token?.data) {
-			items.push(<Route key={33} path={`${match.url}generarPedido`} component={GenerarPedido} />);
+			items.push(<Route key={34} path={`${match.url}generarPedido`} component={GenerarPedido} />);
 			items.push(
-				<Route key={34} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />
+				<Route key={35} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />
 			);
 			items.push(
-				<Route key={35} path={`${match.url}horario/consultar`} component={ConsultarHorario} />
+				<Route key={36} path={`${match.url}horario/consultar`} component={ConsultarHorario} />
 			);
 			items.push(
 				<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />

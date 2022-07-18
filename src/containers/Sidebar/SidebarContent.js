@@ -509,12 +509,32 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 							<span>Asignacion de Modulos</span>
 						</Link>
 					</Menu.Item>
-					<Menu.Item key="configuraciones/medicos">
-						<Link to="/hc-admin/configuraciones/medicos">
-							<i className="icon icon-widgets" />
-							<span>Gestionar Médicos</span>
-						</Link>
-					</Menu.Item>
+					<SubMenu
+						key="medicos"
+						title={
+							<span>
+								{' '}
+								<i className="icon icon-widgets" />
+								<span>Médicos</span>
+							</span>
+
+						}
+					>
+						<Menu.Item key="configuraciones/medicos">
+							<Link to="/hc-admin/configuraciones/medicos">
+								<i className="icon icon-widgets" />
+								<span>Gestionar Médicos</span>
+							</Link>
+						</Menu.Item>
+
+						<Menu.Item key="configuraciones/asignacionmedicos">
+							<Link to="/hc-admin/configuraciones/asignacionbusmedicos">
+								<i className="icon icon-widgets" />
+								<span>Asignacion </span>
+							</Link>
+						</Menu.Item>
+
+					</SubMenu>
 					{/*<Menu.Item key="configuraciones/asignaciones">*/}
 					{/*  <Link to="/hc-admin/configuraciones/asignaciones">*/}
 					{/*    <i className="icon icon-widgets" />*/}
