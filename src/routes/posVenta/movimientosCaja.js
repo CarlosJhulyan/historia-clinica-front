@@ -21,6 +21,7 @@ import { httpClient } from '../../util/Api';
 import { useAuth } from '../../authentication';
 import { openNotification } from '../../util/util';
 import moment from 'moment';
+import ModalLoading from '../../util/modalLoading';
 
 function MovimientosCaja() {
   const { confirm } = Modal;
@@ -34,6 +35,7 @@ function MovimientosCaja() {
   const [fechaApertura, setFechaApertura] = useState();
   const [turnoCaja, setTurnoCaja] = useState('');
   const [loadingDataInit, setLoadingDataInit] = useState(false);
+  const [loadingData, setLoadingData] = useState(false);
   const [loadingValid, setLoadingValid] = useState(false);
   const [diaVenta, setDiaVenta] = useState(moment().format('DD/MM/yyyy'));
   const { Option } = Select;
@@ -54,6 +56,7 @@ function MovimientosCaja() {
           icon: <ExclamationCircleOutlined />,
           content: '¿Está seguro que desea efectuar la operación? Esto puede tomar unos segundos.',
           onOk: async () => {
+            setLoadingData(true);
             if (validado) {
               await obtenerValorComprobanteBoleta();
               await obtenerValorComprobanteFactura();
@@ -67,6 +70,7 @@ function MovimientosCaja() {
                 setVisibleModalAperturaCierre(false);
                 openNotification('Pos Venta', 'No hay datos', 'Warning');
               }
+              setLoadingData(false);
             }
           },
           onCancel() {
@@ -75,6 +79,7 @@ function MovimientosCaja() {
           },
           cancelText: 'Cancelar',
           okText: 'Continuar',
+          centered: true,
         }
       );
     else {
@@ -92,9 +97,11 @@ function MovimientosCaja() {
           icon: <ExclamationCircleOutlined />,
           content: '¿Está seguro que desea efectuar la operación?',
           onOk: async () => {
+            setLoadingData(true);
             if (validado) {
               await registraMovimientoApertura(numCaja);
             }
+            setLoadingData(false);
           },
           onCancel() {
             Modal.destroyAll();
@@ -102,6 +109,7 @@ function MovimientosCaja() {
           },
           cancelText: 'Cancelar',
           okText: 'Continuar',
+          centered: true,
         }
       );
     else setVisibleModalAperturaCierre(false);
@@ -411,6 +419,7 @@ function MovimientosCaja() {
         visible={visibleModalAperturaCierre}
         title='Apertura/Cierre'
         footer={false}
+        centered
         // onCancel={() => setVisibleModalAperturaCierre(false)}
       >
         <Form
@@ -476,6 +485,7 @@ function MovimientosCaja() {
           }} />}
         </Form>
       </Modal>
+      {loadingData ? <ModalLoading></ModalLoading> : null}
     </>
   );
 }

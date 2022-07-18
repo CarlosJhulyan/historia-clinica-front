@@ -1241,7 +1241,7 @@ const ModalComprobanteMenu = ({
 
 	async function modifyPdf(url, detalles) {
 		const nombre = url.split('/');
-
+    console.log(nombre);
 		const existingPdfBytes = await fetch(
 			baseUrl + '/posventa/downloadComprobante?nombreArchivo=' + nombre[nombre.length - 1]
 		).then(res => res.arrayBuffer());

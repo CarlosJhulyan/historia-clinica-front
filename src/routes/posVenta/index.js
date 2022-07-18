@@ -648,7 +648,14 @@ function GenerarPedido() {
 			if (!success) {
 				return true;
 			} else {
-				openNotification('Pos Venta', 'Abra una nueva caja para continuar', 'Warning');
+        confirm({
+          title: 'Mensaje del Sistema',
+          content: 'Abra una nueva caja para continuar...',
+          okCancel: false,
+          onOk: () => {},
+          okText: 'Aceptar',
+          centered: true
+        });
 				return false;
 			}
 		} catch (e) {
@@ -838,12 +845,7 @@ function GenerarPedido() {
 								}}
 								onClick={() => {
                   if (data.length > 0) confirm({
-                    content: (
-                      <>
-                        <p>Aun mantiene sus productos seleccinados anteriormente.</p>
-                        <p>Si acepta el cambio se sobrescribirá el resumen de productos.</p>
-                      </>
-                    ),
+                    content: 'Si continua se sobrescribirá su resumen de productos.',
                     onOk: () => {
                       setVisibleModal(true);
                     },

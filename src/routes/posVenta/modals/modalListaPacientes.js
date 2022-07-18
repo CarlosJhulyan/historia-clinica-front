@@ -23,12 +23,21 @@ import { SearchOutlined } from '@ant-design/icons';
 import { httpClient } from '../../../util/Api';
 import ModalDetalles from '../../registroPaciente/modalDetalles';
 import ModalTriaje from '../../registroPaciente/modalTriaje';
+import moment from 'moment';
+import { notificaciones, openNotification } from '../../../util/util';
 
 const { Option } = Select;
 
-const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent }) => {
+const ModalListaPacientes = ({
+                               visible,
+                               setVisible,
+                               setPacienteCurrent,
+                               setClienteCurrent
+}) => {
+  const { confirm } = Modal;
   const [abrirModal, setAbrirModal] = useState(false);
   const [abrirModalTriaje, setAbrirModalTriaje] = useState(false);
+  const [visibleModalCreateClient, setVisibleModalCreateClient] = useState(false);
   const [filaActual, setFilaActual] = useState({});
   const [data, setData] = useState();
   const [loadingData, setLoadingData] = useState(false)
@@ -40,6 +49,7 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent }) => {
   const [tipoPariente, setTipoPariente] = useState([]);
   const [estadoCivil, setEstadoCivil] = useState([]);
   const [loadingDataSelect, setLoadingDataSelect] = useState(false)
+  const [pacienteActual, setPacienteActual] = useState({});
 
   const openNotification = (type, message, description) => {
     notification[type]({
@@ -166,14 +176,66 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent }) => {
 
       if (success) {
         setPacienteCurrent(data);
-        openNotification('success', 'Ingreso Paciente', 'Paciente agregado correctamente');
-        setVisible(false);
+        const edad = Math.round(moment().diff(moment(data.FEC_NAC_CLI, 'DD/MM/yyyy'), 'years', true));
+
+        if (edad >= 18) {
+          const existe = await existeCliente(data.NUM_DOCUMENTO);
+          if (!existe) return;
+
+          if (existe === 'S') {
+            // INSERTAR DATOS CON EL COD_CLI
+            const cliente = await traerDataClientesPorDocumento(data.NUM_DOCUMENTO);
+            openNotification('success', 'Ingreso Paciente', 'Paciente agregado correctamente');
+            setClienteCurrent(cliente);
+            setVisible(false);
+          } else {
+            // ABRIR MODAL PARA INSERTAR DATOS DE CLIENTE
+            confirm({
+              content: 'El paciente no esta registrado como cliente, ¿Quiere continuar?',
+              onOk: () => {
+                setPacienteActual(data);
+                setVisibleModalCreateClient(true);
+              },
+              okText: 'Continuar',
+              cancelText: 'Atrás',
+              centered: true
+            });
+          }
+        } else {
+          confirm({
+            content: 'El paciente es MENOR de edad, por favor seleccioné un cliente apoderado o tutor.',
+            okCancel: false,
+            okText: 'Aceptar'
+          });
+          setVisible(false);
+        }
       }
     } catch (e) {
       console.log(e);
       openNotification('error', 'Error Datos Paciente', 'No se pudo traer los datos del paciente, intente de nuevo.')
     }
     setLoadingDataSelect(false);
+  }
+
+  const traerDataClientesPorDocumento = async (numDoc) => {
+    const { data: { success, data } } = await httpClient.post('posventa/getClientesDocPosVenta', {
+      codGrupoCia: '001',
+      codLocal: '001',
+      documento: numDoc,
+    });
+
+    if (success) return data[0];
+  };
+
+  const existeCliente = async (numDoc) => {
+    try {
+      const { data: { data, success } } = await httpClient.post('posventa/existeCliente', {
+        numDoc
+      });
+      if (success) return data.trim();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   useEffect(() => {
@@ -272,17 +334,20 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent }) => {
           <Button loading={loadingDataSelect} disabled={!codEditarPaciente} onClick={() => traerDatosPaciente()}>Seleccionar Paciente</Button>,
           <Button style={{
             background: "#EB5353"
-          }} 
+          }}
           onClick={() => setVisible(false)}>
             <p style={{color: "white"}}>Cerrar</p>
             </Button>
         ]}
       >
-        <Form layout="vertical" ref={formRef} onSubmitCapture={handleSearch}>
+        <Form layout="vertical" ref={formRef} onFinish={handleSearch}>
           <Row style={{ flexDirection: 'row', paddingLeft: '5px', paddingRight: '5px', marginTop: '10px' }}>
             <Col lg={6} md={8} sm={12} xs={24}>
 
-              <Form.Item name="tipo" label="Tipo">
+              <Form.Item
+                name="tipo"
+                label="Tipo"
+              >
                 <Select
                   name="DOC_TIP_DOCUMENTO"
                   value={datosSearch.DOC_TIP_DOCUMENTO}
@@ -360,6 +425,17 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent }) => {
           loading={loadingData} />
       </Modal>
 
+      {visibleModalCreateClient && (
+        <ModalNewCliente
+          setVisible={setVisibleModalCreateClient}
+          visible={visibleModalCreateClient}
+          currentPaciente={pacienteActual}
+          setVisibleModalSeleccion={setVisible}
+          setClienteCurrent={setClienteCurrent}
+          traerDataClientesPorDocumento={traerDataClientesPorDocumento}
+        />
+      )}
+
       {abrirModal ? (
         <ModalDetalles
           abrirModal={abrirModal}
@@ -387,5 +463,153 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent }) => {
     </>
   );
 };
+
+function ModalNewCliente({
+  visible,
+  setVisible,
+  currentPaciente,
+  setVisibleModalSeleccion,
+  traerDataClientesPorDocumento,
+  setClienteCurrent,
+}) {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [natural, setNatural] = useState(
+    currentPaciente.COD_TIP_DOCUMENTO !== '01'
+  );
+
+  useEffect(() => {
+    form.setFieldsValue({
+      documento: currentPaciente.NUM_DOCUMENTO,
+      telefono: currentPaciente.CELL_CLI,
+      correo: currentPaciente.CORREO,
+      nombre: currentPaciente.NOMBRE,
+      apellidoP: currentPaciente.APE_PATERNO,
+      apellidoM: currentPaciente.APE_MATERNO,
+      direccion: currentPaciente.DIR_CLI,
+      razonSocial: currentPaciente.TIP_DOCUMENTO,
+    });
+  }, []);
+
+  const guardar = async () => {
+    const token = JSON.parse(localStorage.getItem('token'));
+    const { documento, telefono, correo, nombre, apellidoP, apellidoM, direccion, razonSocial } =
+      form.getFieldsValue();
+
+    if (natural) {
+      if (documento === '' || nombre === '' || apellidoP === '' || apellidoM === '') {
+        notificaciones('Debe completar todos los campos', 'Alerta');
+        return;
+      }
+    } else {
+      if (documento === '' || razonSocial === '') {
+        notificaciones('Debe completar todos los campos', 'Alerta');
+        return;
+      }
+    }
+
+    setLoading(true);
+
+    await httpClient.post('/posventa/grabarCliente', {
+      pNombre: nombre !== '' ? nombre : '.',
+      pAPellidoPat: apellidoP !== '' ? apellidoP : '.',
+      pApellidoMat: apellidoM !== '' ? apellidoM : '.',
+      pTipoDocIdent: documento.length > 8 ? '02' : '01',
+      pDni: documento,
+      pDirCliente: direccion !== '' ? direccion : '.',
+      vRazonSocial: razonSocial !== '' ? razonSocial : '.',
+      vTelefono: telefono !== '' ? telefono : '.',
+      vCorreo: correo !== '' ? correo : '.',
+      idUsuarioLogueado: token.data.sec_usu_local,
+    });
+
+    const cliente = await traerDataClientesPorDocumento(documento);
+    openNotification('success', 'Ingreso Paciente y cliente', 'Paciente agregado correctamente');
+    setClienteCurrent(cliente);
+    setLoading(false);
+    setVisible(false);
+    setVisibleModalSeleccion(false);
+  };
+
+  return (
+    <Modal
+      centered
+      width={700}
+      visible={visible}
+      closable={false}
+      title="Nuevo Cliente"
+      footer={[
+        <Button onClick={() => setVisible(false)}>Cancelar</Button>,
+        <Button
+          htmlType='submit'
+          style={{ background: '#0169aa', color: '#fff' }}
+          form='form-new-cliente'
+          loading={loading}
+        >
+          Grabar
+        </Button>,
+      ]}
+    >
+      <Form
+        id='form-new-cliente'
+        form={form}
+        labelCol={{ span: 7 }}
+        wrapperCol={{ span: 17 }}
+        onFinish={guardar}
+      >
+        <Row>
+          <Col span={12}>
+            <Form.Item
+              name="documento"
+              label="DNI o RUC"
+              style={{ margin: 0 }}
+              rules={[{ required: true, max: 11, min: 8 }]}
+            >
+              <Input
+                size="small"
+                onChange={value => {
+                  if (value.target.value.length === 11) {
+                    setNatural(false);
+                  } else {
+                    setNatural(true);
+                  }
+                }}
+              />
+            </Form.Item>
+            <Form.Item name="telefono" label="Teléfono" style={{ margin: 0 }}>
+              <Input size="small" />
+            </Form.Item>
+            <Form.Item name="correo" label="Correo" style={{ margin: 0 }}>
+              <Input size="small" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item name="nombre" label="Nombre" style={{ margin: 0 }}>
+              <Input size="small" />
+            </Form.Item>
+            <Form.Item name="apellidoP" label="Ape. Pat" style={{ margin: 0 }}>
+              <Input size="small" />
+            </Form.Item>
+            <Form.Item name="apellidoM" label="Ape. Mat" style={{ margin: 0 }}>
+              <Input size="small" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            <Form.Item name="direccion" label="Dirección" style={{ margin: 0 }}>
+              <Input size="small" />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item name="razonSocial" label="Razón Social" style={{ margin: 0 }}>
+              <Input size="small" disabled={natural} />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    </Modal>
+  );
+}
 
 export default ModalListaPacientes;

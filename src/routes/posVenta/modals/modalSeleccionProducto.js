@@ -16,7 +16,8 @@ function ModalSeleccionProducto({
                                   setProductoCurrent,
                                   productoCurrent,
                                   cancelProductoSelected,
-                                  aceptedProductoSelected
+                                  aceptedProductoSelected,
+                                  permiteEditarPrecio
 }) {
   const dataInitialFetch = {
     codGrupoCia: '001',
@@ -163,7 +164,7 @@ function ModalSeleccionProducto({
                       type='number'
                       min={0}
                       value={dataForm.pu}
-                      disabled={loadingListaFrac}
+                      disabled={loadingListaFrac || !permiteEditarPrecio}
                       onChange={(e) => setDataForm({...dataForm, pu: Number(e.target.value), total: Number(e.target.value) * dataForm.cantidad})}
                     />
                     {(listaFrac && listaFrac.length > 0 && dataForm.pu < listaFrac[0].PRECIO_MIN) && (

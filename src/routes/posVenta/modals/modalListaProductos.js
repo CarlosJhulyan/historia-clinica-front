@@ -12,12 +12,13 @@ import {
 	Divider,
 	List,
 } from 'antd';
-import moment from 'moment';
+
 import { httpClient } from '../../../util/Api';
 import ModalSeleccionProducto from './modalSeleccionProducto';
 import { ExclamationCircleOutlined, MinusOutlined } from '@ant-design/icons';
 import ModalDatosPedido from './modalDatosPedido';
 import ModalInfoProducto from './modalInforProducto';
+import { useAuth } from '../../../authentication';
 
 function ModalListaProductos({
 	visible,
@@ -53,6 +54,10 @@ function ModalListaProductos({
 	const [visibleModalInfoProducto, setVisibleModalInfoProducto] = useState(false);
 	const [totalLabel, setTotalLabel] = useState(0);
 	const [dataCurrentLabel, setDataCurrentLabel] = useState({});
+  const [permiteEditarPrecio, setPermiteEditarPrecio] = useState(false);
+  const {
+    authUser: { data: user },
+  } = useAuth();
 
 	const [state, setState] = useState();
 	const [dataList, setDataList] = useState([]);
@@ -251,7 +256,26 @@ function ModalListaProductos({
 		setLoadingEspecialidades(false);
 	};
 
+  const validaCambioPrecio = async () => {
+    try {
+      const {
+        data: { success, data },
+      } = await httpClient.post('posventa/validaCambioPrecio', {
+        codGrupoCia: '001',
+        codLocal: '001',
+        secUsu: user.sec_usu_local
+      });
+
+      if (success) {
+        setPermiteEditarPrecio(data.trim() === 'N');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 	useEffect(() => {
+    validaCambioPrecio();
 		getListaProductos();
 		getListaEspecialidades();
 	}, []);
@@ -416,6 +440,9 @@ function ModalListaProductos({
 								}}
 								onClick={() => {
 									chargeDetailsModalProducto(productosCurrent, productosDetalles);
+                  setProductosCurrent([]);
+                  setSelectedRowKeys([]);
+                  setProductosDetalles([]);
 									setVisible(false);
 								}}
 								disabled={productosDetalles.length <= 0}
@@ -480,6 +507,7 @@ function ModalListaProductos({
 					productoCurrent={productoCurrent}
 					productosCurrent={productosCurrent}
 					setProductoCurrent={setProductoCurrent}
+          permiteEditarPrecio={permiteEditarPrecio}
 				/>
 			)}
 			{visibleModalInfoProducto ? (

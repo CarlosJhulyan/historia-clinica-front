@@ -154,7 +154,6 @@ function ModalDatosPedido({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-                    disabled={!clienteCurrent.key || !medicoCurrent.key || !pacienteCurrent.NUM_DOCUMENTO}
 										onClick={guardando ? null : handleLimpiar}
 									>
 										Limpiar
@@ -312,6 +311,7 @@ function ModalDatosPedido({
           visible={visibleModalPacientes}
           setVisible={setVisibleModalPacientes}
           setPacienteCurrent={setPacienteCurrent}
+          setClienteCurrent={setClienteCurrent}
         />
       )}
       {visibleModalCliente && (
