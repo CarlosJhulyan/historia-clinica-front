@@ -8,12 +8,13 @@ function ModalBusquedaComprobante({
 	setLoadingData,
 	dataSend,
 	setDataSend,
-	traerPedido,
 	handleChangeText,
 	loadingData,
 	setAbrirModalManual,
 	abrirModalManual,
 	dataComprobantesPago,
+	setDataCabecera,
+	setDataDetalles,
 }) {
 	const { Option } = Select;
 
@@ -44,8 +45,24 @@ function ModalBusquedaComprobante({
 
 		try {
 			const correlativo = await httpClient.post('posventa/getCorrelativoMontoNeto', dataFormat);
-			if (correlativo.data.success) {
+			if (correlativo.data.data) {
 				const arrayData = correlativo.data.data.split(';');
+
+				const verificaPedido = await httpClient.post('posventa/cajVerificaPedido', {
+					cCodGrupoCia: '001',
+					cCodLocal: '001',
+					cNumPedVta: arrayData[0],
+					nMontoVta: dataSend.MONTO,
+					// nIndReclamoNavsat,
+					// cIndAnulaTodoPedido,
+					// cValMints,
+				});
+
+				if (!verificaPedido.data.success) {
+					openNotification('error', verificaPedido.data.message);
+					setLoadingData(false);
+					return;
+				}
 
 				const verificaProdVirtuales = await httpClient.post('posventa/cajVerificaProdVirtuales', {
 					cCodGrupoCia_in: '001',
@@ -53,13 +70,42 @@ function ModalBusquedaComprobante({
 					cNumPedVta_in: arrayData[0],
 					// MONTO: data.MONTO.trim(),
 				});
+
+				if (verificaProdVirtuales.data.data !== '0') {
+					openNotification(
+						'Error',
+						'No se puede anular un pedido con productos virtuales',
+						'Warning'
+					);
+					setLoadingData(false);
+					return;
+				}
+
+				const listaCabeceraPedido = await httpClient.post('posventa/cajListaCabeceraPedido', {
+					cCodGrupoCia: '001',
+					cCodLocal: '001',
+					cNumPedVta: arrayData[0],
+					cNumCompPag: dataSend.SERIE_COMP.toUpperCase() + dataSend.NUM_COMP,
+					cFlagTipProcPago: '0',
+				});
+
+				if (listaCabeceraPedido.data.success) {
+					setDataCabecera(listaCabeceraPedido.data.data);
+				}
+
+				const listaDetallePedido = await httpClient.post('posventa/cajListaDetallePedido', {
+					cCodGrupoCia: '001',
+					cCodLocal: '001',
+					cNumPedVta: arrayData[0],
+					cNumComp: '%',
+					cTipComp: '%',
+				});
+
+				if (listaDetallePedido.data.success) {
+					setDataDetalles(listaDetallePedido.data.data);
+				}
+
 				//TODO: pendiente de endpoints
-				// const verificaPedido = await httpClient.post('posventa/verificaPedido', {
-				// 	cCodGrupoCia_in: '001',
-				// 	cCodLocal_in: '001',
-				// 	correlativo: arrayData[0],
-				// 	monto: arrayData[1].trim(),
-				// });
 				// console.log(verificaPedido);
 				// setDataSend({
 				// 	...dataSend,
@@ -76,12 +122,17 @@ function ModalBusquedaComprobante({
 				// 	openNotification('Pedido', verificaProdVirtuales.data.message, 'Warning');
 				// }
 			} else {
-				openNotification('Comprobante', correlativo.data.message, 'Warning');
+				openNotification('Error', 'Los datos ingresados no son correctos', 'Alerta');
+				setLoadingData(false);
+				return;
 			}
 		} catch (error) {
 			console.error(error);
+			setLoadingData(false);
+			return;
 		}
 		setLoadingData(false);
+		setAbrirModalManual(false);
 	};
 
 	const formItemLayout = {

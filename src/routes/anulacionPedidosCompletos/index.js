@@ -41,11 +41,11 @@ const AnulacionPedidosCompletos = () => {
 		},
 		{
 			title: 'Total S/',
-			dataIndex: 'MONTO',
+			dataIndex: 'TOTAL',
 		},
 		{
 			title: 'R.U.C.',
-			dataIndex: 'NUM_DOCUMENTO',
+			dataIndex: 'RUC',
 		},
 		{
 			title: 'Cliente',
@@ -64,7 +64,7 @@ const AnulacionPedidosCompletos = () => {
 	const detallesColumn = [
 		{
 			title: 'Código',
-			dataIndex: 'key',
+			dataIndex: 'CODIGO',
 		},
 		{
 			title: 'Descripción',
@@ -76,11 +76,11 @@ const AnulacionPedidosCompletos = () => {
 		},
 		{
 			title: 'Pre. Vta.',
-			dataIndex: 'PRE_VTA',
+			dataIndex: 'PRE_VENTA',
 		},
 		{
 			title: 'Cantidad',
-			dataIndex: 'CANTIDAD',
+			dataIndex: 'CANT',
 		},
 		{
 			title: 'Total',
@@ -93,34 +93,6 @@ const AnulacionPedidosCompletos = () => {
 			...dataSend,
 			[e.target.name]: e.target.value,
 		});
-	};
-
-	const traerPedido = async numPedido => {
-		setLoadingData(true);
-		try {
-			const responseCabecera = await httpClient.post('pedido/getPedidoCabecera', {
-				NUM_PEDIDO: numPedido || dataSend.NUM_PEDIDO,
-			});
-			const responseDetalles = await httpClient.post('pedido/getPedidoDetalles', {
-				NUM_PEDIDO: numPedido || dataSend.NUM_PEDIDO,
-			});
-			if (!responseCabecera.data.success || !responseDetalles.data.success) {
-				openNotification('Pedido', responseCabecera.data.message, 'Warning');
-				setDataCabecera([{}]);
-				setDataDetalles([{}]);
-				setPedidoFound(false);
-			} else {
-				setDataCabecera(responseCabecera.data.data);
-				setDataDetalles(responseDetalles.data.data);
-				setDataSend({ ...dataSend, COD_PACIENTE: responseCabecera.data.data[0].COD_PACIENTE });
-				setAbrirModalPedido(false);
-				setPedidoFound(true);
-			}
-		} catch (error) {
-			openNotification('Pedido', 'Error en la petición', 'Alerta');
-			setPedidoFound(false);
-		}
-		setLoadingData(false);
 	};
 
 	const traerComprobantesPago = async () => {
@@ -137,12 +109,17 @@ const AnulacionPedidosCompletos = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			await traerComprobantesPago();
-			// await traerEspecialidades();
-			// await traerConsultorios();
-			// await getModulosConsultaMedica();
 		};
 		fetchData();
 	}, []);
+
+	const [refForm] = Form.useForm();
+
+	useEffect(() => {
+		refForm.setFieldsValue({ correlativo: dataCabecera[0]?.key, monto: dataCabecera[0]?.TOTAL });
+		console.log('dataCabecera', dataCabecera);
+		console.log('form', refForm.getFieldsValue());
+	}, [dataCabecera]);
 
 	return (
 		<>
@@ -164,24 +141,6 @@ const AnulacionPedidosCompletos = () => {
 						>
 							Anulacion de Pedidos
 						</div>
-						{/* <div
-							style={{
-								width: '50%',
-								display: 'flex',
-								justifyContent: 'right',
-							}}
-						>
-							<Button
-								style={{
-									backgroundColor: '#04B0AD',
-									color: 'white',
-									marginTop: '10px',
-									marginLeft: 20,
-								}}
-							>
-								ABC
-							</Button>
-						</div> */}
 					</div>
 				}
 			>
@@ -190,23 +149,21 @@ const AnulacionPedidosCompletos = () => {
 					style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
 				>
 					<Form
+						form={refForm}
 						layout="horizontal"
 						style={{ display: 'flex', flexDirection: 'row', gap: '20px', alignItems: 'center' }}
 					>
 						<Form.Item name="correlativo" label="Correlativo" style={{ width: '300px', margin: 0 }}>
-							<Input
-								type="text"
-								// value={hallazgo}
-							/>
+							<Input type="text" disabled />
 						</Form.Item>
 						<Form.Item name="monto" label="Monto" style={{ width: '300px', margin: 0 }}>
-							<Input
-								type="number"
-								// value={hallazgo}
-							/>
+							<Input type="text" disabled />
 						</Form.Item>
-						<Button className="gx-mb-0" type="primary">
+						<Button className="gx-mb-0" type="primary" onClick={() => setAbrirModalManual(true)}>
 							Buscar
+						</Button>
+						<Button className="gx-mb-0" type="primary" onClick={() => {}}>
+							Anular
 						</Button>
 					</Form>
 					<Table
@@ -228,17 +185,20 @@ const AnulacionPedidosCompletos = () => {
 					/>
 				</div>
 			</Card>
-			<ModalBusquedaComprobante
-				abrirModalManual={abrirModalManual}
-				dataSend={dataSend}
-				handleChangeText={handleChangeText}
-				loadingData={loadingData}
-				setDataSend={setDataSend}
-				setAbrirModalManual={setAbrirModalManual}
-				setLoadingData={setLoadingData}
-				traerPedido={traerPedido}
-				dataComprobantesPago={dataComprobantesPago}
-			/>
+			{abrirModalManual ? (
+				<ModalBusquedaComprobante
+					abrirModalManual={abrirModalManual}
+					dataSend={dataSend}
+					handleChangeText={handleChangeText}
+					loadingData={loadingData}
+					setDataSend={setDataSend}
+					setAbrirModalManual={setAbrirModalManual}
+					setLoadingData={setLoadingData}
+					dataComprobantesPago={dataComprobantesPago}
+					setDataCabecera={setDataCabecera}
+					setDataDetalles={setDataDetalles}
+				/>
+			) : null}
 		</>
 	);
 };
