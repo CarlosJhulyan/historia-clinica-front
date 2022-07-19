@@ -4,15 +4,21 @@ import { httpClient } from '../../../util/Api';
 import { notificaciones, openNotification } from '../../../util/util';
 import axios from 'axios';
 
-const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traerUsuarios }) => {
+const ModalAsignacion = ({
+                           abrirModal,
+                           setAbrirModal,
+                           filaActual,
+                           modulos,
+                           traerUsuarios,
+                           numDocumento,
+                           setNumDocumento
+}) => {
 	const formRef = createRef();
 
 	const onChange = e => {
 		console.log(e);
 		setValores(e);
 	};
-
-  const [numDocumento, setNumDocumento] = useState('');
 	const [valores, setValores] = useState(filaActual ? obtenerValores(filaActual.modulos) : []);
 	const [loading, setLoading] = useState(false);
 
@@ -42,7 +48,7 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 			const repuesta = await httpClient.post('modulos/asignaModulos', {
 				codMedico: filaActual ? filaActual.cod_medico : cod,
 				modulos: valores,
-				codMedico1: tokenAdmin.login_usu || token.cod_medico,
+				codMedico1: tokenAdmin.login_usu,
 			});
 			setAbrirModal(false);
 			notificaciones('Modulos asignado correctamente.', 'success');
@@ -118,7 +124,7 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, filaActual, modulos, traer
 
 	const onSelectCMP = data => {
 		optionsCMP.forEach(element => {
-      if (element.num_doc_iden || element.num_doc_iden === null || element.num_doc_iden.trim() !== '') {
+      if (!element.num_doc_iden || element.num_doc_iden === null || element.num_doc_iden.trim() === '') {
         openNotification('Asignación de modulos', 'El médico no cuenta con un número de documento de identidad asignado.', 'Warning');
         setNumDocumento('');
       }

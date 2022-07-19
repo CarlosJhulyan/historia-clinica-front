@@ -9,7 +9,9 @@ const AsignacionModulos = () => {
 	const [data, setData] = useState();
 	const [modulos, setModulos] = useState();
 	const [abrirModal, setAbrirModal] = useState(false);
+  const [bloquearBoton, setBloquearBoton] = useState(false);
 	const [filaActual, setFilaActual] = useState(null);
+  const [numDocumento, setNumDocumento] = useState('');
 
 	const traerUsuarios = async () => {
 		const respuesta = await httpClient.post('modulos/getMedicosModulos');
@@ -22,9 +24,15 @@ const AsignacionModulos = () => {
 	};
 
 	useEffect(() => {
-		traerUsuarios();
-		traerModulos();
+    cargarDatainicial();
 	}, []);
+
+  const cargarDatainicial = async () => {
+    setBloquearBoton(true);
+    await traerUsuarios();
+    await  traerModulos();
+    setBloquearBoton(false);
+  }
 
 	const getColumnSearchProps = dataIndex => ({
 		filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -131,7 +139,7 @@ const AsignacionModulos = () => {
 	];
 
 	const mostrarModal = record => {
-		console.log('RECORD', record);
+    setNumDocumento(record.num_doc_iden);
 		setFilaActual(record);
 		setAbrirModal(true);
 	};
@@ -164,6 +172,7 @@ const AsignacionModulos = () => {
 							onClick={() => {
 								setFilaActual(null);
 								setAbrirModal(true);
+                setNumDocumento('');
 							}}
 							style={{
 								display: 'flex',
@@ -171,6 +180,7 @@ const AsignacionModulos = () => {
 								justifyContent: 'center',
 							}}
 							type="primary"
+              disabled={bloquearBoton}
 						>
 							Agregar Médico
 						</Button>
@@ -191,6 +201,8 @@ const AsignacionModulos = () => {
 					filaActual={filaActual}
 					traerUsuarios={traerUsuarios}
 					modulos={modulos}
+          numDocumento={numDocumento}
+          setNumDocumento={setNumDocumento}
 				></ModalAsignacion>
 			) : null}
 			<ToastContainer pauseOnHover={false} />

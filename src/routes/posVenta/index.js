@@ -123,6 +123,7 @@ function GenerarPedido() {
 		cCodCiaReserva: 'N',
 		cCodLocalReserva: 'N',
 		cCodPedidoReserva: 'N',
+    cIsWeb: 'S',
 	});
 
 	const dataFetchDetalle = {
