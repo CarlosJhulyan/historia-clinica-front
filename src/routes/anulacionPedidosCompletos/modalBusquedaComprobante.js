@@ -15,6 +15,7 @@ function ModalBusquedaComprobante({
 	dataComprobantesPago,
 	setDataCabecera,
 	setDataDetalles,
+	setDataVenta,
 }) {
 	const { Option } = Select;
 
@@ -47,7 +48,7 @@ function ModalBusquedaComprobante({
 			const correlativo = await httpClient.post('posventa/getCorrelativoMontoNeto', dataFormat);
 			if (correlativo.data.data) {
 				const arrayData = correlativo.data.data.split(';');
-
+				setDataVenta(prevState => ({ ...prevState, cNumPedVta: arrayData[0] }));
 				const verificaPedido = await httpClient.post('posventa/cajVerificaPedido', {
 					cCodGrupoCia: '001',
 					cCodLocal: '001',

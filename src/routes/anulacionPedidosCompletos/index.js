@@ -1,8 +1,9 @@
-import { Button, Card, Form, Input, Table } from 'antd';
+import { Button, Card, Form, Input, Table, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
 import ModalBusquedaComprobante from './modalBusquedaComprobante';
+import ModalNotaPedio from './modalNotaPedido';
 
 const AnulacionPedidosCompletos = () => {
 	const [abrirModalManual, setAbrirModalManual] = useState(true);
@@ -12,6 +13,7 @@ const AnulacionPedidosCompletos = () => {
 	const [dataComprobantesPago, setDataComprobantesPago] = useState([]);
 	const [dataCabecera, setDataCabecera] = useState([]);
 	const [dataDetalles, setDataDetalles] = useState([]);
+	const [abrirModalNotaPedido, setAbrirModalNotaPedido] = useState(false);
 	const [dataSend, setDataSend] = useState({
 		NUM_PEDIDO: '',
 		NUM_ORDEN: '',
@@ -29,6 +31,7 @@ const AnulacionPedidosCompletos = () => {
 		USU_CREA: JSON.parse(localStorage.getItem('token')).data?.login_usu,
 		ESTADO: 'T',
 	});
+	const [dataVenta, setDataVenta] = useState({ cNumPedVta: '', cNumComp: '', cTipComp: '' });
 
 	const cabeceraColumn = [
 		{
@@ -121,6 +124,20 @@ const AnulacionPedidosCompletos = () => {
 		console.log('form', refForm.getFieldsValue());
 	}, [dataCabecera]);
 
+	const info = () => {
+		Modal.info({
+			title: 'Mensaje del sistema',
+			content: (
+				<div>
+					<p>Se anulará dicho pedido, pero se generará una solicitud de Nota de Crédito.</p>
+				</div>
+			),
+			onOk() {
+				setAbrirModalNotaPedido(true);
+			},
+		});
+	};
+
 	return (
 		<>
 			<Card
@@ -162,9 +179,6 @@ const AnulacionPedidosCompletos = () => {
 						<Button className="gx-mb-0" type="primary" onClick={() => setAbrirModalManual(true)}>
 							Buscar
 						</Button>
-						<Button className="gx-mb-0" type="primary" onClick={() => {}}>
-							Anular
-						</Button>
 					</Form>
 					<Table
 						className="gx-table-responsive"
@@ -184,6 +198,14 @@ const AnulacionPedidosCompletos = () => {
 						columns={detallesColumn}
 					/>
 				</div>
+				<div style={{ marginTop: 20 }}>
+					<Button className="gx-mb-0" type="primary" onClick={info}>
+						Anular
+					</Button>
+					<Button className="gx-mb-0" type="primary" onClick={() => {}}>
+						Limpiar
+					</Button>
+				</div>
 			</Card>
 			{abrirModalManual ? (
 				<ModalBusquedaComprobante
@@ -197,6 +219,14 @@ const AnulacionPedidosCompletos = () => {
 					dataComprobantesPago={dataComprobantesPago}
 					setDataCabecera={setDataCabecera}
 					setDataDetalles={setDataDetalles}
+					setDataVenta={setDataVenta}
+				/>
+			) : null}
+			{abrirModalNotaPedido ? (
+				<ModalNotaPedio
+					visible={abrirModalNotaPedido}
+					setVisible={setAbrirModalNotaPedido}
+					dataVenta={dataVenta}
 				/>
 			) : null}
 		</>
