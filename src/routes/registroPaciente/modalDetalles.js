@@ -1,39 +1,39 @@
-import React, { 
-	createRef, 
-	useCallback, 
-	useEffect, 
-	useMemo, 
-	useState 
+import React, {
+	createRef,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState
 } from 'react';
 
-import { 
-	Col, 
-	DatePicker, 
-	Form, 
-	Input, 
-	Modal, 
-	Row, 
-	Select, 
+import {
+	Col,
+	DatePicker,
+	Form,
+	Input,
+	Modal,
+	Row,
+	Select,
 	Spin,
 	notification,
 	Button
 } from 'antd';
 
-import { 
-	DNI_REGEX, 
-	EDAD_REGEX, 
-	TELEFONO_REGEX, 
-	TEXTO_REGEX, 
-	CORREO_REGEX 
+import {
+	DNI_REGEX,
+	EDAD_REGEX,
+	TELEFONO_REGEX,
+	TEXTO_REGEX,
+	CORREO_REGEX
 } from '../../util/constants';
 import moment from 'moment';
 import { httpClient } from '../../util/Api';
 import { getDepartamentos, getProvincias, getDistritos } from '../../util/Ubigeo';
 
 const ModaDetalles = (props) => {
-	const { 
-		abrirModal, 
-		setAbrirModal, 
+	const {
+		abrirModal,
+		setAbrirModal,
 		codPaciente,
 		isModalEdit,
 		tipoDocumento,
@@ -193,9 +193,9 @@ const ModaDetalles = (props) => {
 	}, [codPaciente, isModalEdit]);
 
 	useEffect(() => {
-		formRef.current?.setFieldsValue({ 
-			numeroDoc: estado.NUM_DOCUMENTO, 
-			numDocAcom: estado.NUM_DOC_ACOM, 
+		formRef.current?.setFieldsValue({
+			numeroDoc: estado.NUM_DOCUMENTO,
+			numDocAcom: estado.NUM_DOC_ACOM,
 			edad: moment(estado.FEC_NAC_CLI, formatoFecha).fromNow().substring(5, 8).trim(),
 			fono: estado.FONO_CLI,
 			celu: estado.CELL_CLI,
@@ -203,14 +203,14 @@ const ModaDetalles = (props) => {
 		});
 	}, [
 		estado.NUM_DOCUMENTO,
-		estado.NUM_DOC_ACOM, 
-		formRef, 
-		estado.FEC_NAC_CLI, 
+		estado.NUM_DOC_ACOM,
+		formRef,
+		estado.FEC_NAC_CLI,
 		estado.FONO_CLI,
 		estado.CELL_CLI,
 		estado.EMAIL
 	]);
-	
+
 
 	const upsertPaciente = async () => {
 		setLoadingFetch(true);
@@ -258,7 +258,8 @@ const ModaDetalles = (props) => {
 	return (
 		<>
 			<Modal
-				width="70%"
+        centered
+				width={900}
 				footer={[
 					<Button disabled={loadingDataFetch} onClick={() => handleCloseModal()}>
 						Cancelar
@@ -331,7 +332,7 @@ const ModaDetalles = (props) => {
 									onChange={handleChangeCodTipoDoc}
 								>
 									{
-										tipoDocumento.map(element => 
+										tipoDocumento.map(element =>
 											<Option key={element.key} value={element.COD_DOCUMENTO}>
 												{element.DESCRIPCION}
 											</Option>
@@ -394,7 +395,7 @@ const ModaDetalles = (props) => {
 									},
 								]}
 							>
-								<Input 
+								<Input
 									name="EDAD_CLI"
 									value={estado.EDAD_CLI}
 									disabled
@@ -411,9 +412,9 @@ const ModaDetalles = (props) => {
 									},
 								]}
 							>
-								<Select 
-									placeholder="Seleccione" 
-									onChange={handleChangeSexo} 
+								<Select
+									placeholder="Seleccione"
+									onChange={handleChangeSexo}
 									value={estado?.SEXO_CLI.toUpperCase()}
 									name="SEXO_CLI"
 										>
@@ -516,7 +517,7 @@ const ModaDetalles = (props) => {
 									onChange={handleChangeEstadoCivil}
 								>
 									{
-										estadoCivil.map(element => 
+										estadoCivil.map(element =>
 											<Option key={element.key} value={element.COD_EST_CIVIL}>
 												{element.DESCRIPCION}
 											</Option>
@@ -730,7 +731,7 @@ const ModaDetalles = (props) => {
 									},
 								]}
 							>
-								<Select 
+								<Select
 									name="COD_TIP_ACOM"
 									value={estado.COD_TIP_ACOM}
 									placeholder="Seleccione" onChange={handleChangeTipoAcom}>
@@ -778,7 +779,7 @@ const ModaDetalles = (props) => {
 									onChange={handleChangeTipoDocumentoAcom}
 								>
 									{
-										tipoDocumento.map(element => 
+										tipoDocumento.map(element =>
 											<Option key={element.key} value={element.COD_DOCUMENTO}>
 												{element.DESCRIPCION}
 											</Option>
@@ -813,9 +814,9 @@ const ModaDetalles = (props) => {
 				}
 			</Modal>
 
-			<Modal 
-				title="Confirmación" 
-				visible={isModalVisibleConfirm} 
+			<Modal
+				title="Confirmación"
+				visible={isModalVisibleConfirm}
 				onCancel={handleCancel}
 				footer={[
 					<Button
@@ -823,7 +824,7 @@ const ModaDetalles = (props) => {
 						onClick={handleCancel}>
 							Cambiar datos
 					</Button>,
-					<Button 
+					<Button
 						onClick={async () => {
 							upsertPaciente();
 						}}

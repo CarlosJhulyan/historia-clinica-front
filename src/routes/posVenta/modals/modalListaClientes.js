@@ -17,9 +17,10 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 
 	const columns = [
 		{
-			title: 'T...',
+			title: 'Tipo docu...',
 			dataIndex: 'TIPO_DOC_IDENT',
 			key: 'TIPO_DOC_IDENT',
+      width: 100
 		},
 		{
 			title: 'Documento',
@@ -113,10 +114,10 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 		<>
 			<Modal
 				centered
-				width={900}
+				width={1100}
 				visible={visible}
 				title="Lista de Clientes"
-				className="modal-custom"
+				className="modal-posventa"
 				onCancel={() => setVisible(false)}
 				footer={[
 					<Button
@@ -212,6 +213,9 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					size="small"
 					loading={loadingData}
 					dataSource={data}
+          scroll={{
+            y: 350
+          }}
 				/>
 			</Modal>
 

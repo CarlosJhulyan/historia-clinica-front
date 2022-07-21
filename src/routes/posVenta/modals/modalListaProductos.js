@@ -39,6 +39,7 @@ function ModalListaProductos({
 	setProductosDetalles,
 	productosCurrent,
 	setProductosCurrent,
+  setGrabarPedido
 }) {
 	const [data, setData] = useState([]);
 	const { confirm, warning } = Modal;
@@ -116,12 +117,13 @@ function ModalListaProductos({
 			title: 'Código',
 			dataIndex: 'CODIGO',
 			key: 'CODIGO',
+      width: 80
 		},
 		{
 			title: 'Descripción',
 			dataIndex: 'DESCRIPCION',
 			key: 'DESCRIPCION',
-			width: '400px',
+      width: 230,
 			filterDropdownVisible: true,
 			filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
 				<form
@@ -148,11 +150,13 @@ function ModalListaProductos({
 			title: 'Unidad',
 			dataIndex: 'UNIDAD',
 			key: 'UNIDAD',
+      width: 70
 		},
 		{
 			title: 'Marca',
 			dataIndex: 'MARCA',
 			key: 'MARCA',
+      width: 150,
 			filterDropdownVisible: true,
 			filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
 				<form
@@ -179,11 +183,13 @@ function ModalListaProductos({
 			title: 'Precio(S/)',
 			dataIndex: 'PRECIO',
 			key: 'PRECIO',
+      width: 100
 		},
 		{
 			title: '',
 			dataIndex: 'key',
 			key: 'key',
+      width: 70,
 			render: (_, record) => (
 				<>
 					<a onClick={() => handleSelectDetails(record)}>Detalles</a>
@@ -304,22 +310,48 @@ function ModalListaProductos({
 		<>
 			<Modal
 				centered
-				width={1200}
-				footer={false}
+				width={1100}
+				footer={[
+          <Button
+            style={{
+              backgroundColor: '#0169aa',
+              color: 'white',
+            }}
+            onClick={() => {
+              if (productosDetalles.length <= 0) {
+                warning({
+                  centered: true,
+                  content: 'No hay productos seleccionados. Verifique!!!',
+                });
+                return;
+              }
+              chargeDetailsModalProducto(productosCurrent, productosDetalles);
+              setVisible(false);
+            }}
+            disabled={productosDetalles.length <= 0}
+          >
+            Aceptar
+          </Button>,
+          <Button form="my-form" htmlType="reset" type="default" onClick={resetEspecialidades}>
+            Limpiar Filtro
+          </Button>
+        ]}
 				visible={visible}
 				title="Lista de Productos y Precios"
 				closeIcon={<MinusOutlined />}
 				onCancel={() => {
-					if (productosDetalles.length <= 0)
-						warning({
-							centered: true,
-							content: 'No hay productos seleccionados. Verifique!!!',
-						});
-					else setVisible(false);
+					// if (productosDetalles.length <= 0)
+					// 	warning({
+					// 		centered: true,
+					// 		content: 'No hay productos seleccionados. Verifique!!!',
+					// 	});
+					// else
+          setVisible(false);
 				}}
+        className='modal-posventa modal-posventa-productos'
 			>
 				<Row justify="space-between">
-					<Col span={18}>
+					<Col xl={18} lg={18} md={19} sm={19} xs={20}>
 						<Row justify="space-between" style={{ margin: 0 }}>
 							<Col span={17}>
 								<Form.Item label="Producto">
@@ -363,7 +395,10 @@ function ModalListaProductos({
 											backgroundColor: '#0169aa',
 											color: 'white',
 										}}
-										onClick={() => setVisibleModalDatosPedido(true)}
+										onClick={() => {
+                      setVisibleModalDatosPedido(true);
+                      setGrabarPedido(false);
+                    }}
 									>
 										Datos Pedido
 									</Button>
@@ -384,7 +419,6 @@ function ModalListaProductos({
 									</Col>
 								</Row>
 							</Col>
-							{/*<Divider type='vertical' />*/}
 							<Col span={7}>
 								<Row justify="space-between" style={{ margin: 0 }}>
 									<span>Items:</span>
@@ -412,50 +446,13 @@ function ModalListaProductos({
 							loading={loadingProductos}
 							size="small"
 							bordered
+              scroll={{
+                y: 270
+              }}
 						/>
-						<div
-							style={{
-								marginTop: 20,
-							}}
-						>
-							{/*<Button*/}
-							{/*	style={{*/}
-							{/*		backgroundColor: '#0169aa',*/}
-							{/*		color: 'white',*/}
-							{/*	}}*/}
-							{/*	onClick={() => setVisibleModalInfoProducto(true)}*/}
-							{/*>*/}
-							{/*	Info Prod.*/}
-							{/*</Button>*/}
-							{/*<Button type='primary'>*/}
-							{/*  Cotizar*/}
-							{/*</Button>*/}
-							{/*<Button type='primary'>*/}
-							{/*  Ingresar Pedido/Cotizacion*/}
-							{/*</Button>*/}
-							<Button
-								style={{
-									backgroundColor: '#0169aa',
-									color: 'white',
-								}}
-								onClick={() => {
-									chargeDetailsModalProducto(productosCurrent, productosDetalles);
-                  setProductosCurrent([]);
-                  setSelectedRowKeys([]);
-                  setProductosDetalles([]);
-									setVisible(false);
-								}}
-								disabled={productosDetalles.length <= 0}
-							>
-								Aceptar
-							</Button>
-							{/*<Button type="default">Ver Campañas</Button>*/}
-							<Button form="my-form" htmlType="reset" type="default" onClick={resetEspecialidades}>
-								Limpiar Filtro
-							</Button>
-						</div>
 					</Col>
-					<Col span={6}>
+
+					<Col xl={6} lg={6} md={5} sm={5} xs={4}>
 						<Form layout="vertical">
 							<Form.Item label="Especialidad">
 								<AutoComplete
@@ -480,7 +477,7 @@ function ModalListaProductos({
 								></Button>
 							</Form.Item>
 						</Form>
-						<div style={{ height: 300, overflowY: 'auto' }}>
+						<div style={{ height: 400, overflowY: 'auto', overflowX: 'hidden' }}>
 							<List
 								loading={loadingEspecialidades}
 								size="small"

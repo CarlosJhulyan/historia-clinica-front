@@ -78,10 +78,10 @@ function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
 		<>
 			<Modal
 				centered
-				width={900}
+				width={1100}
 				visible={visible}
 				title="Lista de Médicos"
-				className="modal-custom"
+				className="modal-posventa"
 				onCancel={() => setVisible(false)}
 				footer={[
 					<Button
@@ -150,7 +150,7 @@ function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
 						ref={buttonRef}
 							disabled={loadingData}
 							style={{ marginTop: 5, background: '#0169aa', color: '#fff' }}
-							onClick={handleFilter}							
+							onClick={handleFilter}
 						>
 							Filtrar
 						</Button>
@@ -172,6 +172,9 @@ function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
 					size="small"
 					loading={loadingData}
 					dataSource={dataFiltered}
+          scroll={{
+            y: 300
+          }}
 				/>
 			</Modal>
 

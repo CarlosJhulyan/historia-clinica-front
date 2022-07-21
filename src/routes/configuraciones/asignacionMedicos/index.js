@@ -201,6 +201,7 @@ const AsignacionMedicos = () => {
           visible={visibleModalUpsert}
           setVisible={setVisibleModalUpsert}
           currentAsignacion={currentMedico}
+          defData={defData}
         />
       </>
   );
@@ -209,7 +210,8 @@ const AsignacionMedicos = () => {
 const ModalUpsertAsignacion = ({
   visible,
   setVisible,
-  currentAsignacion
+  currentAsignacion,
+  defData
 }) => {
   const formRef = useRef();
   const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
@@ -289,6 +291,7 @@ const ModalUpsertAsignacion = ({
         else openNotification('Asignación médico', message, 'Warning');
         setLoadingUpsert(false);
         setVisible(false);
+        defData();
       })
       .catch(e => console.error(e));
   }

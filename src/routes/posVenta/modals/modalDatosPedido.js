@@ -60,10 +60,10 @@ function ModalDatosPedido({
 			<Modal
 				centered
 				width={1100}
-				footer={false}
+				footer={[]}
 				visible={visible}
 				title="Datos de Pedido"
-				className="modal-custom"
+				className="modal-posventa"
 				onCancel={guardando ? null : () => setVisible(false)}
 			>
 				<Row justify="space-between" style={{ marginTop: 10, marginLeft: 0, marginRight: 20 }}>
@@ -86,7 +86,7 @@ function ModalDatosPedido({
 										<Button
 											block
 											onClick={() => setVisibleModalMedicos(true)}
-											style={{ display: 'block', height: 'auto', padding: 10 }}
+											style={{ display: 'block', height: 'auto', padding: 10, margin:0 }}
 										>
 											<img src={Doctor} />
 										</Button>
@@ -94,13 +94,19 @@ function ModalDatosPedido({
 									<Divider />
 									<Col span={18}>
 										<h5>Datos de Paciente</h5>
-										<Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-											<Form.Item label="DNI" style={{ margin: 0 }}>
-												<Input disabled size="small" value={pacienteCurrent.NUM_DOCUMENTO} />
-											</Form.Item>
-											<Form.Item label="Nacimiento" style={{ margin: 0 }}>
-												<Input disabled size="small" value={pacienteCurrent.FEC_NAC_CLI} />
-											</Form.Item>
+										<Form labelCol={{ span: 7 }} wrapperCol={{ span: 17 }}>
+											<Row>
+                        <Col span={10}>
+                          <Form.Item label="DNI" style={{ margin: 0 }}>
+                            <Input disabled size="small" value={pacienteCurrent.NUM_DOCUMENTO} />
+                          </Form.Item>
+                        </Col>
+                        <Col span={14}>
+                          <Form.Item label="Nacimiento" style={{ margin: 0 }}>
+                            <Input disabled size="small" value={pacienteCurrent.FEC_NAC_CLI} />
+                          </Form.Item>
+                        </Col>
+                      </Row>
 											<Form.Item label="Nombres" style={{ margin: 0 }}>
 												<Input disabled size="small" value={pacienteCurrent.NOMBRE} />
 											</Form.Item>
@@ -119,7 +125,7 @@ function ModalDatosPedido({
 										<Button
 											block
 											onClick={() => setVisibleModalPacientes(true)}
-											style={{ display: 'block', height: 'auto', padding: 10 }}
+											style={{ display: 'block', height: 'auto', padding: 10, margin:0 }}
 										>
 											<img src={Paciente} />
 										</Button>
@@ -215,10 +221,9 @@ function ModalDatosPedido({
 								</Row>
 							</Col>
 						</Row>
-						<Divider />
-						<span style={{ color: 'red' }}>
+						<small style={{ color: 'red' }}>
 							Para ingresar los datos de Médico y Paciente, hacer CLICK en las imágenes
-						</span>
+						</small>
 						<Divider />
 						<Row>
 							<Col span={5}>
@@ -297,7 +302,6 @@ function ModalDatosPedido({
             </Form.Item>
           </Col> */}
 				</Row>
-				<Divider />
 			</Modal>
 			{visibleModalMedicos ? (
 				<ModalListaMedicos

@@ -6,7 +6,7 @@ function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
 	const [loadingDetalles, setLoadingDetalles] = useState(false);
 	const [loadingListaFrac, setLoadingListaFrac] = useState(false);
 	const [producto, setProducto] = useState({});
-	const [detalles, setDetalles] = useState([]);
+	const [detalles, setDetalles] = useState([{}]);
 
 	const columns = [
 		{
@@ -64,7 +64,9 @@ function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
 		<Modal
 			title="Detalle de Producto"
 			visible={visible}
-			onCancel={() => setVisible(false)}
+			onCancel={() => {
+        if (!loadingDetalles || !loadingListaFrac) setVisible(false);
+      }}
 			footer={[
 				<Button
 					disabled={loadingDetalles || loadingListaFrac}

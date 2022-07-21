@@ -355,7 +355,7 @@ function GenerarPedido() {
 			} = await httpClient.post('/posventa/grabarPedidoCabecera', dataABC);
 			if (success) {
 				console.log(data);
-				openNotification('Cabecera', 'Cabecera grabada');
+				openNotification('Cabecera', 'Pedido grabado');
 			} else {
 				openNotification('Cabecera', message, 'warning');
 			}
@@ -590,7 +590,6 @@ function GenerarPedido() {
 					respuesta = false;
 				} else {
 					setDisabledAll(false);
-					setVisibleModal(true);
 					respuesta = true;
 				}
 				setFechaSistema(fechaSistema);
@@ -625,15 +624,30 @@ function GenerarPedido() {
 	};
 
 	const clearDataFinally = () => {
-		setCNumPedVta_in('');
-		setVisibleModal(false);
-		setTipoVenta('01');
-		setVisibleModalDatosPedido(false);
-		setProductosDetalles([]);
-		setProductosCurrent([]);
-		setSelectedRowKeys([]);
-		setData([]);
-		setSelectedRows([]);
+
+    confirm({
+      content: '¿Quiére continuar con venta o ir a nueva venta?',
+      okText: 'Continuar',
+      cancelText: 'Nueva venta',
+      onOk: () => {
+
+      },
+      onCancel: () => {
+        setCNumPedVta_in('');
+        setVisibleModal(false);
+        setTipoVenta('01');
+        setVisibleModalDatosPedido(false);
+        setProductosDetalles([]);
+        setProductosCurrent([]);
+        setSelectedRowKeys([]);
+        setData([]);
+        setSelectedRows([]);
+        setClienteCurrent({});
+        setMedicoCurrent({});
+        setPacienteCurrent({});
+      },
+      centered: true
+    });
 	};
 
 	const validaOperacionCaja = async tipOp => {
@@ -734,18 +748,23 @@ function GenerarPedido() {
       totalDolar: total / 3.34,
     });
     setVisibleModalCambiarCantidad(false);
+    console.log(productosCurrent);
+    console.log(productosDetalles);
+    console.log(newDataFormat);
   }
 
 	useEffect(() => {
 		const chargeDataAsync = async () => {
 			const valido = await validaOperacionCaja('MA');
-			if (valido) await getFechaMovCaja();
+			if (valido) {
+        await getFechaMovCaja();
+        setVisibleModal(true);
+      }
 			else {
 				setDisabledAll(true);
 				setLoadingData(false);
 			}
 		};
-
 		chargeDataAsync();
 	}, []);
 
@@ -846,11 +865,16 @@ function GenerarPedido() {
 								}}
 								onClick={() => {
                   if (data.length > 0) confirm({
-                    content: 'Si continua se sobrescribirá su resumen de productos.',
+                    content: 'Hacer una nueva selección o continuar con el anterior.',
                     onOk: () => {
                       setVisibleModal(true);
                     },
-                    cancelText: 'Cancelar',
+                    onCancel: () => {
+                      setProductosCurrent([]);
+                      setSelectedRowKeys([]);
+                      setProductosDetalles([]);
+                    },
+                    cancelText: 'Nueva Selección',
                     okText: 'Continuar',
                     centered: true
                   })
@@ -1007,6 +1031,7 @@ function GenerarPedido() {
 				setProductosDetalles={setProductosDetalles}
 				productosCurrent={productosCurrent}
 				setProductosCurrent={setProductosCurrent}
+        setGrabarPedido={setGrabarPedido}
 			/>
 			<ModalDatosPedido
 				visibleDatosPedidoAceptar={datosPedidoAceptar}

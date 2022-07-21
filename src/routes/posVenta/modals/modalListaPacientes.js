@@ -332,10 +332,10 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 		<>
 			<Modal
 				centered
-				width={900}
+				width={1100}
 				visible={visible}
 				title="Ingrese Datos de Paciente"
-				className="modal-custom"
+				className="modal-posventa"
 				onCancel={() => setVisible(false)}
 				footer={[
 					<Button
@@ -463,6 +463,10 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 						...rowSelection,
 					}}
 					loading={loadingData}
+          scroll={{
+            y: 210
+          }}
+          size='small'
 				/>
 			</Modal>
 
