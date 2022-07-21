@@ -173,24 +173,24 @@ function ModalCobrarPedido({
 
 				if (!montoValidado) return;
 
-        let formaPagoInvalidate = false;
+				let formaPagoInvalidate = false;
 				for (const item of dataMontos) {
 					await cajGrabNewFormPagoPedido(item);
-					const validar = await cajFVerificaPedForPag();
-					if (validar === 'ERROR') {
-						openNotification(
-							'Error',
-							'El pedido no puede ser cobrado.\n Los totales de formas de pago y cabecera no coinciden. \n Comuníquese con el Operador de Sistemas inmediatamente.\n NO CIERRE LA VENTANA.',
-							'Alerta'
-						);
-						setLoadingCobrar(false);
-						formaPagoInvalidate = true;
-					}
+				}
+				const validar = await cajFVerificaPedForPag();
+				if (validar === 'ERROR') {
+					setLoadingCobrar(false);
+					openNotification(
+						'Error',
+						'El pedido no puede ser cobrado.\n Los totales de formas de pago y cabecera no coinciden. \n Comuníquese con el Operador de Sistemas inmediatamente.\n NO CIERRE LA VENTANA.',
+						'Alerta'
+					);
+					formaPagoInvalidate = true;
 				}
 
-        if (formaPagoInvalidate) return;
+				if (formaPagoInvalidate) return;
 
-        // // Valida caja abierta
+				// // Valida caja abierta
 				// const isCajaAbierta = await getFechaMovCaja();
 				// if (!isCajaAbierta) {
 				//   showModalInfo('La fecha de apertura y la fecha del sistema no concuerdan, ABRA UNA NUEVO DIA', async () => {
@@ -761,35 +761,34 @@ function ModalCobrarPedido({
 				centered
 				title="Cobrar Pedido"
 				className="modal-posventa"
-				width={1100}				
+				width={1100}
 				footer={[
-          <Button
-            onClick={() => {
-              confirm({
-                content:
-                  '¿Esta seguro de retirar los métodos de pago ingresados en el cobro ?',
-                okText: 'Aceptar',
-                cancelText: 'Cancelar',
-                centered: true,
-                onOk: () => {
-                  setDataMontos([]);
-                },
-                onCancel: () => {},
-              });
-            }}
-            disabled={dataMontos.length === 0 || cNumPedVta_in.trim() === ''}
-          >
-            Limpiar
-          </Button>,
-          <Button
-            style={{ backgroundColor: '#0169aa', color: 'white' }}
-            disabled={totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in) < 0}
-            loading={loadingCobrar}
-            onClick={handleCobrarPedido}
-          >
-            Aceptar
-          </Button>
-        ]}
+					<Button
+						onClick={() => {
+							confirm({
+								content: '¿Esta seguro de retirar los métodos de pago ingresados en el cobro ?',
+								okText: 'Aceptar',
+								cancelText: 'Cancelar',
+								centered: true,
+								onOk: () => {
+									setDataMontos([]);
+								},
+								onCancel: () => {},
+							});
+						}}
+						disabled={dataMontos.length === 0 || cNumPedVta_in.trim() === ''}
+					>
+						Limpiar
+					</Button>,
+					<Button
+						style={{ backgroundColor: '#0169aa', color: 'white' }}
+						disabled={totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in) < 0}
+						loading={loadingCobrar}
+						onClick={handleCobrarPedido}
+					>
+						Aceptar
+					</Button>,
+				]}
 			>
 				<Row style={{ marginTop: 0, marginLeft: 0, marginRight: 0 }}>
 					<Col xl={8} lg={8} md={24} sm={24} xs={24} style={{ marginBottom: 10 }}>
@@ -824,12 +823,18 @@ function ModalCobrarPedido({
 								<Button
 									block
 									onClick={() => setVisibleModalMedicos(true)}
-									style={{ display: 'block', height: 'auto', padding: 10, margin: 0, marginBottom: 3 }}
+									style={{
+										display: 'block',
+										height: 'auto',
+										padding: 10,
+										margin: 0,
+										marginBottom: 3,
+									}}
 								>
 									<img src={Doctor} />
 								</Button>
 							</Col>
-              <Col span={18} style={{padding:0}}>
+							<Col span={18} style={{ padding: 0 }}>
 								<h5>Datos de Medico</h5>
 								<Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
 									<Form.Item label="CMP" style={{ margin: 0 }}>
@@ -846,26 +851,26 @@ function ModalCobrarPedido({
 								<Button
 									block
 									onClick={() => setVisibleModalPacientes(true)}
-									style={{ display: 'block', height: 'auto', padding: 10, margin:0 }}
+									style={{ display: 'block', height: 'auto', padding: 10, margin: 0 }}
 								>
 									<img src={Paciente} />
 								</Button>
 							</Col>
-							<Col span={18} style={{padding:0}}>
+							<Col span={18} style={{ padding: 0 }}>
 								<h5>Datos de Paciente</h5>
 								<Form labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
 									<Row>
-                    <Col span={11} style={{padding:0}}>
-                      <Form.Item label="DNI" style={{ margin: 0 }}>
-                        <Input disabled size="small" value={pacienteCurrent.NUM_DOCUMENTO} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={13} style={{paddingLeft:0}}>
-                      <Form.Item label="Nacimiento" style={{ margin: 0 }}>
-                        <Input disabled size="small" value={pacienteCurrent.FEC_NAC_CLI} />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+										<Col span={11} style={{ padding: 0 }}>
+											<Form.Item label="DNI" style={{ margin: 0 }}>
+												<Input disabled size="small" value={pacienteCurrent.NUM_DOCUMENTO} />
+											</Form.Item>
+										</Col>
+										<Col span={13} style={{ paddingLeft: 0 }}>
+											<Form.Item label="Nacimiento" style={{ margin: 0 }}>
+												<Input disabled size="small" value={pacienteCurrent.FEC_NAC_CLI} />
+											</Form.Item>
+										</Col>
+									</Row>
 									<Form.Item label="Nombres" style={{ margin: 0 }}>
 										<Input disabled size="small" value={pacienteCurrent.NOMBRE} />
 									</Form.Item>
@@ -928,12 +933,15 @@ function ModalCobrarPedido({
 						<Row style={{ marginBottom: 2 }}>
 							<Descriptions className="description-boleta">
 								<Descriptions.Item span={1} label="BOLETA"></Descriptions.Item>
-								<Descriptions.Item span={1} label={clienteCurrent.TIP_DOCUMENTO === '01' ? 'DNI' : 'RUC'}>
+								<Descriptions.Item
+									span={1}
+									label={clienteCurrent.TIP_DOCUMENTO === '01' ? 'DNI' : 'RUC'}
+								>
 									{dataCabeceraPed.cRucCliPedVta_in}
 								</Descriptions.Item>
-                <Descriptions.Item span={1} label='Tipo de cambio S/'>
-                  {dataCabeceraPed.nValTipCambioPedVta_in}
-                </Descriptions.Item>
+								<Descriptions.Item span={1} label="Tipo de cambio S/">
+									{dataCabeceraPed.nValTipCambioPedVta_in}
+								</Descriptions.Item>
 								<Descriptions.Item span={4} label="Cliente">
 									{dataCabeceraPed.cNomCliPedVta_in}
 								</Descriptions.Item>
@@ -956,9 +964,9 @@ function ModalCobrarPedido({
 						</Row>
 						<Row>
 							<Col span={8} style={{ padding: 0, paddingRight: 10 }}>
-                {/*<Row className="div-tipo-cambio">*/}
-                {/*  <Col span={12}>Formas de Pago</Col>*/}
-                {/*</Row>*/}
+								{/*<Row className="div-tipo-cambio">*/}
+								{/*  <Col span={12}>Formas de Pago</Col>*/}
+								{/*</Row>*/}
 								<List
 									size="small"
 									bordered
@@ -1001,7 +1009,7 @@ function ModalCobrarPedido({
 								/>
 							</Col>
 							<Col span={16}>
-								<Form size='small'>
+								<Form size="small">
 									<Row style={{ marginTop: 10 }}>
 										<Col span={10} style={{ marginRight: 10 }}>
 											<Form.Item label="Moneda">
@@ -1040,7 +1048,7 @@ function ModalCobrarPedido({
 										<Col span={10} style={{ marginRight: 10 }}>
 											<Form.Item>
 												<Button
-                          size='middle'
+													size="middle"
 													onClick={() => {
 														setDataMontos(oldData => {
 															let existe = false;
@@ -1083,13 +1091,13 @@ function ModalCobrarPedido({
 									size="small"
 									pagination={false}
 									dataSource={dataMontos.length === 0 ? [{}] : dataMontos}
-                  // scroll={{
-                  //   y: 95
-                  // }}
+									// scroll={{
+									//   y: 95
+									// }}
 								/>
 							</Col>
 							<Col span={10} style={{ marginBottom: 20 }}>
-								<Descriptions className="total-pagar-desc" style={{ height:145 }}>
+								<Descriptions className="total-pagar-desc" style={{ height: 145 }}>
 									<Descriptions.Item span={3} label="TOTAL A PAGAR S/.">
 										{Number(dataCabeceraPed.nValNetoPedVta_in).toFixed(2)}
 									</Descriptions.Item>
@@ -1103,7 +1111,6 @@ function ModalCobrarPedido({
 							<Col span={24}>
 								<Row justify="end" style={{ marginRight: 5 }}>
 									{/*<Button>% Descuento</Button>*/}
-
 								</Row>
 							</Col>
 						</Row>
@@ -1254,7 +1261,7 @@ const ModalComprobanteMenu = ({
 
 	async function modifyPdf(url, detalles) {
 		const nombre = url.split('/');
-    console.log(nombre);
+		console.log(nombre);
 		const existingPdfBytes = await fetch(
 			baseUrl + '/posventa/downloadComprobante?nombreArchivo=' + nombre[nombre.length - 1]
 		).then(res => res.arrayBuffer());
