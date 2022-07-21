@@ -184,7 +184,7 @@ function ModalCobrarPedido({
 							'Alerta'
 						);
 						setLoadingCobrar(false);
-						formaPagoInvalidate = false;
+						formaPagoInvalidate = true;
 					}
 				}
 

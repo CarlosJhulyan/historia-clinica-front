@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Form, AutoComplete, Button, Table, Divider, Row, Modal, Descriptions, Col } from 'antd';
+import { Card, Form, AutoComplete, Button, Table, Divider, Row, Modal, Descriptions, Col, Input } from 'antd';
 import moment from 'moment';
 import ModalListaProductos from './modals/modalListaProductos';
 import { httpClient } from '../../util/Api';
@@ -18,6 +18,7 @@ function GenerarPedido() {
 	const [loadingData, setLoadingData] = useState(true);
 	const token = JSON.parse(localStorage.getItem('token'));
 	const [data, setData] = useState([]);
+  const [dataFiltered, setDataFiltered] = useState([]);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalCobrarPedido, setVisibleModalCobrarPedido] = useState(false);
   const [visibleModalCambiarCantidad, setVisibleModalCambiarCantidad] = useState(false);
@@ -26,9 +27,10 @@ function GenerarPedido() {
 	const [selectedRows, setSelectedRows] = useState([]);
 	const [productosDetalles, setProductosDetalles] = useState([]);
 	const [productosCurrent, setProductosCurrent] = useState([]);
-
+  const [textSearch, setTextSearch] = useState('');
 	const [cNumPedVta_in, setCNumPedVta_in] = useState('');
 	const [tipoVenta, setTipoVenta] = useState('01');
+  const [ultimoPedidoDiario, setUltimoPedidoDiario] = useState('____');
 
 	const {
 		authUser: { data: user },
@@ -215,8 +217,6 @@ function GenerarPedido() {
 			dataLocalCabecera.cIDRef = medicoCurrent.TIP_REFERENCIA;
 			dataLocalCabecera.cDescRef = medicoCurrent.DESC_REFERENCIA;
 
-			console.log(dataLocalCabecera);
-
 			await grabarPedidoFinally(dataLocalCabecera);
 			setDataFetchCabecera(dataLocalCabecera);
 			let index = 0;
@@ -286,11 +286,9 @@ function GenerarPedido() {
 	};
 
 	const guardarPedidoDetalle = async (item, pFila, tipo, cNumPedVta_in) => {
-		console.log('producto', item);
 		const dataLocalDetalle = {
 			...dataFetchDetalle,
 		};
-		// TODO: En desarrollo
 		dataLocalDetalle.cNumPedVta_in = cNumPedVta_in;
 		dataLocalDetalle.nSecPedVtaDet_in = String(pFila + 1);
 		dataLocalDetalle.cCodProd_in = item.CODIGO;
@@ -416,6 +414,20 @@ function GenerarPedido() {
 		}
 	};
 
+  const getUltimoPedidoDiario = async () => {
+    try {
+      const {
+        data: { success, data }
+      } = await httpClient.post('posventa/getUltimoPedidoDiario', {
+        ...dataFetch,
+        secUsu: user.sec_usu_local
+      });
+      if (success) setUltimoPedidoDiario(data);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
 	const completeWithSymbol = (pValue, pLength, pSymbol, pAlign) => {
 		let tempString = pValue;
 		const temp = pValue.length;
@@ -524,6 +536,7 @@ function GenerarPedido() {
 			dataIndex: 'pu',
 			key: 'pu',
 			align: 'right',
+      render: (pu) => <span>{Number(pu).toFixed(2)}</span>
 		},
 		{
 			title: 'Total',
@@ -626,7 +639,7 @@ function GenerarPedido() {
 	const clearDataFinally = () => {
 
     confirm({
-      content: '¿Quiére continuar con venta o ir a nueva venta?',
+      content: '¿Desea hacer una venta al mismo paciente?',
       okText: 'Continuar',
       cancelText: 'Nueva venta',
       onOk: () => {
@@ -748,9 +761,13 @@ function GenerarPedido() {
       totalDolar: total / 3.34,
     });
     setVisibleModalCambiarCantidad(false);
-    console.log(productosCurrent);
-    console.log(productosDetalles);
-    console.log(newDataFormat);
+    setProductosDetalles(productosDetalles.map(item => {
+      if (key === item.key) return {
+        ...item,
+        ...newData,
+      }
+      else return item;
+    }));
   }
 
 	useEffect(() => {
@@ -758,6 +775,7 @@ function GenerarPedido() {
 			const valido = await validaOperacionCaja('MA');
 			if (valido) {
         await getFechaMovCaja();
+        await getUltimoPedidoDiario();
         setVisibleModal(true);
       }
 			else {
@@ -767,6 +785,17 @@ function GenerarPedido() {
 		};
 		chargeDataAsync();
 	}, []);
+
+  useEffect(() => {
+    setDataFiltered(data.filter(item => {
+      return item.DESCRIPCION.toUpperCase().includes(textSearch.toUpperCase());
+    }));
+
+  }, [textSearch]);
+
+  useEffect(() => {
+    setDataFiltered(data);
+  }, [data]);
 
 	return (
 		<>
@@ -808,14 +837,11 @@ function GenerarPedido() {
 									gap: '10px',
 								}}
 							>
-								<Form.Item name="codPaciente" style={{ width: '30%', margin: 0 }}>
-									<AutoComplete
-										disabled={disabledAll}
-										// value={valueCOD}
-										// options={optionsCOD}
-										// onSearch={onSearchCOD}
-										// onSelect={onSelectCOD}
-										// onChange={onChangeCOD}
+								<Form.Item style={{ width: '30%', margin: 0 }}>
+									<Input
+                    disabled={disabledAll || data.length <= 0}
+										value={textSearch}
+										onChange={e => setTextSearch(e.target.value.toUpperCase())}
 										style={{ width: '100%' }}
 										placeholder="Nombre de Producto"
 									/>
@@ -865,7 +891,7 @@ function GenerarPedido() {
 								}}
 								onClick={() => {
                   if (data.length > 0) confirm({
-                    content: 'Hacer una nueva selección o continuar con el anterior.',
+                    content: 'Continuar con el anterior o nueva selección',
                     onOk: () => {
                       setVisibleModal(true);
                     },
@@ -873,6 +899,9 @@ function GenerarPedido() {
                       setProductosCurrent([]);
                       setSelectedRowKeys([]);
                       setProductosDetalles([]);
+                      setData([]);
+                      setSelectedRows([]);
+                      setVisibleModal(true);
                     },
                     cancelText: 'Nueva Selección',
                     okText: 'Continuar',
@@ -900,7 +929,7 @@ function GenerarPedido() {
 					<span>Fecha: {moment().format('DD/MM/yyyy')}</span>
 					<span>Tipo Cambio: {dataDetallesFinally.tipoCambio}</span>
 					<span>Vendedor: {JSON.parse(localStorage.getItem('token'))?.data.login_usu}</span>
-					<span>Ult. Pedido: _____</span>
+					<span>Ult. Pedido: {ultimoPedidoDiario.trim() === '0000' ? '____' : ultimoPedidoDiario}</span>
 				</Row>
 				<Row
 					style={{
@@ -919,7 +948,7 @@ function GenerarPedido() {
 					loading={loadingData}
 					className="gx-table-responsive"
 					columns={columns}
-					dataSource={data}
+					dataSource={dataFiltered}
 					pagination={{
 						pageSize: 5,
 					}}
@@ -934,7 +963,7 @@ function GenerarPedido() {
 							}}
 						>
 							<span>Red. S/. 0.00</span>
-							<span>I.G.V.: 15.25</span>
+							<span>I.G.V.: S/. {(dataDetallesFinally.total * 0.18).toFixed(2)}</span>
 							<span>TOTAL: S/. {dataDetallesFinally.total.toFixed(2)}</span>
 							<span>US: $ {dataDetallesFinally.totalDolar.toFixed(2)}</span>
 						</Row>
@@ -991,6 +1020,9 @@ function GenerarPedido() {
                     total,
                     totalDolar: total / 3.34,
                   });
+                  setSelectedRowKeys(selectedRowKeys.filter(item => item !== selectedRows[0].key));
+                  setProductosDetalles(productosDetalles.filter(item => item.key !== selectedRows[0].key));
+                  setProductosCurrent(productosCurrent.filter(item => item.key !== selectedRows[0].key));
                   setSelectedRows([]);
 								},
 								centered: true,
