@@ -2,16 +2,21 @@ import { Modal, Input, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../authentication';
 import { httpClient } from '../../util/Api';
+import ModalComprobante from './modalComprobante';
 
-const ModalNotaPedio = ({ visible, setVisible, dataVenta }) => {
+const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 	const [dataDetalleNotaCredito, setDataDetalleNotaCredito] = useState([]);
 	const [dataListaUsuarios, setDataListaUsuarios] = useState([]);
 	// const [dataCabecera, setDataCabecera] = useState('');
 	// const [dataDetalles, setDataDetalles] = useState([]);
 	const [modalListaUsuarios, setModalListausuarios] = useState(true);
 	const [modalMotivo, setModalMotivo] = useState(false);
+	const [modalComprobante, setModalComprobante] = useState(false);
 	const [currentUsuario, setCurrentUsuario] = useState({});
 	const [motivo, setMotivo] = useState('');
+
+	const [dataImprimir, setDataImprimir] = useState([]);
+	const [dataDetalle, setDataDetalle] = useState([]);
 
 	const {
 		authUser: { data: user },
@@ -113,29 +118,90 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta }) => {
 			const da = await fCurLstCompPago();
 			let resp = await getNumNC();
 			resp = resp.split('@');
-			fImpCompElectWS(resp[0], resp[1]);
-
+			const idDocumento = await impCompElectWS(resp[0], resp[1]);
+			if (!idDocumento) {
+				return;
+			}
+			const dataImp = await obtieneDocImprimirWs(idDocumento);
+			setDataImprimir(dataImp);
+			const detalle = await imprimirDetalle(resp[0], resp[1]);
+			setDataDetalle(detalle);
+			await clearCacheImprimirWs(idDocumento);
 			console.log(data);
+			setModalComprobante(true);
 		} catch (error) {
 			console.error(error);
 		}
 	};
+	console.log(dataImprimir);
+	console.log(dataDetalle);
 
-	const fImpCompElectWS = async (val1, val2) => {
+	const clearCacheImprimirWs = async idDocumento => {
+		try {
+			const {
+				data: { success, message },
+			} = await httpClient.post('posventa/clearCacheImprimirWs', {
+				IdDocumento: idDocumento,
+			});
+			if (success) {
+			}
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const imprimirDetalle = async (numPedVta, secCompPago) => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('posventa/imprimirDetalle', {
+				codGrupoCia: '001',
+				codLocal: '001',
+				numPedVta,
+				secCompPago,
+			});
+			if (success) {
+				return data;
+			}
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const obtieneDocImprimirWs = async idDocumento => {
+		try {
+			const {
+				data: { data, success, message },
+			} = await httpClient.post('posventa/obtieneDocImprimirWs', {
+				IdDocumento: idDocumento,
+			});
+			if (success) {
+				return data;
+			}
+			console.log(message);
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
+	const impCompElectWS = async (val1, val2) => {
 		try {
 			const {
 				data: { data = [] },
-			} = await httpClient.post('posventa/fImpCompElectWS', {
-				cCodGrupoCia: '001',
-				cCodLocal: '001',
-				cNumPedVta: val1,
-				cSecCompPago: val2,
-				vVersion: 'v1.0.0GA20221507',
-				vReimpresion: 'N',
+			} = await httpClient.post('posventa/impCompElectWS', {
+				codGrupoCia: '001',
+				codLocal: '001',
+				numPedVta: val1,
+				secCompPago: val2,
+				version: 'v1.0.0GA20221507',
+				reimpresion: 'N',
 				valorAhorro: '0',
-				cDocTarjetaPtos: '',
+				docTarjetaPtos: '',
 			});
-			console.log('fImpCompElectWS', data); // TODO: HASTA AQUI QUEDAMOS POR HOY
+			console.log('impCompElectWS', data);
+			return data;
 		} catch (error) {
 			console.error(error);
 		}
@@ -163,7 +229,7 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta }) => {
 		}
 	};
 
-	const fCurLstCompPago = async dd => {
+	const fCurLstCompPago = async () => {
 		try {
 			const {
 				data: { data = [] },
@@ -179,7 +245,7 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta }) => {
 		}
 	};
 
-	const getNumNC = async dd => {
+	const getNumNC = async () => {
 		try {
 			const {
 				data: { data = [] },
@@ -278,8 +344,8 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta }) => {
 					okText="Aceptar"
 					cancelText="Salir"
 					onOk={() => {
-						cajAgregarCabNotaCredito();
 						setModalMotivo(false);
+						cajAgregarCabNotaCredito();
 					}}
 					centered
 					onCancel={() => setModalMotivo(false)}
@@ -292,6 +358,15 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta }) => {
 						}}
 					/>
 				</Modal>
+			)}
+			{modalComprobante && (
+				<ModalComprobante
+					visible={modalComprobante}
+					setVisible={setModalComprobante}
+					dataImprimir={dataImprimir}
+					dataDetalle={dataDetalle}
+					dataCabecera={dataCabecera}
+				/>
 			)}
 		</>
 	);

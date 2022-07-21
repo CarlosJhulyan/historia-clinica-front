@@ -227,6 +227,7 @@ const AnulacionPedidosCompletos = () => {
 					visible={abrirModalNotaPedido}
 					setVisible={setAbrirModalNotaPedido}
 					dataVenta={dataVenta}
+					dataCabecera={dataCabecera}
 				/>
 			) : null}
 		</>
