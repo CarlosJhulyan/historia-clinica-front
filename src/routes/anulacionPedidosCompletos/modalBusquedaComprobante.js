@@ -105,23 +105,6 @@ function ModalBusquedaComprobante({
 				if (listaDetallePedido.data.success) {
 					setDataDetalles(listaDetallePedido.data.data);
 				}
-
-				//TODO: pendiente de endpoints
-				// console.log(verificaPedido);
-				// setDataSend({
-				// 	...dataSend,
-				// 	MONTO: arrayData[1].trim(),
-				// 	FECHA: arrayData[2],
-				// 	FECHA_FORMAT: moment(arrayData[2], 'DD/MM/yyyy'),
-				// 	NUM_PEDIDO: arrayData[0],
-				// });
-
-				// if (verificaProdVirtuales.data.success) {
-				// 	await traerPedido(arrayData[0]);
-				// 	openNotification('Pedido', verificaProdVirtuales.data.message);
-				// } else {
-				// 	openNotification('Pedido', verificaProdVirtuales.data.message, 'Warning');
-				// }
 			} else {
 				openNotification('Error', 'Los datos ingresados no son correctos', 'Alerta');
 				setLoadingData(false);
@@ -154,7 +137,10 @@ function ModalBusquedaComprobante({
 			okText="Aceptar"
 			cancelText="Salir"
 			centered
-			onCancel={() => setAbrirModalManual(false)}
+			onCancel={() => {
+				if (loadingData) return;
+				setAbrirModalManual(false);
+			}}
 			onOk={() => traerCorrelativoMontoNeto()}
 			okButtonProps={{
 				loading: loadingData,

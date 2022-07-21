@@ -2,6 +2,7 @@ import { Modal, Input, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../authentication';
 import { httpClient } from '../../util/Api';
+import ModalLoading from '../../util/modalLoading';
 import ModalComprobante from './modalComprobante';
 
 const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
@@ -18,6 +19,8 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataDetalle, setDataDetalle] = useState([]);
 
+	const [newDocumento, setNewDocumento] = useState('');
+	const [cargando, setCargando] = useState(false);
 	const {
 		authUser: { data: user },
 	} = useAuth();
@@ -102,6 +105,7 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 	};
 
 	const cajAgregarCabNotaCredito = async () => {
+		setCargando(true);
 		try {
 			const {
 				data: { data = [] },
@@ -118,6 +122,7 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 			const da = await fCurLstCompPago();
 			let resp = await getNumNC();
 			resp = resp.split('@');
+			setNewDocumento(resp[0]);
 			const idDocumento = await impCompElectWS(resp[0], resp[1]);
 			if (!idDocumento) {
 				return;
@@ -129,8 +134,10 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 			await clearCacheImprimirWs(idDocumento);
 			console.log(data);
 			setModalComprobante(true);
+			setCargando(false);
 		} catch (error) {
 			console.error(error);
+			setCargando(false);
 		}
 	};
 	console.log(dataImprimir);
@@ -275,16 +282,22 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 		}
 	};
 
+	const inicio = async () => {
+		setCargando(true);
+		await cajListaDetalleNotaCredito();
+		await cajListaCajaUsuario();
+		setCargando(false);
+	};
+
 	useEffect(() => {
-		cajListaDetalleNotaCredito();
-		cajListaCajaUsuario();
+		inicio();
 	}, []);
 
 	return (
 		<>
 			<Modal
 				title="Nueva nota de credito"
-				width={'80%'}
+				width={900}
 				closable={false}
 				okText="Aceptar"
 				cancelText="Salir"
@@ -309,7 +322,7 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 			{modalListaUsuarios && (
 				<Modal
 					title="Listas de usuarios y cajas disponibles"
-					width={'50%'}
+					width={800}
 					closable={false}
 					okText="Aceptar"
 					cancelText="Salir"
@@ -339,7 +352,7 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 			{modalMotivo && (
 				<Modal
 					title="Motivo de anulacion"
-					width={'50%'}
+					width={900}
 					closable={false}
 					okText="Aceptar"
 					cancelText="Salir"
@@ -366,8 +379,10 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 					dataImprimir={dataImprimir}
 					dataDetalle={dataDetalle}
 					dataCabecera={dataCabecera}
+					newDocumento={newDocumento}
 				/>
 			)}
+			{cargando && <ModalLoading></ModalLoading>}
 		</>
 	);
 };

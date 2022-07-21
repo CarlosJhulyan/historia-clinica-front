@@ -761,7 +761,7 @@ function ModalCobrarPedido({
 				centered
 				title="Cobrar Pedido"
 				className="modal-posventa"
-				width={1100}
+				width={1100}				
 				footer={[
           <Button
             onClick={() => {
@@ -1083,9 +1083,9 @@ function ModalCobrarPedido({
 									size="small"
 									pagination={false}
 									dataSource={dataMontos.length === 0 ? [{}] : dataMontos}
-                  scroll={{
-                    y: 95
-                  }}
+                  // scroll={{
+                  //   y: 95
+                  // }}
 								/>
 							</Col>
 							<Col span={10} style={{ marginBottom: 20 }}>
