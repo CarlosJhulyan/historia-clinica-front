@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { useAuth } from '../../authentication';
 import { ModalCerrarSesion } from '../../components/modal/ModalCerrarSesion';
+import { httpClient } from '../../util/Api';
 
 const { Header } = Layout;
 
@@ -57,16 +58,25 @@ const Topbar = () => {
 
 	const history = useHistory();
 
+	const tt = authUser?.data ? authUser.data : tokenAdmin;
+	const id = tt?.login_usu ? tt.login_usu : token.num_cmp;
+
+	const cerrarSesion = async () => {
+		const response = await httpClient.post('/authController/cerrarSesionActivo', { userId: id });
+		console.log('response', response.data.message);
+	};
+
 	const onLogoutAdmin = () => {
 		adminSignOut(() => {
 			history.push('/hc-admin');
-		})
+		});
+		cerrarSesion();
 	};
 
 	const onLogoutReports = () => {
 		reportsSignOut(() => {
 			history.push('/reportes');
-		})
+		});
 	};
 
 	return (
@@ -88,18 +98,21 @@ const Topbar = () => {
 					<img alt="" src={'/assets/images/w-logo.png'} />
 				</Link>
 				<div>
-					{initURL.includes('/hc-admin') &&
+					{initURL.includes('/hc-admin') && (
 						<Button onClick={() => onLogoutAdmin()} style={{ marginTop: 12 }}>
 							Cerrar Sesión Admin
-						</Button>}
-					{initURL.includes('/reportes') &&
+						</Button>
+					)}
+					{initURL.includes('/reportes') && (
 						<Button onClick={() => onLogoutReports()} style={{ marginTop: 12 }}>
 							Cerrar Sesión Reportes
-						</Button>}
-					{(authUser && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) &&
+						</Button>
+					)}
+					{authUser && !initURL.includes('/hc-admin') && !initURL.includes('/reportes') && (
 						<Button onClick={() => setModalCerrar(true)} style={{ marginTop: 12 }}>
 							Cerrar Sesión
-						</Button>}
+						</Button>
+					)}
 				</div>
 
 				<div
@@ -111,50 +124,50 @@ const Topbar = () => {
 						gap: '30px',
 					}}
 				>
-					{(token && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) && (
+					{token && !initURL.includes('/hc-admin') && !initURL.includes('/reportes') && (
 						<>
 							<div>
 								<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-                  {!token.data ? (
-                    <>
-                      MÉDICO:{' '}
-                    </>
-                  ) : (
-                    <>
-                      USUARIO:{' '}
-                    </>
-                  )}
+									{!token.data ? <>MÉDICO: </> : <>USUARIO: </>}
 									<span style={{ fontWeight: 'normal' }}>
-										{!token.data ? token.des_nom_medico + ' ' + token.des_ape_medico : token.data.login_usu}
+										{!token.data
+											? token.des_nom_medico + ' ' + token.des_ape_medico
+											: token.data.login_usu}
 									</span>{' '}
 								</h4>
 							</div>
-              {!token.data && (
-                <>
-                  <div>
-                    <h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-                      ESPECIALIDAD: <span style={{ fontWeight: 'normal' }}>{token.des_especialidad}</span>
-                    </h4>
-                  </div>
-                  <div>
-                    <h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-                      CMP: <span style={{ fontWeight: 'normal' }}>{token.num_cmp}</span>
-                    </h4>
-                  </div>
-                </>
-              )}
+							{!token.data && (
+								<>
+									<div>
+										<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
+											ESPECIALIDAD:{' '}
+											<span style={{ fontWeight: 'normal' }}>{token.des_especialidad}</span>
+										</h4>
+									</div>
+									<div>
+										<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
+											CMP: <span style={{ fontWeight: 'normal' }}>{token.num_cmp}</span>
+										</h4>
+									</div>
+								</>
+							)}
 						</>
-					)
-					}
-					{(tokenAdmin && initURL.includes('/hc-admin')) && <div>
-						<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
-							<span style={{ fontWeight: 'normal' }}>{tokenAdmin.login_usu}</span>
-						</h4>
-					</div>}
+					)}
+					{tokenAdmin && initURL.includes('/hc-admin') && (
+						<div>
+							<h4 style={{ fontWeight: 'bold', marginBottom: '0' }}>
+								<span style={{ fontWeight: 'normal' }}>{tokenAdmin.login_usu}</span>
+							</h4>
+						</div>
+					)}
 				</div>
 			</Header>
 			{modalCerar ? (
-				<ModalCerrarSesion modalCerar={modalCerar} setModalCerrar={setModalCerrar} />
+				<ModalCerrarSesion
+					modalCerar={modalCerar}
+					setModalCerrar={setModalCerrar}
+					cerrarSesion={cerrarSesion}
+				/>
 			) : null}
 		</>
 	);
