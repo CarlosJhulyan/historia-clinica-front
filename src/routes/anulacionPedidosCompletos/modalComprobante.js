@@ -39,6 +39,7 @@ const ModalComprobante = ({
 	dataDetalle,
 	dataCabecera,
 	newDocumento,
+  clearAll
 }) => {
 	const [visibleModalComprobante, setVisibleModalComprobante] = useState(false);
 	const [loadingData, setLoadingData] = useState(false);
@@ -191,7 +192,7 @@ const ModalComprobante = ({
 				onCancel={() => {
 					setVisible(false);
 				}}
-				footer={[<Button onClick={() => setVisible(false)}>Salir</Button>]}
+				footer={[<Button onClick={() => clearAll()}>Salir</Button>]}
 			>
 				<Row justify="space-between">
 					<Col span={12}>

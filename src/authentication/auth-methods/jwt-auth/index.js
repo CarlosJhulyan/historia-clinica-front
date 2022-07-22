@@ -11,7 +11,7 @@ export const useProvideAuth = () => {
 	const [authUser, setAuthUser] = useState(null);
 	const [authAdmin, setAuthAdmin] = useState(null);
 	const [authReports, setAuthReports] = useState(null);
-	const [error, setError] = useState('');
+	const [error, setError] = useState(null);
 	const [errorReports, setErrorReports] = useState('');
 	const [isLoadingUser, setLoadingUser] = useState(true);
 	const [isLoading, setLoading] = useState(false);
@@ -22,12 +22,12 @@ export const useProvideAuth = () => {
 
 	const fetchStart = () => {
 		setLoading(true);
-		setError('');
+    setError(null);
 	};
 
 	const fetchSuccess = () => {
 		setLoading(false);
-		setError('');
+    setError(null);
 	};
 
 	const fetchError = error => {
@@ -36,13 +36,13 @@ export const useProvideAuth = () => {
 	};
 
 	const fetchStartAdmin = () => {
+    setErrorAdmin(null);
 		setLoadingAdmin(true);
-		setErrorAdmin('');
 	};
 
 	const fetchSuccessAdmin = () => {
+    setErrorAdmin(null);
 		setLoadingAdmin(false);
-		setErrorAdmin('');
 	};
 
 	const fetchErrorAdmin = error => {
@@ -51,13 +51,13 @@ export const useProvideAuth = () => {
 	};
 
 	const fetchStartReports = () => {
+    setErrorReports(null);
 		setLoadingReports(true);
-		setErrorReports('');
 	};
 
 	const fetchSuccessReports = () => {
+    setErrorReports(null);
 		setLoadingReports(false);
-		setErrorReports('');
 	};
 
 	const fetchErrorReports = error => {
@@ -77,17 +77,18 @@ export const useProvideAuth = () => {
 					localStorage.setItem('token', JSON.stringify(data.data));
 					getAuthUser(data.data);
 					if (callbackFun) callbackFun();
+
+          httpClient
+            .post('sistema/getVersion')
+            .then(({ data: { data, success } }) => {
+              if (success) localStorage.setItem('version', data.num_version);
+            })
+            .catch(function (error) {
+              fetchError(error.message);
+            });
 				} else {
 					fetchError(data.message);
 				}
-			})
-			.catch(function (error) {
-				fetchError(error.message);
-			});
-		httpClient
-			.post('sistema/getVersion')
-			.then(({ data: { data, success } }) => {
-				if (success) localStorage.setItem('version', data.num_version);
 			})
 			.catch(function (error) {
 				fetchError(error.message);
@@ -109,17 +110,18 @@ export const useProvideAuth = () => {
           );
           getAuthUser(data);
           if (callbackFun) callbackFun();
+
+          httpClient
+            .post('sistema/getVersion')
+            .then(({ data: { data, success } }) => {
+              if (success) localStorage.setItem('version', data.num_version);
+            })
+            .catch(function (error) {
+              fetchError(error.message);
+            });
 				} else {
 					fetchError(data.message);
 				}
-			})
-			.catch(function (error) {
-				fetchError(error.message);
-			});
-		httpClient
-			.post('sistema/getVersion')
-			.then(({ data: { data, success } }) => {
-				if (success) localStorage.setItem('version', data.num_version);
 			})
 			.catch(function (error) {
 				fetchError(error.message);

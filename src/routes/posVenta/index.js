@@ -643,7 +643,7 @@ function GenerarPedido() {
       okText: 'Continuar',
       cancelText: 'Nueva venta',
       onOk: () => {
-
+        getUltimoPedidoDiario();
       },
       onCancel: () => {
         setCNumPedVta_in('');
@@ -658,6 +658,7 @@ function GenerarPedido() {
         setClienteCurrent({});
         setMedicoCurrent({});
         setPacienteCurrent({});
+        getUltimoPedidoDiario();
       },
       centered: true
     });
@@ -774,9 +775,11 @@ function GenerarPedido() {
 		const chargeDataAsync = async () => {
 			const valido = await validaOperacionCaja('MA');
 			if (valido) {
-        await getFechaMovCaja();
-        await getUltimoPedidoDiario();
-        setVisibleModal(true);
+        const validoFecha = await getFechaMovCaja();
+        if (validoFecha) {
+          await getUltimoPedidoDiario();
+          setVisibleModal(true);
+        }
       }
 			else {
 				setDisabledAll(true);

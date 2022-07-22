@@ -60,8 +60,12 @@ function ModalBusquedaComprobante({
 				});
 
 				if (!verificaPedido.data.success) {
-					openNotification('error', verificaPedido.data.message);
-					setLoadingData(false);
+          setLoadingData(false);
+          if (verificaPedido.data.message.includes('El Pedido ya está anulado.')) {
+            openNotification('Anulación', 'El Pedido ya está anulado.');
+            return;
+          }
+					openNotification('Anulación', verificaPedido.data.message);
 					return;
 				}
 
@@ -105,6 +109,7 @@ function ModalBusquedaComprobante({
 				if (listaDetallePedido.data.success) {
 					setDataDetalles(listaDetallePedido.data.data);
 				}
+        setAbrirModalManual(false);
 			} else {
 				openNotification('Error', 'Los datos ingresados no son correctos', 'Alerta');
 				setLoadingData(false);
@@ -213,7 +218,7 @@ function ModalBusquedaComprobante({
               name='FECHA_FORMAT'
               value={dataSend.FECHA_FORMAT}
               format='DD/MM/yyyy'
-              placeholder='dd/mm/yyyy' 
+              placeholder='dd/mm/yyyy'
               style={{ width: '100%' }} />
           </Form.Item> */}
 			</Form>
