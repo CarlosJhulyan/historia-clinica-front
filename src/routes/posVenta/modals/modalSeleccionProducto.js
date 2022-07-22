@@ -29,7 +29,7 @@ function ModalSeleccionProducto({
   const [listaFrac, setListaFrac] = useState([]);
   const [dataForm, setDataForm] = useState({
     pu: 0,
-    cantidad: 0,
+    cantidad: 1,
     total: 0
   });
 

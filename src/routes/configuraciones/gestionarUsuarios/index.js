@@ -15,22 +15,35 @@ import { httpClient } from '../../../util/Api';
 import ModalUpsertUsuario from './modalUpsertUsuario';
 import { useAuth } from '../../../authentication';
 import { openNotification } from '../../../util/util';
+import ModalAsignacionRoles from './modalAsignacionRoles';
 
 const GestionarUsuarios = () => {
   const [usersData, setUsersData] = useState([]);
+  const [usersDataFiltered, setUsersDataFiltered] = useState([]);
   const [estadoUsuarios, setEstadoUsuarios] = useState('A');
   const [searchText, setSearchText] = useState('');
   const [loadingUsersData, setLoadingUsersData] = useState(false);
   const [loadingChangeEstado, setLoadingChangeEstado] = useState(false);
   const [disabledAll, setDisabledAll] = useState(false);
   const [visibleUpsertUsuario, setVisibleUpsertUsuario] = useState(false);
+  const [visibleModalRoles, setVisibleModalRoles] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [currentCliente, setCurrentCliente] = useState();
+  const [currentUsuario, setCurrentUsuario] = useState();
+  const [loadingListaRoles, setLoadingListaRoles] = useState(false);
+  const [listaRoles, setListaRoles] = useState([]);
   const dataFetchInit = {
     codGrupoCia: '001',
     codLocal: '001'
   }
   const { authAdmin } = useAuth();
+
+  const getListaRoles = () => {
+    httpClient.get('admin/getTodosRolesUsuario')
+      .then(({ data: { success, data } }) => {
+        if (success) setListaRoles(data);
+      })
+      .catch(e => console.error(e));
+  }
 
   const columnsDataUsers = [
     {
@@ -68,7 +81,7 @@ const GestionarUsuarios = () => {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys);
-      setCurrentCliente(selectedRows[0]);
+      setCurrentUsuario(selectedRows[0]);
     },
     selectedRowKeys
   };
@@ -95,19 +108,33 @@ const GestionarUsuarios = () => {
       data: { success, message }
     } = await httpClient.post('admin/changeEstadoUsuario', {
       ...dataFetchInit,
-      secUsu: currentCliente.key,
+      secUsu: currentUsuario.key,
       codUsu: authAdmin.login_usu
     })
 
     if (success) {
       openNotification('Cambio de estado', message);
+      setCurrentUsuario(null);
+      setSelectedRowKeys([]);
       getUsers();
     } else openNotification('Cambio de estado', message, 'Warning');
     setLoadingChangeEstado(false);
   }
 
+  const handleSearchInTable = () => {
+    setUsersDataFiltered(usersData.filter(item => item.APE_PAT.includes(searchText)));
+  }
+
   useEffect(() => {
     getUsers();
+  }, [estadoUsuarios]);
+
+  useEffect(() => {
+    setUsersDataFiltered(usersData);
+  }, [usersData]);
+
+  useEffect(() => {
+    getListaRoles();
   }, []);
 
   return (
@@ -126,14 +153,15 @@ const GestionarUsuarios = () => {
               className='usuarios-activos'
             >
               <Input.Search
-                style={{marginTop:5,marginBottom:5}}
+                onSearch={handleSearchInTable}
+                style={{marginTop:5,marginBottom:6}}
                 onChange={e => setSearchText(e.target.value.toUpperCase())}
                 value={searchText}
               />
             </Form.Item>
           </Col>
         </Row>
-        <Row>
+        <Row style={{marginTop:10}}>
           <Col span={24}>
             <Table
               rowSelection={{
@@ -142,7 +170,7 @@ const GestionarUsuarios = () => {
               }}
               // title={() => <Row style={{backgroundColor: '#0169aa'}} align='middle'><span>Relación de Usuarios:</span></Row>}
               loading={loadingUsersData}
-              dataSource={usersData}
+              dataSource={usersDataFiltered}
               columns={columnsDataUsers}
               size='small'
               className="gx-table-responsive"
@@ -158,7 +186,7 @@ const GestionarUsuarios = () => {
                 color: '#fff',
               }}
               onClick={() => {
-                setCurrentCliente(null);
+                setCurrentUsuario(null);
                 setSelectedRowKeys([]);
                 setVisibleUpsertUsuario(true);
               }}
@@ -188,24 +216,26 @@ const GestionarUsuarios = () => {
             >
               Activar/Desactivar
             </Button>
-            {/*<Button*/}
-            {/*  disabled={disabledAll}*/}
-            {/*  style={{*/}
-            {/*    backgroundColor: '#0169aa',*/}
-            {/*    color: '#fff',*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  Roles ASignados*/}
-            {/*</Button>*/}
-            {/*<Button*/}
-            {/*  disabled={disabledAll}*/}
-            {/*  style={{*/}
-            {/*    backgroundColor: '#0169aa',*/}
-            {/*    color: '#fff',*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  Ver Todos*/}
-            {/*</Button>*/}
+            <Button
+              disabled={disabledAll  || selectedRowKeys.length === 0}
+              style={{
+                backgroundColor: '#0169aa',
+                color: '#fff',
+              }}
+              onClick={() => setVisibleModalRoles(true)}
+            >
+              Roles Asignados
+            </Button>
+            <Button
+              disabled={disabledAll}
+              style={{
+                backgroundColor: '#0169aa',
+                color: '#fff',
+              }}
+              onClick={() => setEstadoUsuarios('')}
+            >
+              Ver Todos
+            </Button>
           </Col>
         </Row>
       </Card>
@@ -215,8 +245,19 @@ const GestionarUsuarios = () => {
           dataFetchInit={dataFetchInit}
           visible={visibleUpsertUsuario}
           setVisible={setVisibleUpsertUsuario}
-          currentCliente={currentCliente}
+          currentUsuario={currentUsuario}
           getUsers={getUsers}
+        />
+      )}
+
+      {visibleModalRoles && (
+        <ModalAsignacionRoles
+          visible={visibleModalRoles}
+          setVisible={setVisibleModalRoles}
+          dataFetchInit={dataFetchInit}
+          lista={listaRoles}
+          loadingLista={loadingListaRoles}
+          currentUsuario={currentUsuario}
         />
       )}
     </>

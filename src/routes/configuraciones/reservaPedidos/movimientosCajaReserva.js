@@ -14,18 +14,18 @@ import {
   Select,
   Spin
 } from 'antd';
-import CloseBox from '../../assets/posventa/close-box.png';
-import OpenBox from '../../assets/posventa/open-box.png';
+import CloseBox from '../../../assets/posventa/close-box.png';
+import OpenBox from '../../../assets/posventa/open-box.png';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { httpClient } from '../../util/Api';
-import { useAuth } from '../../authentication';
-import { openNotification } from '../../util/util';
+import { httpClient } from '../../../util/Api';
+import { useAuth } from '../../../authentication';
+import { openNotification } from '../../../util/util';
 import moment from 'moment';
-import ModalLoading from '../../util/modalLoading';
+import ModalLoading from '../../../util/modalLoading';
 
-function MovimientosCaja() {
+function MovimientosCajaReserva() {
   const { confirm } = Modal;
-  const { authUser: { data: user }  } = useAuth();
+  const { authAdmin: user } = useAuth();
   const [infoComprobanteBoleta, setInfoComprobanteBoleta] = useState({});
   const [infoComprobanteFactura, setInfoComprobanteFactura] = useState({});
   const [visibleModalAperturaCierre, setVisibleModalAperturaCierre] = useState(false);
@@ -490,4 +490,4 @@ function MovimientosCaja() {
   );
 }
 
-export default MovimientosCaja;
+export default MovimientosCajaReserva;

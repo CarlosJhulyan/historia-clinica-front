@@ -64,6 +64,12 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 							<span>Generar Pedido</span>
 						</Link>
 					</Menu.Item>
+          <Menu.Item key="reservarPedido">
+            <Link to="/reservarPedido">
+              <i className="icon icon-icon" />
+              <span>Reservar Pedido</span>
+            </Link>
+          </Menu.Item>
 					<Menu.Item key="movimientosCaja">
 						<Link to="/movimientosCaja">
 							<i className="icon icon-icon" />

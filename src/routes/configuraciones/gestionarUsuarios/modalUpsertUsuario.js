@@ -14,7 +14,7 @@ import { openNotification } from '../../../util/util';
 const ModalUpsertUsuario = ({
                               visible,
                               setVisible,
-                              currentCliente,
+                              currentUsuario,
                               dataFetchInit,
                               getUsers,
 }) => {
@@ -33,8 +33,8 @@ const ModalUpsertUsuario = ({
       codUsu: authAdmin.login_usu
     }
 
-    if (currentCliente) {
-      dataFormat.codSecUsu = currentCliente.key;
+    if (currentUsuario) {
+      dataFormat.codSecUsu = currentUsuario.key;
       const {
         data: { success, message }
       } = await httpClient.post('admin/updateUsuario', dataFormat);
@@ -59,16 +59,16 @@ const ModalUpsertUsuario = ({
   }
 
   useEffect(() => {
-    if (currentCliente) {
+    if (currentUsuario) {
       formRef.current.setFieldsValue({
-        nomUsu: currentCliente.NOMBRE,
-        apePat: currentCliente.APE_PAT,
-        apeMat: currentCliente.APE_MAT,
-        direccUsu: currentCliente.DIRECCION,
-        dni: currentCliente.DNI,
-        fecNac: moment(currentCliente.FEC_NAC, 'DD/MM/yyyy'),
-        telefUsu: currentCliente.TELEFONO,
-        loginUsu: currentCliente.USUARIO,
+        nomUsu: currentUsuario.NOMBRE,
+        apePat: currentUsuario.APE_PAT,
+        apeMat: currentUsuario.APE_MAT,
+        direccUsu: currentUsuario.DIRECCION,
+        dni: currentUsuario.DNI,
+        fecNac: moment(currentUsuario.FEC_NAC, 'DD/MM/yyyy'),
+        telefUsu: currentUsuario.TELEFONO,
+        loginUsu: currentUsuario.USUARIO,
       });
     }
   }, []);
@@ -84,10 +84,10 @@ const ModalUpsertUsuario = ({
           <Button
             form='form-upsert-cliente'
             htmlType='submit'
-            type='primary'
             loading={loadingUpsert}
+            style={{background: '#0169aa', color:'#fff'}}
           >
-            {currentCliente ? 'Actualizar' : 'Crear'}
+            {currentUsuario ? 'Actualizar' : 'Crear'}
           </Button>,
           <Button
             disabled={loadingUpsert}

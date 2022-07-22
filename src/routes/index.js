@@ -40,6 +40,8 @@ import ListaEspera from './admisionConsulta/listaEspera';
 import AnulacionPedidosCompletos from './anulacionPedidosCompletos';
 import AsignacionMedicos from './configuraciones/asignacionMedicos';
 import GestionarUsuarios from './configuraciones/gestionarUsuarios';
+import ReservaPedidos from './configuraciones/reservaPedidos';
+import MovimientosCajaReserva from './configuraciones/reservaPedidos/movimientosCajaReserva';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -48,7 +50,7 @@ const App = ({ match }) => {
 	const [modal, contextHolder] = Modal.useModal();
 	const [dataPrincial, setDataPrincial] = useState(false);
 	const { userSignOut, authUser } = useAuth();
-	
+
 
 	const tt = authUser?.data ? authUser.data : tokenAdmin;
 
@@ -204,42 +206,42 @@ const App = ({ match }) => {
 		if (tokenAdmin) {
 			items.push(
 				<Route
-					key={25}
+					key={1}
 					path={`${match.url}hc-admin/configuraciones/medicos`}
 					component={GestionarMedicos}
 				/>
 			);
 			items.push(
 				<Route
-					key={26}
+					key={2}
 					path={`${match.url}hc-admin/configuraciones/asignacionbusmedicos`}
 					component={AsignacionMedicos}
 				/>
 			);
 			items.push(
 				<Route
-					key={27}
+					key={3}
 					path={`${match.url}hc-admin/configuraciones/modulos`}
 					component={AsignacionModulos}
 				/>
 			);
 			items.push(
 				<Route
-					key={28}
+					key={4}
 					path={`${match.url}hc-admin/configuraciones/firmas`}
 					component={ConfiguracionFirmas}
 				/>
 			);
 			items.push(
 				<Route
-					key={29}
+					key={5}
 					path={`${match.url}hc-admin/configuraciones/camas`}
 					component={ConfiguracionCamas}
 				/>
 			);
       items.push(
         <Route
-          key={30}
+          key={6}
           path={`${match.url}hc-admin/configuraciones/usuarios`}
           component={GestionarUsuarios}
         />
@@ -247,31 +249,30 @@ const App = ({ match }) => {
 		}
 
 		if (tokenReports && dataPrincial) {
-			items.push(<Route key={31} path={`${match.url}reportes/reporte1`} component={Reporte1} />);
-			items.push(<Route key={32} path={`${match.url}reportes/reporte2`} component={Reporte2} />);
-			items.push(<Route key={33} path={`${match.url}reportes/reporte3`} component={Reporte3} />);
-			items.push(<Route key={34} path={`${match.url}reportes/reporte4`} component={Reporte4} />);
+			items.push(<Route key={1} path={`${match.url}reportes/reporte1`} component={Reporte1} />);
+			items.push(<Route key={2} path={`${match.url}reportes/reporte2`} component={Reporte2} />);
+			items.push(<Route key={3} path={`${match.url}reportes/reporte3`} component={Reporte3} />);
+			items.push(<Route key={4} path={`${match.url}reportes/reporte4`} component={Reporte4} />);
 		}
 
 		if (token?.data) {
-			items.push(<Route key={34} path={`${match.url}generarPedido`} component={GenerarPedido} />);
+			items.push(<Route key={1} path={`${match.url}generarPedido`} component={GenerarPedido} />);
+			items.push(<Route key={2} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />);
 			items.push(
-				<Route key={35} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />
+				<Route key={3} path={`${match.url}horario/consultar`} component={ConsultarHorario} />
 			);
 			items.push(
-				<Route key={36} path={`${match.url}horario/consultar`} component={ConsultarHorario} />
-			);
-			items.push(
-				<Route key={20} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />
+				<Route key={4} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />
 			);
 			items.push(
 				<Route
-					key={36}
+					key={5}
 					path={`${match.url}anulacionPedidosCompletos`}
 					component={AnulacionPedidosCompletos}
 				/>
 			);
-			items.push(<Route key={1} path={`${match.url}listaEspera`} component={ListaEspera} />);
+			items.push(<Route key={6} path={`${match.url}listaEspera`} component={ListaEspera} />);
+      items.push(<Route key={7} path={`${match.url}reservarpedido`} component={ReservaPedidos} />);
 		}
 
 		return items;
