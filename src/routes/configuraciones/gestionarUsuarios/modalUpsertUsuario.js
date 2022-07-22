@@ -1,0 +1,230 @@
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  Button,
+  Card,
+  Col, DatePicker, Divider,
+  Form, Input, InputNumber,
+  Modal, Row
+} from 'antd';
+import { httpClient } from '../../../util/Api';
+import moment from 'moment';
+import { useAuth } from '../../../authentication';
+import { openNotification } from '../../../util/util';
+
+const ModalUpsertUsuario = ({
+                              visible,
+                              setVisible,
+                              currentCliente,
+                              dataFetchInit,
+                              getUsers,
+}) => {
+  const formRef = useRef();
+  const { authAdmin } = useAuth();
+  const [loadingUpsert, setLoadingUpsert] = useState(false);
+
+  const handleUpsertUsuario = async (values) => {
+    setLoadingUpsert(true);
+    const dataFormat = {
+      ...dataFetchInit,
+      ...values,
+      codTrabRH: '',
+      codTrab: '',
+      fecNac: moment(values.fecNac._d).format('DD/MM/yyyy'),
+      codUsu: authAdmin.login_usu
+    }
+
+    if (currentCliente) {
+      dataFormat.codSecUsu = currentCliente.key;
+      const {
+        data: { success, message }
+      } = await httpClient.post('admin/updateUsuario', dataFormat);
+
+      if (success) {
+        openNotification('Cliente actualiza', message);
+        getUsers();
+        setVisible(false);
+      } else openNotification('Cliente actualiza', message, 'Warning');
+    } else {
+      const {
+        data: { success, message }
+      } = await httpClient.post('admin/createUsuario', dataFormat);
+
+      if (success) {
+        openNotification('Cliente registro', message);
+        getUsers();
+        setVisible(false);
+      } else openNotification('Cliente regitro', message, 'Warning');
+    }
+    setLoadingUpsert(false);
+  }
+
+  useEffect(() => {
+    if (currentCliente) {
+      formRef.current.setFieldsValue({
+        nomUsu: currentCliente.NOMBRE,
+        apePat: currentCliente.APE_PAT,
+        apeMat: currentCliente.APE_MAT,
+        direccUsu: currentCliente.DIRECCION,
+        dni: currentCliente.DNI,
+        fecNac: moment(currentCliente.FEC_NAC, 'DD/MM/yyyy'),
+        telefUsu: currentCliente.TELEFONO,
+        loginUsu: currentCliente.USUARIO,
+      });
+    }
+  }, []);
+
+  return (
+    <>
+      <Modal
+        className='modal-posventa'
+        centered
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        footer={[
+          <Button
+            form='form-upsert-cliente'
+            htmlType='submit'
+            type='primary'
+            loading={loadingUpsert}
+          >
+            {currentCliente ? 'Actualizar' : 'Crear'}
+          </Button>,
+          <Button
+            disabled={loadingUpsert}
+            onClick={() => setVisible(false)}
+          >
+            Salir
+          </Button>
+        ]}
+        width={800}
+        title='Mantenimiento de Usuarios'
+      >
+        <Form
+          ref={formRef}
+          onFinish={handleUpsertUsuario}
+          id='form-upsert-cliente'
+          // size='small'
+          labelCol={{
+            span: 7
+          }}
+          wrapperCol={{
+            span: 14
+          }}
+        >
+          <Row justify='center'  style={{backgroundColor: '#0169aa'}} align='middle'>
+            <Col style={{color: '#fff', marginTop:10}} span={24}>
+              Num. Sec. Usuario
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label='Id'
+                style={{margin:0, alignItems:'center'}}
+                className='usuarios-activos'
+                name='loginUsu'
+                rules={[{
+                  required:true,
+                }]}
+              >
+                <Input
+                  style={{marginTop:5,marginBottom:10}}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label='Clave Usuario'
+                style={{margin:0, alignItems:'center'}}
+                className='usuarios-activos'
+                name='claveUsu'
+                rules={[{
+                  required: true,
+                  type: 'number'
+                }]}
+              >
+                <InputNumber
+                  style={{marginTop:5,marginBottom:10,width:'100%'}}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Card style={{marginTop:10,marginBottom:0}}>
+            <Row justify='center'>
+              <Col span={24}>
+                <Form.Item
+                  label='Apellido Paterno'
+                  name='apePat'
+                  rules={[{
+                    required:true
+                  }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label='Apellido Materno'
+                  name='apeMat'
+                  rules={[{
+                    required:true
+                  }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label='Nombres'
+                  name='nomUsu'
+                  rules={[{
+                    required:true
+                  }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label='Dirección'
+                  name='direccUsu'
+                  rules={[{
+
+                  }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label='Teléfono'
+                  name='telefUsu'
+                  rules={[{
+                    len:9
+                  }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label='DNI'
+                  name='dni'
+                  rules={[{
+                    len:8,
+                    required: true
+                  }]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item
+                  label='Fecha Nacimiento'
+                  name='fecNac'
+                  rules={[{
+                    required: true
+                  }]}
+                >
+                  <DatePicker
+                    format='DD/MM/yyyy'
+                    placeholder='Seleccione fecha'
+                    style={{width:'100%'}}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Card>
+        </Form>
+      </Modal>
+    </>
+  );
+}
+
+export default ModalUpsertUsuario;

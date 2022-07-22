@@ -1,19 +1,20 @@
-import React from "react";
-import { Button, Form, Input, Spin } from "antd";
+import React, { useEffect } from 'react';
+import { Button, Form, Input, message, Spin } from 'antd';
 import AppNotificationContainer from "../components/AppNotificationContainer";
 import { useAuth } from "../authentication";
-import { useSelector } from "react-redux";
-//import { settings } from "nprogress";
 
 const SignInReports = (props) => {
   const { loadingReports, errorReports, reportsLogin } = useAuth();
-  const settings = useSelector((state) => state.settings);
 
   const onFinishFailed = (errorInfo) => {};
 
   const onFinish = (values) => {
     reportsLogin(values);
   };
+
+  useEffect(() => {
+    if (errorReports) message.error(errorReports);
+  }, [errorReports]);
 
   return (
     <div
@@ -24,9 +25,7 @@ const SignInReports = (props) => {
         justifyContent: "center",
       }}
     >
-      {settings.loadingReports ? (
-        <Spin tip="Iniciando sesión" size="large"></Spin>
-      ) : (
+      <Spin tip="Iniciando sesión" size="large" spinning={loadingReports}>
         <div
           style={{
             display: "flex",
@@ -91,10 +90,10 @@ const SignInReports = (props) => {
                 </Form>
               </div>
             </div>
-            <AppNotificationContainer loading={loadingReports} error={errorReports} />
+            {/*<AppNotificationContainer loading={loadingReports} error={errorReports} />*/}
           </div>
         </div>
-      )}
+      </Spin>
     </div>
   );
 };

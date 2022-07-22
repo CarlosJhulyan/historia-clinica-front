@@ -39,6 +39,7 @@ import MovimientosCaja from './posVenta/movimientosCaja';
 import ListaEspera from './admisionConsulta/listaEspera';
 import AnulacionPedidosCompletos from './anulacionPedidosCompletos';
 import AsignacionMedicos from './configuraciones/asignacionMedicos';
+import GestionarUsuarios from './configuraciones/gestionarUsuarios';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -236,13 +237,20 @@ const App = ({ match }) => {
 					component={ConfiguracionCamas}
 				/>
 			);
+      items.push(
+        <Route
+          key={30}
+          path={`${match.url}hc-admin/configuraciones/usuarios`}
+          component={GestionarUsuarios}
+        />
+      );
 		}
 
 		if (tokenReports && dataPrincial) {
-			items.push(<Route key={30} path={`${match.url}reportes/reporte1`} component={Reporte1} />);
-			items.push(<Route key={31} path={`${match.url}reportes/reporte2`} component={Reporte2} />);
-			items.push(<Route key={32} path={`${match.url}reportes/reporte3`} component={Reporte3} />);
-			items.push(<Route key={33} path={`${match.url}reportes/reporte4`} component={Reporte4} />);
+			items.push(<Route key={31} path={`${match.url}reportes/reporte1`} component={Reporte1} />);
+			items.push(<Route key={32} path={`${match.url}reportes/reporte2`} component={Reporte2} />);
+			items.push(<Route key={33} path={`${match.url}reportes/reporte3`} component={Reporte3} />);
+			items.push(<Route key={34} path={`${match.url}reportes/reporte4`} component={Reporte4} />);
 		}
 
 		if (token?.data) {

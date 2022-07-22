@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../authentication';
-import { Spin } from 'antd';
+import { message, Spin } from 'antd';
 import { SignInScreen } from './SignInScreen';
+import AppNotificationContainer from '../components/AppNotificationContainer';
 
 const SignIn = () => {
 	const { isLoading, error, userLogin, usuarioLogin } = useAuth();
@@ -15,27 +16,20 @@ const SignIn = () => {
 		usuarioLogin(values);
 	};
 
+  useEffect(() => {
+    if (error) message.error(error);
+  }, [error]);
+
 	return (
-		<div className="gx-app-login-wrap" /* style={{ backgroundImage: `url(${fondo})` }} */>
-			{isLoading ? (
-				<Spin tip="Iniciando Sesión..." size="large">
-					<SignInScreen
-						onFinish={onFinish}
-						onFinishFailed={onFinishFailed}
-						isLoading={isLoading}
-						error={error}
-						onFinishUsuario={onFinishUsuario}
-					/>
-				</Spin>
-			) : (
-				<SignInScreen
-					onFinish={onFinish}
-					onFinishFailed={onFinishFailed}
-					isLoading={isLoading}
-					error={error}
-					onFinishUsuario={onFinishUsuario}
-				/>
-			)}
+		<div className="gx-app-login-wrap">
+      <Spin tip="Iniciando Sesión..." size="large" spinning={isLoading}>
+        <SignInScreen
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          onFinishUsuario={onFinishUsuario}
+        />
+      </Spin>
+      {/*<AppNotificationContainer loading={isLoading} error={error} />*/}
 		</div>
 	);
 };

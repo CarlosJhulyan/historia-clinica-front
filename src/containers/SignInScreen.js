@@ -1,14 +1,11 @@
 import React from 'react';
 import { Button, Form, Input, Tabs } from 'antd';
-import AppNotificationContainer from '../components/AppNotificationContainer';
 
 import { useSelector } from 'react-redux';
 
 export const SignInScreen = ({
 	onFinish,
 	onFinishFailed,
-	isLoading,
-	error,
 	onFinishUsuario,
 }) => {
   const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
@@ -88,7 +85,6 @@ export const SignInScreen = ({
 								</Form>
 							</div>
 						</div>
-						<AppNotificationContainer loading={isLoading} error={error} />
 					</div>
 				</TabPane>
 
@@ -145,7 +141,6 @@ export const SignInScreen = ({
 								</Form>
 							</div>
 						</div>
-						<AppNotificationContainer loading={isLoading} error={error} />
 					</div>
 				</TabPane>
 			</Tabs>

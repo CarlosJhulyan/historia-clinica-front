@@ -1,9 +1,8 @@
 import React from 'react';
 import { Button, Col, Form, Input, Row } from 'antd';
-import AppNotificationContainer from '../components/AppNotificationContainer';
 import { useSelector } from 'react-redux';
 
-export const SignInAdminScreen = ({ logo2, onFinish, onFinishFailed, isLoading, error, goBack }) => {
+export const SignInAdminScreen = ({ onFinish, onFinishFailed }) => {
   const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
 	return (
@@ -74,7 +73,6 @@ export const SignInAdminScreen = ({ logo2, onFinish, onFinishFailed, isLoading, 
 						</Form>
 					</div>
 				</div>
-				<AppNotificationContainer loading={isLoading} error={error} />
 			</div>
 		</div>
 	);

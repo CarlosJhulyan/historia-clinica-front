@@ -5,7 +5,7 @@ import { httpClient } from '../../util/Api';
 import ModalLoading from '../../util/modalLoading';
 import ModalComprobante from './modalComprobante';
 
-const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
+const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera, clearAll }) => {
 	const [dataDetalleNotaCredito, setDataDetalleNotaCredito] = useState([]);
 	const [dataListaUsuarios, setDataListaUsuarios] = useState([]);
 	// const [dataCabecera, setDataCabecera] = useState('');
@@ -380,6 +380,7 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera }) => {
 					dataDetalle={dataDetalle}
 					dataCabecera={dataCabecera}
 					newDocumento={newDocumento}
+          clearAll={clearAll}
 				/>
 			)}
 			{cargando && <ModalLoading></ModalLoading>}

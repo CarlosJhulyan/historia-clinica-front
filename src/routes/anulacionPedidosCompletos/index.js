@@ -1,15 +1,12 @@
 import { Button, Card, Form, Input, Table, Modal } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { httpClient } from '../../util/Api';
-import { openNotification } from '../../util/util';
 import ModalBusquedaComprobante from './modalBusquedaComprobante';
 import ModalNotaPedio from './modalNotaPedido';
 
 const AnulacionPedidosCompletos = () => {
 	const [abrirModalManual, setAbrirModalManual] = useState(true);
-	const [abrirModalPedido, setAbrirModalPedido] = useState(false);
 	const [loadingData, setLoadingData] = useState(false);
-	const [pedidoFound, setPedidoFound] = useState(false);
 	const [dataComprobantesPago, setDataComprobantesPago] = useState([]);
 	const [dataCabecera, setDataCabecera] = useState([]);
 	const [dataDetalles, setDataDetalles] = useState([]);
@@ -91,6 +88,14 @@ const AnulacionPedidosCompletos = () => {
 		},
 	];
 
+  const clearAll = () => {
+    setDataCabecera([]);
+    setDataDetalles([]);
+    setAbrirModalNotaPedido(false);
+    setAbrirModalManual(false);
+    refForm.resetFields();
+  }
+
 	const handleChangeText = e => {
 		setDataSend({
 			...dataSend,
@@ -122,6 +127,7 @@ const AnulacionPedidosCompletos = () => {
 		refForm.setFieldsValue({ correlativo: dataCabecera[0]?.key, monto: dataCabecera[0]?.TOTAL });
 		console.log('dataCabecera', dataCabecera);
 		console.log('form', refForm.getFieldsValue());
+    refForm.resetFields();
 	}, [dataCabecera]);
 
 	const info = () => {
@@ -199,10 +205,15 @@ const AnulacionPedidosCompletos = () => {
 					/>
 				</div>
 				<div style={{ marginTop: 20 }}>
-					<Button className="gx-mb-0" type="primary" onClick={info}>
+					<Button
+            className="gx-mb-0"
+            type="primary"
+            onClick={info}
+            disabled={dataCabecera.length <= 0}
+          >
 						Anular
 					</Button>
-					<Button className="gx-mb-0" type="primary" onClick={() => {}}>
+					<Button className="gx-mb-0" type="primary" onClick={() => clearAll()}>
 						Limpiar
 					</Button>
 				</div>
@@ -228,6 +239,7 @@ const AnulacionPedidosCompletos = () => {
 					setVisible={setAbrirModalNotaPedido}
 					dataVenta={dataVenta}
 					dataCabecera={dataCabecera}
+          clearAll={clearAll}
 				/>
 			) : null}
 		</>
