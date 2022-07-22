@@ -45,7 +45,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const createMenuItem = () => {
 		const menuItems = [];
 
-		if (token?.data && token.data.login_usu && !initURL.includes('/hc-admin')) {
+		if (token?.data && token.data.login_usu && !initURL.includes('/hc-admin') && !initURL.includes('/reportes')) {
 			menuItems.push(
 				<SubMenu
 					key="posVentaG"
@@ -64,12 +64,12 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 							<span>Generar Pedido</span>
 						</Link>
 					</Menu.Item>
-          <Menu.Item key="reservarPedido">
+          {token.data.roles.some(item => item === '909') ? <Menu.Item key="reservarPedido">
             <Link to="/reservarPedido">
               <i className="icon icon-icon" />
               <span>Reservar Pedido</span>
             </Link>
-          </Menu.Item>
+          </Menu.Item> : null}
 					<Menu.Item key="movimientosCaja">
 						<Link to="/movimientosCaja">
 							<i className="icon icon-icon" />

@@ -40,8 +40,8 @@ import ListaEspera from './admisionConsulta/listaEspera';
 import AnulacionPedidosCompletos from './anulacionPedidosCompletos';
 import AsignacionMedicos from './configuraciones/asignacionMedicos';
 import GestionarUsuarios from './configuraciones/gestionarUsuarios';
-import ReservaPedidos from './configuraciones/reservaPedidos';
-import MovimientosCajaReserva from './configuraciones/reservaPedidos/movimientosCajaReserva';
+import ReservaPedidos from './posVenta/reservaPedidos';
+import MovimientosCajaReserva from './posVenta/reservaPedidos/movimientosCajaReserva';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -258,21 +258,12 @@ const App = ({ match }) => {
 		if (token?.data) {
 			items.push(<Route key={1} path={`${match.url}generarPedido`} component={GenerarPedido} />);
 			items.push(<Route key={2} path={`${match.url}movimientosCaja`} component={MovimientosCaja} />);
-			items.push(
-				<Route key={3} path={`${match.url}horario/consultar`} component={ConsultarHorario} />
-			);
-			items.push(
-				<Route key={4} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />
-			);
-			items.push(
-				<Route
-					key={5}
-					path={`${match.url}anulacionPedidosCompletos`}
-					component={AnulacionPedidosCompletos}
-				/>
-			);
+			items.push(<Route key={3} path={`${match.url}horario/consultar`} component={ConsultarHorario} />);
+			items.push(<Route key={4} path={`${match.url}ingresoAtenciones`} component={AdmisionConsulta} />);
+			items.push(<Route key={5} path={`${match.url}anulacionPedidosCompletos`} component={AnulacionPedidosCompletos} />);
 			items.push(<Route key={6} path={`${match.url}listaEspera`} component={ListaEspera} />);
-      items.push(<Route key={7} path={`${match.url}reservarpedido`} component={ReservaPedidos} />);
+      if (token.data.roles.some(item => item === '909'))
+        items.push(<Route key={7} path={`${match.url}reservarpedido`} component={ReservaPedidos} />);
 		}
 
 		return items;

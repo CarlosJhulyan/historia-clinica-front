@@ -13,9 +13,9 @@ import {
 
 import Doctor from '../../../assets/posventa/doctor.png';
 import Paciente from '../../../assets/posventa/paciente.png';
-import ModalListaMedicos from './modalListaMedicos';
-import ModalListaPacientes from './modalListaPacientes';
-import ModalListaClientes from './modalListaClientes';
+import ModalListaMedicos from '../modalListas/modalListaMedicos';
+import ModalListaPacientes from '../modalListas/modalListaPacientes';
+import ModalListaClientes from '../modalListas/modalListaClientes';
 import { openNotification } from '../../../util/util';
 import ModalLoading from '../../../util/modalLoading';
 
@@ -205,7 +205,7 @@ function ModalDatosPedido({
 										}
                     loading={loadingGrabarPedido}
 									>
-										Aceptar
+                    {grabarPedido ? 'Generar' : 'Aceptar'}
 									</Button>
 									<Button
 										block

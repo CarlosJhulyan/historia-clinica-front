@@ -83,7 +83,8 @@ function ModalSeleccionProducto({
         setLoadingListaFrac(false);
         setDataForm({
           ...dataForm,
-          pu: response.data.data ? response.data.data[0].PRECIO_MIN : 0
+          pu: response.data.data ? response.data.data[0].PRECIO_MIN : 0,
+          total: response.data.data && response.data.data[0].PRECIO_MIN * dataForm.cantidad
         })
       })
       .catch(e => console.error(e));
@@ -174,7 +175,7 @@ function ModalSeleccionProducto({
                   <Form.Item
                     label="Sub Total"
                   >
-                    <Input disabled value={(listaFrac && listaFrac.length > 0 && dataForm.pu < listaFrac[0].PRECIO_MIN) ? '' : dataForm.total} />
+                    <Input disabled value={(listaFrac && listaFrac.length > 0 && dataForm.pu < listaFrac[0].PRECIO_MIN) ? '' : dataForm.total.toFixed(2)} />
                   </Form.Item>
               </Col>
             </Row>

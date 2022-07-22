@@ -16,9 +16,9 @@ import {
 	Spin,
 	Table,
 } from 'antd';
-import ModalListaMedicos from './modalListaMedicos';
-import ModalListaPacientes from './modalListaPacientes';
-import ModalListaClientes from './modalListaClientes';
+import ModalListaMedicos from '../modalListas/modalListaMedicos';
+import ModalListaPacientes from '../modalListas/modalListaPacientes';
+import ModalListaClientes from '../modalListas/modalListaClientes';
 import Doctor from '../../../assets/posventa/doctor.png';
 import Paciente from '../../../assets/posventa/paciente.png';
 import { httpClient } from '../../../util/Api';

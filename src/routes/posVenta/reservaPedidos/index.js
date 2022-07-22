@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, AutoComplete, Button, Table, Divider, Row, Modal, Descriptions, Col, Input } from 'antd';
 import moment from 'moment';
-import ModalListaProductos from '../../posVenta/modals/modalListaProductos';
+import ModalListaProductos from '../modals/modalListaProductos';
 import { httpClient } from '../../../util/Api';
 import ModalDatosPedido from './modalDatosPedido';
-import ModalCobrarPedido from '../../posVenta/modals/modalCobrarPedido';
+import ModalCobrarPedido from '../modals/modalCobrarPedido';
 import { openNotification } from '../../../util/util';
 import { useAuth } from '../../../authentication';
 import DecimalFormat from 'decimal-format';
-import ModalSeleccionProducto from '../../posVenta/modals/modalSeleccionProducto';
+import ModalSeleccionProducto from '../modals/modalSeleccionProducto';
 import ModalGenPedidoDiario from './modalGenPedidoDiario';
 
 function ReservaPedidos() {
@@ -33,7 +33,7 @@ function ReservaPedidos() {
   const [ultimoPedidoDiario, setUltimoPedidoDiario] = useState('____');
 
   // Reserva pedido
-  const [visibleModalGenPedido, setVisibleModalGenPedido] = useState(true);
+  const [visibleModalGenPedido, setVisibleModalGenPedido] = useState(false);
 
   const {
     authAdmin: user,
@@ -50,6 +50,9 @@ function ReservaPedidos() {
 
   const COD_NUMERA_PEDIDO = '007';
   const COD_NUMERA_PEDIDO_DIARIO = '009';
+  const COD_NUMERA_COTIZA_DIARIO = '088';
+  const COD_NUMERA_RESERVA = '089';
+  const COD_NUMERA_RESERVA_DIARIO = '090';
   const TIPO_PEDIDO_VENTA_MESON = '01';
   const TIPO_COMP_PEDIDO = '01';
   const TIPO_CONVENIO = 'N';
@@ -164,7 +167,7 @@ function ReservaPedidos() {
     vNumLoteProd_in: '',
   };
 
-  const guardarDatosPedidoCabecera = async () => {
+  const guardarReservaPedidoCabecera = async (datosReserva) => {
     setLoadingGrabarPedido(true);
     try {
       const cajaAbierta = await getFechaMovCaja();
@@ -174,12 +177,13 @@ function ReservaPedidos() {
       console.log('caja abierta');
       const dataLocalCabecera = {
         ...dataFetchCabecera,
+        ...datosReserva
       };
       // Cargando los numeros de pedido
-      dataLocalCabecera.cNumPedVta_in = await getNuSecNumeracion('007', 10);
+      dataLocalCabecera.cNumPedVta_in = await getNuSecNumeracion(COD_NUMERA_RESERVA, 10);
       dataLocalCabecera.cCodCliLocal_in = clienteCurrent.COD_CLI;
       dataLocalCabecera.cTipCompPago_in = tipoVenta;
-      dataLocalCabecera.cNumPedDiario_in = await getNumeraPedidoDiario(false, false);
+      dataLocalCabecera.cNumPedDiario_in = await getNumeraPedidoDiario(false, true);
       dataLocalCabecera.cSecMovCaja_in = await obtenerMovApertura();
       // Valores de pedido
       // dataLocalCabecera.nValBrutoPedVta_in = 0.0;
@@ -220,8 +224,12 @@ function ReservaPedidos() {
       dataLocalCabecera.cIDRef = medicoCurrent.TIP_REFERENCIA;
       dataLocalCabecera.cDescRef = medicoCurrent.DESC_REFERENCIA;
 
+      dataLocalCabecera.cIndReserva = 'S';
+      console.log(dataLocalCabecera);
+
       await grabarPedidoFinally(dataLocalCabecera);
       setDataFetchCabecera(dataLocalCabecera);
+
       let index = 0;
       for (const item of data) {
         await guardarPedidoDetalle(item, index, IND_PROD_SIMPLE, dataLocalCabecera.cNumPedVta_in);
@@ -229,8 +237,8 @@ function ReservaPedidos() {
       }
 
       //----------------------------------------------------
-      await updateNumeracionSinComit(COD_NUMERA_PEDIDO);
-      await updateNumeracionSinComit(COD_NUMERA_PEDIDO_DIARIO);
+      await updateNumeracionSinComit(COD_NUMERA_RESERVA);
+      await updateNumeracionSinComit(COD_NUMERA_RESERVA_DIARIO);
       // ---
       await validarValorVentaNeto(dataLocalCabecera.cNumPedVta_in);
       // --
@@ -239,7 +247,6 @@ function ReservaPedidos() {
       datosPedidoAceptar();
       setLoadingGrabarPedido(false);
     } catch (e) {
-      console.error(e);
       setLoadingGrabarPedido(false);
     }
   };
@@ -324,7 +331,7 @@ function ReservaPedidos() {
     try {
       const {
         data: { success, message },
-      } = await httpClient.post('posventa/grabarPedidoDetalle', data);
+      } = await httpClient.post('posventa/grabarReservaPedidoDetalle', data);
       if (success) console.log(message);
     } catch (e) {
       console.error(e);
@@ -353,7 +360,7 @@ function ReservaPedidos() {
     try {
       const {
         data: { data, success, message },
-      } = await httpClient.post('/posventa/grabarPedidoCabecera', dataABC);
+      } = await httpClient.post('/posventa/grabarReservaPedidoCabecera', dataABC);
       if (success) {
         console.log(data);
         openNotification('Cabecera', 'Pedido grabado');
@@ -396,9 +403,6 @@ function ReservaPedidos() {
   };
 
   const getFechaModPedido = async (cotiza, reserva) => {
-    const COD_NUMERA_COTIZA_DIARIO = '088';
-    const COD_NUMERA_RESERVA_DIARIO = '090';
-
     try {
       const {
         data: { data, success, message },
@@ -462,9 +466,6 @@ function ReservaPedidos() {
   };
 
   const getNumeraPedidoDiario = async (cotiza, reserva) => {
-    const COD_NUMERA_COTIZA_DIARIO = '088';
-    const COD_NUMERA_RESERVA_DIARIO = '090';
-
     let feModNumeracion = await getFechaModPedido(cotiza, reserva);
     let feHoyDia = fechaSistema;
     let numPedDiario = '';
@@ -640,31 +641,20 @@ function ReservaPedidos() {
   };
 
   const clearDataFinally = () => {
-
-    confirm({
-      content: '¿Desea hacer una venta al mismo paciente?',
-      okText: 'Continuar',
-      cancelText: 'Nueva venta',
-      onOk: () => {
-        getUltimoPedidoDiario();
-      },
-      onCancel: () => {
-        setCNumPedVta_in('');
-        setVisibleModal(false);
-        setTipoVenta('01');
-        setVisibleModalDatosPedido(false);
-        setProductosDetalles([]);
-        setProductosCurrent([]);
-        setSelectedRowKeys([]);
-        setData([]);
-        setSelectedRows([]);
-        setClienteCurrent({});
-        setMedicoCurrent({});
-        setPacienteCurrent({});
-        getUltimoPedidoDiario();
-      },
-      centered: true
-    });
+    setCNumPedVta_in('');
+    setVisibleModal(false);
+    setTipoVenta('01');
+    setVisibleModalDatosPedido(false);
+    setProductosDetalles([]);
+    setProductosCurrent([]);
+    setSelectedRowKeys([]);
+    setData([]);
+    setSelectedRows([]);
+    setClienteCurrent({});
+    setMedicoCurrent({});
+    setPacienteCurrent({});
+    setVisibleModalGenPedido(false);
+    getUltimoPedidoDiario();
   };
 
   const validaOperacionCaja = async tipOp => {
@@ -732,7 +722,7 @@ function ReservaPedidos() {
       centered: true,
       okText: 'Aceptar',
       onOk: () => {
-        if (grabarPedido) setVisibleModalCobrarPedido(true);
+        if (grabarPedido) setVisibleModalGenPedido(true);
       },
       okButtonProps: {
         style: {
@@ -1082,7 +1072,7 @@ function ReservaPedidos() {
         clienteCurrent={clienteCurrent}
         setClienteCurrent={setClienteCurrent}
         grabarPedido={grabarPedido}
-        guardarDatosPedidoCabecera={guardarDatosPedidoCabecera}
+        guardarReservaPedidoCabecera={guardarReservaPedidoCabecera}
         loadingGrabarPedido={loadingGrabarPedido}
         tipoVenta={tipoVenta}
         setTipoVenta={setTipoVenta}
@@ -1120,8 +1110,10 @@ function ReservaPedidos() {
 
       {/*Reserva pedido*/}
       <ModalGenPedidoDiario
+        dataFetchCabecera={dataFetchCabecera}
         visible={visibleModalGenPedido}
         setVisible={setVisibleModalGenPedido}
+        clearDataFinally={clearDataFinally}
       />
     </>
   );

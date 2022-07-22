@@ -13,11 +13,12 @@ import {
 
 import Doctor from '../../../assets/posventa/doctor.png';
 import Paciente from '../../../assets/posventa/paciente.png';
-import ModalListaMedicos from '../../posVenta/modals/modalListaMedicos';
-import ModalListaPacientes from '../../posVenta/modals/modalListaPacientes';
-import ModalListaClientes from '../../posVenta/modals/modalListaClientes';
+import ModalListaMedicos from '../modalListas/modalListaMedicos';
+import ModalListaPacientes from '../modalListas/modalListaPacientes';
+import ModalListaClientes from '../modalListas/modalListaClientes';
 import { openNotification } from '../../../util/util';
 import ModalLoading from '../../../util/modalLoading';
+import ModalInsertReserva from './modalInsertReserva';
 
 function ModalDatosPedido({
                               visible,
@@ -30,7 +31,7 @@ function ModalDatosPedido({
                               setClienteCurrent,
                               visibleDatosPedidoAceptar,
                               grabarPedido,
-                              guardarDatosPedidoCabecera,
+                              guardarReservaPedidoCabecera,
                               loadingGrabarPedido,
                               tipoVenta,
                               setTipoVenta,
@@ -39,6 +40,7 @@ function ModalDatosPedido({
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
+  const [visibleModalInsertReserva, setVisibleModalInsertReserva] = useState(false);
 	const [guardando, setGuardando] = useState(false);
 
 	const handleLimpiar = () => {
@@ -60,7 +62,7 @@ function ModalDatosPedido({
 			<Modal
 				centered
 				width={1100}
-				footer={false}
+				footer={[]}
 				visible={visible}
 				title="Datos de Pedido Reserva"
 				className="modal-posventa"
@@ -176,16 +178,13 @@ function ModalDatosPedido({
 												? null
 												: () => {
 														if (grabarPedido) {
-															const fun = async () => {
-																setGuardando(true);
-																console.log('grabando');
-																console.log(pacienteCurrent, medicoCurrent, clienteCurrent);
+															const fun = () => {
 																if (
 																	pacienteCurrent.COD_PACIENTE &&
 																	medicoCurrent.key &&
 																	clienteCurrent.key
 																) {
-																	await guardarDatosPedidoCabecera();
+                                  setVisibleModalInsertReserva(true);
 																} else {
 																	openNotification(
 																		'error',
@@ -193,8 +192,6 @@ function ModalDatosPedido({
 																		'Alerta'
 																	);
 																}
-																console.log('grabado');
-																setGuardando(false);
 															};
 															fun();
 														} else {
@@ -205,7 +202,7 @@ function ModalDatosPedido({
 										}
                     loading={loadingGrabarPedido}
 									>
-										Aceptar
+                    {grabarPedido ? 'Reservar' : 'Aceptar'}
 									</Button>
 									<Button
 										block
@@ -221,9 +218,9 @@ function ModalDatosPedido({
 								</Row>
 							</Col>
 						</Row>
-						{/*<small style={{ color: 'red' }}>*/}
-						{/*	Para ingresar los datos de Médico y Paciente, hacer CLICK en las imágenes*/}
-						{/*</small>*/}
+						<small style={{ color: '#EB5353' }}>
+							Para ingresar los datos de Médico y Paciente, hacer CLICK en las imágenes
+						</small>
 						<Divider />
 						<Row>
 							<Col span={5}>
@@ -269,52 +266,6 @@ function ModalDatosPedido({
 								</Form>
 							</Col>
 						</Row>
-            <Card size='small' style={{margin:0,marginTop:10}}>
-              <Form
-                labelCol={{
-                  span:9
-                }}
-                wrapperCol={{
-                  span:15
-                }}
-                size='small'
-              >
-                <Row>
-                  <Col span={24} style={{marginBottom:10}}>
-                    Datos para Reserva
-                  </Col>
-                </Row>
-                <Row>
-                  <Col span={7}>
-                    <Form.Item label='Fecha'>
-                      <DatePicker
-                        format='DD/MM/yyyy'
-                        style={{width:'100%'}}
-                        placeholder='__/__/____'
-                      />
-                    </Form.Item>
-                    <Form.Item label='Hora'>
-                      <TimePicker
-                        style={{width:'100%'}}
-                        placeholder='00:00'
-                        format='h:mm'
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label='Celular Contac.'>
-                      <Input />
-                    </Form.Item>
-                    <Form.Item label='Correo'>
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={9}>
-                    <Input.TextArea style={{minHeight:70,margin:0}} />
-                  </Col>
-                </Row>
-              </Form>
-            </Card>
 					</Col>
 					{/* <Col span={6}>
             <h5>Seleccionar Fecha y Hora para reservar...</h5>
@@ -371,6 +322,16 @@ function ModalDatosPedido({
           setClienteCurrent={setClienteCurrent}
         />
       )}
+      {visibleModalInsertReserva && (
+        <ModalInsertReserva
+          visible={visibleModalInsertReserva}
+          setVisible={setVisibleModalInsertReserva}
+          guardarReservaPedidoCabecera={guardarReservaPedidoCabecera}
+          setGuardando={setGuardando}
+          guardando={guardando}
+        />
+      )}
+
       {guardando ? <ModalLoading></ModalLoading> : null}
 		</>
 	);
