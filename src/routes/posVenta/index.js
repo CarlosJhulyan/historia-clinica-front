@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, AutoComplete, Button, Table, Divider, Row, Modal, Descriptions, Col, Input } from 'antd';
 import moment from 'moment';
-import ModalListaProductos from './modals/modalListaProductos';
+import ModalListaProductos from './modalListas/modalListaProductos';
 import { httpClient } from '../../util/Api';
 import ModalDatosPedido from './modals/modalDatosPedido';
 import ModalCobrarPedido from './modals/modalCobrarPedido';

@@ -25,7 +25,9 @@ import ModalLoading from '../../../util/modalLoading';
 
 function MovimientosCajaReserva() {
   const { confirm } = Modal;
-  const { authAdmin: user } = useAuth();
+  const {
+    authUser: { data: user },
+  } = useAuth();
   const [infoComprobanteBoleta, setInfoComprobanteBoleta] = useState({});
   const [infoComprobanteFactura, setInfoComprobanteFactura] = useState({});
   const [visibleModalAperturaCierre, setVisibleModalAperturaCierre] = useState(false);

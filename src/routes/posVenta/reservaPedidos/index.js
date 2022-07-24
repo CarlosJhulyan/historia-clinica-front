@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Form, AutoComplete, Button, Table, Divider, Row, Modal, Descriptions, Col, Input } from 'antd';
 import moment from 'moment';
-import ModalListaProductos from '../modals/modalListaProductos';
+import ModalListaProductos from '../modalListas/modalListaProductos';
 import { httpClient } from '../../../util/Api';
 import ModalDatosPedido from './modalDatosPedido';
 import ModalCobrarPedido from '../modals/modalCobrarPedido';
@@ -36,7 +36,7 @@ function ReservaPedidos() {
   const [visibleModalGenPedido, setVisibleModalGenPedido] = useState(false);
 
   const {
-    authAdmin: user,
+    authUser: { data: user },
   } = useAuth();
   const { confirm } = Modal;
   const [numCaja, setNumCaja] = useState('');
@@ -363,7 +363,7 @@ function ReservaPedidos() {
       } = await httpClient.post('/posventa/grabarReservaPedidoCabecera', dataABC);
       if (success) {
         console.log(data);
-        openNotification('Cabecera', 'Pedido grabado');
+        openNotification('Cabecera', 'Pedido Reservado');
       } else {
         openNotification('Cabecera', message, 'warning');
       }
@@ -695,7 +695,7 @@ function ReservaPedidos() {
           <Descriptions size="small">
             <Descriptions.Item
               span={3}
-              label="EL PEDIDO SERA REGISTRADO PARA EL MÉDICO"
+              label="EL PEDIDO SERA RESERVADO PARA EL MÉDICO"
             ></Descriptions.Item>
             <Descriptions.Item span={3} label="CMP">
               {medicoCurrent.CMP}
@@ -1060,6 +1060,7 @@ function ReservaPedidos() {
         productosCurrent={productosCurrent}
         setProductosCurrent={setProductosCurrent}
         setGrabarPedido={setGrabarPedido}
+        reserva={true}
       />
       <ModalDatosPedido
         visibleDatosPedidoAceptar={datosPedidoAceptar}

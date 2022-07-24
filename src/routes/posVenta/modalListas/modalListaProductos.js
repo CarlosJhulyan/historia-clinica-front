@@ -14,11 +14,12 @@ import {
 } from 'antd';
 
 import { httpClient } from '../../../util/Api';
-import ModalSeleccionProducto from './modalSeleccionProducto';
+import ModalSeleccionProducto from '../modals/modalSeleccionProducto';
 import { ExclamationCircleOutlined, MinusOutlined } from '@ant-design/icons';
-import ModalDatosPedido from './modalDatosPedido';
-import ModalInfoProducto from './modalInforProducto';
+import ModalDatosPedido from '../modals/modalDatosPedido';
+import ModalInfoProducto from '../modals/modalInforProducto';
 import { useAuth } from '../../../authentication';
+import ModalConsultaReserva from '../modalsReserva/modalConsultaReserva';
 
 function ModalListaProductos({
 	visible,
@@ -39,7 +40,8 @@ function ModalListaProductos({
 	setProductosDetalles,
 	productosCurrent,
 	setProductosCurrent,
-  setGrabarPedido
+  setGrabarPedido,
+  reserva
 }) {
 	const [data, setData] = useState([]);
 	const { confirm, warning } = Modal;
@@ -50,6 +52,7 @@ function ModalListaProductos({
 	const [textSearch, settextSearch] = useState('');
 	const [productoCurrent, setProductoCurrent] = useState({});
 	const [productoCurrentDetails, setProductoCurrentDetails] = useState({});
+  const [visibleModalConsultaReserva, setVisibleModalConsultaReserva] = useState(false);
 	const [visibleModalCantidad, setVisibleModalCantidad] = useState(false);
 	const [visibleModalDatosPedido, setVisibleModalDatosPedido] = useState(false);
 	const [visibleModalInfoProducto, setVisibleModalInfoProducto] = useState(false);
@@ -332,6 +335,11 @@ function ModalListaProductos({
           >
             Aceptar
           </Button>,
+          !reserva && (
+            <Button onClick={() => setVisibleModalConsultaReserva(true)}>
+              Ingresa Pedido/Cotización
+            </Button>
+          ),
           <Button form="my-form" htmlType="reset" type="default" onClick={resetEspecialidades}>
             Limpiar Filtro
           </Button>
@@ -505,6 +513,7 @@ function ModalListaProductos({
 					productosCurrent={productosCurrent}
 					setProductoCurrent={setProductoCurrent}
           permiteEditarPrecio={permiteEditarPrecio}
+          reserva={reserva}
 				/>
 			)}
 			{visibleModalInfoProducto ? (
@@ -514,6 +523,12 @@ function ModalListaProductos({
 					productoCurrent={productoCurrentDetails}
 				/>
 			) : null}
+      {visibleModalConsultaReserva && (
+        <ModalConsultaReserva
+          visible={visibleModalConsultaReserva}
+          setVisible={setVisibleModalConsultaReserva}
+        />
+      )}
 			<ModalDatosPedido
 				// grabarPedido
 				// guardarDatosPedidoCabecera

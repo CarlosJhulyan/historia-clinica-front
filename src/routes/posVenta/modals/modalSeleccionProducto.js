@@ -17,7 +17,8 @@ function ModalSeleccionProducto({
                                   productoCurrent,
                                   cancelProductoSelected,
                                   aceptedProductoSelected,
-                                  permiteEditarPrecio
+                                  permiteEditarPrecio,
+                                  reserva
 }) {
   const dataInitialFetch = {
     codGrupoCia: '001',
