@@ -313,7 +313,7 @@ function ModalCobrarPedido({
 				...dataInitFetch,
 				numPedVta: dataCabeceraPed.cNumPedVta_in,
 				estPedVta: 'C',
-				usuModPedVtaCab: user.usu_mod_usu_local,
+				usuModPedVtaCab: user.usu_crea_usu_local,
 			});
 			if (success) {
 			}
@@ -535,7 +535,7 @@ function ModalCobrarPedido({
 				codMotKardex: MOT_KARDEX_VENTA_NORMAL,
 				tipDocKardex: '01',
 				codNumeraKardex: COD_NUMERA_SEC_KARDEX,
-				usuCreaCompPago: user.usu_mod_usu_local,
+				usuCreaCompPago: user.usu_crea_usu_local,
 				// descDetalleForPago: 'Codigo , Descripcion , Moneda , Monto , Total , Vuelto <BR>00001 , EFECTIVO SOLES , SOLES , 90.00 , 90.00 , 0.00<BR>'
 				descDetalleForPago: '',
 				permiteCampana: 'N',
@@ -603,7 +603,7 @@ function ModalCobrarPedido({
 				fecVencTarj: '',
 				nomTarj: '',
 				canCupon: '0',
-				usuCreaFormaPagoPed: user.usu_mod_usu_local,
+				usuCreaFormaPagoPed: user.usu_crea_usu_local,
 				dni: '',
 				codAtori: '',
 				lote: '.',
