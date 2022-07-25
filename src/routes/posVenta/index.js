@@ -31,6 +31,7 @@ function GenerarPedido() {
 	const [cNumPedVta_in, setCNumPedVta_in] = useState('');
 	const [tipoVenta, setTipoVenta] = useState('01');
   const [ultimoPedidoDiario, setUltimoPedidoDiario] = useState('____');
+  const [dataReserva, setDataReserva] = useState();
 
 	const {
 		authUser: { data: user },
@@ -121,7 +122,7 @@ function GenerarPedido() {
 		cNumCmp_visitador: '',
 		cNombreMedico_visitador: '',
 		cIndCotizacion: 'N',
-		cIndReserva: 'N',
+		cIndReserva: 'N', // No es reserva
 		cCodCiaReserva: 'N',
 		cCodLocalReserva: 'N',
 		cCodPedidoReserva: 'N',
@@ -216,6 +217,13 @@ function GenerarPedido() {
 			// Datos de hospital
 			dataLocalCabecera.cIDRef = medicoCurrent.TIP_REFERENCIA;
 			dataLocalCabecera.cDescRef = medicoCurrent.DESC_REFERENCIA;
+
+      // IF RESERVA
+      if (dataReserva) {
+        dataLocalCabecera.cCodCiaReserva = '001';
+        dataLocalCabecera.cCodLocalReserva = '001';
+        dataLocalCabecera.cCodPedidoReserva = dataReserva.numPedido;
+      }
 
 			await grabarPedidoFinally(dataLocalCabecera);
 			setDataFetchCabecera(dataLocalCabecera);
@@ -527,9 +535,10 @@ function GenerarPedido() {
 		},
 		{
 			title: '%Dscto',
-			dataIndex: 'descuento',
-			key: 'descuento',
+			dataIndex: 'PRECIO_VENTA_DSCTO',
+			key: 'PRECIO_VENTA_DSCTO',
 			align: 'right',
+      render: (desc) => <span>{Number(desc).toFixed(2)}</span>
 		},
 		{
 			title: 'Precio Venta',
@@ -799,7 +808,7 @@ function GenerarPedido() {
   useEffect(() => {
     setDataFiltered(data);
   }, [data]);
-
+  console.log(data);
 	return (
 		<>
 			<Card
@@ -1067,6 +1076,8 @@ function GenerarPedido() {
 				productosCurrent={productosCurrent}
 				setProductosCurrent={setProductosCurrent}
         setGrabarPedido={setGrabarPedido}
+        setDataReservaFinally={setData}
+        setDataReserva={setDataReserva}
 			/>
 			<ModalDatosPedido
 				visibleDatosPedidoAceptar={datosPedidoAceptar}

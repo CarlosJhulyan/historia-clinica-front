@@ -17,25 +17,43 @@ import {
 import { httpClient } from '../../../util/Api';
 import ModalListaReservas from './modalListaReservas';
 import { openNotification } from '../../../util/util';
+import ModalLoading from '../../../util/modalLoading';
 
 const ModalConsultaReserva = ({
                                 visible,
                                 setVisible,
+                                setClienteCurrent,
+                                setMedicoCurrent,
+                                setPacienteCurrent,
+                                setTipoVenta,
+                                setDataReservaFinally,
+                                setSelectedRowKeys,
+                                setProductosCurrent,
+                                setProductosDetalles,
+                                showProductosSinStockReserva,
+                                setDataReservaCab,
 }) => {
-  const { warning } = Modal;
+  const { warning, confirm } = Modal;
   const [textSearch, setTextSearch] = useState('');
   const [messageError, setMessageError] = useState('');
   const [loadingSearch, setLoadingSearch] = useState(false);
+  const [validated, setValidated] = useState(false);
   const [dataReserva, setDataReserva] = useState([{}]);
   const [datosPacienteReserva, setDatosPacienteReserva] = useState({});
   const [datosMedicoReserva, setDatosMedicoReserva] = useState({});
   const [visibleModalListaRes, setVisibleModalListaRes] = useState(false);
   const [disabledButton, setDisabledButton] = useState(true);
   const [loadingBuscarReserva, setLoadingBuscarReserva] = useState(false);
+  const [loadingProcede, setLoadingProcede] = useState(false);
 
-  const getDatosPacienteReserva = async (dataFetch) => {
+  const dataInitialFetch = {
+    codGrupoCia: '001',
+    codLocal: '001'
+  };
+
+  const getDatosPacienteReserva = async (dataFetch, valueNoDefault) => {
     setMessageError('');
-    if (textSearch.trim() === '') {
+    if (textSearch.trim() === '' && !valueNoDefault) {
       openNotification('Consulta Reserva', 'Complete el campo', 'Warning');
       return;
     }
@@ -91,7 +109,11 @@ const ModalConsultaReserva = ({
     const {
       data: { data, success }
     } = await httpClient.post('posventa/validoReservaPedido', dataFetch);
-    if (success) return data;
+    if (success) {
+      if (data.trim() === 'S') setValidated(true);
+      else setValidated(false);
+      return data;
+    } else setValidated(false);
   }
 
   const columns = [
@@ -134,19 +156,140 @@ const ModalConsultaReserva = ({
 
   const handleSearchDatosPacienteReserva = async values => {
     const dataFetch = {
-      codGrupoCia: '001',
-      codLocal: '001',
+      ...dataInitialFetch,
       numPedido: values.padStart(10, '0')
     }
 
     setLoadingSearch(true);
-    await getDatosPacienteReserva(dataFetch);
+    await getDatosPacienteReserva(dataFetch, values);
     setLoadingSearch(false);
   }
 
-  useEffect(() => {
+  const getDetallesOperaReserva = async () => {
+    try {
+      const {
+        data: { data, success }
+      } = await httpClient.post('posventa/getDetallesOperaReserva', {
+        ...dataInitialFetch,
+        numPedido: datosPacienteReserva.NUM_PEDIDO_VTA
+      });
 
-  }, []);
+      if (success) return data;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const handleOperaReserva = async () => {
+    if (validated) {
+      confirm({
+        content: '¿Esta seguro de aceptar la reserva?',
+        okText: 'Aceptar',
+        okCancel: 'Cancelar',
+        onOk: async () => {
+          setLoadingProcede(true);
+          const valido = await isValidoPedidoReserva({
+            ...dataInitialFetch,
+            numPedido: datosPacienteReserva.NUM_PEDIDO_VTA
+          });
+
+          if (valido === 'N') {
+            warning({
+              title: 'Mensaje de Sistema',
+              content: 'La hora pactada en la reserva fue superada',
+              centered: true
+            });
+            setMessageError('NO SE PUEDE ATENDER POR IMPUNTUALIDAD');
+            setLoadingProcede(false);
+            return;
+          }
+
+          const { data: { data: dataDetallePedido, success } } = await httpClient.post('posventa/getDatosReserva', {
+            ...dataInitialFetch,
+            numPedido: datosPacienteReserva.NUM_PEDIDO_VTA
+          });
+          if (success) {
+            const {
+              data: { data: dataPaciente, success: successPaciente },
+            } = await httpClient.post(`/pacientes/getPaciente`, {
+              ...dataInitialFetch,
+              codPaciente: datosPacienteReserva.COD_PACIENTE,
+            });
+            // const {
+            //   data: { data: dataCliente, success: successCliente }
+            // } = await httpClient.post('posventa/getClientesDocPosVenta', {
+            //   ...dataInitialFetch,
+            //   documento: dataDetallePedido.NUM_DOCUMENTO,
+            // })
+
+            // if (dataCliente && successCliente) setClienteCurrent(dataCliente[0]);
+            setMedicoCurrent({
+              key: dataDetallePedido.NUM_CMP,
+              CMP: dataDetallePedido.NUM_CMP,
+              NOMBRE_COMPLETO: dataDetallePedido.DATOS_COMPLETOS,
+              DESC_REFERENCIA: dataDetallePedido.DESC_REF,
+              TIP_REFERENCIA: dataDetallePedido.TIPO_REF
+            });
+            setTipoVenta(dataDetallePedido.TIPO_COMPROBANTE);
+            if (successPaciente) setPacienteCurrent(dataPaciente);
+
+            // CARGA DETALLES RESERVA
+
+            const dataValidateStock = await getDetallesOperaReserva();
+
+            setSelectedRowKeys(dataReserva.map(item => item.key));
+            setProductosCurrent(dataReserva.map(item => {
+              return { ...item, MARCA: item.ESPECIALIDAD }
+            }));
+
+            const detallesItem = []
+            for (const dataReservaElement of dataReserva) {
+              const { data: { data: detallesProducto } } = await httpClient.post('posventa/getDetalleCompProducto', {
+                ...dataInitialFetch,
+                codProducto: dataReservaElement.key,
+                indVerifica: "N"
+              });
+              detallesItem.push({
+                ...detallesProducto[0],
+                key: dataReservaElement.key,
+                PRECIO: detallesProducto[0].PRECIO_VENTA
+              });
+            }
+
+            setProductosDetalles(dataReserva.map(item => {
+              return {
+                ...detallesItem.find(item2 => item2.key === item.key),
+                total: Number(item.TOTAL),
+                cantidad: Number(item.CANTIDAD),
+                pu: Number(item.TOTAL) / Number(item.CANTIDAD),
+              }
+            }));
+
+            const dataFormat = dataReserva.map(item => {
+              return {
+                ...item,
+                ...detallesItem.find(item2 => item2.key === item.key),
+                total: Number(item.TOTAL),
+                cantidad: Number(item.CANTIDAD),
+                pu: Number(item.TOTAL) / Number(item.CANTIDAD),
+              }
+            });
+            setDataReservaFinally(dataFormat);
+            showProductosSinStockReserva(dataValidateStock.filter(item => {
+              if (item.IN_STOCK === 'N') return {
+                ...item,
+                ...dataReserva.find(item2 => item2.key === item.key),
+              };
+            }));
+            setLoadingProcede(false);
+            setDataReservaCab({ numPedido: datosPacienteReserva.NUM_PEDIDO_VTA });
+            setVisible(false);
+          }
+        },
+        centered: true
+      })
+    }
+  }
 
   return (
     <>
@@ -174,7 +317,9 @@ const ModalConsultaReserva = ({
               backgroundColor: '#0169aa',
               color: 'white',
             }}
-            disabled={disabledButton}
+            disabled={disabledButton || !validated}
+            onClick={handleOperaReserva}
+            loading={loadingProcede}
           >
             Aceptar
           </Button>
@@ -280,6 +425,7 @@ const ModalConsultaReserva = ({
         loading={loadingBuscarReserva}
         setLoading={setLoadingBuscarReserva}
       />
+      {loadingProcede ? <ModalLoading></ModalLoading> : null}
     </>
   );
 }

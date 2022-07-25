@@ -10,6 +10,7 @@ import {
   Table
 } from 'antd';
 import { httpClient } from '../../../util/Api';
+import { openNotification } from '../../../util/util';
 
 function ModalSeleccionProducto({
                                   visible,
@@ -18,12 +19,12 @@ function ModalSeleccionProducto({
                                   cancelProductoSelected,
                                   aceptedProductoSelected,
                                   permiteEditarPrecio,
-                                  reserva
 }) {
   const dataInitialFetch = {
     codGrupoCia: '001',
     codLocal: '001'
   };
+  const [bloqueoProducto, setBloqueoProducto] = useState(false);
   const [loadingDetalles, setLoadingDetalles] = useState(false);
   const [loadingListaFrac, setLoadingListaFrac] = useState(false);
   const [detalles, setDetalles] = useState({});
@@ -64,8 +65,12 @@ function ModalSeleccionProducto({
       indVerifica: "N"
     })
       .then(response => {
-        if (response.data.success && response.data.data)
+        if (response.data.success && response.data.data) {
           setDetalles(response.data.data[0]);
+          if (Number(response.data.data.STOCK_FISICO) <= 0) {
+            setBloqueoProducto(true);
+          }
+        }
         setLoadingDetalles(false);
       })
       .catch(e => console.error(e));
@@ -197,26 +202,34 @@ function ModalSeleccionProducto({
                   loadingDetalles ||
                   loadingListaFrac ||
                   dataForm.cantidad <= 0 ||
-                  (listaFrac && listaFrac.length > 0 && dataForm.pu < listaFrac[0].PRECIO_MIN)
+                  (listaFrac && listaFrac.length > 0 && dataForm.pu < listaFrac[0].PRECIO_MIN) ||
+                  bloqueoProducto
                 }
                 style={{
                   backgroundColor: '#0169aa',
                   color: 'white'
                 }}
                 onClick={() => {
-                  aceptedProductoSelected(productoCurrent.key, {
-                    ...detalles,
-                    pu: Number(dataForm.pu),
-                    cantidad: Number(dataForm.cantidad),
-                    total: dataForm.total
-                  });
-                  setDataForm({
-                    pu: 0,
-                    cantidad: 0,
-                    total: 0
-                  });
-                  setListaFrac([]);
-                  if (setProductoCurrent) setProductoCurrent({});
+                  if (bloqueoProducto) return;
+                  else {
+                    if (Number(detalles.STOCK_FISICO) < Number(dataForm.cantidad)) {
+                      openNotification('Selección de Producto', 'No hay cantidad en STOCK', 'Warning');
+                      return;
+                    }
+                    aceptedProductoSelected(productoCurrent.key, {
+                      ...detalles,
+                      pu: Number(dataForm.pu),
+                      cantidad: Number(dataForm.cantidad),
+                      total: dataForm.total
+                    });
+                    setDataForm({
+                      pu: 0,
+                      cantidad: 0,
+                      total: 0
+                    });
+                    setListaFrac([]);
+                    if (setProductoCurrent) setProductoCurrent({});
+                  }
                 }}
               >
                 Aceptar

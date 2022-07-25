@@ -19,10 +19,14 @@ const ModalListaReservas = ({
                               loading,
                               setLoading,
 }) => {
+  const { confirm } = Modal;
   const [dataList, setDataList] = useState([]);
   const [loadingDataList, setLoadingDataList] = useState(false);
   const [currentPedido, setCurrentPedido] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [modalDetalles, setModalDetalles] = useState(false);
+  const [loadingDetalles, setLoadingDetalles] = useState(false);
+  const [dataReserva, setDataReserva] = useState([]);
 
   const handleGetDatalist = async (values) => {
     const datafetch = {
@@ -55,11 +59,13 @@ const ModalListaReservas = ({
       title: 'CLIENTE',
       dataIndex: 'NOM_CLI',
       key: 'NOM_CLI',
+      sorter: (a, b) => a.NOM_CLI - b.NOM_CLI,
     },
     {
       title: 'DNI-RUC',
       dataIndex: 'DNI',
       key: 'DNI',
+      sorter: (a, b) => a.DNI - b.DNI,
     },
     {
       title: 'Monto',
@@ -70,9 +76,64 @@ const ModalListaReservas = ({
     },
   ];
 
-  useEffect(() => {
+  const getDetallesPedido = async () => {
+    try {
+      setModalDetalles(true);
+      setLoadingDetalles(true);
+      if (currentPedido) {
+        const {
+          data: { data, success, message }
+        } = await httpClient.post('posventa/getListaDetalles', {
+          codGrupoCia: '001',
+          codLocal: '001',
+          numPedido: currentPedido.NUM_PEDIDO_VTA
+        });
+        if (success) setDataReserva(data);
+        else openNotification('Lista Reservas', message, 'Warning');
+      }
+      setLoadingDetalles(false);
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
-  }, []);
+  const columnsDetalles = [
+    {
+      title: 'Especialidad',
+      dataIndex: 'ESPECIALIDAD',
+      key: 'ESPECIALIDAD',
+    },
+    {
+      title: 'Código',
+      dataIndex: 'CODIGO',
+      key: 'CODIGO',
+    },
+    {
+      title: 'Descripción',
+      dataIndex: 'DESCRIPCION',
+      key: 'DESCRIPCION',
+    },
+    {
+      title: 'Unidad',
+      dataIndex: 'UNIDAD',
+      key: 'UNIDAD',
+    },
+    {
+      title: 'Cantidad',
+      dataIndex: 'CANTIDAD',
+      key: 'CANTIDAD',
+    },
+    {
+      title: 'S/ Prec.Unit',
+      dataIndex: 'PRECIO_UNI',
+      key: 'PRECIO_UNI',
+    },
+    {
+      title: 'S/ Total',
+      dataIndex: 'TOTAL',
+      key: 'TOTAL',
+    },
+  ];
 
   return (
     <>
@@ -89,13 +150,10 @@ const ModalListaReservas = ({
           </Button>,
           <Button
             disabled={!currentPedido || loadingDataList}
+            loading={loadingDetalles}
+            onClick={getDetallesPedido}
           >
             Ver Detalles
-          </Button>,
-          <Button
-            disabled={dataList.length <= 0 || loadingDataList}
-          >
-            Ordenar
           </Button>,
           <Button
             disabled
@@ -110,10 +168,18 @@ const ModalListaReservas = ({
             disabled={!currentPedido || loadingDataList}
             onClick={async () => {
               if (currentPedido) {
-                setVisible(false);
-                setLoading(true);
-                await handleSearchDatosPacienteReserva(currentPedido.NUM_PEDIDO_VTA);
-                setLoading(false);
+                confirm({
+                  content: '¿Está seguro de seleccionar la reserva?',
+                  onOk: async () => {
+                    setVisible(false);
+                    setLoading(true);
+                    await handleSearchDatosPacienteReserva(currentPedido.NUM_PEDIDO_VTA);
+                    setLoading(false);
+                  },
+                  okText: 'Aceptar',
+                  cancelText: 'Cancelar',
+                  centered: true
+                });
               } else openNotification('Lista Reservas', 'Seleccione un pedido', 'Warning');
             }}
             loading={loading}
@@ -136,7 +202,7 @@ const ModalListaReservas = ({
               <Form.Item
                 name='documento'
                 label='DNI/RUC/OTROS'
-                rules={[{required:true}]}
+                // rules={[{required:true}]}
               >
                 <Input />
               </Form.Item>
@@ -206,6 +272,31 @@ const ModalListaReservas = ({
           </Col>
         </Row>
       </Modal>
+
+      {modalDetalles && (
+        <Modal
+          centered
+          width={1100}
+          visible={modalDetalles}
+          onCancel={() => !loadingDetalles && setModalDetalles(false)}
+          title='Detalles de pedido'
+          footer={false}
+        >
+          <Row>
+            <Col span={24}>
+              <Table
+                dataSource={dataReserva}
+                columns={columnsDetalles}
+                size='small'
+                pagination={{
+                  pageSize:5
+                }}
+                loading={loadingDetalles}
+              />
+            </Col>
+          </Row>
+        </Modal>
+      )}
     </>
   );
 }

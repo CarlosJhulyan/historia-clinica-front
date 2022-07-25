@@ -10,12 +10,14 @@ import {
 } from 'antd';
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
+import moment from 'moment';
 
 function ModalTriaje({
   setAbrirModal,
   abrirModal,
   numAtencionMedica, traerListaEspera,
-  usuario
+  usuario,
+  currentPaciente,
 }) {
   const [datosEnviar, setDatosEnviar] = useState({
     NUM_ATENCION: '',
@@ -30,6 +32,7 @@ function ModalTriaje({
     SATURACION: ''
   });
   const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(false);
 
   const formItemLayout = {
     labelCol: {
@@ -44,6 +47,33 @@ function ModalTriaje({
 
   const handleChangeInputs = e => {
     setDatosEnviar({ ...datosEnviar, [e.target.name]: e.target.value });
+  }
+
+  const traerTriaje = async () => {
+    setLoadingData(true);
+    console.log();
+    try {
+      const { data: { data = [] } } = await httpClient.post(`triaje/getTriaje`, { COD_PACIENTE: currentPaciente.COD_PACIENTE });
+      if (data.length === 0) {
+        openNotification('Pre Triaje', 'El paciente no tiene Pre Triaje registrado', 'Warning');
+      } else {
+        setDatosEnviar({
+          PA1: data.pa_1,
+          PA2: data.pa_2,
+          FR: data.fr,
+          FC: data.fc,
+          SATURACION: data.saturacion_oxigeno,
+          TALLA: data.talla,
+          PESO: data.peso,
+          TEMP: data.temp,
+          COD_PACIENTE: currentPaciente.COD_PACIENTE,
+          USU_CREA: JSON.parse(localStorage.getItem('token')).usuario
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setLoadingData(false);
   }
 
   const insertarTriaje = async () => {
@@ -90,6 +120,13 @@ function ModalTriaje({
         centered
         title='Insertar Triaje'
         footer={[
+          <Button
+            style={{ margin: '0 8px' }}
+            loading={loadingData}
+            onClick={() => traerTriaje()}
+          >
+            Cargar Pre Triaje
+          </Button>,
           <Button
             type='primary'
             style={{ margin: '0 8px' }}

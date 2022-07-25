@@ -54,6 +54,7 @@
 		"react-export-excel": "^0.5.3",
 		"react-flip-move": "^3.0.4",
 		"react-google-maps": "^9.4.5",
+		"react-icons": "^4.4.0",
 		"react-idle-timer": "^4.6.4",
 		"react-instantsearch": "^6.8.2",
 		"react-instantsearch-dom": "^6.10.3",

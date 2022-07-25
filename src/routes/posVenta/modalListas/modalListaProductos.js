@@ -41,10 +41,12 @@ function ModalListaProductos({
 	productosCurrent,
 	setProductosCurrent,
   setGrabarPedido,
-  reserva
+  reserva,
+  setDataReservaFinally,
+  setDataReserva,
 }) {
 	const [data, setData] = useState([]);
-	const { confirm, warning } = Modal;
+	const { confirm, warning, info } = Modal;
 	const [loadingProductos, setLoadingProductos] = useState(false);
 	const [loadingEspecialidades, setLoadingEspecialidades] = useState(false);
 	const [dataEspecialidades, setDataEspecialidades] = useState([]);
@@ -283,6 +285,20 @@ function ModalListaProductos({
     }
   };
 
+  const showProductosSinStockReserva = (productos = []) => {
+    if (productos.length >= 1) info({
+      centered: true,
+      content: (
+        <>
+          <p>Los siguientes productos cuentan sin Stock o sobrepasan la cantidad de Stock Físico:</p>
+          {productos.map(item => <span key={item.key}>{item.DESCRIPCION}</span>)}
+        </>
+      ),
+      title: 'Productos Observados',
+      okText: 'Continuar',
+    });
+  }
+
 	useEffect(() => {
     validaCambioPrecio();
 		getListaProductos();
@@ -513,7 +529,6 @@ function ModalListaProductos({
 					productosCurrent={productosCurrent}
 					setProductoCurrent={setProductoCurrent}
           permiteEditarPrecio={permiteEditarPrecio}
-          reserva={reserva}
 				/>
 			)}
 			{visibleModalInfoProducto ? (
@@ -523,10 +538,20 @@ function ModalListaProductos({
 					productoCurrent={productoCurrentDetails}
 				/>
 			) : null}
-      {visibleModalConsultaReserva && (
+      {(visibleModalConsultaReserva && !reserva) && (
         <ModalConsultaReserva
           visible={visibleModalConsultaReserva}
           setVisible={setVisibleModalConsultaReserva}
+          setClienteCurrent={setClienteCurrent}
+          setMedicoCurrent={setMedicoCurrent}
+          setPacienteCurrent={setPacienteCurrent}
+          setTipoVenta={setTipoVenta}
+          setDataReservaFinally={setDataReservaFinally}
+          setProductosCurrent={setProductosCurrent}
+          setProductosDetalles={setProductosDetalles}
+          setSelectedRowKeys={setSelectedRowKeys}
+          showProductosSinStockReserva={showProductosSinStockReserva}
+          setDataReservaCab={setDataReserva}
         />
       )}
 			<ModalDatosPedido

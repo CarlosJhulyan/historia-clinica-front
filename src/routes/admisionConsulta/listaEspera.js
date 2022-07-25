@@ -13,6 +13,7 @@ import {
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
 import ModalTriaje from './modalTriaje';
+import moment from 'moment';
 
 function ListaEspera() {
   const { Option } = Select;
@@ -34,7 +35,7 @@ function ListaEspera() {
   const [loadingDataEspecialidad, setLoadingDataEspecialidad] = useState(true);
   const [numHCSelection, setNumHCSelection] = useState([]);
   const [atender, setAtender] = useState('');
-
+  const [currentPaciente, setCurrentPaciente] = useState({});
   const [loadingAnular, setLoadingAnular] = useState(false);
   const [loadingActualizar, setLoadingActualizar] = useState(false);
 
@@ -113,6 +114,7 @@ function ListaEspera() {
       setLoadingData(true);
       setDataListaEspera([]);
       setNumHCSelection([]);
+      setCurrentPaciente();
       try {
         const { data: { data = [], success, message } } = await httpClient.post('pacientes/getListaEsperaTriaje', dataSend);
         if (success) {
@@ -138,6 +140,7 @@ function ListaEspera() {
       });
       if (success) {
         openNotification('Atención Médica', message);
+        traerListaEspera();
       } else {
         openNotification('Atención Médica', message, 'Warning');
       }
@@ -157,6 +160,7 @@ function ListaEspera() {
       });
       if (success) {
         openNotification('Atención Médica', message);
+        traerListaEspera();
       } else {
         openNotification('Atención Médica', message, 'Warning');
       }
@@ -178,6 +182,7 @@ function ListaEspera() {
       actualizarAtencionMedica();
     }
   }
+  console.log(currentPaciente);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -260,6 +265,7 @@ function ListaEspera() {
             </Col>
             <Col span={4}>
               <Button
+                disabled={loadingDataConsultorio}
                 onClick={() => traerListaEspera()}>
                 Buscar
               </Button>
@@ -313,6 +319,7 @@ function ListaEspera() {
               console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
               setAtender(selectedRows[0].ESTADO);
               setNumHCSelection(selectedRowKeys);
+              setCurrentPaciente(selectedRows[0]);
             },
             selectedRowKeys: numHCSelection
           }}
@@ -346,12 +353,16 @@ function ListaEspera() {
           </Button>
         </Row>
       </Card>
-      <ModalTriaje
-        usuario={usuario}
-        traerListaEspera={traerListaEspera}
-        numAtencionMedica={numHCSelection[0]}
-        setAbrirModal={setAbrirModalTriaje}
-        abrirModal={abrirModalTriaje}/>
+      {abrirModalTriaje && (
+        <ModalTriaje
+          usuario={usuario}
+          traerListaEspera={traerListaEspera}
+          numAtencionMedica={numHCSelection[0]}
+          setAbrirModal={setAbrirModalTriaje}
+          abrirModal={abrirModalTriaje}
+          currentPaciente={currentPaciente}
+        />
+      )}
     </>
   )
 }

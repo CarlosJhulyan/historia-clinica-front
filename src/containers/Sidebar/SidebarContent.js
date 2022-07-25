@@ -13,6 +13,7 @@ import {
 import { useSelector } from 'react-redux';
 import './styles.css';
 import SubMenu from 'antd/lib/menu/SubMenu';
+import { FaCalendarAlt, FaStore } from 'react-icons/all';
 
 const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const { navStyle, themeType, themeSettingsGlobal } = useSelector(({ settings }) => settings);
@@ -53,7 +54,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					title={
 						<span>
 							{' '}
-							<i className="icon icon-icon" />
+							<i className="icon">
+                <FaStore />
+              </i>
 							<span>Pos Venta</span>
 						</span>
 					}
@@ -104,7 +107,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					title={
 						<span>
 							{' '}
-							<i className="icon icon-icon" />
+							<i className="icon">
+                <FaCalendarAlt />
+              </i>
 							<span>Horario</span>
 						</span>
 					}
