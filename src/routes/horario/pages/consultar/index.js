@@ -7,6 +7,7 @@ import ModalAsignar from './ModalAsignar';
 import ModalEditar from './ModalEditar';
 import ReactExport from 'react-export-excel';
 import { ClearOutlined } from '@ant-design/icons';
+import { convertir24hrsa12hrs } from '../../../../util/util';
 
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
@@ -110,7 +111,11 @@ const ConsultarHorario = () => {
 							{element.nombre_medico}
 						</div>
 						<p style={{ margin: 0 }}>{element.especialidad}</p>
-						<p style={{ margin: 0 }}>{element.hora_inicio + ' - ' + element.hora_fin}</p>
+						<p style={{ margin: 0 }}>
+							{convertir24hrsa12hrs(element.hora_inicio) +
+								' - ' +
+								convertir24hrsa12hrs(element.hora_fin)}
+						</p>
 					</>
 				),
 				start,
