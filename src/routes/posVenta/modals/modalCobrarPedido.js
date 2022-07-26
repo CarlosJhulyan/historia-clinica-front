@@ -1408,7 +1408,7 @@ const ModalComprobanteMenu = ({
 			}}
 			footer={[
 				<Button disabled={loadingData} onClick={() => setVisible(false)}>
-					Salir
+					Atrás
 				</Button>,
 			]}
 		>
@@ -1488,7 +1488,7 @@ const ModalOrdenes = ({
 				}}
 				footer={[
 					<Button disabled={loadingData} onClick={() => setVisible(false)}>
-						Salir
+						Atrás
 					</Button>,
 				]}
 			>

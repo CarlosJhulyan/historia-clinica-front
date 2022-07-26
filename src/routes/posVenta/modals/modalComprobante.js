@@ -5,7 +5,8 @@ import { httpClient } from '../../../util/Api';
 import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import QRCode from 'react-qr-code';
 
-import logoHeader from '../../../assets/posventa/biensalud-logo.png';
+// import logoHeader from '../../../assets/posventa/biensalud-logo.png';
+import logoHeader from '../../../assets/posventa/logo-biensalud.jpg';
 import { numberToLetter } from '../../../util/numberToletters';
 import DecimalFormat from 'decimal-format';
 import { openNotification } from '../../../util/util';
@@ -38,6 +39,7 @@ const ModalComprobante = ({
 	tipoVenta,
 }) => {
 	const [dataImprimir, setDataImprimir] = useState([]);
+	const [dataEmpresa, setDataEmpresa] = useState();
 	const [dataDetalle, setDataDetalle] = useState([]);
 	const [dataMetodosPago, setDataMetodosPago] = useState([]);
 	const impresionRef = useRef();
@@ -124,6 +126,22 @@ const ModalComprobante = ({
 		}
 	};
 
+	const getDataEmpresa = async () => {
+		try {
+			const {
+				data: { data, success },
+			} = await httpClient.post('posventa/getDataEmpresa', {
+				codCia: '001',
+				codLocal: '001',
+			});
+			if (success) {
+				setDataEmpresa(data);
+			}
+		} catch (e) {
+			console.error(e);
+		}
+	};
+
 	const clearCacheImprimirWs = async idDocumento => {
 		try {
 			const {
@@ -158,6 +176,7 @@ const ModalComprobante = ({
 
 	useEffect(() => {
 		inicial();
+		getDataEmpresa();
 	}, []);
 
 	const [totalPagar, setTotalPagar] = useState('');
@@ -230,13 +249,17 @@ const ModalComprobante = ({
 					<img src={logoHeader} alt="lopotipo-biensalud" />
 				</div>
 				<div style={{ width: '100%', textAlign: 'center' }}>
-					CONSORCIO SALUD LIMA SUR - RUC: 20555875828
+					{dataEmpresa && dataEmpresa.RAZON_SOCIAL + ' - RUC: ' + dataEmpresa.RUC}
 				</div>
-				<div style={{ width: '100%', textAlign: 'center' }}>PR GRAL MIGUEL IGLESIAS NRO. 997</div>
 				<div style={{ width: '100%', textAlign: 'center' }}>
-					LIMA - LIMA - SAN JUAN DE MIRAFLORES
+					{dataEmpresa && dataEmpresa.DIRECCION}
 				</div>
-				<div style={{ width: '100%', textAlign: 'center' }}>TELF.: 7178060</div>
+				<div style={{ width: '100%', textAlign: 'center' }}>
+					{dataEmpresa && dataEmpresa.UBIGEO}
+				</div>
+				<div style={{ width: '100%', textAlign: 'center' }}>
+					{dataEmpresa && 'TELF.: ' + dataEmpresa.TELEFONO}
+				</div>
 				<div
 					style={{
 						width: '100%',
@@ -245,9 +268,9 @@ const ModalComprobante = ({
 						fontWeight: 600,
 					}}
 				>
-					001 - Humanidad SUR
+					001 - {dataEmpresa && dataEmpresa.DIRECCION}
 				</div>
-				<br />
+				{/* <br /> */}
 				{dataImprimir && (
 					<>
 						<div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
@@ -388,7 +411,7 @@ const ModalComprobante = ({
 				<br />
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					{dataImprimir && (
-						<>{dataImprimir.length > 0 ? <QRCode key={qr} value={qr} size={100} /> : ''} </>
+						<>{dataImprimir.length > 0 ? <QRCode key={qr} value={qr} size={60} /> : ''} </>
 					)}
 				</div>
 				<br />
