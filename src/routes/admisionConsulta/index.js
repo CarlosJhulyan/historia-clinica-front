@@ -367,7 +367,7 @@ function AdmisionConsulta() {
         traerPedido={traerPedido}
       />
 
-      <ModalAtencionMedica
+      {abrirModalConsulta && <ModalAtencionMedica
         dataConsultorios={dataConsultorios}
         dataEspecialidades={dataEspecialidades}
         abrirModalConsulta={abrirModalConsulta}
@@ -379,7 +379,7 @@ function AdmisionConsulta() {
         setDataCabecera={setDataCabecera}
         setDataDetalles={setDataDetalles}
         setPedidoFound={setPedidoFound}
-      />
+      />}
     </div>
   )
 }

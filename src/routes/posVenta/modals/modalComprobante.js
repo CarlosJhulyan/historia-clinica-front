@@ -37,6 +37,8 @@ const ModalComprobante = ({
 	secCompPago,
 	clienteCurrent,
 	tipoVenta,
+  medicoCurrent,
+  pacienteCurrent
 }) => {
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataEmpresa, setDataEmpresa] = useState();
@@ -191,6 +193,15 @@ const ModalComprobante = ({
 	// const [direccion, setDireccion] = useState('');
 	const [qr, setQr] = useState('');
 
+  const dia = pacienteCurrent.FEC_NAC_CLI.substring(0, 2);
+  const mes = pacienteCurrent.FEC_NAC_CLI.substring(3, 5);
+  const anio = pacienteCurrent.FEC_NAC_CLI.substring(6, 10);
+  const fechaNacimiento = new Date(mes + '/' + dia + '/' + anio);
+  console.log(fechaNacimiento);
+  const fechaActual = new Date();
+  // restar años completos
+  const edad = Math.floor((fechaActual - fechaNacimiento) / (1000 * 60 * 60 * 24 * 365));
+
 	useEffect(() => {
 		console.log('dataImprimir', dataImprimir);
 		const posicion = 3;
@@ -242,7 +253,14 @@ const ModalComprobante = ({
 		>
 			<div
 				ref={impresionRef}
-				style={{ display: 'flex', flexDirection: 'column', padding: 10, fontSize: 10 }}
+				style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 10,
+          fontSize: 10,
+          lineHeight: 0.9
+        }}
+        className='font-ticket'
 			>
 				{/* {imprimir} */}
 				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
@@ -264,7 +282,7 @@ const ModalComprobante = ({
 					style={{
 						width: '100%',
 						textAlign: 'center',
-						textDecoration: 'underline',
+						// textDecoration: 'underline',
 						fontWeight: 600,
 					}}
 				>
@@ -277,7 +295,7 @@ const ModalComprobante = ({
 						<div>{dataImprimir.length > 0 ? dataImprimir[8].VALOR : ''} </div>
 					</>
 				)}
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 					<Col xs={4} style={{ padding: 0 }}>
 						CODIGO
@@ -298,7 +316,7 @@ const ModalComprobante = ({
 						IMPORTE
 					</Col>
 				</Row>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				{dataDetalle.map((element, index) => (
 					<Row key={index} style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 						<Col xs={4} style={{ padding: 0 }}>
@@ -321,7 +339,7 @@ const ModalComprobante = ({
 						</Col>
 					</Row>
 				))}
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
 					<Col xs={18} style={{ padding: 0 }}>
 						TOTAL A PAGAR: S/
@@ -330,7 +348,7 @@ const ModalComprobante = ({
 						{totalPagar}
 					</Col>
 				</Row>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 
 				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
 					<Col xs={18} style={{ padding: 0 }}>
@@ -356,7 +374,7 @@ const ModalComprobante = ({
 						{importeTotal}
 					</Col>
 				</Row>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				{dataMetodosPago.map(item => (
 					<>
 						<Row key={item.COD_FORMA_PAGO} style={{ width: '100%', margin: 0, textAlign: 'end' }}>
@@ -401,13 +419,27 @@ const ModalComprobante = ({
 				{/*</Row>*/}
 				<br />
 				{/*<div>{dataImprimir.length > 0 ? texto : ''} </div>*/}
-				<div>SON: {numberToLetter(Number(importeTotal))}</div>
+				<div style={{fontSize:9}}>SON: {numberToLetter(Number(importeTotal))}</div>
 				{/*<div>{dataImprimir.length > 0 ? nombreCliente : ''} </div>*/}
 				{/*<div>{dataImprimir.length > 0 ? dni : ''} </div>*/}
 				{/*<div>{dataImprimir.length > 0 ? direccion : ''} </div>*/}
-				<div>NOMBRE DE CLIENTE: {clienteCurrent.CLIENTE}</div>
-				<div>DNI CLIENTE: {clienteCurrent.NUM_DOCUMENTO}</div>
-				<div>DIRECCION: {clienteCurrent.DIRECCION}</div>
+				<div style={{fontSize:9}}>NOMBRE DE CLIENTE: {clienteCurrent.CLIENTE}</div>
+				<div style={{fontSize:9}}>DNI CLIENTE: {clienteCurrent.NUM_DOCUMENTO}</div>
+				<div style={{fontSize:9}}>DIRECCION: {clienteCurrent.DIRECCION}</div>
+        <br/>
+        <div style={{fontSize:12}}>--- DATOS DE MEDICO ---</div>
+        <br />
+        <div>{medicoCurrent.CMP + ' - ' + medicoCurrent.NOMBRE_COMPLETO}</div>
+        <br />
+        <div style={{fontSize:12}}>--- DATOS DE PACIENTE ---</div>
+        <br />
+        <div style={{fontSize:11}}>N° HC {pacienteCurrent.COD_PACIENTE}</div>
+        <div style={{fontSize:11}}>DNI - {pacienteCurrent.NUM_DOCUMENTO}</div>
+        <div style={{fontSize:11}}>
+          {pacienteCurrent.NOMBRE} {pacienteCurrent.APE_PATERNO} {pacienteCurrent.APE_MATERNO}
+        </div>
+        <div style={{fontSize:11}}>FECHA NACIMIENTO : {pacienteCurrent.FEC_NAC_CLI}</div>
+        <div>EDAD: {edad} años</div>
 				<br />
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					{dataImprimir && (

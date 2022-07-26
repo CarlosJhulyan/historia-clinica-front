@@ -3,8 +3,10 @@ import { Button, Col, Form, Input, Modal, Row, Table } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones, openNotification } from '../../../util/util';
 import { ToastContainer } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [data, setData] = useState([]);
 	const [loadingData, setLoadingData] = useState(false);
 	const [clienteKeyCurrent, setClienteKeyCurrent] = useState('');
@@ -181,7 +183,7 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					<Button
 						ref={buttonRef}
 						disabled={loadingData || clienteSearch.trim() === ''}
-						style={{ marginTop: 5, background: '#0169aa', color: '#fff' }}
+						style={{ marginTop: 5, background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
 						loading={loadingData}
 						onClick={handleSearch}
 					>
@@ -189,14 +191,14 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					</Button>
 					<Button
 						disabled={loadingData}
-						style={{ marginTop: 5, background: '#0169aa', color: '#fff' }}
+						style={{ marginTop: 5, background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
 					// onClick={traerDataClientesPorNombre}
 					>
 						Sin Docume...
 					</Button>
 					<Button
 						disabled={loadingData}
-						style={{ marginTop: 5, background: '#0169aa', color: '#fff' }}
+						style={{ marginTop: 5, background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
 						onClick={handleClearData}
 					>
 						Limpiar
@@ -243,7 +245,7 @@ function ModalMantenimientoCliente({
 	handleSearch,
 }) {
 	const [form] = Form.useForm();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [natural, setNatural] = useState(
 		tipo === 'crear' ? true : filaActual.TIP_DOCUMENTO === '01'
 	);
@@ -359,7 +361,7 @@ function ModalMantenimientoCliente({
 			onCancel={() => setVisible(false)}
 			footer={[
 				<Button onClick={() => setVisible(false)}>Cerrar</Button>,
-				<Button style={{ background: '#0169aa', color: '#fff' }} onClick={guardar}>
+				<Button style={{ background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }} onClick={guardar}>
 					Grabar
 				</Button>,
 			]}

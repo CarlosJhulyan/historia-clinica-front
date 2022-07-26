@@ -10,9 +10,10 @@ import {
   Row,
   TimePicker
 } from 'antd';
+import { useSelector } from 'react-redux';
 
 const ModalInsertReserva = ({ visible, setVisible, guardarReservaPedidoCabecera, setGuardando,guardando }) => {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const handleReservaPedidoFinal = async (values) => {
     setGuardando(true);
     const dataFormat = {
@@ -43,7 +44,7 @@ const ModalInsertReserva = ({ visible, setVisible, guardarReservaPedidoCabecera,
           <Button
             htmlType='submit'
             style={{
-              backgroundColor: '#0169aa',
+              backgroundColor: themeSettingsGlobal.COD_COLOR_1,
               color: 'white',
             }}
             form='form-reserva-pedido'

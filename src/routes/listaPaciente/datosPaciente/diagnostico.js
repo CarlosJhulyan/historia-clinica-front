@@ -52,14 +52,14 @@ const Diagnostico = ({ datosModal }) => {
 					cod_medico: token.cod_medico
 				})
 				.then(resp => {
-					console.log('REEEEEEEEESPUESTA:', resp);
+					console.log('RSPUESTA:', resp);
 					if (resp.data.success) {
 						dispatch(setSugerenciaTratamiento(resp.data.data.tratamientos));
 						dispatch(setSugerenciaProcedimiento(resp.data.data.procedimientos));
 						dispatch(setSugerenciaInterProcedimiento(resp.data.data.interconsultas));
 						dispatch(setSugerenciaImagenes(resp.data.data.imagenes));
 						dispatch(setSugerenciaLaboratorio(resp.data.data.laboratorios));
-
+            console.log(resp.data.data);
 						if (
 							resp.data.data.tratamientos.length !== 0 ||
 							resp.data.data.procedimientos.length !== 0 ||
@@ -67,6 +67,7 @@ const Diagnostico = ({ datosModal }) => {
 							resp.data.data.imagenes.length !== 0 ||
 							resp.data.data.laboratorios.length !== 0
 						) {
+              console.log('ENTRO');
 							setBtnSugerencia(true);
 						}
 					}

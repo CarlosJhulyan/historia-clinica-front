@@ -3,8 +3,10 @@ import { Button, Col, Form, Input, Modal, Row, Select, Table } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones, openNotification } from '../../../util/util';
 import { ToastContainer } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [data, setData] = useState([]);
 	const [dataFiltered, setDataFiltered] = useState([]);
 	const [loadingData, setLoadingData] = useState(false);
@@ -149,7 +151,7 @@ function ModalListaMedicos({ visible, setVisible, setMedicoCurrent }) {
 						<Button
 						ref={buttonRef}
 							disabled={loadingData}
-							style={{ marginTop: 5, background: '#0169aa', color: '#fff' }}
+							style={{ marginTop: 5, background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
 							onClick={handleFilter}
 						>
 							Filtrar
@@ -199,6 +201,7 @@ function ModalMantenimientoMedico({
 	filaActual,
 	editarMedico,
 }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [dataList, setDataList] = useState([]);
 	const [refForm] = Form.useForm();
 
@@ -281,7 +284,7 @@ function ModalMantenimientoMedico({
 			onCancel={() => setVisible(false)}
 			footer={[
 				<Button onClick={() => setVisible(false)}>Cerrar</Button>,
-				<Button style={{ background: '#0169aa', color: '#fff' }} onClick={guardar}>
+				<Button style={{ background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }} onClick={guardar}>
 					Grabar
 				</Button>,
 			]}

@@ -10,8 +10,10 @@ import { useAuth } from '../../../authentication';
 import DecimalFormat from 'decimal-format';
 import ModalSeleccionProducto from '../modals/modalSeleccionProducto';
 import ModalGenPedidoDiario from './modalGenPedidoDiario';
+import { useSelector } from 'react-redux';
 
 function ReservaPedidos() {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const { info } = Modal;
   const [modal, contextHolder] = Modal.useModal();
   const [visibleModal, setVisibleModal] = useState(false);
@@ -726,7 +728,7 @@ function ReservaPedidos() {
       },
       okButtonProps: {
         style: {
-          background: '#0169aa',
+          background: themeSettingsGlobal.COD_COLOR_1,
           color: '#fff',
         },
       },
@@ -866,7 +868,7 @@ function ReservaPedidos() {
               <Button
                 // loading={loading}
                 style={{
-                  backgroundColor: '#0169aa',
+                  backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                   color: 'white',
                   marginTop: '10px',
                 }}
@@ -880,7 +882,7 @@ function ReservaPedidos() {
               </Button>
               <Button
                 style={{
-                  backgroundColor: '#0169aa',
+                  backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                   color: 'white',
                   marginTop: '10px',
                   marginRight: 20
@@ -974,7 +976,7 @@ function ReservaPedidos() {
           <Button
             disabled={disabledAll || data.length <= 0}
             style={{
-              backgroundColor: '#0169aa',
+              backgroundColor: themeSettingsGlobal.COD_COLOR_1,
               color: '#fff',
             }}
             // onClick={handleGrabarPedido}
@@ -988,7 +990,7 @@ function ReservaPedidos() {
           <Button
             disabled={disabledAll || data.length <= 0 || selectedRows.length === 0}
             style={{
-              backgroundColor: '#0169aa',
+              backgroundColor: themeSettingsGlobal.COD_COLOR_1,
               color: '#fff',
             }}
             onClick={() => {
@@ -1000,7 +1002,7 @@ function ReservaPedidos() {
           <Button
             disabled={disabledAll || data.length <= 0 || selectedRows.length === 0}
             style={{
-              backgroundColor: '#0169aa',
+              backgroundColor: themeSettingsGlobal.COD_COLOR_1,
               color: '#fff',
             }}
             onClick={() => {

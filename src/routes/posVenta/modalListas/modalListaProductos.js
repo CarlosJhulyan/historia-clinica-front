@@ -20,6 +20,7 @@ import ModalDatosPedido from '../modals/modalDatosPedido';
 import ModalInfoProducto from '../modals/modalInforProducto';
 import { useAuth } from '../../../authentication';
 import ModalConsultaReserva from '../modalsReserva/modalConsultaReserva';
+import { useSelector } from 'react-redux';
 
 function ModalListaProductos({
 	visible,
@@ -45,6 +46,7 @@ function ModalListaProductos({
   setDataReservaFinally,
   setDataReserva,
 }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [data, setData] = useState([]);
 	const { confirm, warning, info } = Modal;
 	const [loadingProductos, setLoadingProductos] = useState(false);
@@ -289,16 +291,38 @@ function ModalListaProductos({
     if (productos.length >= 1) info({
       centered: true,
       content: (
-        <>
-          <p>Los siguientes productos cuentan sin Stock o sobrepasan la cantidad de Stock Físico:</p>
-          {productos.map(item => <span key={item.key}>{item.DESCRIPCION}</span>)}
-        </>
+        <div>
+          <p>Los siguientes productos cuentan sin Stock o sobrepasan la cantidad en Stock Físico:</p>
+          <List
+            size='small'
+            dataSource={productos}
+            itemLayout='horizontal'
+            renderItem={item => (
+              <List.Item>
+                {item.COD_PRODUCTO} - {item.DESCRIPCION}
+              </List.Item>
+            )}
+          />
+          <p>Cambie sus cantidades...</p>
+        </div>
       ),
       title: 'Productos Observados',
-      okText: 'Continuar',
+      okText: 'Aceptar',
+      onOk: () => {
+        if (productosDetalles.length <= 0) {
+          warning({
+            centered: true,
+            content: 'No hay productos seleccionados. Verifique!!!',
+          });
+          return;
+        }
+        chargeDetailsModalProducto(productosCurrent, productosDetalles);
+        setVisible(false);
+      },
+      width: 500
     });
   }
-
+  console.log(productoCurrent);
 	useEffect(() => {
     validaCambioPrecio();
 		getListaProductos();
@@ -310,7 +334,6 @@ function ModalListaProductos({
 			(previus, current) => parseFloat(current.total) + previus,
 			0
 		);
-		console.log(productosDetalles);
 		setTotalLabel(total);
 		if (productosDetalles.length >= 1) {
 			setDataCurrentLabel({
@@ -333,7 +356,7 @@ function ModalListaProductos({
 				footer={[
           <Button
             style={{
-              backgroundColor: '#0169aa',
+              backgroundColor: themeSettingsGlobal.COD_COLOR_1,
               color: 'white',
             }}
             onClick={() => {
@@ -404,7 +427,7 @@ function ModalListaProductos({
 										size="small"
 										disabled={textSearch.trim() === ''}
 										style={{
-											backgroundColor: '#0169aa',
+											backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 											color: 'white',
 											margin: 0,
 											marginBottom: 5,
@@ -416,7 +439,7 @@ function ModalListaProductos({
 									<Button
 										size="small"
 										style={{
-											backgroundColor: '#0169aa',
+											backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 											color: 'white',
 										}}
 										onClick={() => {

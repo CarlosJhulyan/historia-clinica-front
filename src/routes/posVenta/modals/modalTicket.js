@@ -3,11 +3,8 @@ import { useRef, useState } from 'react';
 import { useEffect } from 'react';
 import { httpClient } from '../../../util/Api';
 import ReactToPrint, { useReactToPrint } from 'react-to-print';
-import QRCode from 'react-qr-code';
+import Barcode from 'react-barcode';
 
-import logoHeader from '../../../assets/posventa/biensalud-logo.png';
-import { numberToLetter } from '../../../util/numberToletters';
-import DecimalFormat from 'decimal-format';
 import { openNotification } from '../../../util/util';
 
 const pageStyle = `
@@ -107,22 +104,6 @@ const ModalTicket = ({
 		}
 	};
 
-	const getnumOrdenVta = async () => {
-		try {
-			const {
-				data: { success, message, data },
-			} = await httpClient.post('posventa/getnumOrdenVta', {
-				codGrupoCia: '001',
-				codLocal: '001',
-				numPedVta,
-			});
-			if (success) return data.NUM_ORDEN;
-			console.log(message);
-		} catch (e) {
-			console.error(e);
-		}
-	};
-
 	const imprimirDetalle = async () => {
 		try {
 			const {
@@ -201,19 +182,26 @@ const ModalTicket = ({
 		>
 			<div
 				ref={impresionRef}
-				style={{ display: 'flex', flexDirection: 'column', padding: 10, fontSize: 10 }}
+				style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 10,
+          fontSize: 10,
+          lineHeight: 0.9
+      }}
+        className='font-ticket'
 			>
 				{/* {imprimir} */}
 				{/* <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
 					<img src={logoHeader} alt="lopotipo-biensalud" />
 				</div> */}
-				<div style={{ width: '100%', textAlign: 'center' }}>ENTREGAR PARA SU ATENCION</div>
+				<div style={{ width: '100%', textAlign: 'center', fontSize: 25 }}>ENTREGAR PARA SU ATENCIÓN</div>
 				<br />
 				<div>
 					{dataImprimir && (
 						<>
-							<div>{dataImprimir.length > 0 ? dataImprimir[4].VALOR : ''} </div>
-							<div>{dataImprimir.length > 0 ? dataImprimir[5].VALOR : ''} </div>
+							<div style={{fontSize:23}}>{dataImprimir.length > 0 ? dataImprimir[4].VALOR : ''} </div>
+							<div style={{fontSize:12}}>{dataImprimir.length > 0 ? dataImprimir[5].VALOR : ''} </div>
               <div>{dataImprimir.length > 0 ? dataImprimir[6].VALOR : ''} </div>
 							<br />
 							<div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
@@ -222,12 +210,12 @@ const ModalTicket = ({
 							<div>{dataImprimir.length > 0 ? dataImprimir[9].VALOR : ''} </div>
 							<div>{dataImprimir.length > 0 ? dataImprimir[10].VALOR : ''} </div>
 							<div>{dataImprimir.length > 0 ? dataImprimir[11].VALOR : ''} </div>
-              <div>{dataImprimir.length > 0 ? dataImprimir[12].VALOR : ''} </div>
+              <div>{dataImprimir.length > 0 ? dataImprimir[12].VALOR.substring(0,55) : ''} </div>
 						</>
 					)}
 				</div>
 
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 					<Col xs={4} style={{ padding: 0 }}>
 						CODIGO
@@ -248,13 +236,13 @@ const ModalTicket = ({
 						IMPORTE
 					</Col>
 				</Row>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				{dataDetalle.map((element, index) => (
 					<Row key={index} style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 						<Col xs={4} style={{ padding: 0 }}>
 							{element.COD_PROD}
 						</Col>
-						<Col xs={6} style={{ padding: 0 }}>
+						<Col xs={7} style={{ padding: 0 }}>
 							{element.DESCRIPCION + ' ' + element.LAB}
 						</Col>
 						<Col xs={3} style={{ padding: 0 }}>
@@ -266,40 +254,48 @@ const ModalTicket = ({
 						<Col xs={3} style={{ padding: 0 }}>
 							{element.DESCTO}
 						</Col>
-						<Col xs={5} style={{ padding: 0, textAlign: 'end' }}>
+						<Col xs={4} style={{ padding: 0, textAlign: 'end' }}>
 							{element.SUBTOTAL}
 						</Col>
 					</Row>
 				))}
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<br />
 				<div>NOMBRE DE CLIENTE: {clienteCurrent.CLIENTE}</div>
 				<div>DNI CLIENTE: {clienteCurrent.NUM_DOCUMENTO}</div>
 				<div>DIRECCION: {clienteCurrent.DIRECCION}</div>
 				<br />
-				<div>--- DATOS DE MEDICO ---</div>
+        <div style={{fontSize:12}}>--- DATOS DE MEDICO ---</div>
+        <br />
+        <div>{medicoCurrent.CMP + ' - ' + medicoCurrent.NOMBRE_COMPLETO}</div>
+        <br />
+        <div style={{fontSize:12}}>--- DATOS DE PACIENTE ---</div>
 				<br />
-				<div>{medicoCurrent.CMP + ' - ' + medicoCurrent.NOMBRE_COMPLETO}</div>
+        <div style={{fontSize:11}}>N° HC {pacienteCurrent.COD_PACIENTE}</div>
+        <div style={{fontSize:11}}>DNI - {pacienteCurrent.NUM_DOCUMENTO}</div>
+        <div style={{fontSize:11}}>
+          {pacienteCurrent.NOMBRE} {pacienteCurrent.APE_PATERNO} {pacienteCurrent.APE_MATERNO}
+        </div>
+        <div style={{fontSize:11}}>FECHA NACIMIENTO : {pacienteCurrent.FEC_NAC_CLI}</div>
+        <div>EDAD: {edad} años</div>
 				<br />
-				<div>--- DATOS DE PACIENTE ---</div>
-				<br />
-				<div>N° HC {pacienteCurrent.COD_PACIENTE}</div>
-				<div>DNI - {pacienteCurrent.NUM_DOCUMENTO}</div>
-				<div>
-					{pacienteCurrent.NOMBRE} {pacienteCurrent.APE_PATERNO} {pacienteCurrent.APE_MATERNO}
-				</div>
-				<div>FECHA NACIMIENTO : {pacienteCurrent.FEC_NAC_CLI}</div>
-				<div>EDAD - {edad} años</div>
-				<br />
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<div
 					style={{ width: '100%', textAlign: 'center', marginBottom: 10, padding: 0, margin: 0 }}
 				>
 					ATENDIDO POR : {user.nom_usu.trim()}
 				</div>
-				<div>----------------------------------------------------------------</div>
-				<div style={{ width: '100%', textAlign: 'center' }}>{codigo}</div>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
+        <div style={{ width: '100%', textAlign: 'center' }}>
+          <Barcode
+            width={0.9}
+            height={50}
+            value={codigo}
+            fontSize={10}
+          />
+        </div>
+				{/*<div style={{ width: '100%', textAlign: 'center' }}>*{codigo}*</div>*/}
+				<div>-------------------------------------------------------</div>
 				<br />
 				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
 					Entregar esta orden a la técnica responsable de cada consultorio
@@ -310,7 +306,7 @@ const ModalTicket = ({
 					calma, pronto el doctor atenderá su consulta a detalle.
 				</div>
 				<br />
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>DATOS DE TRIAJE</div>
 				<br />
 				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>

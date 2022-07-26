@@ -52,21 +52,21 @@ const App = ({ match }) => {
 	const { userSignOut, authUser } = useAuth();
 
 
-	const tt = authUser?.data ? authUser.data : tokenAdmin;
+	// const tt = authUser?.data ? authUser.data : tokenAdmin;
 
-	useEffect(() => {
-		console.log('unica vez', tt);
-		const id = tt?.login_usu ? tt.login_usu : token.num_cmp;
-		const actualizarData = async () => {
-			const response = await httpClient.post('/authController/updateUsuarioActivo', { userId: id });
-			console.log('response', response.data.message);
-		};
-		actualizarData();
-		const timer = setInterval(() => {
-			actualizarData();
-		}, 25000);
-		return () => clearInterval(timer);
-	}, []);
+	// useEffect(() => {
+	// 	console.log('unica vez', tt);
+	// 	const id = tt?.login_usu ? tt.login_usu : token.num_cmp;
+	// 	const actualizarData = async () => {
+	// 		const response = await httpClient.post('/authController/updateUsuarioActivo', { userId: id });
+	// 		console.log('response', response.data.message);
+	// 	};
+	// 	actualizarData();
+	// 	const timer = setInterval(() => {
+	// 		actualizarData();
+	// 	}, 25000);
+	// 	return () => clearInterval(timer);
+	// }, []);
 
 	const traerDataPrincial = async () => {
 		const response = await httpClientReports.post('reportes/getTablasPrimarias');

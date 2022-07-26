@@ -18,6 +18,7 @@ import { httpClient } from '../../../util/Api';
 import ModalListaReservas from './modalListaReservas';
 import { openNotification } from '../../../util/util';
 import ModalLoading from '../../../util/modalLoading';
+import { useSelector } from 'react-redux';
 
 const ModalConsultaReserva = ({
                                 visible,
@@ -34,6 +35,7 @@ const ModalConsultaReserva = ({
                                 setDataReservaCab,
 }) => {
   const { warning, confirm } = Modal;
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [textSearch, setTextSearch] = useState('');
   const [messageError, setMessageError] = useState('');
   const [loadingSearch, setLoadingSearch] = useState(false);
@@ -275,12 +277,15 @@ const ModalConsultaReserva = ({
               }
             });
             setDataReservaFinally(dataFormat);
-            showProductosSinStockReserva(dataValidateStock.filter(item => {
+            const dataFilteredShow = dataValidateStock.map(item => {
+              const detail = dataReserva.find(item2 => item2.key === item.key);
               if (item.IN_STOCK === 'N') return {
                 ...item,
-                ...dataReserva.find(item2 => item2.key === item.key),
+                ...detail,
+                MARCA: detail.ESPECIALIDAD
               };
-            }));
+            });
+            showProductosSinStockReserva(dataFilteredShow);
             setLoadingProcede(false);
             setDataReservaCab({ numPedido: datosPacienteReserva.NUM_PEDIDO_VTA });
             setVisible(false);
@@ -314,7 +319,7 @@ const ModalConsultaReserva = ({
           </Button>,
           <Button
             style={{
-              backgroundColor: '#0169aa',
+              backgroundColor: themeSettingsGlobal.COD_COLOR_1,
               color: 'white',
             }}
             disabled={disabledButton || !validated}
@@ -373,7 +378,7 @@ const ModalConsultaReserva = ({
           <Col
             span={24}
             style={{
-              backgroundColor:'#0169aa',
+              backgroundColor: themeSettingsGlobal.COD_COLOR_1,
               paddingTop:10,
               paddingBottom:10,
               color:'#fff',

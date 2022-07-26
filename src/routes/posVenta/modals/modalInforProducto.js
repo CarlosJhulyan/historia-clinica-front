@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Modal, Row, Table } from 'antd';
 import { httpClient } from '../../../util/Api';
+import { useSelector } from 'react-redux';
 
 function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [loadingDetalles, setLoadingDetalles] = useState(false);
 	const [loadingListaFrac, setLoadingListaFrac] = useState(false);
 	const [producto, setProducto] = useState({});
@@ -84,7 +86,7 @@ function ModalInfoProducto({ visible, setVisible, productoCurrent }) {
 		>
 			<div
 				style={{
-					backgroundColor: '#0169aa',
+					backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 					color: 'white',
 					display: 'flex',
 					flexDirection: 'row',

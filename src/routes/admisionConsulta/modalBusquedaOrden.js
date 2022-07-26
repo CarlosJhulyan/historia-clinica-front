@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
+import {
   Button,
   Col,
   Form,
   Input,
-  Modal, 
+  Modal,
   Row,
   Image
 } from 'antd';
@@ -26,12 +26,12 @@ function ModalBusquedaOrden({
   handleChangeText
 }) {
 
-  const traerOrden = async () => {
+  const traerOrden = async (values) => {
     setLoadingData(true);
     const { NUM_ORDEN } = dataSend;
     try {
-      const responseCabecera = await httpClient.post('orden/getOrdenCabecera', { NUM_ORDEN });
-      const responseDetalles = await httpClient.post('orden/getOrdenDetalles', { NUM_ORDEN });
+      const responseCabecera = await httpClient.post('orden/getOrdenCabecera', values);
+      const responseDetalles = await httpClient.post('orden/getOrdenDetalles', values);
       if (!responseCabecera.data.success || !responseDetalles.data.success) {
         openNotification('Orden', responseCabecera.data.message, 'Warning');
         setDataCabecera([{}]);
@@ -67,26 +67,28 @@ function ModalBusquedaOrden({
       visible={abrirModalOrden}>
       <Row>
         <Col span={12}>
-          <Form.Item label='Número Orden'>
-            <Input
-              name='NUM_ORDEN'
-              onChange={handleChangeText}
-              value={dataSend.NUM_ORDEN} />
-          </Form.Item>
-          <Form.Item>
-            <Button
-            style={{
-              background: "#36AE7C"
-            }}
-              loading={loadingData} 
-              onClick={() => traerOrden()}>
+          <Form onFinish={traerOrden}>
+            <Form.Item name='NUM_ORDEN' label='Número Orden'>
+              <Input
+                onChange={handleChangeText}
+                value={dataSend.NUM_ORDEN} />
+            </Form.Item>
+            <Form.Item>
+              <Button
+                style={{
+                  background: "#36AE7C"
+                }}
+                loading={loadingData}
+                htmlType='submit'
+              >
                 <p style={{
                   color: "white"
                 }}>
-                Buscar Orden
-                </p>                
-            </Button>
-          </Form.Item>
+                  Buscar Orden
+                </p>
+              </Button>
+            </Form.Item>
+          </Form>
         </Col>
         <Col span={12}>
           <Image preview={false} src={FormatoNuevo} />

@@ -11,6 +11,7 @@ import {
 } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { openNotification } from '../../../util/util';
+import { useSelector } from 'react-redux';
 
 function ModalSeleccionProducto({
                                   visible,
@@ -24,6 +25,7 @@ function ModalSeleccionProducto({
     codGrupoCia: '001',
     codLocal: '001'
   };
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [bloqueoProducto, setBloqueoProducto] = useState(false);
   const [loadingDetalles, setLoadingDetalles] = useState(false);
   const [loadingListaFrac, setLoadingListaFrac] = useState(false);
@@ -115,9 +117,9 @@ function ModalSeleccionProducto({
       <Row style={{ marginTop: 10, marginLeft: 0, marginRight: 0 }}>
         <Col span={24}>
           {loadingDetalles ? (
-            <Alert style={{ background: 'rgba(1,105,170,0.55)' }} message={`Cargando detalles...`} type='info' />
+            <Alert style={{ background: themeSettingsGlobal.COD_COLOR_1 }} message={`Cargando detalles...`} type='info' />
           ): (
-            <Alert style={{ background: 'rgba(1,105,170,0.55)' }} message={`Stock del Producto: ${detalles.STOCK_FISICO}, Unidades: ${detalles.UNIDAD}, Precio Costo: S/. ${detalles.PRECIO_LISTA}`} type='info' />
+            <Alert className='font-white' style={{ background: themeSettingsGlobal.COD_COLOR_1 }} message={`Stock del Producto: ${detalles.STOCK_FISICO}, Unidades: ${detalles.UNIDAD}, Precio Costo: S/. ${detalles.PRECIO_LISTA}`} type='info' />
           )}
         </Col>
         <Col sm={24} md={24}>
@@ -206,7 +208,7 @@ function ModalSeleccionProducto({
                   bloqueoProducto
                 }
                 style={{
-                  backgroundColor: '#0169aa',
+                  backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                   color: 'white'
                 }}
                 onClick={() => {

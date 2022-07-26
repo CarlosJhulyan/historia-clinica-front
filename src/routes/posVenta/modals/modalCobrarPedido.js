@@ -29,6 +29,7 @@ import ModalComprobante from './modalComprobante';
 import ModalTicket from './modalTicket';
 import { baseUrl, baseUrlImage } from '../../../config/backend';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { useSelector } from 'react-redux';
 
 function ModalCobrarPedido({
 	visible,
@@ -48,6 +49,7 @@ function ModalCobrarPedido({
 	clearDataFinallyMain,
 }) {
 	const { info, confirm } = Modal;
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
@@ -257,7 +259,7 @@ function ModalCobrarPedido({
 			},
 			okButtonProps: {
 				style: {
-					background: '#0169aa',
+					background: themeSettingsGlobal.COD_COLOR_1,
 					color: '#fff',
 				},
 			},
@@ -781,7 +783,7 @@ function ModalCobrarPedido({
 						Limpiar
 					</Button>,
 					<Button
-						style={{ backgroundColor: '#0169aa', color: 'white' }}
+						style={{ backgroundColor: themeSettingsGlobal.COD_COLOR_1, color: 'white' }}
 						disabled={totalMonto - Number(dataCabeceraPed.nValNetoPedVta_in) < 0}
 						loading={loadingCobrar}
 						onClick={handleCobrarPedido}
@@ -813,8 +815,8 @@ function ModalCobrarPedido({
 						/>
 					</Col>
 				</Row>
-				<Row style={{ background: '#0169aa', margin: 0 }} justify="center">
-					<Col span={20} style={{ color: '#0169aa', height: 1 }}></Col>
+				<Row style={{ background: themeSettingsGlobal.COD_COLOR_1, margin: 0 }} justify="center">
+					<Col span={20} style={{ color: themeSettingsGlobal.COD_COLOR_1, height: 1 }}></Col>
 				</Row>
 				<Row style={{ marginLeft: 0, marginRight: 0, marginTop: 5 }}>
 					<Col xl={11} lg={10} md={9} sm={24} xs={24}>
@@ -930,7 +932,7 @@ function ModalCobrarPedido({
 						</Row>
 					</Col>
 					<Col xl={13} lg={14} md={15} sm={24} xs={24}>
-						<Row style={{ marginBottom: 2 }}>
+						<Row style={{ marginBottom: 2, background: themeSettingsGlobal.COD_COLOR_1 }}>
 							<Descriptions className="description-boleta">
 								<Descriptions.Item span={1} label="BOLETA"></Descriptions.Item>
 								<Descriptions.Item
@@ -995,7 +997,7 @@ function ModalCobrarPedido({
 												cursor: 'pointer',
 												color:
 													formaPagoCurrent.COD_FORMA_PAGO === item.COD_FORMA_PAGO
-														? '#0169aa'
+														? themeSettingsGlobal.COD_COLOR_1
 														: '#000',
 												background:
 													formaPagoCurrent.COD_FORMA_PAGO === item.COD_FORMA_PAGO
@@ -1096,7 +1098,7 @@ function ModalCobrarPedido({
 									// }}
 								/>
 							</Col>
-							<Col span={10} style={{ marginBottom: 20 }}>
+							<Col span={10} style={{ marginBottom: 20, background: themeSettingsGlobal.COD_COLOR_1 }}>
 								<Descriptions className="total-pagar-desc" style={{ height: 145 }}>
 									<Descriptions.Item span={3} label="TOTAL A PAGAR S/.">
 										{Number(dataCabeceraPed.nValNetoPedVta_in).toFixed(2)}
@@ -1147,6 +1149,8 @@ function ModalCobrarPedido({
 					secCompPago={secCompPago}
 					clienteCurrent={clienteCurrent}
 					tipoVenta={tipoVenta}
+          pacienteCurrent={pacienteCurrent}
+          medicoCurrent={medicoCurrent}
 				></ModalComprobante>
 			) : null}
 

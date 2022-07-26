@@ -62,6 +62,9 @@ const RegistroPaciente = () => {
 		};
 		const respuesta = await httpClient.post('/pacientes/getTipoDoc', acomp);
 		setTipoDocumento(respuesta.data.data);
+    form.setFieldsValue({
+      DOC_TIP_DOCUMENTO: '01'
+    });
 	}, []);
 
 	const traerTipoParientes = useCallback(async () => {
@@ -86,10 +89,13 @@ const RegistroPaciente = () => {
 	const [form] = Form.useForm();
 
 	const traerDatos = useCallback(
-		async (noMessage = 'false') => {
+		async (noMessage = 'false', values) => {
 			setLoadingData(true);
 			try {
-				const { data } = await httpClient.post(`/pacientes/searchPacientes`, datosSearch);
+				const { data } = await httpClient.post(`/pacientes/searchPacientes`, {
+          ...datosSearch,
+          ...values
+        });
 				setData(data.data);
 				if (noMessage) openNotification('success', 'Búsqueda', data.message);
 			} catch (e) {
@@ -160,10 +166,10 @@ const RegistroPaciente = () => {
 				: '',
 	});
 
-	const handleSearch = async () => {
+	const handleSearch = async (values) => {
 		if (dataValida()) {
 			const dataOld = data;
-			await traerDatos();
+			await traerDatos('false', values);
 			if (dataOld !== data) {
 				setCodEditarPaciente(false);
 			}
@@ -312,21 +318,17 @@ const RegistroPaciente = () => {
 					<Form
 						layout="vertical"
 						form={form}
-						onSubmitCapture={handleSearch}
-						onValuesChange={(changedValues, allValues) => {
-							// UPPERCASE
-							form.setFieldsValue({
-								paterno: allValues.paterno?.toUpperCase().trim(),
-								materno: allValues.materno?.toUpperCase().trim(),
-								nombre: allValues.nombre?.toUpperCase().trim(),
-							});
-						}}
+						onFinish={handleSearch}
+            onFieldsChange={(e) => {
+              form.setFieldsValue({
+                [e[0].name]: e[0].value?.toUpperCase()
+              });
+            }}
 					>
 						<Row style={{ flexDirection: 'row', paddingLeft: '5px', paddingRight: '5px' }}>
 							<Col lg={6} md={8} sm={12} xs={24}>
-								<Form.Item name="tipo" label="Tipo">
+								<Form.Item name="DOC_TIP_DOCUMENTO" label="Tipo">
 									<Select
-										name="DOC_TIP_DOCUMENTO"
 										value={datosSearch.DOC_TIP_DOCUMENTO}
 										style={{ width: '100%' }}
 										placeholder="Seleccione"
@@ -345,7 +347,7 @@ const RegistroPaciente = () => {
 
 							<Col lg={8} md={8} sm={12} xs={24}>
 								<Form.Item
-									name="numero"
+									name="NUM_DOCUMENTO"
 									label="Número de documento"
 									rules={[
 										{
@@ -372,17 +374,17 @@ const RegistroPaciente = () => {
 						</Row>
 						<Row style={{ flexDirection: 'row', paddingLeft: '5px', paddingRight: '5px' }}>
 							<Col lg={6} md={8} sm={12} xs={24}>
-								<Form.Item name="paterno" label="Apellido Paterno">
+								<Form.Item name="APE_PATERNO" label="Apellido Paterno">
 									<Input onChange={handleChangeApePaterno} />
 								</Form.Item>
 							</Col>
 							<Col lg={6} md={8} sm={12} xs={24}>
-								<Form.Item name="materno" label="Apellido Materno">
+								<Form.Item name="APE_MATERNO" label="Apellido Materno">
 									<Input onChange={handleChangeApeMaterno} />
 								</Form.Item>
 							</Col>
 							<Col lg={6} md={8} sm={12} xs={24}>
-								<Form.Item name="nombre" label="Nombres">
+								<Form.Item name="NOMBRE" label="Nombres">
 									<Input onChange={handleChangeNombres} />
 								</Form.Item>
 							</Col>

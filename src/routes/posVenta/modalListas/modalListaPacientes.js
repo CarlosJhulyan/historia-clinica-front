@@ -20,11 +20,13 @@ import ModalDetalles from '../../registroPaciente/modalDetalles';
 import ModalTriaje from '../../registroPaciente/modalTriaje';
 import moment from 'moment';
 import { notificaciones, openNotification } from '../../../util/util';
+import { useSelector } from 'react-redux';
 
 const { Option } = Select;
 
 const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClienteCurrent }) => {
 	const { confirm } = Modal;
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [abrirModal, setAbrirModal] = useState(false);
 	const [abrirModalTriaje, setAbrirModalTriaje] = useState(false);
 	const [visibleModalCreateClient, setVisibleModalCreateClient] = useState(false);
@@ -62,6 +64,9 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 		};
 		const respuesta = await httpClient.post('/pacientes/getTipoDoc', acomp);
 		setTipoDocumento(respuesta.data.data);
+    form.setFieldsValue({
+      DOC_TIP_DOCUMENTO: '01'
+    });
 	}, []);
 
 	const traerTipoParientes = useCallback(async () => {
@@ -83,10 +88,13 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 	const [form] = Form.useForm();
 
 	const traerDatos = useCallback(
-		async (noMessage = 'false') => {
+		async (noMessage = 'false', values) => {
 			setLoadingData(true);
 			try {
-				const { data } = await httpClient.post(`/pacientes/searchPacientes`, datosSearch);
+				const { data } = await httpClient.post(`/pacientes/searchPacientes`, {
+          ...datosSearch,
+          ...values
+        });
 				setData(data.data);
 				if (noMessage) openNotification('success', 'Búsqueda', data.message);
 			} catch (e) {
@@ -142,17 +150,17 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 				</Space>
 			</div>
 		),
-		filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+		filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
 		onFilter: (value, record) =>
 			record[dataIndex]
 				? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
 				: '',
 	});
 
-	const handleSearch = async () => {
+	const handleSearch = async (values) => {
 		if (dataValida()) {
 			const dataOld = data;
-			await traerDatos();
+			await traerDatos('false', values);
 			if (dataOld !== data) {
 				setCodEditarPaciente(false);
 			}
@@ -210,12 +218,12 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 							'El paciente es MENOR de edad, por favor seleccioné un cliente apoderado o tutor.',
 						okCancel: false,
 						okText: 'Aceptar',
+            centered: true,
 					});
 					setVisible(false);
 				}
 			}
 		} catch (e) {
-			console.log(e);
 			openNotification(
 				'error',
 				'Error Datos Paciente',
@@ -371,14 +379,11 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 					layout="vertical"
 					form={form}
 					onFinish={handleSearch}
-					onValuesChange={(changedValues, allValues) => {
-						// UPPERCASE
-						form.setFieldsValue({
-							paterno: allValues.paterno?.toUpperCase().trim(),
-							materno: allValues.materno?.toUpperCase().trim(),
-							nombre: allValues.nombre?.toUpperCase().trim(),
-						});
-					}}
+          onFieldsChange={(e) => {
+            form.setFieldsValue({
+              [e[0].name]: e[0].value?.toUpperCase()
+            });
+          }}
 				>
 					<Row
 						style={{
@@ -389,9 +394,8 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 						}}
 					>
 						<Col lg={6} md={8} sm={12} xs={24}>
-							<Form.Item name="tipo" label="Tipo">
+							<Form.Item name="DOC_TIP_DOCUMENTO" label="Tipo">
 								<Select
-									name="DOC_TIP_DOCUMENTO"
 									value={datosSearch.DOC_TIP_DOCUMENTO}
 									style={{ width: '100%' }}
 									placeholder="Seleccione"
@@ -410,7 +414,7 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 
 						<Col lg={8} md={8} sm={12} xs={24}>
 							<Form.Item
-								name="numero"
+								name="NUM_DOCUMENTO"
 								label="Número de documento"
 								rules={[
 									{
@@ -428,7 +432,7 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 								loading={loadingData}
 								htmlType="submit"
 								disabled={!dataValida()}
-								style={{ width: '100%', marginTop: '25px', background: '#0169aa', color: '#fff' }}
+								style={{ width: '100%', marginTop: '25px', background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
 							>
 								Buscar
 							</Button>
@@ -436,17 +440,17 @@ const ModalListaPacientes = ({ visible, setVisible, setPacienteCurrent, setClien
 					</Row>
 					<Row style={{ flexDirection: 'row', paddingLeft: '5px', paddingRight: '5px' }}>
 						<Col lg={6} md={8} sm={12} xs={24}>
-							<Form.Item name="paterno" label="Apellido Paterno">
+							<Form.Item name="APE_PATERNO" label="Apellido Paterno">
 								<Input onChange={handleChangeApePaterno} />
 							</Form.Item>
 						</Col>
 						<Col lg={6} md={8} sm={12} xs={24}>
-							<Form.Item name="materno" label="Apellido Materno">
+							<Form.Item name="APE_MATERNO" label="Apellido Materno">
 								<Input onChange={handleChangeApeMaterno} />
 							</Form.Item>
 						</Col>
 						<Col lg={6} md={8} sm={12} xs={24}>
-							<Form.Item name="nombre" label="Nombres">
+							<Form.Item name="NOMBRE" label="Nombres">
 								<Input onChange={handleChangeNombres} />
 							</Form.Item>
 						</Col>
@@ -517,6 +521,7 @@ function ModalNewCliente({
 	traerDataClientesPorDocumento,
 	setClienteCurrent,
 }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const [natural, setNatural] = useState(currentPaciente.COD_TIP_DOCUMENTO !== '01');
@@ -585,7 +590,7 @@ function ModalNewCliente({
 				<Button onClick={() => setVisible(false)}>Cancelar</Button>,
 				<Button
 					htmlType="submit"
-					style={{ background: '#0169aa', color: '#fff' }}
+					style={{ background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
 					form="form-new-cliente"
 					loading={loading}
 				>

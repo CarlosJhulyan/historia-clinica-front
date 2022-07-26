@@ -13,7 +13,16 @@ import {
 import { useSelector } from 'react-redux';
 import './styles.css';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import { FaCalendarAlt, FaStore } from 'react-icons/all';
+import {
+  FaBed,
+  FaCalendarAlt, FaCashRegister, FaHistory, FaIdCard, FaIdCardAlt,
+  FaStore, FaTimes,
+  FaUser,
+  FaUserInjured, FaUserMd,
+  FaUserNurse,
+  MdViewModule,
+  RiSoundModuleFill
+} from 'react-icons/all';
 
 const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 	const { navStyle, themeType, themeSettingsGlobal } = useSelector(({ settings }) => settings);
@@ -75,7 +84,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
           </Menu.Item> : null}
 					<Menu.Item key="movimientosCaja">
 						<Link to="/movimientosCaja">
-							<i className="icon icon-icon" />
+							<i className="icon">
+                <FaCashRegister />
+              </i>
 							<span>Movimientos de Caja</span>
 						</Link>
 					</Menu.Item>
@@ -94,7 +105,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 			menuItems.push(
 				<Menu.Item key="anulacionPedidosCompletos">
 					<Link to="/anulacionPedidosCompletos">
-						<i className="icon icon-auth-screen" />
+						<i className="icon">
+              <FaTimes />
+            </i>
 						<span>Anulación de Pedidos Completos</span>
 					</Link>
 				</Menu.Item>
@@ -122,7 +135,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					</Menu.Item> */}
 					<Menu.Item key="horario/consultar">
 						<Link to="/horario/consultar">
-							<i className="icon icon-icon" />
+							<i className="icon">
+                <FaCalendarAlt />
+              </i>
 							<span>Horario</span>
 						</Link>
 					</Menu.Item>
@@ -136,7 +151,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					title={
 						<span>
 							{' '}
-							<i className="icon icon-auth-screen" />
+							<i className="icon">
+                <FaUserInjured />
+              </i>
 							<span>Pacientes</span>
 						</span>
 					}
@@ -168,7 +185,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						{token.modulos.includes('16') && (
 							<Menu.Item key="ingresoEvolucionEnfermeria">
 								<Link to="/ingresoEvolucionEnfermeria">
-									<i className="icon icon-icon" />
+                  <i className="icon icon-auth-screen" />
 									<span>Agregar Evolución de Enfermería</span>
 								</Link>
 							</Menu.Item>
@@ -176,7 +193,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						{token.modulos.includes('17') && (
 							<Menu.Item key="historialEvolucionEnfermeria">
 								<Link to="/historialEvolucionEnfermeria">
-									<i className="icon icon-icon" />
+									<i className="icon">
+                    <FaHistory />
+                  </i>
 									<span>Historial Evolución de Enfermería</span>
 								</Link>
 							</Menu.Item>
@@ -193,7 +212,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						title={
 							<span>
 								{' '}
-								<i className="icon icon-icon" />
+								<i className="icon">
+                  <FaIdCardAlt />
+                </i>
 								<span>Pre triaje</span>
 							</span>
 						}
@@ -209,7 +230,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						{token.modulos.includes('19') && (
 							<Menu.Item key="historicoPreTriaje">
 								<Link to="/historicoPreTriaje">
-									<i className="icon icon-icon" />
+									<i className="icon">
+                    <FaHistory />
+                  </i>
 									<span>Historico de Pre triaje</span>
 								</Link>
 							</Menu.Item>
@@ -248,7 +271,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						title={
 							<span>
 								{' '}
-								<i className="icon icon-auth-screen" />
+								<i className="icon">
+                  <FaUserInjured />
+                </i>
 								<span>Pacientes</span>
 							</span>
 						}
@@ -315,7 +340,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						title={
 							<span>
 								{' '}
-								<i className="icon icon-icon" />
+                <i className="icon">
+                  <FaUserNurse />
+                </i>
 								<span>Enfermería</span>
 							</span>
 						}
@@ -343,7 +370,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 								{token.modulos.includes('7') && (
 									<Menu.Item key="enfermeria/balanceHidrico/historialBalanceHidrico">
 										<Link to="/historialBalanceHidrico">
-											<i className="icon icon-icon" />
+                      <i className="icon">
+                        <FaHistory />
+                      </i>
 											<span>Historial Balance Hidrico</span>
 										</Link>
 									</Menu.Item>
@@ -373,7 +402,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 								{token.modulos.includes('9') && (
 									<Menu.Item key="enfermeria/signosVitales/historialSignosVitales">
 										<Link to="/historialSignosVitales">
-											<i className="icon icon-company" />
+                      <i className="icon">
+                        <FaHistory />
+                      </i>
 											<span>Historial Signos Vitales</span>
 										</Link>
 									</Menu.Item>
@@ -516,7 +547,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 				<>
 					<Menu.Item key="configuraciones/modulos">
 						<Link to="/hc-admin/configuraciones/modulos">
-							<i className="icon icon-widgets" />
+							<i className="icon">
+                <RiSoundModuleFill />
+              </i>
 							<span>Asignacion de Modulos</span>
 						</Link>
 					</Menu.Item>
@@ -525,7 +558,9 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						title={
 							<span>
 								{' '}
-								<i className="icon icon-widgets" />
+								<i className="icon">
+                  <FaUserMd />
+                </i>
 								<span>Médicos</span>
 							</span>
 
@@ -540,21 +575,25 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 
 						<Menu.Item key="configuraciones/asignacionmedicos">
 							<Link to="/hc-admin/configuraciones/asignacionbusmedicos">
-								<i className="icon icon-widgets" />
-								<span>Asignacion </span>
+								<i className="icon">
+                  <RiSoundModuleFill />
+                </i>
+								<span>Asignación </span>
 							</Link>
 						</Menu.Item>
 
 					</SubMenu>
 					<Menu.Item key="configuraciones/usuarios">
 					  <Link to="/hc-admin/configuraciones/usuarios">
-					    <i className="icon icon-user" />
+					    <i className="icon">
+                <FaUser />
+              </i>
 					    <span>Usuarios</span>
 					  </Link>
 					</Menu.Item>
 					<Menu.Item key="configuraciones/camas">
 						<Link to="/hc-admin/configuraciones/camas">
-							<i className="icon icon-company" />
+              <i className="icon icon-company" />
 							<span>Camas</span>
 						</Link>
 					</Menu.Item>

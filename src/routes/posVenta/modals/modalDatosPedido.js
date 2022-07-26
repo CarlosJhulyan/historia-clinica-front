@@ -18,6 +18,7 @@ import ModalListaPacientes from '../modalListas/modalListaPacientes';
 import ModalListaClientes from '../modalListas/modalListaClientes';
 import { openNotification } from '../../../util/util';
 import ModalLoading from '../../../util/modalLoading';
+import { useSelector } from 'react-redux';
 
 function ModalDatosPedido({
                               visible,
@@ -36,6 +37,7 @@ function ModalDatosPedido({
                               setTipoVenta,
 }) {
   const { confirm } = Modal;
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [visibleModalMedicos, setVisibleModalMedicos] = useState(false);
 	const [visibleModalPacientes, setVisibleModalPacientes] = useState(false);
 	const [visibleModalCliente, setVisibleModalCliente] = useState(false);
@@ -137,7 +139,7 @@ function ModalDatosPedido({
 									<Button
 										block
 										style={{
-											backgroundColor: '#0169aa',
+											backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 											color: 'white',
 										}}
 										onClick={guardando ? null : () => setVisibleModalMedicos(true)}
@@ -147,7 +149,7 @@ function ModalDatosPedido({
 									<Button
 										block
 										style={{
-											backgroundColor: '#0169aa',
+											backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 											color: 'white',
 										}}
 										onClick={guardando ? null : () => setVisibleModalPacientes(true)}
@@ -157,7 +159,7 @@ function ModalDatosPedido({
 									<Button
 										block
 										style={{
-											backgroundColor: '#0169aa',
+											backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 											color: 'white',
 										}}
 										onClick={guardando ? null : handleLimpiar}

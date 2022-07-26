@@ -11,6 +11,8 @@ import {
 } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { openNotification } from '../../../util/util';
+import ModalLoading from '../../../util/modalLoading';
+import { useSelector } from 'react-redux';
 
 const ModalListaReservas = ({
                               visible,
@@ -20,13 +22,17 @@ const ModalListaReservas = ({
                               setLoading,
 }) => {
   const { confirm } = Modal;
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [dataList, setDataList] = useState([]);
+  const [dataListFiltered, setDataListFiltered] = useState([]);
   const [loadingDataList, setLoadingDataList] = useState(false);
   const [currentPedido, setCurrentPedido] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [modalDetalles, setModalDetalles] = useState(false);
   const [loadingDetalles, setLoadingDetalles] = useState(false);
   const [dataReserva, setDataReserva] = useState([]);
+  const [textSearch, setTextSearch] = useState([]);
+  const [messageShow, setMessageShow] = useState(false);
 
   const handleGetDatalist = async (values) => {
     const datafetch = {
@@ -49,6 +55,7 @@ const ModalListaReservas = ({
       title: 'Correlativo',
       dataIndex: 'NUM_PEDIDO_VTA',
       key: 'NUM_PEDIDO_VTA',
+      sorter: (a, b) => a.NUM_PEDIDO_VTA - b.NUM_PEDIDO_VTA,
     },
     {
       title: 'Fecha',
@@ -59,7 +66,6 @@ const ModalListaReservas = ({
       title: 'CLIENTE',
       dataIndex: 'NOM_CLI',
       key: 'NOM_CLI',
-      sorter: (a, b) => a.NOM_CLI - b.NOM_CLI,
     },
     {
       title: 'DNI-RUC',
@@ -135,6 +141,10 @@ const ModalListaReservas = ({
     },
   ];
 
+  useEffect(() => {
+    setDataListFiltered(dataList);
+  }, [dataList]);
+
   return (
     <>
       <Modal
@@ -162,7 +172,7 @@ const ModalListaReservas = ({
           </Button>,
           <Button
             style={{
-              backgroundColor: '#0169aa',
+              backgroundColor: themeSettingsGlobal.COD_COLOR_1,
               color: 'white',
             }}
             disabled={!currentPedido || loadingDataList}
@@ -223,7 +233,7 @@ const ModalListaReservas = ({
                 block
                 htmlType='submit'
                 style={{
-                  backgroundColor: '#0169aa',
+                  backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                   color: 'white',
                 }}
                 loading={loadingDataList}
@@ -236,7 +246,7 @@ const ModalListaReservas = ({
         <Row
           justify='center'
           style={{
-            backgroundColor:'#0169aa',
+            backgroundColor:themeSettingsGlobal.COD_COLOR_1,
             paddingTop:10,
             paddingBottom:10,
             color:'#fff',
@@ -245,10 +255,28 @@ const ModalListaReservas = ({
           <Col
             span={20}
           >
-            <Form.Item label='Cliente o RUC' className='usuarios-activos'>
-              <Input />
+            <Form.Item
+              label='Cliente o RUC'
+              className='usuarios-activos'
+            >
+              <Input
+                value={textSearch}
+                onChange={e => {
+                  const text = e.target.value.toUpperCase();
+                  setTextSearch(text);
+                  if (isNaN(Number(text))) {
+                    const dataFilter = dataList.filter(item => item.NOM_CLI.includes(text));
+                    setDataListFiltered(dataFilter);
+                    if (dataFilter.length === 0 ) setMessageShow(true);
+                  } else {
+                    const dataFilter = dataList.filter(item => item.DNI.includes(text));
+                    setDataListFiltered(dataFilter);
+                    if (dataFilter.length === 0 ) setMessageShow(true);
+                  }
+                }}
+              />
             </Form.Item>
-            {/*No se encontraron datos para el filtro ingresado*/}
+            {messageShow && <span>No se encontraron datos para el filtro ingresado</span>}
           </Col>
         </Row>
         <Row>
@@ -263,7 +291,7 @@ const ModalListaReservas = ({
                 selectedRowKeys
               }}
               columns={columns}
-              dataSource={dataList}
+              dataSource={dataListFiltered}
               size='small'
               pagination={{
                 pageSize: 6
@@ -297,6 +325,8 @@ const ModalListaReservas = ({
           </Row>
         </Modal>
       )}
+
+      {loading ? <ModalLoading></ModalLoading> : null}
     </>
   );
 }

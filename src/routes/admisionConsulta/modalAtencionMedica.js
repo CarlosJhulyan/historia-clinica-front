@@ -1,7 +1,7 @@
 import React, {
   useState
 } from 'react';
-import { 
+import {
   AutoComplete,
   Col,
   Form,
@@ -170,7 +170,7 @@ function ModalAtencionMedica({
                   />
                   </Col>
                   <Col span={16}>
-                    <Input 
+                    <Input
                       name='NOM_MEDICO'
                       disabled
                       value={dataSend.NOM_MEDICO} />

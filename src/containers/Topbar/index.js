@@ -58,10 +58,17 @@ const Topbar = () => {
 
 	const history = useHistory();
 
-	const tt = authUser?.data ? authUser.data : tokenAdmin;
-	const id = tt?.login_usu ? tt.login_usu : token.num_cmp;
-
 	const cerrarSesion = async () => {
+    const tt = authUser?.data ? authUser.data : authUser;
+    // let id = tt?.login_usu ? tt.login_usu : token?.num_cmp;
+    let id = '';
+    if (tokenAdmin && initURL.includes('/hc-admin')) {
+      id = tokenAdmin.login_usu;
+      console.log(id);
+    } else {
+      id = tt.login_usu ? tt.login_usu : token.num_cmp
+      console.log(id);
+    }
 		const response = await httpClient.post('/authController/cerrarSesionActivo', { userId: id });
 		console.log('response', response.data.message);
 	};

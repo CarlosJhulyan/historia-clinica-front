@@ -9,8 +9,10 @@ import { openNotification } from '../../util/util';
 import { useAuth } from '../../authentication';
 import DecimalFormat from 'decimal-format';
 import ModalSeleccionProducto from './modals/modalSeleccionProducto';
+import { useSelector } from 'react-redux';
 
 function GenerarPedido() {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const { info } = Modal;
 	const [modal, contextHolder] = Modal.useModal();
 	const [visibleModal, setVisibleModal] = useState(false);
@@ -742,7 +744,7 @@ function GenerarPedido() {
 			},
 			okButtonProps: {
 				style: {
-					background: '#0169aa',
+					background: themeSettingsGlobal.COD_COLOR_1,
 					color: '#fff',
 				},
 			},
@@ -808,7 +810,7 @@ function GenerarPedido() {
   useEffect(() => {
     setDataFiltered(data);
   }, [data]);
-  console.log(data);
+
 	return (
 		<>
 			<Card
@@ -882,7 +884,7 @@ function GenerarPedido() {
 							<Button
 								// loading={loading}
 								style={{
-									backgroundColor: '#0169aa',
+									backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 									color: 'white',
 									marginTop: '10px',
 								}}
@@ -896,7 +898,7 @@ function GenerarPedido() {
 							</Button>
 							<Button
 								style={{
-									backgroundColor: '#0169aa',
+									backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 									color: 'white',
 									marginTop: '10px',
                   marginRight: 20
@@ -990,7 +992,7 @@ function GenerarPedido() {
 					<Button
 						disabled={disabledAll || data.length <= 0}
 						style={{
-							backgroundColor: '#0169aa',
+							backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 							color: '#fff',
 						}}
 						// onClick={handleGrabarPedido}
@@ -1004,7 +1006,7 @@ function GenerarPedido() {
 					<Button
 						disabled={disabledAll || data.length <= 0 || selectedRows.length === 0}
 						style={{
-							backgroundColor: '#0169aa',
+							backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 							color: '#fff',
 						}}
 						onClick={() => {
@@ -1016,7 +1018,7 @@ function GenerarPedido() {
 					<Button
             disabled={disabledAll || data.length <= 0 || selectedRows.length === 0}
 						style={{
-							backgroundColor: '#0169aa',
+							backgroundColor: themeSettingsGlobal.COD_COLOR_1,
 							color: '#fff',
 						}}
 						onClick={() => {

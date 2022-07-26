@@ -58,6 +58,7 @@ function ModalTriaje({
         openNotification('Pre Triaje', 'El paciente no tiene Pre Triaje registrado', 'Warning');
       } else {
         setDatosEnviar({
+          ...datosEnviar,
           PA1: data.pa_1,
           PA2: data.pa_2,
           FR: data.fr,
@@ -67,7 +68,6 @@ function ModalTriaje({
           PESO: data.peso,
           TEMP: data.temp,
           COD_PACIENTE: currentPaciente.COD_PACIENTE,
-          USU_CREA: JSON.parse(localStorage.getItem('token')).usuario
         });
       }
     } catch (e) {
@@ -115,7 +115,7 @@ function ModalTriaje({
   return (
     <>
       <Modal
-        width="600px"
+        width={570}
         closable={false}
         centered
         title='Insertar Triaje'
