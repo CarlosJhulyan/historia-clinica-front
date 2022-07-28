@@ -106,17 +106,41 @@ const Topbar = () => {
 				</Link>
 				<div>
 					{initURL.includes('/hc-admin') && (
-						<Button onClick={() => onLogoutAdmin()} style={{ marginTop: 12 }}>
+						<Button
+              onClick={() => onLogoutAdmin()}
+              style={{
+                marginTop: 12,
+                background: '#878787',
+                color: '#fff',
+                border: 'none'
+              }}
+            >
 							Cerrar Sesión Admin
 						</Button>
 					)}
 					{initURL.includes('/reportes') && (
-						<Button onClick={() => onLogoutReports()} style={{ marginTop: 12 }}>
+						<Button
+              onClick={() => onLogoutReports()}
+              style={{
+                marginTop: 12,
+                background: '#878787',
+                color: '#fff',
+                border: 'none'
+              }}
+            >
 							Cerrar Sesión Reportes
 						</Button>
 					)}
 					{authUser && !initURL.includes('/hc-admin') && !initURL.includes('/reportes') && (
-						<Button onClick={() => setModalCerrar(true)} style={{ marginTop: 12 }}>
+						<Button
+              onClick={() => setModalCerrar(true)}
+              style={{
+                marginTop: 12,
+                background: '#878787',
+                color: '#fff',
+                border: 'none'
+              }}
+            >
 							Cerrar Sesión
 						</Button>
 					)}

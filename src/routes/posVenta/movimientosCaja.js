@@ -124,7 +124,7 @@ function MovimientosCaja() {
       });
 
       if (success) {
-        openNotification('Pos Venta', message + '. Puede continuar...');
+        openNotification('Pos Venta', 'Puede continuar...');
         return true;
       } else {
         openNotification('Pos Venta', message, 'Warning');

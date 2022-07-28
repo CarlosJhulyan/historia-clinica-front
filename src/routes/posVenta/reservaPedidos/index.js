@@ -657,6 +657,12 @@ function ReservaPedidos() {
     setPacienteCurrent({});
     setVisibleModalGenPedido(false);
     getUltimoPedidoDiario();
+    setDataDetallesFinally({
+      total: 0,
+      totalDolar: 0,
+      items: 0,
+      tipoCambio: 3.34,
+    });
   };
 
   const validaOperacionCaja = async tipOp => {

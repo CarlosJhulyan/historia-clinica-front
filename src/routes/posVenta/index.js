@@ -670,6 +670,13 @@ function GenerarPedido() {
         setMedicoCurrent({});
         setPacienteCurrent({});
         getUltimoPedidoDiario();
+        setDataReserva(null);
+        setDataDetallesFinally({
+          total: 0,
+          totalDolar: 0,
+          items: 0,
+          tipoCambio: 3.34,
+        });
       },
       centered: true
     });

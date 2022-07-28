@@ -22,24 +22,28 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 	const [fecha, setFecha] = useState();
 	const [guardando, setGuardando] = useState(false);
 	const [dataEspecialidades, setDataEspecialidades] = useState([]);
+  const [dataConsultorios, setDataConsultorios] = useState([]);
 	const [dataMedicos, setDataMedicos] = useState([]);
 	const [currentEspecialidad, setCurrentEspecialidad] = useState('');
+  const [currentConsultorio, setCurrentConsultorio] = useState('');
 	const [mensaje, setMensaje] = useState('');
 	const [currentMedico, setCurrentMedico] = useState('');
+
+  const [loadingEspecialidad, setLoadingEspecialidad] = useState(false);
+  const [loadingMedicos, setLoadingMedicos] = useState(false);
+  const [loadingConsultorio, setLoadingConsultorio] = useState(false);
 
 	const [form] = Form.useForm();
 
 	const guardarHorario = async () => {
 		setGuardando(true);
-		if (!horario || !fecha || currentMedico === '' || currentEspecialidad === '') {
+		if (!horario || !fecha || currentMedico === '' || currentEspecialidad === '' || currentConsultorio === '') {
 			openNotification('Error', 'Debe completar todos los campos', 'Alerta');
 			setGuardando(false);
 			return;
 		}
 
 		const medico = dataMedicos.find(medico => medico.num_cmp === currentMedico);
-		console.log('medico', medico);
-		console.log('currentMedico', currentMedico);
 		const response = await httpClient.post('horarios/setHorario', {
 			cmp: currentMedico,
 			nombreMedico: medico.des_nom_medico + ' ' + medico.des_ape_medico,
@@ -48,11 +52,15 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 			horaFin: horario[1].format('HH:mm'),
 			especialidad: medico.descripcion,
 			idEspecialidad: medico.id_consultorio,
+      bus: medico.bus,
+      idBus: medico.id_bus
 		});
 		if (response.data.success) {
 			openNotification('Exito', 'Horario asignado correctamente');
 		} else {
 			openNotification('Error', response.data.message, 'Alerta');
+      setGuardando(false);
+      return;
 		}
 		form.resetFields();
 		setCurrentMedico('');
@@ -64,31 +72,39 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 	};
 
 	const traerEspeciliades = async () => {
+    setLoadingEspecialidad(true);
 		const response = await httpClient.post('horarios/obtenerEspecialidad');
 		if (response.data.success) {
 			setDataEspecialidades(response.data.data);
 		}
+    setLoadingEspecialidad(false);
 	};
 
-	const traerMedicos = async () => {
+  const traerConsultorios = async (id = '01') => {
+    setLoadingConsultorio(true);
+    const response = await httpClient.post('atencionMedica/getConsultorios', { COD_ESPECIALIDAD: id });
+    if (response.data.success) {
+      setDataConsultorios(response.data.data);
+    }
+    setLoadingConsultorio(false);
+  };
+
+	const traerMedicos = async (bus_id) => {
+    setLoadingMedicos(true);
 		const response = await httpClient.post('horarios/getMedicoByEspecialidad', {
 			especialidad_id: currentEspecialidad,
+      bus_id
 		});
 		if (response.data.success) {
 			if (response.data.data && !response.data.data.length > 0) {
-				setMensaje('No hay medicos disponibles para esta especialidad');
+				setMensaje('No hay medicos disponibles para este consultorio');
 			} else {
 				setMensaje('');
 			}
 			setDataMedicos(response.data.data);
 		}
+    setLoadingMedicos(false);
 	};
-
-	useEffect(() => {
-		form.setFieldsValue({ medico: '' });
-		setCurrentMedico('');
-		traerMedicos();
-	}, [currentEspecialidad]);
 
 	useEffect(() => {
 		traerEspeciliades();
@@ -109,11 +125,28 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 				title="Asignar Horario"
 			>
 				<div style={{ padding: 10 }}>
-					<Form form={form} style={{ paddingLeft: 20, paddingRight: 20 }}>
+					<Form
+            form={form}
+            style={{ paddingLeft: 20, paddingRight: 20 }}
+            labelCol={{
+              span: 8
+            }}
+            wrapperCol={{
+              span: 16
+            }}
+          >
 						<Row>
 							<Col span={24}>
 								<Form.Item name="especialidad" label="Especialidad">
-									<Select onChange={setCurrentEspecialidad} value={currentEspecialidad}>
+									<Select
+                    onChange={e => {
+                      setCurrentEspecialidad(e);
+                      traerConsultorios(e);
+                    }}
+                    value={currentEspecialidad}
+                    loading={loadingEspecialidad}
+                    disabled={loadingEspecialidad}
+                  >
 										{dataEspecialidades.map(item => (
 											<Select.Option key={item.key} value={item.value}>
 												{item.descripcion}
@@ -122,6 +155,27 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 									</Select>
 								</Form.Item>
 							</Col>
+              <Col span={24}>
+                <Form.Item name="consultorio" label="Consultorio">
+                  <Select
+                    onChange={e => {
+                      setCurrentConsultorio(e);
+                      form.setFieldsValue({ medico: '' });
+                      setCurrentMedico('');
+                      traerMedicos(e);
+                    }}
+                    value={currentConsultorio}
+                    loading={loadingConsultorio}
+                    disabled={loadingConsultorio}
+                  >
+                    {dataConsultorios.map(item => (
+                      <Select.Option key={item.key} value={item.value}>
+                        {item.descripcion}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
 						</Row>
 						<Row>
 							<Col span={24}>
@@ -129,7 +183,8 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 									<Select
 										onChange={setCurrentMedico}
 										value={currentMedico}
-										disabled={mensaje !== ''}
+										disabled={mensaje !== '' || !currentEspecialidad || !currentConsultorio || loadingMedicos}
+                    loading={loadingMedicos}
 									>
 										{dataMedicos.map(item => (
 											<Select.Option key={item.num_cmp} value={item.num_cmp}>

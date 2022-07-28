@@ -137,19 +137,19 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 	useEffect(() => {
 		const asyncronized = async () => {
       setCargandoGlobal(true);
-      notificaciones('Cargando lista de ignorados', 'Info');
+      openNotification('', 'Cargando lista de ignorados', 'Info');
       await getListaIgnorados();
       setCargandoGlobal(true);
-      notificaciones('Cargando antecedentes generales', 'Info');
+      openNotification('', 'Cargando antecedentes generales', 'Info');
       await AntecedentesGenerales();
       setCargandoGlobal(true);
-      notificaciones('Cargando diagóstico', 'Info');
+      openNotification('', 'Cargando diagóstico', 'Info');
       await traerCombos(dataGlobal);
       setCargandoGlobal(true);
-      notificaciones('Cargando anexos', 'Info');
+      openNotification('', 'Cargando anexos', 'Info');
       await traerAnexo(dataGlobal);
       setCargandoGlobal(true);
-      notificaciones('Cargando datos del paciente actual', 'Info');
+      openNotification('', 'Cargando datos del paciente actual', 'Info');
       await traerDataAtencionPacienteActual(dataGlobal);
       setCargandoGlobal(false);
     }
@@ -162,15 +162,15 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
         setCargandoGlobal(true);
         await traerAntecedentes(dataGlobal);
         setCargandoGlobal(true);
-        notificaciones('Cargando antecedentes de historia clínica', 'Info');
+        openNotification('', 'Cargando antecedentes de historia clínica', 'Info');
         await AntecedentesHC(dataGlobal);
         setCargandoGlobal(true);
-        notificaciones('Cargando patológicos', 'Info');
+        openNotification('', 'Cargando patológicos', 'Info');
         await traerPatologicos(dataGlobal);
         setCargandoGlobal(true);
         await traerPatologicosFamiliares(dataGlobal);
         setCargandoGlobal(true);
-        notificaciones('Cargando antecedentes penales', 'Info');
+        openNotification('', 'Cargando antecedentes penales', 'Info');
         await traerAntecedentesPaneles(dataGlobal);
         setCargandoGlobal(false);
       }
@@ -183,16 +183,16 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
       if (!historiaClinica) {
         setCargandoGlobal(true);
         examenFisico(dataGlobal);
-        notificaciones('Cargando evolución tratamiento', 'Info');
+        openNotification('', 'Cargando evolución tratamiento', 'Info');
         await traerEvolucionTratamiento(dataGlobal);
         tratamiento(dataGlobal);
         consultasProcedimiento(dataGlobal);
-        notificaciones('Cargando interconsulta', 'Info');
+        openNotification('', 'Cargando interconsulta', 'Info');
         await traerInterconsulta(dataGlobal);
         imagenes(dataGlobal);
         laboratorio(dataGlobal);
         traerEstematologico(dataGlobal);
-        notificaciones('Cargando evolución tratamiento odontológico', 'Info');
+        openNotification('', 'Cargando evolución tratamiento odontológico', 'Info');
         await traerEvolucionTratamientoOdonto(dataGlobal);
         desarrolloProcedimientos(dataGlobal);
         setCargandoGlobal(false);

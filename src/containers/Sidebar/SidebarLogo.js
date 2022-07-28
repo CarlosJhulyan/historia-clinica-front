@@ -40,10 +40,18 @@ const SidebarLogo = ({ sidebarCollapsed, setSidebarCollapsed }) => {
               <div style={{display: 'flex', alignItems: 'center', gap: 5}}>
                 <img
                   alt="logoHC"
-                  style={{ float: "left", width: " 25%" }} src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.LOGO}`}
+                  style={{
+                    float: "left",
+                    width: !themeSettingsGlobal.COMPANIA.includes('Buena') ? '25%' : '100%'
+                  }}
+                  src={`${process.env.PUBLIC_URL}/assets/images/${themeSettingsGlobal.LOGO.split('.')[0]}.png`}
                   title={themeSettingsGlobal.COMPANIA}
                 />
-                <h1 style={{ color: "white", float: "right", width: " 70%", fontSize: "18px", paddingTop: "8px" }}>Historia Clínica</h1>
+                {!themeSettingsGlobal.COMPANIA.includes('Buena') && (
+                  <h1 style={{ color: "white", float: "right", width: " 70%", fontSize: "18px", paddingTop: "8px" }}>
+                    Historia Clínica
+                  </h1>
+                )}
               </div>
           }
           {/*<img alt="lo" src={ImageLocal} />*/}

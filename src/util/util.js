@@ -58,7 +58,7 @@ export const openNotification = (titulo, texto, tipo) => {
 	notification.open({
 		duration: 2,
 		style: { color: tipo === 'Alerta' ? 'red' : tipo === 'Warning' ? 'orange' : tipo === 'Info' ? 'blue' : '#52c41a' },
-		icon: tipo === 'Alerta' ? <CloseCircleOutlined /> : tipo === 'Warning' ? <WarningOutlined /> : tipo === 'Info' ? <InfoOutlined /> : <CheckCircleOutlined />,
+		icon: tipo === 'Alerta' ? <CloseCircleOutlined /> : tipo === 'Warning' ? <WarningOutlined /> : <CheckCircleOutlined />,
 		message: titulo,
 		description: texto,
 		key,
