@@ -66,6 +66,7 @@ const InformacionPaciente = ({
 	setTabDefault,
 	traerDatos,
 }) => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [estado, setEstado] = useState();
 	const [firma, setFirma] = useState('');
 	const [modalGuardar, setModalGuardar] = useState(false);
@@ -487,7 +488,6 @@ const InformacionPaciente = ({
 					<Button
 						disabled={historiaClinica ? true : pestañasReducer.actual === '' ? true : false}
 						className="gx-mb-0"
-						type="primary"
 						htmlType="submit"
 						style={{
 							height: 'auto',
@@ -497,6 +497,8 @@ const InformacionPaciente = ({
 							whiteSpace: 'break-spaces',
 							padding: '10px',
 							marginTop: '10px',
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
 						}}
 						onClick={() => guardarDatosPaciente()}
 					>
@@ -505,8 +507,10 @@ const InformacionPaciente = ({
 				</Col>
 
 				<Modal
-					okType="primary"
-					//title="¿Está seguro de Salir?"
+          okType='default'
+          okButtonProps={{
+            style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+          }}
 					okText="Si, Salir"
 					cancelText="No, Cancelar"
 					onOk={() => {

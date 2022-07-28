@@ -19,7 +19,7 @@ import {
   FaStore, FaTimes,
   FaUser,
   FaUserInjured, FaUserMd,
-  FaUserNurse,
+  FaUserNurse, FaUserTie,
   MdViewModule,
   RiSoundModuleFill
 } from 'react-icons/all';
@@ -545,7 +545,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 		if (tokenAdmin && initURL.includes('/hc-admin')) {
 			menuItems.push(
 				<>
-					<Menu.Item key="configuraciones/modulos">
+					<Menu.Item key="hc-admin/configuraciones/modulos">
 						<Link to="/hc-admin/configuraciones/modulos">
 							<i className="icon">
                 <RiSoundModuleFill />
@@ -566,14 +566,14 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 
 						}
 					>
-						<Menu.Item key="configuraciones/medicos">
+						<Menu.Item key="hc-admin/configuraciones/medicos">
 							<Link to="/hc-admin/configuraciones/medicos">
 								<i className="icon icon-widgets" />
 								<span>Gestionar Médicos</span>
 							</Link>
 						</Menu.Item>
 
-						<Menu.Item key="configuraciones/asignacionmedicos">
+						<Menu.Item key="hc-admin/configuraciones/asignacionbusmedicos">
 							<Link to="/hc-admin/configuraciones/asignacionbusmedicos">
 								<i className="icon">
                   <RiSoundModuleFill />
@@ -583,7 +583,7 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 						</Menu.Item>
 
 					</SubMenu>
-					<Menu.Item key="configuraciones/usuarios">
+					<Menu.Item key="hc-admin/configuraciones/usuarios">
 					  <Link to="/hc-admin/configuraciones/usuarios">
 					    <i className="icon">
                 <FaUser />
@@ -591,13 +591,21 @@ const SidebarContent = ({ sidebarCollapsed, setSidebarCollapsed }) => {
 					    <span>Usuarios</span>
 					  </Link>
 					</Menu.Item>
-					<Menu.Item key="configuraciones/camas">
+          <Menu.Item key="hc-admin/configuraciones/clientes">
+            <Link to="/hc-admin/configuraciones/clientes">
+              <i className="icon">
+                <FaUserTie />
+              </i>
+              <span>Cliente/Proveedor</span>
+            </Link>
+          </Menu.Item>
+					<Menu.Item key="hc-admin/configuraciones/camas">
 						<Link to="/hc-admin/configuraciones/camas">
               <i className="icon icon-company" />
 							<span>Camas</span>
 						</Link>
 					</Menu.Item>
-					<Menu.Item key="configuraciones/firmas">
+					<Menu.Item key="hc-admin/configuraciones/firmas">
 						<Link to="/hc-admin/configuraciones/firmas">
 							<i className="icon icon-rendaring-calendar" />
 							<span>Firma Digital</span>

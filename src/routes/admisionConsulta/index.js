@@ -17,8 +17,10 @@ import ModalAtencionMedica from './modalAtencionMedica';
 import ModalBusquedaPedido from './modalBusquedaPedido';
 import ModalBusquedaComprobante from './modalBusquedaComprobante';
 import ModalBusquedaOrden from './modalBusquedaOrden';
+import { useSelector } from 'react-redux';
 
 function AdmisionConsulta() {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [abrirModalManual, setAbrirModalManual] = useState(false);
   const [abrirModalOrden, setAbrirModalOrden] = useState(false);
   const [abrirModalPedido, setAbrirModalPedido] = useState(false);
@@ -259,7 +261,11 @@ function AdmisionConsulta() {
                       modulos[1].llave_tab_gral === 'S' &&
                         <Button
                           onClick={() => setAbrirModalPedido(true)}
-                          type='primary'>
+                          style={{
+                            background: themeSettingsGlobal.COD_COLOR_1,
+                            color: '#fff'
+                          }}
+                        >
                             Buscar pedido
                         </Button>
                     }
@@ -267,7 +273,11 @@ function AdmisionConsulta() {
                       modulos[2].llave_tab_gral === 'S' &&
                         <Button
                           onClick={() => setAbrirModalOrden(true)}
-                          type='primary'>
+                          style={{
+                            background: themeSettingsGlobal.COD_COLOR_1,
+                            color: '#fff'
+                          }}
+                        >
                             Buscar orden
                         </Button>
                     }
@@ -275,7 +285,8 @@ function AdmisionConsulta() {
                       modulos[0].llave_tab_gral === 'S' &&
                         <Button
                           onClick={() => setAbrirModalManual(true)}
-                          type='default'>
+                          type='default'
+                        >
                             Buscar comprobante manual.
                         </Button>
                     }
@@ -313,9 +324,7 @@ function AdmisionConsulta() {
             </div>
           </div>
         }
-      >
-
-      </Card>
+      ></Card>
       <Table
         className="gx-table-responsive"
         style={{ marginBottom: 30 }}

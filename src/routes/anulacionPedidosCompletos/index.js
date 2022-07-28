@@ -3,8 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { httpClient } from '../../util/Api';
 import ModalBusquedaComprobante from './modalBusquedaComprobante';
 import ModalNotaPedio from './modalNotaPedido';
+import { useSelector } from 'react-redux';
 
 const AnulacionPedidosCompletos = () => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [abrirModalManual, setAbrirModalManual] = useState(true);
 	const [loadingData, setLoadingData] = useState(false);
 	const [dataComprobantesPago, setDataComprobantesPago] = useState([]);
@@ -159,7 +161,6 @@ const AnulacionPedidosCompletos = () => {
 							style={{
 								width: '50%',
 								fontSize: '22px',
-								// marginTop: '15px',
 							}}
 						>
 							Anulacion de Pedidos
@@ -182,7 +183,14 @@ const AnulacionPedidosCompletos = () => {
 						<Form.Item name="monto" label="Monto" style={{ width: '300px', margin: 0 }}>
 							<Input type="text" disabled />
 						</Form.Item>
-						<Button className="gx-mb-0" type="primary" onClick={() => setAbrirModalManual(true)}>
+						<Button
+              className="gx-mb-0"
+              style={{
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
+              onClick={() => setAbrirModalManual(true)}
+            >
 							Buscar
 						</Button>
 					</Form>
@@ -207,13 +215,23 @@ const AnulacionPedidosCompletos = () => {
 				<div style={{ marginTop: 20 }}>
 					<Button
             className="gx-mb-0"
-            type="primary"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
             onClick={info}
             disabled={dataCabecera.length <= 0}
           >
 						Anular
 					</Button>
-					<Button className="gx-mb-0" type="primary" onClick={() => clearAll()}>
+					<Button
+            className="gx-mb-0"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+            onClick={() => clearAll()}
+          >
 						Limpiar
 					</Button>
 				</div>

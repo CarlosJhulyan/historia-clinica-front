@@ -10,8 +10,8 @@ import {
   THEME_COLOR,
   THEME_TYPE,
   UPDATE_RTL_STATUS,
-  THEME_DESIGN_LOOK_GLOBAL
-} from "../../constants/ThemeSetting";
+  THEME_DESIGN_LOOK_GLOBAL, ICONS_IMPRESION
+} from '../../constants/ThemeSetting';
 
 export function toggleCollapsedSideNav(navCollapsed) {
   return { type: TOGGLE_COLLAPSED_NAV, navCollapsed };
@@ -103,3 +103,11 @@ export const setThemeDesignLook = (themeData) => {
     payload: themeData
   };
 }
+
+export const setLogosImpresion = (themeData) => {
+  return {
+    type: ICONS_IMPRESION,
+    payload: themeData
+  };
+}
+

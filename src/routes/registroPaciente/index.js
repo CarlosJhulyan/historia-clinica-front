@@ -23,6 +23,7 @@ import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
 import ModalTriaje from './modalTriaje';
+import { useSelector } from 'react-redux';
 
 const { Option } = Select;
 
@@ -31,6 +32,7 @@ const RegistroPaciente = () => {
 	const [abrirModalTriaje, setAbrirModalTriaje] = useState(false);
 	const [filaActual, setFilaActual] = useState({});
 	const [data, setData] = useState();
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [loadingData, setLoadingData] = useState(false);
 	const [datosModal, setDatosModal] = useState({});
 	const [mostrarListaPaciente, setMostrarListaPaciente] = useState(true);
@@ -145,11 +147,14 @@ const RegistroPaciente = () => {
 				/>
 				<Space>
 					<Button
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
 					>
 						Buscar
 					</Button>
@@ -290,30 +295,24 @@ const RegistroPaciente = () => {
 		<>
 			{mostrarListaPaciente ? (
 				<Card
-					title={
-						<div
-							style={{
-								display: 'grid',
-								gridTemplateColumns: 'repeat(2, 1fr)',
-								gridTemplateRows: '1fr',
-								gridColumnGap: '0px',
-								gridRowGap: '0px',
-								marginRight: '5%',
-							}}
-						>
-							<div style={{ gridArea: '1 / 1 / 2 / 2', fontSize: '22px', paddingTop: '20px' }}>
-								Registro de Pacientes
-							</div>
-							<div
-								style={{
-									gridArea: '1 / 2 / 2 / 3',
-									display: 'flex',
-									flexDirection: 'row-reverse',
-									paddingTop: '15px',
-								}}
-							></div>
-						</div>
-					}
+          title={
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '10px',
+              }}
+            >
+              <div
+                style={{
+                  width: '50%',
+                  fontSize: '22px',
+                }}
+              >
+                Registro de Pacientes
+              </div>
+            </div>
+          }
 				>
 					<Form
 						layout="vertical"
@@ -363,10 +362,14 @@ const RegistroPaciente = () => {
 							<Col lg={4} md={8} sm={12} xs={24}>
 								<Button
 									loading={loadingData}
-									type="primary"
 									htmlType="submit"
 									disabled={!dataValida()}
-									style={{ width: '100%', marginTop: '25px' }}
+									style={{
+                    width: '100%',
+                    marginTop: '25px',
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
+                  }}
 								>
 									Buscar
 								</Button>
@@ -402,24 +405,35 @@ const RegistroPaciente = () => {
 						loading={loadingData}
 					/>
 					<Divider plain></Divider>
-					<Button type="primary" onClick={() => mostrarModal()}>
+					<Button
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+            onClick={() => mostrarModal()}
+          >
 						Nuevo Paciente
 					</Button>
-					<Button type="primary" disabled={!codEditarPaciente} onClick={() => mostrarModalEditar()}>
+					<Button
+            disabled={!codEditarPaciente}
+            onClick={() => mostrarModalEditar()}
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
 						Mod Paciente
 					</Button>
 					<Button
-						type="primary"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
 						disabled={!codEditarPaciente}
 						onClick={() => setAbrirModalTriaje(true)}
 					>
 						Editar Pre triaje
 					</Button>
-					{/* <Button type="primary" disabled={!codEditarPaciente} onClick={() => {}}>Activar/Desactivar</Button> */}
-					{/* <Button type="primary" onClick={() => {}}>Imprimir</Button>
-					<Button type="primary" onClick={() => {}}>Ver histórico atenciones</Button>
-					<Button type="primary" onClick={() => {}}>Resultados Lab. Pacientes</Button>
-					<Button type="primary" onClick={() => {}}>Seleccionar pacientes</Button> */}
 				</Card>
 			) : (
 				<DatosPaciente

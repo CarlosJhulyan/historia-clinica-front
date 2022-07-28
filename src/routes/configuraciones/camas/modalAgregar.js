@@ -15,8 +15,10 @@ import UCI_M from '../../../assets/camas/UCI_M.png';
 import UCIM_V from '../../../assets/camas/UCIM_V.png';
 import UCIM_F from '../../../assets/camas/UCIM_F.png';
 import UCIM_M from '../../../assets/camas/UCIM_M.png';
+import { useSelector } from 'react-redux';
 
 const ModalAgregar = ({ abrirModal, setAbrirModal, editar, tipo, traerPisos, traerHabitaciones, traerCamas, habitaciones, pisos }) => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const token = JSON.parse(localStorage.getItem('token'));
   const tokenAdmin = JSON.parse(localStorage.getItem('token-admin'));
 
@@ -154,6 +156,10 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, editar, tipo, traerPisos, tra
       okText="Aceptar"
       cancelText="Cancelar"
       confirmLoading={loading}
+      okType='default'
+      okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+      }}
       title={
         <div
           style={{

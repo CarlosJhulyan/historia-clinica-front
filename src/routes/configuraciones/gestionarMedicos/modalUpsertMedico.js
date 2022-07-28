@@ -3,6 +3,7 @@ import { Button, Col, DatePicker, Form, Input, Modal, Row, Select } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones, openNotification } from '../../../util/util';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const ModalUpsertMedico = ({
                              visible,
@@ -13,6 +14,7 @@ const ModalUpsertMedico = ({
   const [dataListEspecialidad, setDataListEspecialidad] = useState([]);
   const [newEspecialidad, setNewEspecialidad] = useState('');
   const [loadingSave, setLoadingSave] = useState(false);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [refForm] = Form.useForm();
 
   const traerListaTipoColegio = () => {
@@ -98,9 +100,12 @@ const ModalUpsertMedico = ({
           </Button>,
           <Button
             htmlType='submit'
-            type='primary'
             form='form-create-doctor'
             loading={loadingSave}
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
           >
             {currentMedico ? 'Actualizar' : 'Grabar'}
           </Button>,

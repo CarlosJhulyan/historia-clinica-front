@@ -26,7 +26,7 @@ import { useAuth } from "../../authentication";
 import { httpClient } from "../../util/Api";
 import SignInAdmin from "../SignInAdmin";
 import SignInReports from "../SignInReport";
-import { getThemeDesignLookGlobal } from '../../routes/listaPaciente/datosPaciente/apis';
+import { getThemeDesignLookGlobal, getLogosImpresionGlobal } from '../../routes/listaPaciente/datosPaciente/apis';
 
 const RestrictedRoute = ({ component: Component, location, authUser, authAdmin, authReports, ...rest }) =>
   <Route
@@ -187,6 +187,7 @@ const App = () => {
         });
     }
     getThemeDesignLookGlobal();
+    getLogosImpresionGlobal();
   }, [])
 
   const currentAppLocale = AppLocale[locale.locale];

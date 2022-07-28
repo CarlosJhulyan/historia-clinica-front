@@ -88,8 +88,9 @@ const GestionarMedicos = () => {
       key: 'ESTADO',
       render: (estado, record) => (
         <Switch
-          // checkedChildren={record.EQUIV_ESTADO}
-          // unCheckedChildren={record.EQUIV_ESTADO}
+          style={{
+            background: estado === '1' ? themeSettingsGlobal.COD_COLOR_1 : '#ccc'
+          }}
           checked={estado === '1'}
           loading={loadingUpdate && currentUpdate.key === record.key}
           onClick={e => handleChangeStatus(e, record)}

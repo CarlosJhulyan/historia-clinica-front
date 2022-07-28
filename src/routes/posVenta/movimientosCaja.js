@@ -348,34 +348,26 @@ function MovimientosCaja() {
 
   return (
     <>
-      <Card title={
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '280px auto 100px',
-            gridTemplateRows: '1fr',
-            gridColumnGap: '0px',
-            gridRowGap: '0px',
-            overflowX: 'auto'
-          }}
-        >
-          <div style={{
-            gridArea: '1 / 1 / 2 / 2',
-            fontSize: '22px',
-            marginTop: '15px'
-          }}>
-            Movimientos de Caja
-          </div>
+      <Card
+        title={
           <div
             style={{
-              gridArea: '1 / 2 / 2 / 3',
               display: 'flex',
-              flexDirection: 'row-reverse',
+              flexDirection: 'row',
+              gap: '10px',
             }}
           >
+            <div
+              style={{
+                width: '50%',
+                fontSize: '22px',
+              }}
+            >
+              Movimientos de Caja
+            </div>
           </div>
-        </div>
-      }>
+        }
+      >
         <Row justify='center'>
           <Col xl={5} lg={6} md={7} sm={7} xs={8} style={{ textAlign: 'center' }}>
             <Button

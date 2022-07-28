@@ -23,9 +23,11 @@ import moment from 'moment';
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
 import datosDelProfesional from '../historiaOdontologica/DatosDelProfesional';
+import { useSelector } from 'react-redux';
 
 function TomaPreTriaje() {
   const date = moment().locale('es');
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [disableFetch, setDisableFetch] = useState(true);
   const [loadingFetch, setLoadingFetch] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
@@ -268,8 +270,8 @@ function TomaPreTriaje() {
 							<Button
 								loading={loadingFetch}
 								style={{
-									backgroundColor: '#04B0AD',
-									color: 'white',
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff',
                   marginTop: '10px'
 								}}
 								onClick={() => fetchData()}
@@ -280,8 +282,8 @@ function TomaPreTriaje() {
               <Button
 								loading={loadingData}
 								style={{
-									backgroundColor: '#04B0AD',
-									color: 'white',
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff',
                   marginTop: '10px'
 								}}
                 htmlType='submit'
@@ -518,8 +520,8 @@ function TomaPreTriaje() {
                 >
                   <Button
                     style={{
-                      backgroundColor: '#04B0AD',
-                      color: 'white',
+                      background: themeSettingsGlobal.COD_COLOR_1,
+                      color: '#fff',
                       top: '7px'
                     }}
                     onClick={() => handleChangeEditDate()}

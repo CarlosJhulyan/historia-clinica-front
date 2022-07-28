@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Form, Input, Modal, Row, Table } from 'antd';
+import { Button, Card, Col, Form, Input, Modal, Row, Table } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones, openNotification } from '../../../util/util';
 import { ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
 
-function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
+function GestionarClienteProveedor() {
   const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [data, setData] = useState([]);
   const [dataFiltered, setDataFiltered] = useState([]);
@@ -107,68 +107,14 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 		openNotification('Lista de Clientes', 'Lista limpiada');
 	};
 
-	const handleAcepted = () => {
-		openNotification('Ingreso Cliente', 'Cliente agregado correctamente');
-		setClienteCurrent(filaActual);
-		setVisible(false);
-	};
-
   useEffect(() => {
     setDataFiltered(data);
   }, [data]);
 
 	return (
 		<>
-			<Modal
-				centered
-				width={1100}
-				visible={visible}
+			<Card
 				title="Lista de Clientes"
-				className="modal-posventa"
-				onCancel={() => setVisible(false)}
-				footer={[
-					<Button
-						style={{
-							background: "#36AE7C"
-						}}
-						onClick={() => {
-							setVisibleModalUpsertCliente(true);
-							setTipo('crear');
-						}}
-					>
-						<p
-							style={{
-								color: "white"
-							}}
-						>
-
-							Crear
-						</p>
-					</Button>,
-					<Button
-						disabled={!clienteKeyCurrent}
-						onClick={() => {
-							setVisibleModalUpsertCliente(true);
-							setTipo('editar');
-						}}
-					>
-						Modificar
-					</Button>,
-					<Button disabled={!clienteKeyCurrent} onClick={handleAcepted}>
-						Seleccionar
-					</Button>,
-					<Button
-						style={{
-							background: "#EB5353"
-						}}
-						onClick={() => setVisible(false)}>
-						<p style={{
-							color: "white"
-						}}>
-							Cerrar
-						</p>
-					</Button>,
-				]}
 			>
 				<Row>
 					<Col span={14}>
@@ -197,11 +143,11 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					<Button
 						disabled={loadingData}
 						style={{ marginTop: 5, background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}
-            onClick={() => {
+					  onClick={() => {
               setDataFiltered(data.filter(item => item.NUM_DOCUMENTO.trim() === '0'))
             }}
 					>
-						Sin Docume...
+						Sin Documento
 					</Button>
 					<Button
 						disabled={loadingData}
@@ -212,7 +158,6 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					</Button>
 				</Row>
 				<Table
-					style={{ marginRight: 10, marginLeft: 10 }}
 					rowSelection={{
 						type: 'radio',
 						...rowSelection,
@@ -221,12 +166,44 @@ function ModalListaMedicos({ visible, setVisible, setClienteCurrent }) {
 					columns={columns}
 					size="small"
 					loading={loadingData}
-					dataSource={data}
-          scroll={{
-            y: 350
-          }}
+					dataSource={dataFiltered}
 				/>
-			</Modal>
+        <Row>
+          <Col span={24}>
+            <Button
+              style={{
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
+              onClick={() => {
+                setVisibleModalUpsertCliente(true);
+                setTipo('crear');
+              }}
+            >
+              <p
+                style={{
+                  color: "white"
+                }}
+              >
+                Crear
+              </p>
+            </Button>
+            <Button
+              style={{
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
+              disabled={!clienteKeyCurrent}
+              onClick={() => {
+                setVisibleModalUpsertCliente(true);
+                setTipo('editar');
+              }}
+            >
+              Modificar
+            </Button>
+          </Col>
+        </Row>
+			</Card>
 
 			{visibleModalUpsertCliente ? (
 				<ModalMantenimientoCliente
@@ -429,4 +406,4 @@ function ModalMantenimientoCliente({
 	);
 }
 
-export default ModalListaMedicos;
+export default GestionarClienteProveedor;

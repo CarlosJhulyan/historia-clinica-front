@@ -7,7 +7,7 @@ import Barcode from 'react-barcode';
 
 import { openNotification } from '../../../util/util';
 import { numberToLetter } from '../../../util/numberToletters';
-import logoHeader from '../../../assets/posventa/logo-biensalud.jpg';
+import { useSelector } from 'react-redux';
 
 const pageStyle = `
 @page {
@@ -39,7 +39,7 @@ const ModalImpresionTermica = ({
                                  dataDetalle
 }) => {
   const [dataImprimir, setDataImprimir] = useState([]);
-  // const [dataDetalle, setDataDetalle] = useState([]);
+  const { logosImpresion } = useSelector(({ settings }) => settings);
   const impresionRef = useRef();
   const [iniciando, setIniciando] = useState(true);
   const [codigo, setCodigo] = useState('');
@@ -185,7 +185,7 @@ const ModalImpresionTermica = ({
         className='font-ticket'
       >
         <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
-          <img src={logoHeader} alt="lopotipo-biensalud" />
+          <img src={`${process.env.PUBLIC_URL}/assets/images/${logosImpresion.LOGO_FE_TERMICA}`} alt="lopotipo-biensalud" />
         </div>
         <div style={{ width: '100%', textAlign: 'center', fontSize: 20 }}>RESERVA</div>
         <br />

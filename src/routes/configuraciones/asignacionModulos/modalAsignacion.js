@@ -52,7 +52,6 @@ const ModalAsignacion = ({
 				codMedico1: tokenAdmin.login_usu,
 			});
 			setAbrirModal(false);
-			notificaciones('Modulos asignado correctamente.', 'success');
 			return repuesta.data;
 		} catch (error) {
 			throw error;
@@ -126,7 +125,7 @@ const ModalAsignacion = ({
 	const onSelectCMP = data => {
 		optionsCMP.forEach(element => {
       if (!element.num_doc_iden || element.num_doc_iden === null || element.num_doc_iden.trim() === '') {
-        openNotification('Asignación de modulos', 'El médico no cuenta con un número de documento de identidad asignado.', 'Warning');
+        notificaciones('El médico no cuenta con un número de documento de identidad asignado.', 'Warn');
         setNumDocumento('');
       }
 			if (element.key === data) {
@@ -143,8 +142,8 @@ const ModalAsignacion = ({
 
 	const onSelectNOM = data => {
 		optionsNOM.forEach(element => {
-      if (element.num_doc_iden || element.num_doc_iden === null || element.num_doc_iden.trim() !== '') {
-        openNotification('Asignación de modulos', 'El médico no cuenta con un número de documento de identidad asignado.', 'Warning');
+      if (!element.num_doc_iden || element.num_doc_iden === null || element.num_doc_iden.trim() === '') {
+        notificaciones('El médico no cuenta con un número de documento de identidad asignado.', 'Warn');
         setNumDocumento('');
       }
 			if (element.key === data) {
@@ -179,38 +178,40 @@ const ModalAsignacion = ({
         </Button>,
         <Button
           onClick={async () => {
-            if (numDocumento) {
-              if (filaActual) {
-                if (valores.length >= 1) {
-                  setLoading(true);
-                  await guardarAssignacion();
+            if (filaActual) {
+              setLoading(true);
+              await guardarAssignacion();
+              await traerUsuarios();
+              setLoading(false);
+              if (valores.length < 1) {
+                notificaciones('El médico no podrá acceder a los modulos.', 'Alerta');
+              } else {
+                notificaciones('Modulos asignado correctamente.', 'success');
+              }
+              // if (numDocumento) {
+              //
+              // } else notificaciones('Se debe asignar un número de documento al médico', 'Alerta');
+            } else {
+              if (cod !== '') {
+                setLoading(true);
+                const respuesta = await guardarAssignacion();
+                if (respuesta?.success) {
                   await traerUsuarios();
                   setLoading(false);
+                  setAbrirModal(false);
                 } else {
-                  notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
+                  notificaciones('El codigo del medico es incorrecto.', 'Alerta');
+                  setLoading(false);
+                }
+                if (valores.length < 1) {
+                  notificaciones('El médico no podrá acceder a los modulos.', 'Alerta');
+                } else {
+                  notificaciones('Modulos asignado correctamente.', 'success');
                 }
               } else {
-                if (cod !== '') {
-                  if (valores.length >= 1) {
-                    setLoading(true);
-                    const respuesta = await guardarAssignacion();
-                    if (respuesta?.success) {
-                      await traerUsuarios();
-                      setLoading(false);
-                      setAbrirModal(false);
-                      notificaciones('Completado!');
-                    } else {
-                      notificaciones('El codigo del medico es incorrecto.', 'Alerta');
-                      setLoading(false);
-                    }
-                  } else {
-                    notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
-                  }
-                } else {
-                  notificaciones('Debe ingresar un código de médico', 'Alerta');
-                }
+                notificaciones('Debe ingresar un código de médico', 'Alerta');
               }
-            } else notificaciones('Se debe asignar un número de documento al médico', 'Alerta');
+            }
           }}
           style={{
             background: themeSettingsGlobal.COD_COLOR_1,

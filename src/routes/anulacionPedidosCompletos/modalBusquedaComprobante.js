@@ -3,6 +3,7 @@ import { Col, DatePicker, Form, Input, Modal, Row, Select } from 'antd';
 import moment from 'moment';
 import { openNotification } from '../../util/util';
 import { httpClient } from '../../util/Api';
+import { useSelector } from 'react-redux';
 
 function ModalBusquedaComprobante({
 	setLoadingData,
@@ -17,8 +18,8 @@ function ModalBusquedaComprobante({
 	setDataDetalles,
 	setDataVenta,
 }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const { Option } = Select;
-
 	const handleChangeTipoComp = e => {
 		setDataSend({
 			...dataSend,
@@ -147,9 +148,11 @@ function ModalBusquedaComprobante({
 				setAbrirModalManual(false);
 			}}
 			onOk={() => traerCorrelativoMontoNeto()}
-			okButtonProps={{
-				loading: loadingData,
-			}}
+      okType='default'
+      okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'},
+        loading: loadingData,
+      }}
 			cancelButtonProps={{
 				disabled: loadingData,
 			}}

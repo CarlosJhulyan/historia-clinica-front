@@ -13,12 +13,14 @@ import {
 import moment from 'moment';
 
 import { httpClient } from '../../util/Api';
+import { useSelector } from 'react-redux';
 
 function ModalTriaje({
   visibleModal,
   setVisibleModal,
   codPaciente
 }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [loadingData, setLoadingData] = useState(false);
   const [loadingFetch, setLoadingFetch] = useState(false);
   const [editar, setEditar] = useState(true);
@@ -148,7 +150,16 @@ function ModalTriaje({
         <Button disabled={loadingData || loadingFetch} style={{ margin: '0 8px' }} onClick={() => setVisibleModal(false)}>
           Cancelar
         </Button>,
-        <Button loading={loadingFetch} disabled={loadingData} type='primary' style={{ margin: '0 8px' }} onClick={() => actualizarTriaje()}>
+        <Button
+          loading={loadingFetch}
+          disabled={loadingData}
+          style={{
+            margin: '0 8px',
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
+          onClick={() => actualizarTriaje()}
+        >
           {editar ? 'Editar' : 'Crear'}
         </Button>
       ]}

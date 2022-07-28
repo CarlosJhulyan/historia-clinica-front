@@ -981,18 +981,24 @@ function GenerarPedido() {
 					}}
 					footer={() => (
 						<Row
-							justify="start"
+							justify="space-between"
 							style={{
-								gap: '20px 80px',
 								marginLeft: 10,
-								// marginBottom: 20,
 								fontWeight: 'bold',
 							}}
 						>
-							<span>Red. S/. 0.00</span>
-							<span>I.G.V.: S/. {(dataDetallesFinally.total * 0.18).toFixed(2)}</span>
-							<span>TOTAL: S/. {dataDetallesFinally.total.toFixed(2)}</span>
-							<span>US: $ {dataDetallesFinally.totalDolar.toFixed(2)}</span>
+              <Col span={10}>
+                <Row justify='space-around'>
+                  <span>Red. S/. 0.00</span>
+                  <span>I.G.V.: S/. {(dataDetallesFinally.total * 0.18).toFixed(2)}</span>
+                </Row>
+              </Col>
+							<Col span={10}>
+                <Row justify='space-around'>
+                  <span>TOTAL: S/. {dataDetallesFinally.total.toFixed(2)}</span>
+                  <span>US: $ {dataDetallesFinally.totalDolar.toFixed(2)}</span>
+                </Row>
+              </Col>
 						</Row>
 					)}
 					// loading={tableLoading}
@@ -1068,17 +1074,25 @@ function GenerarPedido() {
                 color: '#fff',
               }}
               onClick={() => {
-                setDataReserva(null);
-                setProductosCurrent([]);
-                setSelectedRowKeys([]);
-                setProductosDetalles([]);
-                setData([]);
-                setSelectedRows([]);
-                setDataDetallesFinally({
-                  total: 0,
-                  totalDolar: 0,
-                  items: 0,
-                  tipoCambio: 3.34,
+                confirm({
+                  content: '¿Esta seguro de limpiar la reserva?',
+                  onOk: () => {
+                    setDataReserva(null);
+                    setProductosCurrent([]);
+                    setSelectedRowKeys([]);
+                    setProductosDetalles([]);
+                    setData([]);
+                    setSelectedRows([]);
+                    setDataDetallesFinally({
+                      total: 0,
+                      totalDolar: 0,
+                      items: 0,
+                      tipoCambio: 3.34,
+                    });
+                  },
+                  centered: true,
+                  okText: 'Aceptar',
+                  cancelText: 'Cancelar',
                 });
               }}
             >

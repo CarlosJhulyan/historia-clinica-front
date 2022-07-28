@@ -74,8 +74,8 @@ import ModalLoading from '../../../util/modalLoading';
 const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDatosModal }) => {
   const [cargandoGlobal, setCargandoGlobal] = useState(false);
 	console.log('DATOS MODAL222222222222222:', datosModal);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const dispatch = useDispatch();
-
 	const token = JSON.parse(localStorage.getItem('token'));
 	const [opcion, setOpcion] = useState();
 	const [state, setState] = useState();
@@ -701,7 +701,6 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 						<Button
 							disabled={historiaClinica}
 							className={('gx-mb-0', null)}
-							type="primary"
 							style={{
 								maxWidth: 256,
 								height: 'auto',
@@ -711,6 +710,8 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 								whiteSpace: 'break-spaces',
 								padding: '10px',
 								marginTop: '10px',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => {
 								setAbrirModalOpciones(true);
@@ -730,7 +731,6 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 						<Button
 							disabled={historiaClinica}
 							className={('gx-mb-0', null)}
-							type="primary"
 							style={{
 								maxWidth: 256,
 								height: 'auto',
@@ -740,6 +740,8 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 								whiteSpace: 'break-spaces',
 								padding: '10px',
 								marginTop: '10px',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => {
 								setAbrirModal(true);
@@ -759,7 +761,6 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 						<Button
 							disabled={historiaClinica}
 							className={('gx-mb-0', null)}
-							type="primary"
 							style={{
 								maxWidth: 256,
 								height: 'auto',
@@ -769,6 +770,8 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 								whiteSpace: 'break-spaces',
 								padding: '10px',
 								marginTop: '10px',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => {
 								setAbrirResultadoLab(true);
@@ -811,7 +814,6 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 							<Button
 								disabled={pestañasReducer.actual === '' ? true : false}
 								className={('gx-mb-0', null)}
-								type="primary"
 								style={{
 									maxWidth: 256,
 									height: 'auto',
@@ -821,6 +823,8 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 									whiteSpace: 'break-spaces',
 									padding: '10px',
 									marginTop: '10px',
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
 								}}
 								onClick={() => {
 									setAbrirModalHc(true);
@@ -960,7 +964,13 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 									</Col>
 								) : (
 									<Col lg={8} style={{ textAlign: 'start' }}>
-										<Button type="primary" onClick={() => setAbrirModalHA(true)}>
+										<Button
+                      style={{
+                        background: themeSettingsGlobal.COD_COLOR_1,
+                        color: '#fff'
+                      }}
+                      onClick={() => setAbrirModalHA(true)}
+                    >
 											Ver Historial
 										</Button>
 									</Col>
@@ -980,7 +990,10 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 									</Button>
 									<Button
 										disabled={historiaAntecedentes}
-										type="primary"
+										style={{
+                      background: themeSettingsGlobal.COD_COLOR_1,
+                      color: '#fff'
+                    }}
 										onClick={() => confirmAdd()}
 									>
 										Guardar
@@ -1033,6 +1046,10 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 						setAbrirModalOpciones(false);
 					}}
 					onCancel={() => setAbrirModalOpciones(false)}
+          okType='default'
+          okButtonProps={{
+            style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+          }}
 				>
 					<Tree
 						checkable

@@ -199,7 +199,14 @@ function ModalListaProductos({
       width: 70,
 			render: (_, record) => (
 				<>
-					<a onClick={() => handleSelectDetails(record)}>Detalles</a>
+					<a
+           style={{
+             color: themeSettingsGlobal.COD_COLOR_1
+           }}
+            onClick={() => handleSelectDetails(record)}
+          >
+            Detalles
+          </a>
 				</>
 			)
 		}

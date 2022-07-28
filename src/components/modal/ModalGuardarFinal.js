@@ -10,7 +10,6 @@ import { notificaciones } from '../../util/util';
 
 export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setModalGuardar, limpiarData, setModalImpresion, traerDatos, setMostrarListaPaciente }) => {
 	console.log("ENVIAR DATA:", enviarData);
-  const [messageError, setMessageError] = useState('');
 	const dispatch = useDispatch();
 	const token = JSON.parse(localStorage.getItem('token'));
 	console.log(enviarData2);
@@ -32,7 +31,6 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 				traerDatos();
 			} else {
 				dispatch(setOpacity(true));
-        setMessageError(e.data.message);
 				throw e.data.message;
 			}
 		} catch (error) {
@@ -42,16 +40,13 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 	};
 
 	const onCancelGuardado = async () => {
-		// setModalGuardar(false);
 		dispatch(setOpacity(false));
-
 		try {
 			enviarData.estadoConsulta.codestadonew = 'G';
 			const e = await httpClient.post('/consulta/setConsulta', enviarData);
 			console.log('data enviada: ', e);
 			if (!e.data.success) {
 				dispatch(setOpacity(true));
-        setMessageError(e.data.message);
 				throw e.data.message;
 			} else {
 				enviarData2.cod_medico = token.cod_medico;
@@ -81,7 +76,11 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 										notificaciones('Guardado Temporalmente', 'Promesa', {
 											promesa: onCancelGuardado,
 											pendiente: 'Guardando datos',
-											error: messageError,
+											error: {
+                        render({data}) {
+                          return <span>{data}</span>
+                        }
+                      },
 											ok: 'Datos guardados',
 										});
 									}}>
@@ -95,7 +94,11 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 										notificaciones('Paciente Atendido', 'Promesa', {
 											promesa: onConfirmAtendido,
 											pendiente: 'Guardando datos',
-											error: messageError,
+                      error: {
+                        render({data}) {
+                          return <span>{data}</span>
+                        }
+                      },
 											ok: 'Datos guardados',
 										})}
 										type="primary">

@@ -14,13 +14,14 @@ import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
 import ModalTriaje from './modalTriaje';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 function ListaEspera() {
   const { Option } = Select;
   const medico = JSON.parse(localStorage.getItem('token')).usuario;
   const personal = JSON.parse(localStorage.getItem('token')).data?.login_usu;
   const usuario = personal ? personal : medico;
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [loadingData, setLoadingData] = useState(false);
   const [dataListaEspera, setDataListaEspera] = useState([]);
   const [abrirModalTriaje, setAbrirModalTriaje] = useState(false);
@@ -198,48 +199,21 @@ function ListaEspera() {
         title={
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '250px auto',
-              gridTemplateRows: '1fr',
-              gridColumnGap: '0px',
-              gridRowGap: '0px'
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '10px',
             }}
           >
-            <div style={{ gridArea: '1 / 1 / 2 / 2', fontSize: '22px', paddingTop: '20px' }}>Lista de Espera</div>
             <div
               style={{
-                gridArea: '1 / 2 / 2 / 3',
-                display: 'flex',
-                flexDirection: 'row',
-                paddingTop: '15px',
-                justifyContent: 'flex-end',
-                flexWrap: 'wrap'
+                width: '50%',
+                fontSize: '22px',
               }}
             >
+              Lista de Espera
             </div>
           </div>
         }
-        footer={[
-          <Button
-            loading={loadingAnular}
-            onClick={() => anularAtencionMedica()}
-            disabled={!numHCSelection || numHCSelection.length <= 0}
-            type='primary'>
-            Anular
-          </Button>,
-          <Button
-            onClick={() => traerListaEspera()}
-            type='primary'>
-            Actualizar
-          </Button>,
-          <Button
-            loading={loadingActualizar}
-            disabled={!numHCSelection || numHCSelection.length <= 0}
-            onClick={() => establecerAtender()}
-            type='primary'>
-            Atender
-          </Button>
-        ]}
       >
         <Form
           {...layout}
@@ -336,19 +310,31 @@ function ListaEspera() {
             loading={loadingAnular}
             onClick={() => anularAtencionMedica()}
             disabled={!numHCSelection || numHCSelection.length <= 0}
-            type='primary'>
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
             Anular
           </Button>
           <Button
             onClick={() => traerListaEspera()}
-            type='primary'>
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
             Actualizar
           </Button>
           <Button
             loading={loadingActualizar}
             disabled={!numHCSelection || numHCSelection.length <= 0}
             onClick={() => establecerAtender()}
-            type='primary'>
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
             Atender
           </Button>
         </Row>

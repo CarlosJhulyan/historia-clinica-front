@@ -33,7 +33,7 @@ const ModalGenPedidoDiario = ({
           >
             Imprimir Térmica
           </Button>,
-          <Button>
+          <Button disabled>
             Generar PDF
           </Button>
         ]}

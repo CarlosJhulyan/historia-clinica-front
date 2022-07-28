@@ -135,7 +135,12 @@ const AsignacionModulos = () => {
 			title: 'Acciones',
 			key: 'acciones',
 			render: record => (
-				<span>{<Button onClick={() => mostrarModal(record)}>Asignar</Button>}</span>
+				<span>{<Button
+          onClick={() => mostrarModal(record)}
+          disabled={bloquearBoton}
+        >
+          Asignar
+        </Button>}</span>
 			),
 		},
 	];
@@ -174,7 +179,6 @@ const AsignacionModulos = () => {
 							onClick={() => {
 								setFilaActual(null);
 								setAbrirModal(true);
-                setNumDocumento('');
 							}}
 							style={{
 								display: 'flex',

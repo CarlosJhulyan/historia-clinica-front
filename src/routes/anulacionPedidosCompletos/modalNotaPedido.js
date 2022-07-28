@@ -4,10 +4,12 @@ import { useAuth } from '../../authentication';
 import { httpClient } from '../../util/Api';
 import ModalLoading from '../../util/modalLoading';
 import ModalComprobante from './modalComprobante';
+import { useSelector } from 'react-redux';
 
 const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera, clearAll }) => {
 	const [dataDetalleNotaCredito, setDataDetalleNotaCredito] = useState([]);
 	const [dataListaUsuarios, setDataListaUsuarios] = useState([]);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	// const [dataCabecera, setDataCabecera] = useState('');
 	// const [dataDetalles, setDataDetalles] = useState([]);
 	const [modalListaUsuarios, setModalListausuarios] = useState(true);
@@ -307,6 +309,10 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera, clearAll
 				centered
 				onCancel={() => setVisible(false)}
 				visible={visible}
+        okType='defaults'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+        }}
 			>
 				<Table
 					className="gx-table-responsive"
@@ -332,6 +338,10 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera, clearAll
 					centered
 					onCancel={() => setModalListausuarios(false)}
 					visible={visible}
+          okType='defaults'
+          okButtonProps={{
+            style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+          }}
 				>
 					<Table
 						className="gx-table-responsive"
@@ -363,6 +373,10 @@ const ModalNotaPedio = ({ visible, setVisible, dataVenta, dataCabecera, clearAll
 					centered
 					onCancel={() => setModalMotivo(false)}
 					visible={visible}
+          okType='defaults'
+          okButtonProps={{
+            style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+          }}
 				>
 					<Input.TextArea
 						rows={3}

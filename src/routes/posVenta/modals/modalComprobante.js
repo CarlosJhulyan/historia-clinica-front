@@ -5,10 +5,10 @@ import { httpClient } from '../../../util/Api';
 import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import QRCode from 'react-qr-code';
 
-import logoHeader from '../../../assets/posventa/logo-biensalud.jpg';
 import { numberToLetter } from '../../../util/numberToletters';
 import DecimalFormat from 'decimal-format';
 import { openNotification } from '../../../util/util';
+import { useSelector } from 'react-redux';
 
 const pageStyle = `
 @page {
@@ -39,6 +39,7 @@ const ModalComprobante = ({
   medicoCurrent,
   pacienteCurrent
 }) => {
+  const { logosImpresion } = useSelector(({ settings }) => settings);
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataEmpresa, setDataEmpresa] = useState();
 	const [dataDetalle, setDataDetalle] = useState([]);
@@ -263,7 +264,7 @@ const ModalComprobante = ({
 			>
 				{/* {imprimir} */}
 				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
-					<img src={logoHeader} alt="lopotipo-biensalud" />
+					<img src={`${process.env.PUBLIC_URL}/assets/images/${logosImpresion.LOGO_FE_TERMICA}`} alt="lopotipo-biensalud" />
 				</div>
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					{dataEmpresa && dataEmpresa.RAZON_SOCIAL + ' - RUC: ' + dataEmpresa.RUC}

@@ -8,8 +8,8 @@ import {
   THEME_TYPE,
   THEME_TYPE_SEMI_DARK,
   UPDATE_RTL_STATUS,
-  THEME_DESIGN_LOOK_GLOBAL
-} from "../../constants/ThemeSetting";
+  THEME_DESIGN_LOOK_GLOBAL, ICONS_IMPRESION
+} from '../../constants/ThemeSetting';
 import { types } from "../types/types";
 
 const initialSettings = {
@@ -37,6 +37,11 @@ const initialSettings = {
     COD_COLOR_1: '',
     COD_COLOR_2: '',
     COD_COLOR_3: '',
+  },
+  logosImpresion: {
+    LOGO_CIA: '',
+    LOGO_FE_TERMICA: '',
+    LOGO_FE_PDF: '',
   }
 };
 
@@ -117,6 +122,13 @@ const SettingsReducer = (state = initialSettings, action) => {
       return {
         ...state,
         themeSettingsGlobal: action.payload
+      }
+    }
+
+    case ICONS_IMPRESION: {
+      return {
+        ...state,
+        logosImpresion: action.payload
       }
     }
 

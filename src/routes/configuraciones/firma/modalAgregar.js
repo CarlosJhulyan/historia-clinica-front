@@ -5,10 +5,11 @@ import { httpClient } from '../../../util/Api';
 import { baseUrlImage } from '../../../config/backend';
 import { notificaciones } from '../../../util/util';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const ModalAgregar = ({ abrirModal, setAbrirModal, filaActual, traerData }) => {
   const formRef = createRef();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [loading, setLoading] = useState(false);
 
   const [medico, setMedico] = useState();
@@ -171,6 +172,10 @@ const ModalAgregar = ({ abrirModal, setAbrirModal, filaActual, traerData }) => {
       okText="Aceptar"
       cancelText="Cancelar"
       confirmLoading={loading}
+      okType='default'
+      okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+      }}
       title={
         <div
           style={{

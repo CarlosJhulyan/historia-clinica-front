@@ -289,7 +289,7 @@ const ModalListaReservas = ({
           </Col>
         </Row>
         <Row>
-          <Col span={24}>
+          <Col span={24} style={{height:300}}>
             <Table
               rowSelection={{
                 type: 'radio',
@@ -303,8 +303,11 @@ const ModalListaReservas = ({
               dataSource={dataListFiltered}
               size='small'
               pagination={{
-                pageSize: 6
+                pageSize: 5
               }}
+              // scroll={{
+              //   y: 230
+              // }}
             />
           </Col>
         </Row>

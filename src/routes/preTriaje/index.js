@@ -27,8 +27,10 @@ import { httpClient } from '../../util/Api';
 import axios from 'axios';
 import ModalTriajeDetalles from './modalTriajeDetalles';
 import { openNotification } from '../../util/util';
+import { useSelector } from 'react-redux';
 
 function HistoricoPreTriaje() {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [peticion, setPeticion] = useState(false);
   const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
   const [visibleModalDate, setVisibleModalDate] = useState(false);
@@ -108,7 +110,7 @@ function HistoricoPreTriaje() {
         </Space>
       </div>
     ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
     onFilter: (value, record) =>
       record[dataIndex]
         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
@@ -347,8 +349,8 @@ function HistoricoPreTriaje() {
                 <Form.Item name="rangoFechas" style={{ width: '20%', margin: 0 }}>
                   <Button
                     style={{
-                      backgroundColor: '#04B0AD',
-                      color: 'white',
+                      background: themeSettingsGlobal.COD_COLOR_1,
+                      color: '#fff',
                       marginTop: '12px'
                     }}
                     onClick={() => setVisibleModalDate(true)}
@@ -370,8 +372,8 @@ function HistoricoPreTriaje() {
                 <Button
                   loading={btnBuscar}
                   style={{
-                    backgroundColor: '#04B0AD',
-                    color: 'white',
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff',
                     marginTop: '10px'
                   }}
                   onClick={searchPreTriaje}
@@ -395,7 +397,12 @@ function HistoricoPreTriaje() {
         closable={false}
         onCancel={() => setVisibleModalDate(false)}
         onOk={() => setVisibleModalDate(false)}
-        visible={visibleModalDate}>
+        visible={visibleModalDate}
+        okType='defaults'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+        }}
+      >
           <DateRangePicker
             onChange={item => setStateDate([item.selection])}
             showSelectionPreview={true}

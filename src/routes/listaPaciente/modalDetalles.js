@@ -4,14 +4,14 @@ import { DNI_REGEX, EDAD_REGEX, TELEFONO_REGEX, TEXTO_REGEX, CORREO_REGEX } from
 import moment from 'moment';
 import { httpClient } from '../../util/Api';
 import { getDepartamentos, getProvincias, getDistritos } from '../../util/Ubigeo';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setDataGlobal } from '../../appRedux/actions/dataGlobal';
 
 const ModaDetalles = (props) => {
 	const { abrirModal, setAbrirModal, filaActual, handleDatos } = props;
 	const formatoFecha = 'DD-MM-YYYY';
 	const { Option } = Select;
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [estado, setEstado] = useState({});
 	const [paciente, setDataPaciente] = useState();
 	const [botonModal, setBotonModal] = useState(true);
@@ -204,6 +204,11 @@ const ModaDetalles = (props) => {
 				width={900}
 				okText="Aceptar"
 				cancelText="Cancelar"
+        okType='default'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'},
+          disabled: botonModal,
+        }}
 				title={
 					<div
 						style={{
@@ -230,9 +235,6 @@ const ModaDetalles = (props) => {
 				visible={abrirModal}
 				onOk={async () => {
 					guardarAlergia();
-				}}
-				okButtonProps={{
-					disabled: botonModal,
 				}}
 				onCancel={() => setAbrirModal(false)}
 			>
@@ -715,7 +717,12 @@ const ModaDetalles = (props) => {
 						</Row>
 						<Divider orientation="right">
 							<span style={{ fontWeight: 'normal' }}>Editar alergias &nbsp;</span>
-							<Switch onChange={handleChangeEditar} />
+							<Switch
+                style={{
+                  background: switchEditar ? themeSettingsGlobal.COD_COLOR_1 : '#ccc'
+                }}
+                onChange={handleChangeEditar}
+              />
 						</Divider>
 						<Row
 							style={{

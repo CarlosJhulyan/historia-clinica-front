@@ -11,6 +11,7 @@ import {
 import moment from 'moment';
 import { openNotification } from '../../util/util';
 import { httpClient } from '../../util/Api';
+import { useSelector } from 'react-redux';
 
 function ModalBusquedaComprobante({
   setLoadingData,
@@ -23,8 +24,8 @@ function ModalBusquedaComprobante({
   abrirModalManual,
   dataComprobantesPago
 }) {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const { Option } = Select;
-
   const handleChangeTipoComp = e => {
     setDataSend({
       ...dataSend,
@@ -42,14 +43,14 @@ function ModalBusquedaComprobante({
 
   const traerCorrelativoMontoNeto = async () => {
     setLoadingData(true);
-    const dataFormat = { 
-      ...dataSend, 
+    const dataFormat = {
+      ...dataSend,
       NUM_COMPROBANTE: dataSend.SERIE_COMP.toUpperCase() + dataSend.NUM_COMP
     };
 
     try {
       const { data: { data = [], message: messageComp, success: successComp } } = await httpClient.post('comprobante/getCorrelativoMontoNeto', dataFormat);
-      
+
       if (successComp) {
         setDataSend({
           ...dataSend,
@@ -97,11 +98,13 @@ function ModalBusquedaComprobante({
       okText='Aceptar'
       cancelText='Salir'
       centered
-      onCancel={() => setAbrirModalManual(false)}
-      onOk={() => traerCorrelativoMontoNeto()}
+      okType='default'
       okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'},
         loading: loadingData
       }}
+      onCancel={() => setAbrirModalManual(false)}
+      onOk={() => traerCorrelativoMontoNeto()}
       cancelButtonProps={{
         disabled: loadingData
       }}
@@ -174,7 +177,7 @@ function ModalBusquedaComprobante({
               name='FECHA_FORMAT'
               value={dataSend.FECHA_FORMAT}
               format='DD/MM/yyyy'
-              placeholder='dd/mm/yyyy' 
+              placeholder='dd/mm/yyyy'
               style={{ width: '100%' }} />
           </Form.Item>
         </Form>

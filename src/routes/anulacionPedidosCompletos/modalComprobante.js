@@ -6,12 +6,12 @@ import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import QRCode from 'react-qr-code';
 
-import logoHeader from '../../assets/posventa/logo-biensalud.jpg';
 import DecimalFormat from 'decimal-format';
 import { numberToLetter } from '../../util/numberToletters';
 import { httpClient } from '../../util/Api';
 import { baseUrl, baseUrlImage } from '../../config/backend';
 import ModalLoading from '../../util/modalLoading';
+import { useSelector } from 'react-redux';
 
 const pageStyle = `
 @page {
@@ -43,7 +43,6 @@ const ModalComprobante = ({
 }) => {
 	const [visibleModalComprobante, setVisibleModalComprobante] = useState(false);
 	const [loadingData, setLoadingData] = useState(false);
-
 	const generarComprobante = async () => {
 		setLoadingData(true);
 		const response = await httpClient.post('/posventa/generaReporteNotaCredito', {
@@ -233,7 +232,7 @@ const ModalComprobante = ({
 
 const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabecera }) => {
 	const impresionRef = useRef();
-
+  const { logosImpresion, themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const handlePrint = useReactToPrint({
 		content: () => impresionRef.current,
 		pageStyle: pageStyle,
@@ -304,7 +303,7 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 			>
 				{/* {imprimir} */}
         <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
-          <img src={logoHeader} alt="lopotipo-biensalud" />
+          <img src={`${process.env.PUBLIC_URL}/assets/images/${logosImpresion.LOGO_FE_TERMICA}`} alt="lopotipo-biensalud" />
         </div>
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					CONSORCIO SALUD LIMA SUR - RUC: 20555875828
@@ -451,8 +450,10 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 			</div>
 			<div style={{ margin: 10, display: 'flex', justifyContent: 'center' }}>
 				<Button
-					// disabled={iniciando}
-					type="primary"
+          style={{
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
 					onClick={() => {
 						setVisible(false);
 						handlePrint();

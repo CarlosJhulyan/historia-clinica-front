@@ -16,8 +16,10 @@ import {
 } from 'antd';
 import { openNotification } from '../../../../util/util';
 import { httpClient } from '../../../../util/Api';
+import { useSelector } from 'react-redux';
 
 const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [horario, setHorario] = useState();
 	const [fecha, setFecha] = useState();
 	const [guardando, setGuardando] = useState(false);
@@ -123,7 +125,12 @@ const ModalAsignar = ({ visibleModal, setVisibleModal, traerData }) => {
 					guardarHorario();
 				}}
 				title="Asignar Horario"
-			>
+        okType='defaults'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+        }}
+
+      >
 				<div style={{ padding: 10 }}>
 					<Form
             form={form}

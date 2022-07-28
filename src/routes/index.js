@@ -41,6 +41,7 @@ import AnulacionPedidosCompletos from './anulacionPedidosCompletos';
 import AsignacionMedicos from './configuraciones/asignacionMedicos';
 import GestionarUsuarios from './configuraciones/gestionarUsuarios';
 import ReservaPedidos from './posVenta/reservaPedidos';
+import GestionarClienteProveedor from './configuraciones/gestionarClienteProveedor';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
@@ -245,6 +246,13 @@ const App = ({ match }) => {
           component={GestionarUsuarios}
         />
       );
+      items.push(
+        <Route
+          key={6}
+          path={`${match.url}hc-admin/configuraciones/clientes`}
+          component={GestionarClienteProveedor}
+        />
+      );
 		}
 
 		if (tokenReports && dataPrincial) {
@@ -286,7 +294,7 @@ const App = ({ match }) => {
 	const rutas = generateRoute(token);
 
 	return (
-		<div className="gx-main-content-wrapper">
+		<div className={`gx-main-content-wrapper`}>
 			<Switch>
 				{/* ---------------- DAVID ------------------- */}
 				{rutas.map(item => item)}

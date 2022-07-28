@@ -29,6 +29,7 @@ import {
 import moment from 'moment';
 import { httpClient } from '../../util/Api';
 import { getDepartamentos, getProvincias, getDistritos } from '../../util/Ubigeo';
+import { useSelector } from 'react-redux';
 
 const ModaDetalles = (props) => {
 	const {
@@ -44,7 +45,7 @@ const ModaDetalles = (props) => {
 	const formatoFecha = 'DD/MM/yyyy';
 	const { Option } = Select;
 	const [isModalVisibleConfirm, setIsModalVisibleConfirm] = useState(false);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [estado, setEstado] = useState({
 		SEXO_CLI: 'M',
 		COD_TIP_DOCUMENTO: '01',
@@ -264,9 +265,16 @@ const ModaDetalles = (props) => {
 					<Button disabled={loadingDataFetch} onClick={() => handleCloseModal()}>
 						Cancelar
 					</Button>,
-					<Button loading={loadingDataFetch} type='primary' onClick={() => {
-						showModalConfirm();
-					}}>
+					<Button
+            loading={loadingDataFetch}
+            onClick={() => {
+						  showModalConfirm();
+					  }}
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
 						{
 							isModalEdit ? 'Modificar' : 'Registrar'
 						}
@@ -829,7 +837,11 @@ const ModaDetalles = (props) => {
 							upsertPaciente();
 						}}
 						loading={loadingFetch}
-						type='primary'>
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
 							{isModalEdit ? 'Modificar' : 'Registrar'}
 					</Button>,
 				]}>

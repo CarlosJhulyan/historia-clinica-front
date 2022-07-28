@@ -8,8 +8,10 @@ import { openNotification } from '../../../../util/util';
 import { httpClient } from '../../../../util/Api';
 import confirm from 'antd/lib/modal/confirm';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [guardando, setGuardando] = useState(false);
 	const [horario, setHorario] = useState([
 		moment().set({
@@ -123,7 +125,10 @@ const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 					onClick={() => {
 						confirmar('save');
 					}}
-					type="primary"
+          style={{
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
 				>
 					Aceptar
 				</Button>,
@@ -134,7 +139,14 @@ const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 				<Form
 					form={form}
 					style={{ paddingLeft: 20, paddingRight: 20 }}
+          labelCol={{
+            span: 8
+          }}
+          wrapperCol={{
+            span: 16
+          }}
 					initialValues={{
+            bus: medico.bus,
 						especialidad: medico.especialidad,
 						medico: medico.nombre_medico,
 						fecha: moment(medico.fecha),
@@ -157,6 +169,13 @@ const ModalEditar = ({ visibleModal, setVisibleModal, medico, traerData }) => {
 							</Form.Item>
 						</Col>
 					</Row>
+          <Row>
+            <Col span={24}>
+              <Form.Item name="bus" label="Consultorio">
+                <Input disabled></Input>
+              </Form.Item>
+            </Col>
+          </Row>
 					<Row>
 						<Col span={24}>
 							<Form.Item name="medico" label="Medico">

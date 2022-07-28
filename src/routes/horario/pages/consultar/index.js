@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Button, DatePicker, Spin, Input, Form, Row, Col, Select, Tooltip } from 'antd';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Card, Button, DatePicker, Spin, Input, Form, Row, Col, Select, Tooltip, Modal } from 'antd';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import { httpClient } from '../../../../util/Api';
@@ -7,8 +7,9 @@ import ModalAsignar from './ModalAsignar';
 import ModalEditar from './ModalEditar';
 import ReactExport from 'react-export-excel';
 import { ClearOutlined } from '@ant-design/icons';
-import { convertir24hrsa12hrs } from '../../../../util/util';
-
+import { convertir24hrsa12hrs, openNotification } from '../../../../util/util';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
+import { useSelector } from 'react-redux';
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
 const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
@@ -36,6 +37,7 @@ const messages = {
 };
 
 const ConsultarHorario = () => {
+  const { confirm } = Modal;
 	const [events, setEvents] = useState([]);
 	const [dataFormat, setDataFormat] = useState({});
 	const [visibleModalAsignar, setVisibleModalAsignar] = useState(false);
@@ -50,6 +52,9 @@ const ConsultarHorario = () => {
 	const [currentMedico, setCurrentMedico] = useState('');
 	const [dataMedicos, setDataMedicos] = useState([]);
 	const [mensaje, setMensaje] = useState('');
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
+
+  const DragAndDropCalendar = withDragAndDrop(Calendar)
 
 	const traerEspeciliades = async () => {
 		const response = await httpClient.post('horarios/obtenerEspecialidad');
@@ -72,11 +77,49 @@ const ConsultarHorario = () => {
 		}
 	};
 
+  const handleEventDrop = useCallback((e) => {
+    const horario = {
+      horaInicio: e.event.hora_inicio,
+      horaFin: e.event.hora_fin,
+      id: e.event.id_horario,
+      fecha: e.start
+    }
+
+    if (moment(e.event.fecha, 'yyyy-MM-DD').format('DD/MM/yyyy') === moment(e.start).format('DD/MM/yyyy')) return;
+
+    confirm({
+      content: (
+        <>
+          <p>Se cambiara el horario de la fecha {moment(e.event.fecha, 'yyyy-MM-DD').format('DD/MM/yyyy')} hacia {moment(e.start).format('DD/MM/yyyy')}</p>
+        </>
+      ),
+      cancelText: 'Cancelar',
+      okText: 'Cambiar',
+      onOk: async () => {
+        await guardarHorario(horario);
+      },
+      onCancel: () => {},
+      centered: true
+    });
+  }, []);
+
+  const handleEventDragStart = useCallback((event) => {
+    // console.log('DRAG', event);
+  }, []);
+
+  const guardarHorario = async (horario) => {
+    const response = await httpClient.post('/horarios/editarHorario', horario);
+    if (response.data.success) {
+      traerData();
+    } else {
+      openNotification('Error', response.data.message, 'Alerta');
+    }
+  };
+
 	useEffect(() => {
 		traerMedicos();
 	}, [currentEspecialidad]);
 
-	console.log(fechaSeleccionada);
 	const agregarEvento = data => {
 		var aux = [];
 		data.forEach(element => {
@@ -143,28 +186,19 @@ const ConsultarHorario = () => {
 	};
 
 	const mostrarModalDetalle = record => {
-		// TODO: MOSTRAR EL MODAL DE DETALLE
 		setMedico(record);
 		setVisibleModalEditar(true);
-		// console.log(record);
 	};
 
 	const traerData = async () => {
-		setLoading(true);
 		const response = await httpClient.post('/horarios/getHorarioFecha', {
 			mes: currentMes,
 			medico: currentMedico,
 			especialidad: currentEspecialidad,
 		});
-
-		// console.log(response.data.data);
 		agregarEvento(response.data.data);
-		setLoading(false);
 	};
 
-	// useEffect(() => {
-	// 	traerData();
-	// }, [currentMes]);
 
 	useEffect(() => {
 		if (datePicker) {
@@ -174,8 +208,13 @@ const ConsultarHorario = () => {
 	}, [datePicker]);
 
 	useEffect(() => {
-		traerData();
-		traerEspeciliades();
+    const asyncronized = async () => {
+      setLoading(true);
+      await traerData();
+      setLoading(false);
+      traerEspeciliades();
+    }
+		asyncronized();
 	}, []);
 
 	useEffect(() => {
@@ -187,7 +226,6 @@ const ConsultarHorario = () => {
 				dataNew[item.especialidad] = [item];
 			}
 		});
-		console.log('dataNew', dataNew);
 		setDataFormat(dataNew);
 	}, [events]);
 
@@ -269,8 +307,8 @@ const ConsultarHorario = () => {
 						</ExcelFile>
 						<Button
 							style={{
-								backgroundColor: '#04B0AD',
-								color: 'white',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff',
 								marginTop: '10px',
 								marginLeft: 20,
 							}}
@@ -387,7 +425,7 @@ const ConsultarHorario = () => {
 							<Spin tip="Cargando" />
 						</div>
 					) : (
-						<Calendar
+						<DragAndDropCalendar
 							popup
 							events={[...events]}
 							toolbar={true}
@@ -401,6 +439,9 @@ const ConsultarHorario = () => {
 							views={{ month: true }}
 							onSelectEvent={event => mostrarModalDetalle(event)}
 							date={fechaSeleccionada}
+              onEventDrop={handleEventDrop}
+              onDragStart={handleEventDragStart}
+              backgroundEvents='#000'
 						/>
 					)}
 				</div>

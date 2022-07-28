@@ -127,7 +127,11 @@ const AsignacionMedicos = () => {
                   onOk: () => {
                     handleDeleteAsignacion(record.CMP);
                   },
-                  centered: true
+                  centered: true,
+                  okType: 'default',
+                  okButtonProps: {
+                    style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+                  }
                 });
               }}
               style={{
