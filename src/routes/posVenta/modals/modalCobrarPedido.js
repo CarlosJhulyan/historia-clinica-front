@@ -68,6 +68,7 @@ function ModalCobrarPedido({
 		codGrupoCia: '001',
 		codLocal: '001',
 	};
+  console.log(dataMontos);
 
 	const [listaCajaEspecialidad, setListaCajaEspecialidad] = useState([{}]);
 	const [listaCajaDetEspecialidad, setListaCajaDetEspecialidad] = useState([{}]);

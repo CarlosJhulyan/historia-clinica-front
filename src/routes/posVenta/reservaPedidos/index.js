@@ -899,6 +899,12 @@ function ReservaPedidos() {
                       setProductosDetalles([]);
                       setData([]);
                       setSelectedRows([]);
+                      setDataDetallesFinally({
+                        total: 0,
+                        totalDolar: 0,
+                        items: 0,
+                        tipoCambio: 3.34,
+                      });
                       setVisibleModal(true);
                     },
                     cancelText: 'Nueva Selección',
@@ -1117,6 +1123,12 @@ function ReservaPedidos() {
         visible={visibleModalGenPedido}
         setVisible={setVisibleModalGenPedido}
         clearDataFinally={clearDataFinally}
+        clienteCurrent={clienteCurrent}
+        pacienteCurrent={pacienteCurrent}
+        medicoCurrent={medicoCurrent}
+        user={user}
+        tipoVenta={tipoVenta}
+        detallesPedido={data}
       />
     </>
   );

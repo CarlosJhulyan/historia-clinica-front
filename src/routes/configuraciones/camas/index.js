@@ -5,9 +5,10 @@ import { notificaciones } from '../../../util/util';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import ModalAgregar from './modalAgregar';
+import { useSelector } from 'react-redux';
 
 const ConfiguracionCamas = () => {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [pisos, setPisos] = useState();
   const [habitaciones, setHabitaciones] = useState();
   const [camas, setCamas] = useState();
@@ -163,7 +164,7 @@ const ConfiguracionCamas = () => {
         </Space>
       </div>
     ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
     onFilter: (value, record) =>
       record[dataIndex]
         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
@@ -381,9 +382,10 @@ const ConfiguracionCamas = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    margin: '0px'
+                    margin: '0px',
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
                   }}
-                  type="primary"
                 >
                   Agregar Piso
                 </Button>
@@ -422,9 +424,10 @@ const ConfiguracionCamas = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    margin: '0px'
+                    margin: '0px',
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
                   }}
-                  type="primary"
                 >
                   Agregar Habitación
                 </Button>
@@ -463,9 +466,10 @@ const ConfiguracionCamas = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    margin: '0px'
+                    margin: '0px',
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
                   }}
-                  type="primary"
                 >
                   Agregar Cama
                 </Button>

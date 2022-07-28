@@ -832,7 +832,7 @@ function GenerarPedido() {
 								marginTop: '15px',
 							}}
 						>
-							Generar Pedido
+              {dataReserva ? 'Resumen de Reserva' : 'Resumen de Pedido'}
 						</div>
 						<div
 							style={{
@@ -915,6 +915,12 @@ function GenerarPedido() {
                       setProductosDetalles([]);
                       setData([]);
                       setSelectedRows([]);
+                      setDataDetallesFinally({
+                        total: 0,
+                        totalDolar: 0,
+                        items: 0,
+                        tipoCambio: 3.34,
+                      });
                       setVisibleModal(true);
                     },
                     cancelText: 'Nueva Selección',
@@ -1047,15 +1053,31 @@ function GenerarPedido() {
 					>
 						Borrar
 					</Button>
-					{/* <Button
-						disabled={disabledAll}
-						style={{
-							backgroundColor: '#0169aa',
-							color: '#fff',
-						}}
-					>
-						Cotizar
-					</Button> */}
+          {dataReserva && (
+            <Button
+              disabled={disabledAll}
+              style={{
+                backgroundColor: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff',
+              }}
+              onClick={() => {
+                setDataReserva(null);
+                setProductosCurrent([]);
+                setSelectedRowKeys([]);
+                setProductosDetalles([]);
+                setData([]);
+                setSelectedRows([]);
+                setDataDetallesFinally({
+                  total: 0,
+                  totalDolar: 0,
+                  items: 0,
+                  tipoCambio: 3.34,
+                });
+              }}
+            >
+              Limpiar Reserva
+            </Button>
+          )}
 				</div>
 			</Card>
 			<ModalListaProductos

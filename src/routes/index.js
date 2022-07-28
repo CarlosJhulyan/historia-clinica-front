@@ -41,7 +41,6 @@ import AnulacionPedidosCompletos from './anulacionPedidosCompletos';
 import AsignacionMedicos from './configuraciones/asignacionMedicos';
 import GestionarUsuarios from './configuraciones/gestionarUsuarios';
 import ReservaPedidos from './posVenta/reservaPedidos';
-import MovimientosCajaReserva from './posVenta/reservaPedidos/movimientosCajaReserva';
 
 const App = ({ match }) => {
 	const token = JSON.parse(localStorage.getItem('token'));

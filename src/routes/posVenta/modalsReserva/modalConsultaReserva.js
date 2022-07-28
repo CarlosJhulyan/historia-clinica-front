@@ -240,9 +240,9 @@ const ModalConsultaReserva = ({
             const dataValidateStock = await getDetallesOperaReserva();
 
             setSelectedRowKeys(dataReserva.map(item => item.key));
-            setProductosCurrent(dataReserva.map(item => {
+            const productosCurrent = dataReserva.map(item => {
               return { ...item, MARCA: item.ESPECIALIDAD }
-            }));
+            });
 
             const detallesItem = []
             for (const dataReservaElement of dataReserva) {
@@ -257,15 +257,17 @@ const ModalConsultaReserva = ({
                 PRECIO: detallesProducto[0].PRECIO_VENTA
               });
             }
-
-            setProductosDetalles(dataReserva.map(item => {
+            const productosDetalles = dataReserva.map(item => {
               return {
                 ...detallesItem.find(item2 => item2.key === item.key),
                 total: Number(item.TOTAL),
                 cantidad: Number(item.CANTIDAD),
                 pu: Number(item.TOTAL) / Number(item.CANTIDAD),
               }
-            }));
+            });
+
+            setProductosCurrent(productosCurrent);
+            setProductosDetalles(productosDetalles);
 
             const dataFormat = dataReserva.map(item => {
               return {
@@ -277,15 +279,11 @@ const ModalConsultaReserva = ({
               }
             });
             setDataReservaFinally(dataFormat);
-            const dataFilteredShow = dataValidateStock.map(item => {
-              const detail = dataReserva.find(item2 => item2.key === item.key);
-              if (item.IN_STOCK === 'N') return {
-                ...item,
-                ...detail,
-                MARCA: detail.ESPECIALIDAD
-              };
+            const dataFilteredShow = dataReserva.filter(item => {
+              const detail = dataValidateStock.find(item2 => item2.key === item.key);
+              if (detail.IN_STOCK === 'N') return item;
             });
-            showProductosSinStockReserva(dataFilteredShow);
+            showProductosSinStockReserva(dataFilteredShow, productosCurrent, productosDetalles);
             setLoadingProcede(false);
             setDataReservaCab({ numPedido: datosPacienteReserva.NUM_PEDIDO_VTA });
             setVisible(false);

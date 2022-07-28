@@ -6,7 +6,7 @@ import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import QRCode from 'react-qr-code';
 
-import logoHeader from '../../assets/posventa/biensalud-logo.png';
+import logoHeader from '../../assets/posventa/logo-biensalud.jpg';
 import DecimalFormat from 'decimal-format';
 import { numberToLetter } from '../../util/numberToletters';
 import { httpClient } from '../../util/Api';
@@ -293,12 +293,19 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 		>
 			<div
 				ref={impresionRef}
-				style={{ display: 'flex', flexDirection: 'column', padding: 10, fontSize: 10 }}
+				style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: 10,
+          fontSize: 10,
+          lineHeight: 0.9
+        }}
+        className='font-ticket'
 			>
 				{/* {imprimir} */}
-				<div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
-					<img src={logoHeader} alt="lopotipo-biensalud" />
-				</div>
+        <div style={{ width: '100%', textAlign: 'center', marginBottom: 10 }}>
+          <img src={logoHeader} alt="lopotipo-biensalud" />
+        </div>
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					CONSORCIO SALUD LIMA SUR - RUC: 20555875828
 				</div>
@@ -323,16 +330,16 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 						<div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
 						<div>{dataImprimir.length > 0 ? dataImprimir[8].VALOR : ''} </div>
 						<div>{dataImprimir.length > 0 ? dataImprimir[9].VALOR : ''} </div>
-						<div>{dataImprimir.length > 0 ? dataImprimir[10].VALOR : ''} </div>
-						<div>{dataImprimir.length > 0 ? dataImprimir[11].VALOR : ''} </div>
+						<div>{dataImprimir.length > 0 ? dataImprimir[10].VALOR.substring(0,55) : ''} </div>
+						<div>{dataImprimir.length > 0 ? dataImprimir[11].VALOR.substring(0,55) : ''} </div>
 					</>
 				)}
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<Row style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 					<Col xs={4} style={{ padding: 0 }}>
 						CODIGO
 					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
+					<Col xs={8} style={{ padding: 0 }}>
 						DESCRIPCION
 					</Col>
 					<Col xs={3} style={{ padding: 0 }}>
@@ -344,17 +351,17 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 					<Col xs={3} style={{ padding: 0 }}>
 						DSCTO.
 					</Col>
-					<Col xs={5} style={{ padding: 0, textAlign: 'end' }}>
+					<Col xs={3} style={{ padding: 0, textAlign: 'end' }}>
 						IMPORTE
 					</Col>
 				</Row>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				{dataDetalle.map((element, index) => (
 					<Row key={index} style={{ width: '100%', margin: 0, textAlign: 'start', fontSize: 9 }}>
 						<Col xs={4} style={{ padding: 0 }}>
 							{element.COD_PROD}
 						</Col>
-						<Col xs={6} style={{ padding: 0 }}>
+						<Col xs={8} style={{ padding: 0 }}>
 							{element.DESCRIPCION + ' ' + element.LAB}
 						</Col>
 						<Col xs={3} style={{ padding: 0 }}>
@@ -366,12 +373,12 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 						<Col xs={3} style={{ padding: 0 }}>
 							{element.DESCTO}
 						</Col>
-						<Col xs={5} style={{ padding: 0, textAlign: 'end' }}>
+						<Col xs={3} style={{ padding: 0, textAlign: 'end' }}>
 							{element.SUBTOTAL}
 						</Col>
 					</Row>
 				))}
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
 					<Col xs={18} style={{ padding: 0 }}>
 						TOTAL A PAGAR: S/
@@ -380,7 +387,7 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 						{totalPagar}
 					</Col>
 				</Row>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 
 				<Row style={{ width: '100%', margin: 0, textAlign: 'end' }}>
 					<Col xs={18} style={{ padding: 0 }}>
@@ -406,7 +413,7 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 						{importeTotal}
 					</Col>
 				</Row>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<div>SON: {numberToLetter(Number(importeTotal))}</div>
 				<div>NOMBRE DE CLIENTE: {dataCabecera[0].CLIENTE}</div>
 				<div>DNI CLIENTE: {dataCabecera[0].RUC}</div>
@@ -414,7 +421,7 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 				<br />
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					{dataImprimir && (
-						<>{dataImprimir.length > 0 ? <QRCode key={qr} value={qr} size={100} /> : ''} </>
+						<>{dataImprimir.length > 0 ? <QRCode key={qr} value={qr} size={60} /> : ''} </>
 					)}
 				</div>
 				<br />
@@ -424,13 +431,14 @@ const Modalticket = ({ visible, setVisible, dataImprimir, dataDetalle, dataCabec
 					compra. Indispensable presentar este documento.
 				</div>
 				<br />
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
 				<div style={{ width: '100%', textAlign: 'center' }}>
 					{dataImprimir && (
 						<>{dataImprimir.length > 0 ? dataImprimir[dataImprimir.length - 11].VALOR : ''} </>
 					)}
 				</div>
-				<div>----------------------------------------------------------------</div>
+				<div>-------------------------------------------------------</div>
+        <br/>
 				<div style={{ width: '100%', textAlign: 'center' }}>DATOS DEL CLIENTE</div>
 				<br />
 				<div>NOMBRE: ____________________________________________</div>

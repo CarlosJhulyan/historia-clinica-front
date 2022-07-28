@@ -4,206 +4,216 @@ import { Button, Card, Table, Row, Col, Form, Input, Modal, Select, AutoComplete
 import { SearchOutlined } from "@ant-design/icons";
 import { openNotification } from '../../../util/util';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 
 const AsignacionMedicos = () => {
-    const [data, setData] = useState([]);
-    const [dataFiltered, setDataFiltered] = useState([]);
-    const { confirm } = Modal;
-    const [valueSearch, setValueSearch] = useState('');
-    const [loadingData, setLoadingData] = useState(false);
-    const [currentMedico, setCurrentMedico] = useState();
-    const [loadingSearh, setLoadingSearch] = useState(false);
-    const [visibleModalUpsert, setVisibleModalUpsert] = useState(false);
+  const [data, setData] = useState([]);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
+  const [dataFiltered, setDataFiltered] = useState([]);
+  const { confirm } = Modal;
+  const [valueSearch, setValueSearch] = useState('');
+  const [loadingData, setLoadingData] = useState(false);
+  const [currentMedico, setCurrentMedico] = useState();
+  const [loadingSearh, setLoadingSearch] = useState(false);
+  const [visibleModalUpsert, setVisibleModalUpsert] = useState(false);
 
-    const findMedicos = (values) => {
-      setLoadingSearch(true);
-      if (valueSearch.trim() === '') {
-        setDataFiltered([]);
-      }
-
-      setDataFiltered(data.filter(item => {
-        if (valueSearch.length === 5 && !isNaN(Number(valueSearch))) return item.CMP === valueSearch;
-        else return `${item.NOMBRES} ${item.APELLIDOS}`.includes(valueSearch);
-      }));
-      setLoadingSearch(false);
+  const findMedicos = (values) => {
+    setLoadingSearch(true);
+    if (valueSearch.trim() === '') {
+      setDataFiltered([]);
     }
 
-    const defData = async () => {
-      setLoadingData(true);
-      const response = await httpClient.get('/admin/searchAsignaMedicos');
-      setData(response.data.data);
-      setLoadingData(false);
-    }
+    setDataFiltered(data.filter(item => {
+      if (valueSearch.length === 5 && !isNaN(Number(valueSearch))) return item.CMP === valueSearch;
+      else return `${item.NOMBRES} ${item.APELLIDOS}`.includes(valueSearch);
+    }));
+    setLoadingSearch(false);
+  }
 
-    useEffect(() => {
-      defData();
-    }, [])
+  const defData = async () => {
+    setLoadingData(true);
+    const response = await httpClient.get('/admin/searchAsignaMedicos');
+    setData(response.data.data);
+    setLoadingData(false);
+  }
 
-    useEffect(() => {
-      setDataFiltered(data);
-    }, [data]);
+  useEffect(() => {
+    defData();
+  }, [])
 
-    const handleEditAsignacion = (record) => {
-      setCurrentMedico(record);
-    }
+  useEffect(() => {
+    setDataFiltered(data);
+  }, [data]);
 
-    const handleDeleteAsignacion = (cmp) => {
-      setLoadingData(true);
-      httpClient
-        .post('admin/deleteAsignacion', {cmp})
-        .then(({ data: {success,message} }) => {
-          if (success) {
-            openNotification('Asignación médico', message);
-            defData();
-          }
-          else openNotification('Asignación médico', message, 'Warning');
-        })
-        .catch(e => console.error(e));
-    }
+  const handleEditAsignacion = (record) => {
+    setCurrentMedico(record);
+  }
 
-    const columns = [
-        {
-            title: 'CMP',
-            dataIndex: 'CMP',
-            key: 'CMP',
+  const handleDeleteAsignacion = (cmp) => {
+    setLoadingData(true);
+    httpClient
+      .post('admin/deleteAsignacion', {cmp})
+      .then(({ data: {success,message} }) => {
+        if (success) {
+          openNotification('Asignación médico', message);
+          defData();
+        }
+        else openNotification('Asignación médico', message, 'Warning');
+      })
+      .catch(e => console.error(e));
+  }
 
-        },
-        {
-            title: 'NOMBRE',
-            dataIndex: 'NOMBRES',
-            key: 'NOMBRES',
+  const columns = [
+      {
+          title: 'CMP',
+          dataIndex: 'CMP',
+          key: 'CMP',
 
-        },
-        {
-            title: 'APELLIDOS',
-            dataIndex: 'APELLIDOS',
-            key: 'APELLIDOS',
-        },
-        {
-            title: 'CONSULTORIO',
-            dataIndex: 'CONSULTORIO',
-            key: 'CONSULTORIO'
-        },
-        {
-            title: 'BUS',
-            dataIndex: 'BUS',
-            key: 'BUS',
-        },
-        {
-            title: 'EDITAR',
-            dataIndex: 'key',
-            key: 'key',
-            render: (key, record) => (
-                <Button
-                    style={{
-                        background: "#04B0AD"
-                    }}
-                    onClick={e => {
-                      handleEditAsignacion(record);
-                      setVisibleModalUpsert(true);
-                    }}>
-                    <p style={{
-                        color: "white"
-                    }}>
-                        Editar
-                    </p>
-                </Button>
-            )
-        },
-        {
-            title: 'ELIMINAR',
-            dataIndex: 'key',
-            key: 'key',
-            render: (key, record) => (
+      },
+      {
+          title: 'NOMBRE',
+          dataIndex: 'NOMBRES',
+          key: 'NOMBRES',
+
+      },
+      {
+          title: 'APELLIDOS',
+          dataIndex: 'APELLIDOS',
+          key: 'APELLIDOS',
+      },
+      {
+          title: 'CONSULTORIO',
+          dataIndex: 'CONSULTORIO',
+          key: 'CONSULTORIO'
+      },
+      {
+          title: 'BUS',
+          dataIndex: 'BUS',
+          key: 'BUS',
+      },
+      {
+          title: 'EDITAR',
+          dataIndex: 'key',
+          key: 'key',
+          render: (key, record) => (
               <Button
-                onClick={() => {
-                  confirm({
-                    content: '¿Eliminar asignación de médico?',
-                    okText: 'Aceptar',
-                    cancelText: 'Cancelar',
-                    onOk: () => {
-                      handleDeleteAsignacion(record.CMP);
-                    },
-                    centered: true
-                  });
-                }}
-                style={{
-                    background: "#EB5353"
-                }}
-              >
+                  style={{
+                      background: themeSettingsGlobal.COD_COLOR_1
+                  }}
+                  onClick={e => {
+                    handleEditAsignacion(record);
+                    setVisibleModalUpsert(true);
+                  }}>
                   <p style={{
                       color: "white"
                   }}>
-                      Eliminar
+                      Editar
                   </p>
               </Button>
-            )
-        }
-    ]
+          )
+      },
+      {
+          title: 'ELIMINAR',
+          dataIndex: 'key',
+          key: 'key',
+          render: (key, record) => (
+            <Button
+              onClick={() => {
+                confirm({
+                  content: '¿Eliminar asignación de médico?',
+                  okText: 'Aceptar',
+                  cancelText: 'Cancelar',
+                  onOk: () => {
+                    handleDeleteAsignacion(record.CMP);
+                  },
+                  centered: true
+                });
+              }}
+              style={{
+                  background: "#EB5353"
+              }}
+            >
+                <p style={{
+                    color: "white"
+                }}>
+                    Eliminar
+                </p>
+            </Button>
+          )
+      }
+  ]
 
-    return (
-      <>
-        <Card
-          title={(
-            <Row justify='space-between' align='middle'>
-              <Col span={5}>
-                  Asignar Médico
-              </Col>
-              <Col span={9}>
-                <Form id='form-search' onFinish={findMedicos}>
-                  <Form.Item
-                    name='valor'
-                    style={{ margin: 0, padding: 0 }}
-                  >
-                    <Input
-                      placeholder='CMP o nombres'
-                      onChange={e => setValueSearch(e.target.value.toUpperCase())}
-                    />
-                  </Form.Item>
-                </Form>
-              </Col>
-              <Col span={8}>
-                <Row justify="end" align="middle">
-                  <Button
-                    type='primary'
-                    style={{ margin: 0 }}
-                    form='form-search'
-                    htmlType='submit'
-                    loading={loadingSearh}
-                  >
-                    <SearchOutlined />
-                  </Button>
-                  <Button
-                    type='primary'
-                    onClick={() => {
-                      setVisibleModalUpsert(true);
-                      setCurrentMedico(null);
-                    }}
-                    style={{ margin: 0, marginLeft: 20, marginRight: 20 }}
-                  >
-                    Crear
-                  </Button>
-                </Row>
-              </Col>
-            </Row>
-          )}
-        >
-          <Table
-            className="gx-table-responsive"
-            columns={columns}
-            dataSource={dataFiltered}
-            loading={loadingData}
-          />
-        </Card>
-
-        <ModalUpsertAsignacion
-          visible={visibleModalUpsert}
-          setVisible={setVisibleModalUpsert}
-          currentAsignacion={currentMedico}
-          defData={defData}
+  return (
+    <>
+      <Card
+        title={(
+          <Row justify='space-between' align='middle'>
+            <Col span={5}>
+                Asignar Médico
+            </Col>
+            <Col span={9}>
+              <Form id='form-search' onFinish={findMedicos}>
+                <Form.Item
+                  name='valor'
+                  style={{ margin: 0, padding: 0 }}
+                >
+                  <Input
+                    placeholder='CMP o nombres'
+                    onChange={e => setValueSearch(e.target.value.toUpperCase())}
+                  />
+                </Form.Item>
+              </Form>
+            </Col>
+            <Col span={8}>
+              <Row justify="end" align="middle">
+                <Button
+                  style={{
+                    margin: 0,
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
+                  }}
+                  form='form-search'
+                  htmlType='submit'
+                  loading={loadingSearh}
+                >
+                  <SearchOutlined />
+                </Button>
+                <Button
+                  onClick={() => {
+                    setVisibleModalUpsert(true);
+                    setCurrentMedico(null);
+                  }}
+                  style={{
+                    margin: 0,
+                    marginLeft: 20,
+                    marginRight: 20,
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
+                }}
+                >
+                  Crear
+                </Button>
+              </Row>
+            </Col>
+          </Row>
+        )}
+      >
+        <Table
+          className="gx-table-responsive"
+          columns={columns}
+          dataSource={dataFiltered}
+          loading={loadingData}
         />
-      </>
+      </Card>
+
+      <ModalUpsertAsignacion
+        visible={visibleModalUpsert}
+        setVisible={setVisibleModalUpsert}
+        currentAsignacion={currentMedico}
+        defData={defData}
+      />
+    </>
   );
 }
 
@@ -214,6 +224,7 @@ const ModalUpsertAsignacion = ({
   defData
 }) => {
   const formRef = useRef();
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
   const [peticion, setPeticion] = useState(false);
   const [loadingUpsert, setLoadingUpsert] = useState(false);
@@ -388,9 +399,12 @@ const ModalUpsertAsignacion = ({
           </Button>,
           <Button
             form='form-asignacion'
-            type='primary'
             htmlType='submit'
             loading={loadingUpsert}
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
           >
             {currentAsignacion ? 'Actualizar' : 'Crear'}
           </Button>

@@ -201,7 +201,7 @@ const ModaDetalles = (props) => {
 	return (
 		<>
 			<Modal
-				width="70%"
+				width={900}
 				okText="Aceptar"
 				cancelText="Cancelar"
 				title={

@@ -287,7 +287,7 @@ function ModalListaProductos({
     }
   };
 
-  const showProductosSinStockReserva = (productos = []) => {
+  const showProductosSinStockReserva = (productos = [], pC, pD) => {
     if (productos.length >= 1) info({
       centered: true,
       content: (
@@ -309,20 +309,41 @@ function ModalListaProductos({
       title: 'Productos Observados',
       okText: 'Aceptar',
       onOk: () => {
-        if (productosDetalles.length <= 0) {
+        if (pD.length <= 0) {
           warning({
             centered: true,
             content: 'No hay productos seleccionados. Verifique!!!',
           });
           return;
         }
-        chargeDetailsModalProducto(productosCurrent, productosDetalles);
+        chargeDetailsModalProducto(pC, pD);
         setVisible(false);
       },
       width: 500
     });
+    else {
+      chargeDetailsModalProducto(pC, pD);
+      setVisible(false);
+    }
+    //   info({
+    //   centered: true,
+    //   content: 'Se cargo el pedido en reserva correctamente',
+    //   okText: 'Aceptar',
+    //   onOk: () => {
+    //     if (productosDetalles.length <= 0) {
+    //       warning({
+    //         centered: true,
+    //         content: 'No hay productos seleccionados. Verifique!!!',
+    //       });
+    //       return;
+    //     }
+    //     chargeDetailsModalProducto(productosCurrent, productosDetalles);
+    //
+    //   },
+    //   width: 500
+    // });
   }
-  console.log(productoCurrent);
+
 	useEffect(() => {
     validaCambioPrecio();
 		getListaProductos();
@@ -374,9 +395,9 @@ function ModalListaProductos({
           >
             Aceptar
           </Button>,
-          !reserva && (
+          (!reserva && user.roles.some(item => item === '909')) && (
             <Button onClick={() => setVisibleModalConsultaReserva(true)}>
-              Ingresa Pedido/Cotización
+              Atención de Reserva
             </Button>
           ),
           <Button form="my-form" htmlType="reset" type="default" onClick={resetEspecialidades}>
@@ -561,7 +582,7 @@ function ModalListaProductos({
 					productoCurrent={productoCurrentDetails}
 				/>
 			) : null}
-      {(visibleModalConsultaReserva && !reserva) && (
+      {(visibleModalConsultaReserva && !reserva && user.roles.some(item => item === '909')) && (
         <ModalConsultaReserva
           visible={visibleModalConsultaReserva}
           setVisible={setVisibleModalConsultaReserva}

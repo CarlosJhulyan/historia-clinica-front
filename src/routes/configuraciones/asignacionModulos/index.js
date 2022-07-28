@@ -4,8 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { httpClient } from '../../../util/Api';
 import ModalAsignacion from './modalAsignacion';
+import { useSelector } from 'react-redux';
 
 const AsignacionModulos = () => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [data, setData] = useState();
 	const [modulos, setModulos] = useState();
 	const [abrirModal, setAbrirModal] = useState(false);
@@ -178,8 +180,9 @@ const AsignacionModulos = () => {
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
-							type="primary"
               disabled={bloquearBoton}
 						>
 							Agregar Médico

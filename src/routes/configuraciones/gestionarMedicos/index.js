@@ -4,6 +4,7 @@ import { httpClient } from '../../../util/Api';
 import ModalUpsertMedico from './modalUpsertMedico';
 import { SearchOutlined } from '@ant-design/icons';
 import { openNotification } from '../../../util/util';
+import { useSelector } from 'react-redux';
 
 const GestionarMedicos = () => {
   const admin = JSON.parse(localStorage.getItem('token-admin'));
@@ -15,6 +16,7 @@ const GestionarMedicos = () => {
   const [currentUpdate, setCurrentUpdate] = useState({});
   const [currentMedico, setCurrentMedico] = useState();
   const [visibleModalUpsert, setVisibleModalUpsert] = useState(false);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
   const searchMedicos = async (values) =>{
     if (values.valor.trim() === '') {
@@ -131,8 +133,11 @@ const GestionarMedicos = () => {
             <Col span={8}>
               <Row justify='end' align='middle'>
                 <Button
-                  type='primary'
-                  style={{margin:0}}
+                  style={{
+                    margin:0,
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff',
+                  }}
                   form='form-search'
                   htmlType='submit'
                   loading={loadingSearh}
@@ -140,8 +145,13 @@ const GestionarMedicos = () => {
                   <SearchOutlined />
                 </Button>
                 <Button
-                  type='primary'
-                  style={{margin:0, marginLeft: 20, marginRight:20}}
+                  style={{
+                    margin:0,
+                    marginLeft: 20,
+                    marginRight:20,
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
+                  }}
                   onClick={() => {
                     setCurrentMedico();
                     setVisibleModalUpsert(true);

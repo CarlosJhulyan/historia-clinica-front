@@ -6,10 +6,10 @@ import { httpClient } from '../../../util/Api';
 import { baseUrlImage } from '../../../config/backend';
 import { notificaciones } from '../../../util/util';
 import ModalAgregar from './modalAgregar';
+import { useSelector } from 'react-redux';
 
 const ConfiguracionFirmas = () => {
-  //TODO: crud de firmas como la asignación (busqueda)
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [data, setData] = useState([]);
   const [abrirModal, setAbrirModal] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
@@ -211,8 +211,9 @@ const ConfiguracionFirmas = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
               }}
-              type="primary"
             >
               Agregar Firma
             </Button>

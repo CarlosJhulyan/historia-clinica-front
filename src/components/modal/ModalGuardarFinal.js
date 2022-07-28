@@ -1,6 +1,6 @@
 import { CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { notification, message, Modal, Button, Row, Col } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOpacity } from '../../appRedux/actions/Opacity';
 
@@ -10,7 +10,7 @@ import { notificaciones } from '../../util/util';
 
 export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setModalGuardar, limpiarData, setModalImpresion, traerDatos, setMostrarListaPaciente }) => {
 	console.log("ENVIAR DATA:", enviarData);
-
+  const [messageError, setMessageError] = useState('');
 	const dispatch = useDispatch();
 	const token = JSON.parse(localStorage.getItem('token'));
 	console.log(enviarData2);
@@ -20,7 +20,6 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 		console.log('Atendido');
 		setModalGuardar(false);
 		dispatch(setOpacity(false));
-		console.log('DATITA', enviarData);
 
 		try {
 			enviarData.estadoConsulta.codestadonew = 'A';
@@ -29,11 +28,11 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 			if (e.data.success) {
 				enviarData2.cod_medico = token.cod_medico;
 				const env = await httpClient.post('/consulta/guardarSugerencias', enviarData2);
-				console.log('data enviada Sugerencia: ', env);
 				setModalImpresion(true);
 				traerDatos();
 			} else {
 				dispatch(setOpacity(true));
+        setMessageError(e.data.message);
 				throw e.data.message;
 			}
 		} catch (error) {
@@ -43,11 +42,8 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 	};
 
 	const onCancelGuardado = async () => {
-
-		console.log('Guardado');
 		// setModalGuardar(false);
 		dispatch(setOpacity(false));
-		console.log('DATITA', enviarData);
 
 		try {
 			enviarData.estadoConsulta.codestadonew = 'G';
@@ -55,6 +51,7 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 			console.log('data enviada: ', e);
 			if (!e.data.success) {
 				dispatch(setOpacity(true));
+        setMessageError(e.data.message);
 				throw e.data.message;
 			} else {
 				enviarData2.cod_medico = token.cod_medico;
@@ -84,7 +81,7 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 										notificaciones('Guardado Temporalmente', 'Promesa', {
 											promesa: onCancelGuardado,
 											pendiente: 'Guardando datos',
-											error: 'Alerta al guardar los datos',
+											error: messageError,
 											ok: 'Datos guardados',
 										});
 									}}>
@@ -98,7 +95,7 @@ export const ModalGuardarFinal = ({ enviarData, enviarData2, modalGuardar, setMo
 										notificaciones('Paciente Atendido', 'Promesa', {
 											promesa: onConfirmAtendido,
 											pendiente: 'Guardando datos',
-											error: 'Alerta al guardar los datos',
+											error: messageError,
 											ok: 'Datos guardados',
 										})}
 										type="primary">

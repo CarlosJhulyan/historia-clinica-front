@@ -1060,23 +1060,23 @@ export const getThemeDesignLookGlobal = async () => {
 // ---------------------------- LUIS GRABADO -----------------------------------
 //Separar funciones Pestañas.
 
-export const consultaMedicaGeneral = dataGlobal => {
+export const consultaMedicaGeneral = async dataGlobal => {
 	examenFisico(dataGlobal);
-	traerEvolucionTratamiento(dataGlobal); //edited
+	await traerEvolucionTratamiento(dataGlobal); //edited
 	tratamiento(dataGlobal);
 	consultasProcedimiento(dataGlobal);
-	traerInterconsulta(dataGlobal); //edited
+	await traerInterconsulta(dataGlobal); //edited
 	imagenes(dataGlobal);
 	laboratorio(dataGlobal);
 };
 
-export const consultaOdontologica = dataGlobal => {
+export const consultaOdontologica = async dataGlobal => {
 	examenFisico(dataGlobal);
 	traerEstematologico(dataGlobal); //edited
-	traerEvolucionTratamientoOdonto(dataGlobal); //edited
+	await traerEvolucionTratamientoOdonto(dataGlobal); //edited
 	tratamiento(dataGlobal);
 	consultasProcedimiento(dataGlobal);
-	traerInterconsulta(dataGlobal); //edited
+	await traerInterconsulta(dataGlobal); //edited
 	imagenes(dataGlobal);
 	laboratorio(dataGlobal);
 };

@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Card, Col, Descriptions, Modal, Row } from 'antd';
+import ModalImpresionTermica from './modalImpresionTermica';
 
-const ModalGenPedidoDiario = ({ visible, dataFetchCabecera, clearDataFinally }) => {
+const ModalGenPedidoDiario = ({
+                                visible,
+                                dataFetchCabecera,
+                                clearDataFinally,
+                                clienteCurrent,
+                                medicoCurrent,
+                                pacienteCurrent,
+                                user,
+                                tipoVenta,
+                                detallesPedido,
+}) => {
+  const [visibleImprimirComprobante, setVisibleImprimirComprobante] = useState(false);
+
   return (
     <>
       <Modal
@@ -15,7 +28,9 @@ const ModalGenPedidoDiario = ({ visible, dataFetchCabecera, clearDataFinally }) 
           >
             Aceptar
           </Button>,
-          <Button>
+          <Button
+            onClick={() => setVisibleImprimirComprobante(true)}
+          >
             Imprimir Térmica
           </Button>,
           <Button>
@@ -55,6 +70,21 @@ const ModalGenPedidoDiario = ({ visible, dataFetchCabecera, clearDataFinally }) 
           {dataFetchCabecera.cobs_reserva}
         </Card>
       </Modal>
+
+      {visibleImprimirComprobante && (
+        <ModalImpresionTermica
+          visible={visibleImprimirComprobante}
+          setVisible={setVisibleImprimirComprobante}
+          clienteCurrent={clienteCurrent}
+          medicoCurrent={medicoCurrent}
+          pacienteCurrent={pacienteCurrent}
+          numPedVta={dataFetchCabecera.cNumPedVta_in}
+          user={user}
+          secCompPago={dataFetchCabecera.nSecCompPago_in}
+          tipoVenta={tipoVenta}
+          dataDetalle={detallesPedido}
+        />
+      )}
     </>
   );
 }

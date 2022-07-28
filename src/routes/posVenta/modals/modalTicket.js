@@ -200,7 +200,7 @@ const ModalTicket = ({
 				<div>
 					{dataImprimir && (
 						<>
-							<div style={{fontSize:23}}>{dataImprimir.length > 0 ? dataImprimir[4].VALOR : ''} </div>
+							<div style={{fontSize:22}}>{dataImprimir.length > 0 ? dataImprimir[4].VALOR : ''} </div>
 							<div style={{fontSize:12}}>{dataImprimir.length > 0 ? dataImprimir[5].VALOR : ''} </div>
               <div>{dataImprimir.length > 0 ? dataImprimir[6].VALOR : ''} </div>
 							<br />
@@ -209,8 +209,8 @@ const ModalTicket = ({
 							<br />
 							<div>{dataImprimir.length > 0 ? dataImprimir[9].VALOR : ''} </div>
 							<div>{dataImprimir.length > 0 ? dataImprimir[10].VALOR : ''} </div>
-							<div>{dataImprimir.length > 0 ? dataImprimir[11].VALOR : ''} </div>
-              <div>{dataImprimir.length > 0 ? dataImprimir[12].VALOR.substring(0,55) : ''} </div>
+							<div>{dataImprimir.length > 0 ? dataImprimir[11].VALOR.substring(0,55) : ''} </div>
+              <div>{dataImprimir.length > 0 && dataImprimir[12].VALOR.length < 55 ? dataImprimir[12].VALOR.substring(0,55) : ''} </div>
 						</>
 					)}
 				</div>
@@ -220,7 +220,7 @@ const ModalTicket = ({
 					<Col xs={4} style={{ padding: 0 }}>
 						CODIGO
 					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
+					<Col xs={8} style={{ padding: 0 }}>
 						DESCRIPCION
 					</Col>
 					<Col xs={3} style={{ padding: 0 }}>
@@ -232,7 +232,7 @@ const ModalTicket = ({
 					<Col xs={3} style={{ padding: 0 }}>
 						DSCTO.
 					</Col>
-					<Col xs={5} style={{ padding: 0, textAlign: 'end' }}>
+					<Col xs={3} style={{ padding: 0, textAlign: 'end' }}>
 						IMPORTE
 					</Col>
 				</Row>
@@ -242,7 +242,7 @@ const ModalTicket = ({
 						<Col xs={4} style={{ padding: 0 }}>
 							{element.COD_PROD}
 						</Col>
-						<Col xs={7} style={{ padding: 0 }}>
+						<Col xs={8} style={{ padding: 0 }}>
 							{element.DESCRIPCION + ' ' + element.LAB}
 						</Col>
 						<Col xs={3} style={{ padding: 0 }}>
@@ -254,7 +254,7 @@ const ModalTicket = ({
 						<Col xs={3} style={{ padding: 0 }}>
 							{element.DESCTO}
 						</Col>
-						<Col xs={4} style={{ padding: 0, textAlign: 'end' }}>
+						<Col xs={3} style={{ padding: 0, textAlign: 'end' }}>
 							{element.SUBTOTAL}
 						</Col>
 					</Row>

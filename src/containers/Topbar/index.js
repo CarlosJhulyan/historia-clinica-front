@@ -88,7 +88,7 @@ const Topbar = () => {
 
 	return (
 		<>
-			<Header>
+			<Header style={{background: '#afafaf'}}>
 				{navStyle === NAV_STYLE_DRAWER ||
 				((navStyle === NAV_STYLE_FIXED || navStyle === NAV_STYLE_MINI_SIDEBAR) &&
 					width < TAB_SIZE) ? (

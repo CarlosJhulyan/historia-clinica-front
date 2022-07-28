@@ -10,6 +10,7 @@ import { httpClient } from '../../../util/Api';
 import moment from 'moment';
 import { useAuth } from '../../../authentication';
 import { openNotification } from '../../../util/util';
+import { useSelector } from 'react-redux';
 
 const ModalUpsertUsuario = ({
                               visible,
@@ -21,6 +22,7 @@ const ModalUpsertUsuario = ({
   const formRef = useRef();
   const { authAdmin } = useAuth();
   const [loadingUpsert, setLoadingUpsert] = useState(false);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
   const handleUpsertUsuario = async (values) => {
     setLoadingUpsert(true);
@@ -85,7 +87,7 @@ const ModalUpsertUsuario = ({
             form='form-upsert-cliente'
             htmlType='submit'
             loading={loadingUpsert}
-            style={{background: '#0169aa', color:'#fff'}}
+            style={{background: themeSettingsGlobal.COD_COLOR_1, color:'#fff'}}
           >
             {currentUsuario ? 'Actualizar' : 'Crear'}
           </Button>,
@@ -111,7 +113,7 @@ const ModalUpsertUsuario = ({
             span: 14
           }}
         >
-          <Row justify='center'  style={{backgroundColor: '#0169aa'}} align='middle'>
+          <Row justify='center'  style={{backgroundColor: themeSettingsGlobal.COD_COLOR_1}} align='middle'>
             <Col style={{color: '#fff', marginTop:10}} span={24}>
               Num. Sec. Usuario
             </Col>

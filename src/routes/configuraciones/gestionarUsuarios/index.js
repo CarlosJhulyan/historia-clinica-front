@@ -16,8 +16,10 @@ import ModalUpsertUsuario from './modalUpsertUsuario';
 import { useAuth } from '../../../authentication';
 import { openNotification } from '../../../util/util';
 import ModalAsignacionRoles from './modalAsignacionRoles';
+import { useSelector } from 'react-redux';
 
 const GestionarUsuarios = () => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [usersData, setUsersData] = useState([]);
   const [usersDataFiltered, setUsersDataFiltered] = useState([]);
   const [estadoUsuarios, setEstadoUsuarios] = useState('A');
@@ -142,8 +144,13 @@ const GestionarUsuarios = () => {
       <Card
         title='Listado de Usuarios Activos'
       >
-        <Row style={{backgroundColor: '#0169aa'}} align='middle'>
-          <Col span={12} style={{color:'#fff',fontSize:15}}>
+        <Row style={{backgroundColor: themeSettingsGlobal.COD_COLOR_1}} align='middle'>
+          <Col
+            span={12}
+            style={{
+              color:'#fff',
+              fontSize:15}}
+          >
             LOCAL: 001 - Humanidad SUR
           </Col>
           <Col span={12} style={{height:'auto'}}>
@@ -182,7 +189,7 @@ const GestionarUsuarios = () => {
             <Button
               disabled={disabledAll}
               style={{
-                backgroundColor: '#0169aa',
+                backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                 color: '#fff',
               }}
               onClick={() => {
@@ -196,7 +203,7 @@ const GestionarUsuarios = () => {
             <Button
               disabled={disabledAll || selectedRowKeys.length === 0}
               style={{
-                backgroundColor: '#0169aa',
+                backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                 color: '#fff',
               }}
               onClick={() => {
@@ -208,7 +215,7 @@ const GestionarUsuarios = () => {
             <Button
               disabled={disabledAll || selectedRowKeys.length === 0}
               style={{
-                backgroundColor: '#0169aa',
+                backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                 color: '#fff',
               }}
               onClick={handleActivaDescativaUsuario}
@@ -219,7 +226,7 @@ const GestionarUsuarios = () => {
             <Button
               disabled={disabledAll  || selectedRowKeys.length === 0}
               style={{
-                backgroundColor: '#0169aa',
+                backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                 color: '#fff',
               }}
               onClick={() => setVisibleModalRoles(true)}
@@ -229,7 +236,7 @@ const GestionarUsuarios = () => {
             <Button
               disabled={disabledAll}
               style={{
-                backgroundColor: '#0169aa',
+                backgroundColor: themeSettingsGlobal.COD_COLOR_1,
                 color: '#fff',
               }}
               onClick={() => setEstadoUsuarios('')}

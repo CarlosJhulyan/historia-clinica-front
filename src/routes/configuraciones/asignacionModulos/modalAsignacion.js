@@ -1,8 +1,9 @@
 import React, { useState, createRef, useMemo } from 'react';
-import { Checkbox, Col, Modal, Row, Form, AutoComplete, notification, Divider, Radio } from 'antd';
+import { Checkbox, Col, Modal, Row, Form, AutoComplete, notification, Divider, Radio, Button } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { notificaciones, openNotification } from '../../../util/util';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const ModalAsignacion = ({
                            abrirModal,
@@ -14,7 +15,7 @@ const ModalAsignacion = ({
                            setNumDocumento
 }) => {
 	const formRef = createRef();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const onChange = e => {
 		console.log(e);
 		setValores(e);
@@ -172,8 +173,53 @@ const ModalAsignacion = ({
 
 	return (
 		<Modal
-			okText="Aceptar"
-			cancelText="Cancelar"
+			footer={[
+        <Button onClick={() => setAbrirModal(false)}>
+          Cancelar
+        </Button>,
+        <Button
+          onClick={async () => {
+            if (numDocumento) {
+              if (filaActual) {
+                if (valores.length >= 1) {
+                  setLoading(true);
+                  await guardarAssignacion();
+                  await traerUsuarios();
+                  setLoading(false);
+                } else {
+                  notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
+                }
+              } else {
+                if (cod !== '') {
+                  if (valores.length >= 1) {
+                    setLoading(true);
+                    const respuesta = await guardarAssignacion();
+                    if (respuesta?.success) {
+                      await traerUsuarios();
+                      setLoading(false);
+                      setAbrirModal(false);
+                      notificaciones('Completado!');
+                    } else {
+                      notificaciones('El codigo del medico es incorrecto.', 'Alerta');
+                      setLoading(false);
+                    }
+                  } else {
+                    notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
+                  }
+                } else {
+                  notificaciones('Debe ingresar un código de médico', 'Alerta');
+                }
+              }
+            } else notificaciones('Se debe asignar un número de documento al médico', 'Alerta');
+          }}
+          style={{
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
+        >
+          Aceptar
+        </Button>
+      ]}
 			confirmLoading={loading}
 			title={
 				<div
@@ -192,40 +238,6 @@ const ModalAsignacion = ({
 				</div>
 			}
 			visible={abrirModal}
-			onOk={async () => {
-        if (numDocumento) {
-          if (filaActual) {
-            if (valores.length >= 1) {
-              setLoading(true);
-              await guardarAssignacion();
-              await traerUsuarios();
-              setLoading(false);
-            } else {
-              notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
-            }
-          } else {
-            if (cod !== '') {
-              if (valores.length >= 1) {
-                setLoading(true);
-                const respuesta = await guardarAssignacion();
-                if (respuesta?.success) {
-                  await traerUsuarios();
-                  setLoading(false);
-                  setAbrirModal(false);
-                  notificaciones('Completado!');
-                } else {
-                  notificaciones('El codigo del medico es incorrecto.', 'Alerta');
-                  setLoading(false);
-                }
-              } else {
-                notificaciones('Debe asignar almenos 1 módulo.', 'Alerta');
-              }
-            } else {
-              notificaciones('Debe ingresar un código de médico', 'Alerta');
-            }
-          }
-        } else notificaciones('Se debe asignar un número de documento al médico', 'Alerta');
-			}}
 			onCancel={() => setAbrirModal(false)}
 		>
 			{filaActual ? null : (
@@ -270,8 +282,22 @@ const ModalAsignacion = ({
 					// size="small"
 					onChange={handleChangeAreaDesignada}
 					buttonStyle="solid">
-						<Radio.Button value="1">Historia clinica</Radio.Button>
-						<Radio.Button value="2">Hospitalización</Radio.Button>
+						<Radio.Button
+              style={{
+                background: areaDesignada === '1' && themeSettingsGlobal.COD_COLOR_1
+              }}
+              value="1"
+            >
+              Historia clinica
+            </Radio.Button>
+						<Radio.Button
+              style={{
+                background: areaDesignada === '2' && themeSettingsGlobal.COD_COLOR_1
+              }}
+              value="2"
+            >
+              Hospitalización
+            </Radio.Button>
 				</Radio.Group>
 			</div>
 			<Checkbox.Group style={{ paddingLeft: 15 }} onChange={onChange} value={valores}>

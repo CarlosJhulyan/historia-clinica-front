@@ -1,4 +1,10 @@
-import { CheckCircleOutlined, CloseCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  InfoOutlined,
+  SearchOutlined,
+  WarningOutlined
+} from '@ant-design/icons';
 import { notification, Input, Space, Button } from 'antd';
 import moment from 'moment';
 import { toast } from 'react-toastify';
@@ -51,8 +57,8 @@ export const openNotification = (titulo, texto, tipo) => {
 	const key = `open${Date.now()}`;
 	notification.open({
 		duration: 2,
-		style: { color: tipo === 'Alerta' ? 'red' : tipo === 'Warning' ? 'orange' : '#52c41a' },
-		icon: tipo === 'Alerta' ? <CloseCircleOutlined /> : <CheckCircleOutlined />,
+		style: { color: tipo === 'Alerta' ? 'red' : tipo === 'Warning' ? 'orange' : tipo === 'Info' ? 'blue' : '#52c41a' },
+		icon: tipo === 'Alerta' ? <CloseCircleOutlined /> : tipo === 'Warning' ? <WarningOutlined /> : tipo === 'Info' ? <InfoOutlined /> : <CheckCircleOutlined />,
 		message: titulo,
 		description: texto,
 		key,
@@ -61,6 +67,12 @@ export const openNotification = (titulo, texto, tipo) => {
 
 export const notificaciones = (texto, tipo, objeto) => {
 	switch (tipo) {
+    case 'Info':
+      toast.info(texto, { theme: 'colored' });
+      break;
+    case 'Warn':
+      toast.warning(texto, { theme: 'colored' });
+      break;
 		case 'Alerta':
 			toast.error(texto, { theme: 'colored' });
 			break;

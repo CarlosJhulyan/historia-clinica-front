@@ -258,25 +258,34 @@ const ModalListaReservas = ({
             <Form.Item
               label='Cliente o RUC'
               className='usuarios-activos'
+              style={{margin:0}}
             >
-              <Input
+              <Input.Search
                 value={textSearch}
                 onChange={e => {
                   const text = e.target.value.toUpperCase();
                   setTextSearch(text);
+                }}
+                style={{margin:0}}
+                onSearch={e => {
+                  const text = textSearch;
                   if (isNaN(Number(text))) {
                     const dataFilter = dataList.filter(item => item.NOM_CLI.includes(text));
                     setDataListFiltered(dataFilter);
                     if (dataFilter.length === 0 ) setMessageShow(true);
+                    else setMessageShow(false);
                   } else {
                     const dataFilter = dataList.filter(item => item.DNI.includes(text));
                     setDataListFiltered(dataFilter);
                     if (dataFilter.length === 0 ) setMessageShow(true);
+                    else setMessageShow(false);
                   }
                 }}
               />
+              {messageShow && <span style={{color:'#fff'}}>
+                No se encontraron datos para el filtro ingresado
+              </span>}
             </Form.Item>
-            {messageShow && <span>No se encontraron datos para el filtro ingresado</span>}
           </Col>
         </Row>
         <Row>

@@ -8,7 +8,10 @@ import {
   Modal,
   Divider,
   Radio,
-  Space, DatePicker, TimePicker, Card
+  Space,
+  DatePicker,
+  TimePicker,
+  Card
 } from 'antd';
 
 import Doctor from '../../../assets/posventa/doctor.png';
@@ -224,23 +227,23 @@ function ModalDatosPedido({
 							Para ingresar los datos de Médico y Paciente, hacer CLICK en las imágenes
 						</small>
 						<Divider />
-						<Row>
-							<Col span={5}>
-								<br />
-								<h5>Selección de Tipo...</h5>
-								<Form>
-									<Radio.Group value={tipoVenta} onChange={e => setTipoVenta(e.target.value)}>
-										<Space direction="vertical">
-											<Radio disabled value='05'>
-												Ticket
-											</Radio>
-											<Radio value='01'>Boleta</Radio>
-											<Radio value='02'>Factura</Radio>
-										</Space>
-									</Radio.Group>
-								</Form>
+						<Row justify='center'>
+							<Col span={0}>
+								{/*<br />*/}
+								{/*<h5>Selección de Tipo...</h5>*/}
+								{/*<Form>*/}
+								{/*	<Radio.Group value={tipoVenta} onChange={e => setTipoVenta(e.target.value)}>*/}
+								{/*		<Space direction="vertical">*/}
+								{/*			<Radio disabled value='05'>*/}
+								{/*				Ticket*/}
+								{/*			</Radio>*/}
+								{/*			<Radio value='01'>Boleta</Radio>*/}
+								{/*			<Radio value='02'>Factura</Radio>*/}
+								{/*		</Space>*/}
+								{/*	</Radio.Group>*/}
+								{/*</Form>*/}
 							</Col>
-							<Col span={1}></Col>
+							<Col span={0}></Col>
 							<Col span={17}>
 								<Form labelCol={{ span: 5 }} wrapperCol={{ span: 19 }}>
 									<Form.Item label="Documento" style={{ margin: 0 }}>

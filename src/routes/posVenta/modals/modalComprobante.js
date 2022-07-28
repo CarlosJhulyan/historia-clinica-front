@@ -5,7 +5,6 @@ import { httpClient } from '../../../util/Api';
 import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import QRCode from 'react-qr-code';
 
-// import logoHeader from '../../../assets/posventa/biensalud-logo.png';
 import logoHeader from '../../../assets/posventa/logo-biensalud.jpg';
 import { numberToLetter } from '../../../util/numberToletters';
 import DecimalFormat from 'decimal-format';
@@ -293,6 +292,7 @@ const ModalComprobante = ({
 					<>
 						<div>{dataImprimir.length > 0 ? dataImprimir[7].VALOR : ''} </div>
 						<div>{dataImprimir.length > 0 ? dataImprimir[8].VALOR : ''} </div>
+            <div>{dataImprimir.length > 0 ? dataImprimir[9].VALOR : ''} </div>
 					</>
 				)}
 				<div>-------------------------------------------------------</div>
@@ -300,7 +300,7 @@ const ModalComprobante = ({
 					<Col xs={4} style={{ padding: 0 }}>
 						CODIGO
 					</Col>
-					<Col xs={6} style={{ padding: 0 }}>
+					<Col xs={8} style={{ padding: 0 }}>
 						DESCRIPCION
 					</Col>
 					<Col xs={3} style={{ padding: 0 }}>
@@ -312,7 +312,7 @@ const ModalComprobante = ({
 					<Col xs={3} style={{ padding: 0 }}>
 						DSCTO.
 					</Col>
-					<Col xs={5} style={{ padding: 0, textAlign: 'end' }}>
+					<Col xs={3} style={{ padding: 0, textAlign: 'end' }}>
 						IMPORTE
 					</Col>
 				</Row>
@@ -322,7 +322,7 @@ const ModalComprobante = ({
 						<Col xs={4} style={{ padding: 0 }}>
 							{element.COD_PROD}
 						</Col>
-						<Col xs={6} style={{ padding: 0 }}>
+						<Col xs={8} style={{ padding: 0 }}>
 							{element.DESCRIPCION + ' ' + element.LAB}
 						</Col>
 						<Col xs={3} style={{ padding: 0 }}>
@@ -334,7 +334,7 @@ const ModalComprobante = ({
 						<Col xs={3} style={{ padding: 0 }}>
 							{element.DESCTO}
 						</Col>
-						<Col xs={5} style={{ padding: 0, textAlign: 'end' }}>
+						<Col xs={3} style={{ padding: 0, textAlign: 'end' }}>
 							{element.SUBTOTAL}
 						</Col>
 					</Row>

@@ -1,12 +1,12 @@
 import { Modal } from 'antd';
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { httpClient } from '../../../util/Api';
 import { onClickRetroceder } from '../../../util/util';
 import DetallesPaciente from './detalles';
+import ModalLoading from '../../../util/modalLoading';
 
 const ModalVisualizar = ({ visualizar, setVisualizar, data, setBtnVisualizar }) => {
-
 	const [datosModalVisualizar, setDatosModalVisualizar] = useState(null);
 
 	const traerDatosModal = async () => {
@@ -57,20 +57,22 @@ const ModalVisualizar = ({ visualizar, setVisualizar, data, setBtnVisualizar }) 
 
 	if (datosModalVisualizar !== null) {
 		return (
-			<Modal
-				width="80%"
-				visible={visualizar}
-				cancelText="Salir"
-				cancelButtonProps={{
-					type: "primary"
-				}}
-				onCancel={() => {
-					setVisualizar(false);
-					onClickRetroceder();
-				}}
-				okButtonProps={{ hidden: true }}>
-				<DetallesPaciente datosModal={datosModalVisualizar}></DetallesPaciente>
-			</Modal>
+			<>
+        <Modal
+          width="80%"
+          visible={visualizar}
+          cancelText="Salir"
+          cancelButtonProps={{
+            type: "primary"
+          }}
+          onCancel={() => {
+            setVisualizar(false);
+            onClickRetroceder();
+          }}
+          okButtonProps={{ hidden: true }}>
+          <DetallesPaciente datosModal={datosModalVisualizar}></DetallesPaciente>
+        </Modal>
+      </>
 		);
 	} else {
 		return null;

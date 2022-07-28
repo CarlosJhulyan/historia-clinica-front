@@ -3,6 +3,7 @@ import { Button, Card, Col, Descriptions, Modal, Row, Table } from 'antd';
 import { httpClient } from '../../../util/Api';
 import { openNotification } from '../../../util/util';
 import { useAuth } from '../../../authentication';
+import { useSelector } from 'react-redux';
 
 const ModalAsignacionRoles = ({
                                 visible,
@@ -13,6 +14,7 @@ const ModalAsignacionRoles = ({
                                 loadingLista
 }) => {
   const { authAdmin } = useAuth();
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [loadingAsignados, setLoadingAsignados] = useState(false);
   const [loadingFetch, setLoadingFetch] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -128,7 +130,7 @@ const ModalAsignacionRoles = ({
         title='Lista de Roles Asignados'
         footer={[
           <Button
-            style={{background: '#0169aa', color:'#fff'}}
+            style={{background: themeSettingsGlobal.COD_COLOR_1, color:'#fff'}}
             disabled={loadingAsignados || loadingLista}
             onClick={handleAsignaRolesUsuario}
             loading={loadingFetch}
@@ -167,7 +169,9 @@ const ModalAsignacionRoles = ({
         <Row>
           <Col span={24}>
             <Table
-              title={() => <Row><Col style={{backgroundColor: '#0169aa', color:'#fff', padding: 10}} span={24}>Relación de Roles Asignados</Col></Row>}
+              title={() => <Row><Col style={{backgroundColor: themeSettingsGlobal.COD_COLOR_1, color:'#fff', padding: 10}} span={24}>
+                Relación de Roles Asignados
+              </Col></Row>}
               rowSelection={{
                 type: 'select',
                 ...rowSelection,

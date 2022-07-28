@@ -49,7 +49,7 @@ import {
 	AntecedentesGenerales,
 	getListaIgnorados,
 } from '../../listaPaciente/datosPaciente/apis';
-import { notificaciones } from '../../../util/util';
+import { notificaciones, openNotification } from '../../../util/util';
 import { setRegistrosEvolucion } from '../../../appRedux/actions/menu/evolucionTratamiento';
 import { quitar_seleccion, setEstadoOdonotograma } from '../../../appRedux/actions';
 import 'react-toastify/dist/ReactToastify.css';
@@ -67,8 +67,10 @@ import CabeceraInformacion from './cabeceraInformacion';
 import { ModalImpresionReceta } from './modalImpresion';
 import { ModalImpresionA4 } from './modalImpresionA4';
 import { baseUrlImage } from '../../../config/backend';
+import ModalLoading from '../../../util/modalLoading';
 
 const DetallesPaciente = ({ datosModal }) => {
+  const [cargandoGlobal, setCargandoGlobal] = useState(false);
 	const dispatch = useDispatch();
 	const [opcion, setOpcion] = useState();
 	const [state, setState] = useState();
@@ -128,38 +130,70 @@ const DetallesPaciente = ({ datosModal }) => {
 	};
 
 	useEffect(() => {
-		getListaIgnorados();
-		AntecedentesGenerales();
-		traerCombos(dataGlobal);
-		traerAnexo(dataGlobal);
+    const asyncronized = async () => {
+      setCargandoGlobal(true);
+      openNotification('', 'Cargando lista de ignorados', 'Info');
+      await getListaIgnorados();
+      setCargandoGlobal(true);
+      openNotification('', 'Cargando antecedentes generales', 'Info');
+      await AntecedentesGenerales();
+      setCargandoGlobal(true);
+      openNotification('', 'Cargando diagóstico', 'Info');
+      traerCombos(dataGlobal);
+      setCargandoGlobal(true);
+      openNotification('', 'Cargando anexos', 'Info');
+      await traerAnexo(dataGlobal);
+      setCargandoGlobal(false);
+    }
+    asyncronized();
 	}, []);
 
 	useEffect(() => {
-		if (!historiaAntecedentes) {
-			traerAntecedentes(dataGlobal);
-			AntecedentesHC(dataGlobal);
-			traerPatologicos(dataGlobal);
-			traerPatologicosFamiliares(dataGlobal);
-			traerAntecedentesPaneles(dataGlobal);
-		}
+    const asyncronized = async () => {
+      if (!historiaAntecedentes) {
+        setCargandoGlobal(true);
+        await traerAntecedentes(dataGlobal);
+        setCargandoGlobal(true);
+        openNotification('', 'Cargando antecedentes de historia clínica', 'Info');
+        await AntecedentesHC(dataGlobal);
+        setCargandoGlobal(true);
+        openNotification('', 'Cargando patológicos', 'Info');
+        await traerPatologicos(dataGlobal);
+        setCargandoGlobal(true);
+        await traerPatologicosFamiliares(dataGlobal);
+        setCargandoGlobal(true);
+        openNotification('', 'Cargando antecedentes penales', 'Info');
+        await traerAntecedentesPaneles(dataGlobal);
+        setCargandoGlobal(false);
+      }
+    }
+    asyncronized();
 	}, [historiaAntecedentes]);
 
 	useEffect(() => {
-		if (!historiaClinica) {
-			examenFisico(dataGlobal);
-			traerEvolucionTratamiento(dataGlobal);
-			tratamiento(dataGlobal);
-			consultasProcedimiento(dataGlobal);
-			traerInterconsulta(dataGlobal);
-			imagenes(dataGlobal);
-			laboratorio(dataGlobal);
-			traerEstematologico(dataGlobal);
-			traerEvolucionTratamientoOdonto(dataGlobal);
-			desarrolloProcedimientos(dataGlobal);
-		}
-		return () => {
-			dispatch(setRegistrosEvolucion([]));
-		};
+    const asyncronized = async () => {
+      if (!historiaClinica) {
+        setCargandoGlobal(true);
+        examenFisico(dataGlobal);
+        openNotification('', 'Cargando evolución tratamiento', 'Info');
+        await traerEvolucionTratamiento(dataGlobal);
+        tratamiento(dataGlobal);
+        consultasProcedimiento(dataGlobal);
+        openNotification('', 'Cargando interconsulta', 'Info');
+        await traerInterconsulta(dataGlobal);
+        imagenes(dataGlobal);
+        laboratorio(dataGlobal);
+        traerEstematologico(dataGlobal);
+        openNotification('', 'Cargando evolución tratamiento odontológico', 'Info');
+        await traerEvolucionTratamientoOdonto(dataGlobal);
+        desarrolloProcedimientos(dataGlobal);
+        setCargandoGlobal(false);
+      }
+      return () => {
+        dispatch(setRegistrosEvolucion([]));
+      };
+    }
+    asyncronized();
 	}, [historiaClinica]);
 
 	const getCMP = async () => {
@@ -519,32 +553,39 @@ const DetallesPaciente = ({ datosModal }) => {
 	};
 
 	useEffect(() => {
-		switch (pestañasReducer.actual) {
-			case 'medicaGeneral':
-				consultaMedicaGeneral(dataGlobal);
-				break;
+    const asyncronized = async () => {
+      setCargandoGlobal(true);
+      switch (pestañasReducer.actual) {
+        case 'medicaGeneral':
+          notificaciones('Cargando consulta medicina general', 'Info');
+          await consultaMedicaGeneral(dataGlobal);
+          break;
 
-			case 'odontologica':
-				consultaOdontologica(dataGlobal);
-				break;
+        case 'odontologica':
+          notificaciones('Cargando consulta odotológica', 'Info');
+          await consultaOdontologica(dataGlobal);
+          break;
 
-			case 'procedimental':
-				consultaProcedimental(dataGlobal);
-				break;
+        case 'procedimental':
+          consultaProcedimental(dataGlobal);
+          break;
 
-			default:
-				break;
-		}
+        default:
+          break;
+      }
 
-		if (opcion == 1) {
-			dispatch(setPestañas('medicaGeneral'));
-		} else if (opcion == 2) {
-			dispatch(setPestañas('odontologica'));
-		} else if (opcion == 3) {
-			dispatch(setPestañas('procedimental'));
-		} else {
-			dispatch(setPestañas(''));
-		}
+      if (opcion == 1) {
+        dispatch(setPestañas('medicaGeneral'));
+      } else if (opcion == 2) {
+        dispatch(setPestañas('odontologica'));
+      } else if (opcion == 3) {
+        dispatch(setPestañas('procedimental'));
+      } else {
+        dispatch(setPestañas(''));
+      }
+      setCargandoGlobal(false);
+    }
+    asyncronized();
 	}, [opcion]);
 
 	const grabarAntecedentes = async () => {
@@ -616,10 +657,6 @@ const DetallesPaciente = ({ datosModal }) => {
 			throw resp.data.message;
 		}
 	};
-
-	useEffect(() => {
-		console.log('SEEETT:', tabDefault);
-	}, [tabDefault]);
 
 	//IMPRESION
 	const [firma, setFirma] = useState('');
@@ -993,6 +1030,8 @@ const DetallesPaciente = ({ datosModal }) => {
 					datosModal={datosModal}
 				/>
 			) : null}
+
+      {cargandoGlobal ? <ModalLoading /> : null}
 
 			<div hidden={opacity} className="asd" />
 		</>
