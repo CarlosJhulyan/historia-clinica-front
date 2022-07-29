@@ -6,7 +6,7 @@ import { ModalHorario } from './modalHorario';
 
 const PrimeraParteTable = ({ setAbrirModal, setDataModal, historia, editar, TraerDatos }) => {
 	const dataTratamiento = useSelector(state => state.kardexTratamientoDetalle);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [data, setData] = useState([]);
 	const [abrirModalHorario, setAbrirModalHorario] = useState();
 	const [dataModalHorario, setDataModalHorario] = useState();
@@ -116,12 +116,15 @@ const PrimeraParteTable = ({ setAbrirModal, setDataModal, historia, editar, Trae
 				return (
 					<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 						<Button
-							type="primary"
 							onClick={() => {
 								setAbrirModalHorario(true);
 								setDataModalHorario(record);
 							}}
-							style={{ margin: '0' }}
+							style={{
+                margin: '0',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
 						>
 							Horario
 						</Button>
@@ -138,12 +141,16 @@ const PrimeraParteTable = ({ setAbrirModal, setDataModal, historia, editar, Trae
 				return (
 					<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 						<Button
-							type={record.estado === '2' ? 'default' : 'primary'}
+							type={record.estado === '2' && 'default'}
 							onClick={() => {
 								setAbrirModal(true);
 								setDataModal(record);
 							}}
-							style={{ margin: '0' }}
+							style={{
+                margin: '0',
+                background: record.estadp !== '2' && themeSettingsGlobal.COD_COLOR_1,
+                color: record.estado !== '2' && '#fff'
+              }}
 							disabled={record.estado === '2'}
 						>
 							{record.estado === '2' ? 'Pendiente' : 'Modificar'}

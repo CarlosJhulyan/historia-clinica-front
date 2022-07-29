@@ -8,7 +8,7 @@ import { setLaboratorioAction } from '../../../../appRedux/actions/menu/laborato
 export const Laboratorio = ({ datosModal }) => {
 	const dispatch = useDispatch();
 	const formRef = createRef();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const laboratorio = useSelector(state => state.laboratorio);
 	const obsLaboratorio = laboratorio.recomendacion
 	const dataLaboratorio = useSelector(state => state.combosReducer.dataLaboratorio);
@@ -154,8 +154,11 @@ export const Laboratorio = ({ datosModal }) => {
 						<Button
 							disabled={historiaClinica | visualizar}
 							className="gx-mb-0"
-							type="primary"
-							style={{ width: '100% ' }}
+							style={{
+                width: '100% ',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
 							onClick={() => buscarLab()}
 							icon={<SearchOutlined />}
 						>

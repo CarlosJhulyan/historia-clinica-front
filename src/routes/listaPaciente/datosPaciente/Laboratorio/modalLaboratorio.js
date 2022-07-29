@@ -2,9 +2,10 @@ import { Col, Button, Form, Input, Modal, Row, Space, Spin, Table } from "antd";
 import React, { createRef, useEffect, useState, } from "react";
 import { SearchOutlined } from '@ant-design/icons';
 import { actualizarLaboratorio } from "../apis";
+import { useSelector } from 'react-redux';
 
 const ModalLaboratorio = ({ datosModal, abrirModal, setAbrirModal, handleDatos, lab, dataSource }) => {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
     const dataGlobal = {
         codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
         codLocal: datosModal.estado.COD_LOCAL_ANTECENDENTE,
@@ -49,7 +50,6 @@ const ModalLaboratorio = ({ datosModal, abrirModal, setAbrirModal, handleDatos, 
                 />
                 <Space>
                     <Button
-                        type="primary"
                         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
                         icon={<SearchOutlined />}
                         size="small"
@@ -63,7 +63,7 @@ const ModalLaboratorio = ({ datosModal, abrirModal, setAbrirModal, handleDatos, 
                 </Space>
             </div>
         ),
-        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
         onFilter: (value, record) =>
             record[dataIndex]
                 ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
@@ -138,7 +138,16 @@ const ModalLaboratorio = ({ datosModal, abrirModal, setAbrirModal, handleDatos, 
                                 />
                             </Col>
                             <Col lg={24} md={24} sm={24} xs={24} style={{ alignItems: 'flex-end', display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button type="primary" disabled={btnActualizar} onClick={() => onClickActualizarModal()}>Actualizar Laboratorio</Button>
+                                <Button
+                                  style={{
+                                    background: themeSettingsGlobal.COD_COLOR_1,
+                                    color: '#fff'
+                                  }}
+                                  disabled={btnActualizar}
+                                  onClick={() => onClickActualizarModal()}
+                                >
+                                  Actualizar Laboratorio
+                                </Button>
                             </Col>
                         </Row>
                     </Form>

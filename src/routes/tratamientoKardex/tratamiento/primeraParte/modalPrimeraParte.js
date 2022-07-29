@@ -10,7 +10,7 @@ import ModalTratamiento from './modalTratamiento';
 export const ModalPrimeraParte = ({ abrirModal, setAbrirModal, data, TraerDatos, historia }) => {
 	const formRef = createRef();
 	const token = JSON.parse(localStorage.getItem('token'));
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [modalTratamiento, setModalTratamiento] = useState(false);
 
 	const [dataEditar, setDataEditar] = useState(data);
@@ -199,6 +199,10 @@ export const ModalPrimeraParte = ({ abrirModal, setAbrirModal, data, TraerDatos,
 				onCancel={() => setAbrirModal(false)}
 				okText="Confirmar"
 				cancelText="Cancelar"
+        okType='default'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+        }}
 			>
 				<Form ref={formRef} layout="vertical">
 					<Row style={{ flexDirection: 'row' }}>

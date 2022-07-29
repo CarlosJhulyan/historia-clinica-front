@@ -4,12 +4,14 @@ import { ToastContainer } from 'react-toastify';
 import { httpClient } from '../../../../util/Api';
 import moment from 'moment';
 import { DetallesModal } from './detallesModal';
+import { useSelector } from 'react-redux';
 
 const SextaParte = ({ historia }) => {
 	const [data, setData] = useState([]);
 	const [modal, setModal] = useState(false);
 	const [dataModal, setDataModal] = useState();
 	const [loading, setLoading] = useState(false);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
 	const traerHistorial = async () => {
 		setLoading(true);
@@ -58,8 +60,11 @@ const SextaParte = ({ historia }) => {
 			render: (text, record) => {
 				return (
 					<Button
-						type="primary"
-						style={{ margin: '0' }}
+						style={{
+              margin: '0',
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
 						onClick={() => {
 							setModal(true);
 							setDataModal(JSON.parse(text));

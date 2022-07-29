@@ -1,9 +1,9 @@
-import React, { 
+import React, {
   useEffect,
   useState,
   useCallback
 } from 'react';
-import { 
+import {
   Form,
   Modal,
   Spin,
@@ -26,13 +26,13 @@ function ModalDetallesTriaje({
     saturacion_oxigeno: '',
     temp: '',
   });
-  
+
   const traerDataTriaje = useCallback(
     async () => {
       setLoadingData(true);
       try {
         const { data: { success, data } } = await httpClient.post('triaje/getTriaje', {
-          ID: filaActual.key
+          ID: filaActual.key,
         });
         if (success) {
           setData(data);
@@ -44,8 +44,8 @@ function ModalDetallesTriaje({
     },
     [filaActual.key],
   )
-  
-  
+
+
   useEffect(() => {
     traerDataTriaje();
   }, [])
@@ -97,7 +97,7 @@ function ModalDetallesTriaje({
           </Form.Item>
         </Form>
       )}
-      
+
     </Modal>
   )
 }

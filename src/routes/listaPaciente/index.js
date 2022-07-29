@@ -20,9 +20,11 @@ import { datosEnviar, funn } from '../../constants/datosEnviar';
 import { useAuth } from '../../authentication';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 // import ModalListaEspera from '../admisionConsulta/modalListaEspera';
 
 const ListaPaciente = () => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [abrirModal, setAbrirModal] = useState(false);
 	const [filaActual, setFilaActual] = useState({});
 	const [data, setData] = useState();
@@ -90,12 +92,15 @@ const ListaPaciente = () => {
 				/>
 				<Space>
 					<Button
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
-					>
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
 						Buscar
 					</Button>
 					<Button onClick={() => handleReset(clearFilters)} size="small" style={{ width: 90 }}>

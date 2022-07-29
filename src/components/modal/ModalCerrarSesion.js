@@ -5,6 +5,7 @@ import React from 'react';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { useHistory } from 'react-router';
 import { useAuth } from '../../authentication';
+import { useSelector } from 'react-redux';
 
 export const ModalCerrarSesion = ({ modalCerar, setModalCerrar, cerrarSesion }) => {
 	const { userSignOut } = useAuth();

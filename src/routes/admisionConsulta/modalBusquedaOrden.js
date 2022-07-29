@@ -12,6 +12,7 @@ import {
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
 import FormatoNuevo from '../../assets/images/formato_nuevo.jpg';
+import { useSelector } from 'react-redux';
 
 function ModalBusquedaOrden({
   loadingData,
@@ -25,7 +26,7 @@ function ModalBusquedaOrden({
   setPedidoFound,
   handleChangeText
 }) {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const traerOrden = async (values) => {
     setLoadingData(true);
     const { NUM_ORDEN } = dataSend;
@@ -64,7 +65,12 @@ function ModalBusquedaOrden({
       cancelText='Salir'
       centered
       onCancel={() => setAbrirModalOrden(false)}
-      visible={abrirModalOrden}>
+      visible={abrirModalOrden}
+      okType='default'
+      okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+      }}
+    >
       <Row>
         <Col span={12}>
           <Form onFinish={traerOrden}>

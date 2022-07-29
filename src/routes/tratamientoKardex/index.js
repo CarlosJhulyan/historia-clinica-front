@@ -27,11 +27,11 @@ const TratamientoKardex = () => {
 	});
 	const [editar, setEditar] = useState();
 	const [alergias, setAlergias] = useState();
-	
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [state, setState] = useState('tratamientos');
-	
+
 	const [historia, setHistoria] = useState();
-	
+
 	const [valueCOD, setValueCOD] = useState('');
 	const [optionsCOD, setOptionsCOD] = useState([]);
 	const [valueNOM, setValueNOM] = useState('');
@@ -218,24 +218,24 @@ const TratamientoKardex = () => {
 						nroAtencion: element.num_aten_med,
 						codPaciente: element.cod_paciente,
 					};
-	
+
 					const dataCama = {
 						codPaciente: element.cod_paciente,
 						historiaClinica: element.historia_clinica,
 					};
-	
+
 					const respuesta = await httpClient.post('pacientes/getHospitalizacion', dataCama);
 					const dataHospitalizacion = respuesta.data.data[0];
-	
+
 					let servicio = '';
 					if (dataHospitalizacion.hospitalizacion === '1') {
 						servicio = 'HOSPITALIZACION';
 					}
-	
+
 					if (dataHospitalizacion.urgencia === '1') {
 						servicio = 'URGENCIA';
 					}
-	
+
 					setData({
 						...data,
 						cama: element.cama,
@@ -243,7 +243,7 @@ const TratamientoKardex = () => {
 						servicio: servicio,
 						habitacion: element.habitacion,
 					});
-	
+
 					getKardexHospitaliario(dataGlobal);
 					//Obtener kardex
 					const kardex = await httpClient.post('kardex/getKardex', {
@@ -253,7 +253,7 @@ const TratamientoKardex = () => {
 						console.log(kardex);
 						setEditar(kardex.data.data);
 					}
-	
+
 					//Obtener Alergias
 					const alergias = await httpClient.post('pacientes/getAlergias', {
 						codGrupoCia: '001',
@@ -281,24 +281,24 @@ const TratamientoKardex = () => {
 						nroAtencion: element.num_aten_med,
 						codPaciente: element.cod_paciente,
 					};
-	
+
 					const dataCama = {
 						codPaciente: element.cod_paciente,
 						historiaClinica: element.historia_clinica,
 					};
-	
+
 					const respuesta = await httpClient.post('pacientes/getHospitalizacion', dataCama);
 					const dataHospitalizacion = respuesta.data.data[0];
-	
+
 					let servicio = '';
 					if (dataHospitalizacion.hospitalizacion === '1') {
 						servicio = 'HOSPITALIZACION';
 					}
-	
+
 					if (dataHospitalizacion.urgencia === '1') {
 						servicio = 'URGENCIA';
 					}
-	
+
 					setData({
 						...data,
 						cama: element.cama,
@@ -306,7 +306,7 @@ const TratamientoKardex = () => {
 						servicio: servicio,
 						habitacion: element.habitacion,
 					});
-	
+
 					getKardexHospitaliario(dataGlobal);
 					//Obtener kardex
 					const kardex = await httpClient.post('kardex/getKardex', {
@@ -316,7 +316,7 @@ const TratamientoKardex = () => {
 						console.log(kardex);
 						setEditar(kardex.data.data);
 					}
-	
+
 					//Obtener Alergias
 					const alergias = await httpClient.post('pacientes/getAlergias', {
 						codGrupoCia: '001',
@@ -485,8 +485,8 @@ const TratamientoKardex = () => {
 									display: 'flex',
 									alignItems: 'center',
 									justifyContent: 'center',
-									backgroundColor: '#04B0AD',
-									color: 'white',
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
 								}}
 								/* 	disabled={!data.flagLleno} */
 								onClick={() => TraerDatos()}
@@ -641,7 +641,10 @@ const TratamientoKardex = () => {
 								</Col>
 							</Row>
 							<Button
-								type="primary"
+								style={{
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
+                }}
 								onClick={() => {
 									setState('tratamientos');
 								}}
@@ -650,7 +653,10 @@ const TratamientoKardex = () => {
 								Tratamientos
 							</Button>
 							<Button
-								type="primary"
+								style={{
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
+                }}
 								onClick={() => {
 									setState('examenes');
 								}}
@@ -659,7 +665,10 @@ const TratamientoKardex = () => {
 								Examenes
 							</Button>
 							<Button
-								type="primary"
+								style={{
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
+                }}
 								onClick={() => {
 									setState('interconsultas');
 								}}
@@ -668,7 +677,10 @@ const TratamientoKardex = () => {
 								Interconsultas
 							</Button>
 							<Button
-								type="primary"
+								style={{
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
+                }}
 								onClick={() => {
 									setState('especiales');
 								}}
@@ -677,7 +689,10 @@ const TratamientoKardex = () => {
 								Proc. Especiales
 							</Button>
 							<Button
-								type="primary"
+								style={{
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
+                }}
 								onClick={() => {
 									setState('invasivos');
 								}}

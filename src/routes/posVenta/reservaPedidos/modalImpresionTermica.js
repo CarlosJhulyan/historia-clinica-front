@@ -36,10 +36,11 @@ const ModalImpresionTermica = ({
                                  medicoCurrent,
                                  pacienteCurrent,
                                  user,
-                                 dataDetalle
+
 }) => {
+  const [dataDetalle, setDataDetalle] = useState([]);
   const [dataImprimir, setDataImprimir] = useState([]);
-  const { logosImpresion } = useSelector(({ settings }) => settings);
+  const { logosImpresion, themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const impresionRef = useRef();
   const [iniciando, setIniciando] = useState(true);
   const [codigo, setCodigo] = useState('');
@@ -100,15 +101,14 @@ const ModalImpresionTermica = ({
     }
   };
 
-  const imprimirDetalle = async (secCompPago) => {
+  const imprimirDetalle = async () => {
     try {
       const {
-        data: { data, success, message },
-      } = await httpClient.post('posventa/imprimirDetalle', {
+        data: { data, success },
+      } = await httpClient.post('posventa/getListaDetalles', {
         codGrupoCia: '001',
         codLocal: '001',
-        numPedVta,
-        secCompPago,
+        numPedido: numPedVta
       });
       if (success) {
         return data;
@@ -128,8 +128,8 @@ const ModalImpresionTermica = ({
     const dataImp = await obtieneDocImprimirWs(idDocumento);
     setDataImprimir(dataImp);
     // const secComp = await obtieneNumCompPagoImpr();
-    // const detalle = await imprimirDetalle(secComp);
-    // setDataDetalle(detalle);
+    const detalle = await imprimirDetalle();
+    setDataDetalle(detalle);
     setIniciando(false);
     await clearCacheImprimirWs(idDocumento);
   };
@@ -242,25 +242,25 @@ const ModalImpresionTermica = ({
               {element.CODIGO}
             </Col>
             <Col xs={8} style={{ padding: 0 }}>
-              {element.DESCRIPCION + ' ' + element.MARCA}
+              {element.DESCRIPCION + ' ' + element.ESPECIALIDAD}
             </Col>
             <Col xs={3} style={{ padding: 0 }}>
-              {element.cantidad}
+              {element.CANTIDAD}
             </Col>
             <Col xs={3} style={{ padding: 0 }}>
-              {element.PRECIO_LISTA}
+              {element.PRECIO_UNI}
             </Col>
             <Col xs={3} style={{ padding: 0 }}>
               {element.PRECIO_VENTA_DSCTO}
             </Col>
             <Col xs={3} style={{ padding: 0, textAlign: 'end' }}>
-              {element.total}
+              {element.TOTAL}
             </Col>
           </Row>
         ))}
         <div>-------------------------------------------------------</div>
-        <div>IMPORTE TOTAL: S/ {Number(dataDetalle.reduce((prev, current) => prev + Number(current.total), 0)).toFixed(2)}</div>
-        <div style={{fontSize:9}}>SON: {numberToLetter(Number(dataDetalle.reduce((prev, current) => prev + Number(current.total), 0)))}</div>
+        <div>IMPORTE TOTAL: S/ {Number(dataDetalle.reduce((prev, current) => prev + Number(current.TOTAL), 0)).toFixed(2)}</div>
+        <div style={{fontSize:9}}>SON: {numberToLetter(Number(dataDetalle.reduce((prev, current) => prev + Number(current.TOTAL), 0)))}</div>
         <div>NOMBRE DE CLIENTE: {clienteCurrent.CLIENTE}</div>
         <div>DNI CLIENTE: {clienteCurrent.NUM_DOCUMENTO}</div>
         <div>DIRECCION: {clienteCurrent.DIRECCION}</div>
@@ -287,7 +287,10 @@ const ModalImpresionTermica = ({
       <div style={{ margin: 10, display: 'flex', justifyContent: 'center' }}>
         <Button
           disabled={iniciando}
-          type="primary"
+          style={{
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
           onClick={() => {
             setVisible(false);
             handlePrint();

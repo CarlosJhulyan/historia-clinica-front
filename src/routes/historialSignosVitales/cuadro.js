@@ -17,6 +17,7 @@ import { httpClient } from '../../util/Api';
 import Moment from 'moment';
 import axios from 'axios';
 import locale from 'antd/es/date-picker/locale/es_ES';
+import { useSelector } from 'react-redux';
 
 const CustomFC = ({ cx, cy }) => {
 	return (
@@ -94,7 +95,7 @@ const CustomLegend = ({ payload }) => {
 
 const Cuadro = () => {
 	const token = JSON.parse(localStorage.getItem('token'));
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [loading, setLoading] = useState(false);
 	const [paciente, setPaciente] = useState();
 
@@ -427,8 +428,8 @@ const Cuadro = () => {
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
-								backgroundColor: '#04B0AD',
-								color: 'white',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => buscarHistorial()}
 						>

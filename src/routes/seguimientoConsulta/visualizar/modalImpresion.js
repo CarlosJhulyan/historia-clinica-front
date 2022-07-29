@@ -10,7 +10,7 @@ import { ImpresionImagenes, ImpresionLaboratorio, ImpresionProcedimientos, Impre
 
 
 export const ModalImpresionReceta = ({ modalImpresionReceta, setModalImpresionReceta, firma, datosModal }) => {
-
+    const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
     const [estadoImprimir, setEstadoImprimir] = useState(0);
 
     console.log("fechaNacimiento:", datosModal);
@@ -62,7 +62,16 @@ export const ModalImpresionReceta = ({ modalImpresionReceta, setModalImpresionRe
                     ? [
                         <ReactToPrint
                             pageStyle={pageStyle}
-                            trigger={() => <Button type="primary">Imprimir</Button>}
+                            trigger={() =>
+                                <Button
+                                    style={{
+                                        background: themeSettingsGlobal.COD_COLOR_1,
+                                        color: '#fff'
+                                    }}
+                                >
+                                    Imprimir
+                                </Button>
+                            }
                             content={() => impresionRef.current}
                         />,
                     ]

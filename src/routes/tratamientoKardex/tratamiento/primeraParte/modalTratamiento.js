@@ -2,6 +2,7 @@ import { Col, Button, Form, Input, Modal, Row, Space, Checkbox, Table } from 'an
 import React, { createRef, useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import { actualizarTratamientos } from '../../../listaPaciente/datosPaciente/apis';
+import { useSelector } from 'react-redux';
 const CheckboxGroup = Checkbox.Group;
 
 const options = [
@@ -22,7 +23,7 @@ const ModalTratamiento = ({ abrirModal, setAbrirModal, handleDatos, dataTratamie
 
 	// referencia del formulario
 	const formRef = createRef();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [estado, setEstado] = useState({ a: 'a' });
 	const [medicamentos, setMedicamentos] = useState();
 	const [botonModal, setBotonModal] = useState(true);
@@ -74,11 +75,14 @@ const ModalTratamiento = ({ abrirModal, setAbrirModal, handleDatos, dataTratamie
 				/>
 				<Space>
 					<Button
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
 					>
 						Buscar
 					</Button>
@@ -298,7 +302,10 @@ const ModalTratamiento = ({ abrirModal, setAbrirModal, handleDatos, dataTratamie
 							<Button
 								disabled={botonModal}
 								key="submit"
-								type="primary"
+								style={{
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
+                }}
 								onClick={() => handleDatos({ estado })}
 							>
 								Agregar
@@ -358,7 +365,10 @@ const ModalTratamiento = ({ abrirModal, setAbrirModal, handleDatos, dataTratamie
 								style={{ alignItems: 'flex-end', display: 'flex', justifyContent: 'flex-end' }}
 							>
 								<Button
-									type="primary"
+									style={{
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
+                  }}
 									disabled={btnActualizar}
 									onClick={() => onClickActualizarModal()}
 								>

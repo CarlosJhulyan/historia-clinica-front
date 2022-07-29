@@ -13,9 +13,10 @@ import UCI_M from '../../assets/camas/UCI_M.png';
 import UCIM_V from '../../assets/camas/UCIM_V.png';
 import UCIM_F from '../../assets/camas/UCIM_F.png';
 import UCIM_M from '../../assets/camas/UCIM_M.png';
+import { useSelector } from 'react-redux';
 
 const ModalTransferir = ({ abrirModal, setAbrirModal, traerData, dataModal }) => {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [loading, setLoading] = useState(false);
   const [array, setArray] = useState([]);
   const [pisos, setPisos] = useState([]);
@@ -125,6 +126,10 @@ const ModalTransferir = ({ abrirModal, setAbrirModal, traerData, dataModal }) =>
       okText="Aceptar"
       cancelText="Cancelar"
       confirmLoading={loading}
+      okType='default'
+      okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+      }}
       title={
         <div
           style={{

@@ -563,15 +563,13 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
       setCargandoGlobal(true);
       switch (pestañasReducer.actual) {
         case 'medicaGeneral':
-          notificaciones('Cargando consulta medicina general', 'Info');
+          openNotification('', 'Cargando consulta medicina general', 'Info');
           await consultaMedicaGeneral(dataGlobal);
           break;
-
         case 'odontologica':
-          notificaciones('Cargando consulta odotológica', 'Info');
+          openNotification('', 'Cargando consulta odotológica', 'Info');
           await consultaOdontologica(dataGlobal);
           break;
-
         case 'procedimental':
           consultaProcedimental(dataGlobal);
           break;
@@ -834,35 +832,6 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 							</Button>
 						)}
 					</Col>
-					{/* <Col
-						xl={6}
-						lg={6}
-						md={6}
-						sm={24}
-						xs={24}
-						style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-					>
-						<Button
-							disabled={historiaClinica}
-							className={('gx-mb-0', null)}
-							type="primary"
-							style={{
-								maxWidth: 256,
-								height: 'auto',
-								minWidth: 200,
-								lineHeight: '1.5em',
-								wordWrap: 'break-word',
-								whiteSpace: 'break-spaces',
-								padding: '10px',
-								marginTop: '10px',
-							}}
-							onClick={() => {
-								setAbrirSeguimientoM(true);
-							}}
-						>
-							Seguimiento de Consultas
-						</Button>
-					</Col> */}
 				</Row>
 				{opcion === 1 ? (
 					<h2
@@ -1038,7 +1007,6 @@ const DatosPaciente = ({ datosModal, setMostrarListaPaciente, traerDatos, setDat
 					maskClosable={false}
 					okText="Aceptar"
 					cancelText="Cancelar"
-					width="30%"
 					title={<div style={{ fontSize: '22px' }}>Opciones</div>}
 					visible={abrirModalOpciones}
 					onOk={() => {

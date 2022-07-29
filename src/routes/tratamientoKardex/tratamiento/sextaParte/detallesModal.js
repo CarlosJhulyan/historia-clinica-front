@@ -1,10 +1,11 @@
 import { Button, Checkbox, Col, Form, Input, Modal, Row, Table } from 'antd';
 import React, { createRef, useEffect, useState } from 'react';
 import { HorarioModal } from './horarioModal';
+import { useSelector } from 'react-redux';
 
 export const DetallesModal = ({ abrir, setAbrir, data }) => {
 	const formRef = createRef();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [cambio, setCambio] = useState(false);
 	const [dataVieja, setDataVieja] = useState([]);
 	const [dataNueva, setDataNueva] = useState(data);
@@ -73,12 +74,15 @@ export const DetallesModal = ({ abrir, setAbrir, data }) => {
 				return (
 					<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 						<Button
-							type="primary"
 							onClick={() => {
 								setAbrirModalHorario(true);
 								setDataModalHorario(record);
 							}}
-							style={{ margin: '0' }}
+							style={{
+                margin: '0',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
 						>
 							Horario
 						</Button>

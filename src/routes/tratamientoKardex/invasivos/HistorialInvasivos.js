@@ -2,9 +2,10 @@ import { Button, Col, DatePicker, Row, Select, Table } from 'antd'
 import moment from 'moment';
 import React, { useEffect, useState } from 'react'
 import { httpClient } from '../../../util/Api';
+import { useSelector } from 'react-redux';
 
 function HistorialInvasivos({ historia }) {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [data, setData] = useState([]);
 	const [fecha1cvc, setFecha1cvc] = useState();
 	const [fecha2cvc, setFecha2cvc] = useState();
@@ -218,11 +219,11 @@ function HistorialInvasivos({ historia }) {
 					}
 
 					<Col span={3} style={{textAlign:'end'}}>
-						<Button type='primary' onClick={() => traerInvasivos()}>filtrar</Button>
+						<Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}} onClick={() => traerInvasivos()}>filtrar</Button>
 					</Col>
 				</Row>
 			<div>
-				
+
 				<Table
 					className="gx-table-responsive"
 					columns={tipoInva == 1 ? columnsCVC : tipoInva == 2 ? columnsTET : tipoInva == 3 ? columnsSNG : tipoInva == 4 ? columnsFOLEY : columnsVIA}

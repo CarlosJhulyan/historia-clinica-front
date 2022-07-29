@@ -11,7 +11,7 @@ import ConfiguracionCamas from './configuraciones/camas';
 import ConfiguracionFirmas from './configuraciones/firma';
 import listaPaciente from './listaPaciente';
 import registroPaciente from './registroPaciente';
-import listaHospitalizar from './listaHospitalizar';
+import listaHospitalizar from './admisionHospitalaria';
 import SignosVitales from './signosVitales';
 // import { PruebaOdontograma } from './odontograma';
 import { SeguimientoConsulta } from './seguimientoConsulta';

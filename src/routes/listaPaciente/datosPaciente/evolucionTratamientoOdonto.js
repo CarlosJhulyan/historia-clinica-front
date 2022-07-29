@@ -15,7 +15,7 @@ const EvolucionTratamientoOdonto = ({ datosModal }) => {
 	const [btnLoading, setBtnLoading] = useState(true);
 	const [dataLoading, setDataLoading] = useState(true);
 	const { historiaClinica, visualizar } = useSelector(state => state.helpers);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
 	const [datos, setDatos] = useState({
 		plan: '',
@@ -255,7 +255,14 @@ const EvolucionTratamientoOdonto = ({ datosModal }) => {
 						paddingBottom: 15,
 					}}
 				>
-					<Button type="primary" disabled={btnLoading} onClick={confirmAdd}>
+					<Button
+            disabled={btnLoading}
+            onClick={confirmAdd}
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
 						Guardar registro
 					</Button>
 				</div>

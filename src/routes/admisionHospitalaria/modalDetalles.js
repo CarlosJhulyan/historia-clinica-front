@@ -4,7 +4,7 @@ import { DNI_REGEX, EDAD_REGEX, TELEFONO_REGEX, TEXTO_REGEX, CORREO_REGEX } from
 import moment from 'moment';
 import { httpClient } from '../../util/Api';
 import { getDepartamentos, getProvincias, getDistritos } from '../../util/Ubigeo';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setDataGlobal } from '../../appRedux/actions/dataGlobal';
 
 const obtenerValores = modulos => {
@@ -22,7 +22,7 @@ const ModaDetalles = (props) => {
   const { abrirModal, setAbrirModal, filaActual, handleDatos, setModalAsignacion, setHospi } = props;
   const formatoFecha = 'DD-MM-YYYY';
   const { Option } = Select;
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [estado, setEstado] = useState({});
   const [paciente, setDataPaciente] = useState();
   const [estadoAnterior, setEstadoAnterior] = useState();
@@ -293,6 +293,10 @@ const ModaDetalles = (props) => {
         width="70%"
         okText="Guardar cambios"
         cancelText="Cancelar"
+        okType='default'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+        }}
         title={
           <div
             style={{

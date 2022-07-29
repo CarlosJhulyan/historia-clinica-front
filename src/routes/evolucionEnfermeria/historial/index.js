@@ -1,9 +1,9 @@
-import React, { 
+import React, {
   createRef,
   useMemo,
   useState
 } from 'react';
-import { 
+import {
   Card,
   Form,
   AutoComplete,
@@ -19,9 +19,11 @@ import moment from 'moment';
 import axios from 'axios';
 
 import { httpClient } from '../../../util/Api';
+import { useSelector } from 'react-redux';
 
 function Historial() {
   const { RangePicker } = DatePicker;
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const formSearch = useMemo(() => createRef(), []);
   const [data, setData] = useState([]);
   const [loadingData, setLoadingData] = useState(false);
@@ -125,7 +127,10 @@ function Historial() {
 			key: 'narracion_estado',
       render: (narracion) => (
         <Button
-          type='primary'
+          style={{
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
           title='Ver Narración'
           onClick={() => setModalInformation(narracion)}>
             <EyeOutlined />
@@ -222,7 +227,7 @@ function Historial() {
 	};
 
   return (
-    <Card 
+    <Card
       title={
         <div
           style={{
@@ -240,7 +245,7 @@ function Historial() {
           <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <Form
               ref={formSearch}
-              style={{ 
+              style={{
                 width: '100%',
                 display: 'flex',
                 alignItems: 'center',
@@ -270,7 +275,7 @@ function Historial() {
                   placeholder="Nombre del paciente"
                 />
               </Form.Item>
-              <Form.Item 
+              <Form.Item
                 name="rangoFechas"
                 style={{ margin: 0 }}>
                 <RangePicker
@@ -301,8 +306,8 @@ function Historial() {
               onClick={filtrarPorFecha}
               disabled={!formValidate}
               style={{
-                backgroundColor: '#04B0AD',
-                color: 'white',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
               }}
             >
               <SearchOutlined />
@@ -311,7 +316,7 @@ function Historial() {
         </div>
       }>
       <Table
-        className="gx-table-responsive" 
+        className="gx-table-responsive"
         dataSource={data}
         loading={loadingData}
         columns={columns} />
@@ -321,7 +326,8 @@ function Historial() {
         title='Descripción de estado del paciente'
         visible={visibleModalText}
         onCancel={() => setVisibleModalText(false)}
-        footer={false}>
+        footer={false}
+      >
           {textDescription}
       </Modal>
     </Card>

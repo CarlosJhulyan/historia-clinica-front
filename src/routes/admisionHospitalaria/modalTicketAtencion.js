@@ -1,5 +1,5 @@
-import React, { 
-  useState, 
+import React, {
+  useState,
   useCallback,
   useEffect,
   useRef,
@@ -26,6 +26,7 @@ import {
 import { httpClient } from '../../util/Api';
 import ModalDetalles from '../registroPaciente/modalDetalles';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 function ModalTicketAtencion({
   setAbrirModal,
@@ -45,6 +46,7 @@ function ModalTicketAtencion({
   const [numDocumento, setNumDocumento] = useState('');
   const [loadingFetch, setLoadingFetch] = useState(false);
   const [data, setData] = useState({});
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
   const [dataAsignar, setDataAsignar] = useState({
     camaId: '',
@@ -186,7 +188,7 @@ function ModalTicketAtencion({
             visible: true
           });
         }
-        
+
       }
 		} catch (e) {
 			openNotification('error', 'Búsqueda', e.message);
@@ -215,7 +217,7 @@ function ModalTicketAtencion({
         COD_MEDICO: JSON.parse(localStorage.getItem('token')).cod_medico,
         ESTADO: 'C'
       });
-      
+
       const dataFetch = {
         ...datosEnviar,
         ASIGNADO: areaDesignada,
@@ -236,7 +238,7 @@ function ModalTicketAtencion({
         historiaClinica: numAtencionMedica,
         codPaciente: datosEnviar.COD_PACIENTE,
       };
-  
+
       if (successAtencion) {
         const respuesta = await httpClient.post('/pacientes/getHospitalizacion', dd);
         if (respuesta.data.data) {
@@ -271,7 +273,7 @@ function ModalTicketAtencion({
             codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
             idHospitalizacion: numAtencionMedica
           });
-  
+
           if (repuesta.data.success) {
             openNotification('success', 'Triaje', message);
             setAbrirModal(false);
@@ -286,7 +288,7 @@ function ModalTicketAtencion({
     } catch (error) {
       console.log(error);
     }
-    
+
     setLoadingFetch(false);
   }
 
@@ -397,7 +399,11 @@ function ModalTicketAtencion({
               </Button>
               <Button
                 onClick={() => setAbrirModalNew(true)}
-                type="primary">
+                style={{
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
+                }}
+              >
                   Crear Nuevo
               </Button>
             </Input.Group>
@@ -406,15 +412,34 @@ function ModalTicketAtencion({
           <Form.Item
             style={{ textAlign: 'right' }}
             label='Area Designada'>
-              <Radio.Group 
-                value={areaDesignada} 
-                // size="small"
+              <Radio.Group
+                value={areaDesignada}
                 onChange={handleChangeAreaDesignada}
                 buttonStyle="solid">
-                  <Radio.Button value="1">Hospitalización</Radio.Button>
-                  <Radio.Button value="2">Emergencia</Radio.Button>
-                  <Radio.Button value="3">UCI</Radio.Button>
-                  <Radio.Button value="4">SOP</Radio.Button>
+                  <Radio.Button
+                    style={{
+                      background: areaDesignada === '1' && themeSettingsGlobal.COD_COLOR_1,
+                      border: areaDesignada === '1' && '1px solid #000'
+                    }}
+                    value="1">Hospitalización</Radio.Button>
+                  <Radio.Button
+                    style={{
+                      background: areaDesignada === '2' && themeSettingsGlobal.COD_COLOR_1,
+                      border: areaDesignada === '2' && '1px solid #000'
+                    }}
+                    value="2">Emergencia</Radio.Button>
+                  <Radio.Button
+                    style={{
+                      background: areaDesignada === '3' && themeSettingsGlobal.COD_COLOR_1,
+                      border: areaDesignada === '3' && '1px solid #000'
+                    }}
+                    value="3">UCI</Radio.Button>
+                  <Radio.Button
+                    style={{
+                      background: areaDesignada === '4' && themeSettingsGlobal.COD_COLOR_1,
+                      border: areaDesignada === '4' && '1px solid #000'
+                    }}
+                    value="4">SOP</Radio.Button>
               </Radio.Group>
           </Form.Item>
         </Form>
@@ -433,9 +458,9 @@ function ModalTicketAtencion({
               <Input
                 type='number'
                 name="PA1"
-                value={datosEnviar.PA1} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.PA1}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} placeholder="" />
             </Form.Item>
             <span style={{ marginTop: 10, margin: '0 10px', padding: 0, display: 'inline-block' }} className="ant-form-text">/</span>
@@ -445,11 +470,11 @@ function ModalTicketAtencion({
               noStyle
             >
               <Input
-                type='number' 
+                type='number'
                 name="PA2"
-                value={datosEnviar.PA2} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.PA2}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '90px' }} placeholder="" />
             </Form.Item>
             <span style={{ marginTop: 10 }} className="ant-form-text">MMHG.</span>
@@ -457,11 +482,11 @@ function ModalTicketAtencion({
           <Form.Item label="F. Resporatoria" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
-                name="FR" 
-                value={datosEnviar.FR} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                type='number'
+                name="FR"
+                value={datosEnviar.FR}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> X'.</span>
@@ -469,11 +494,11 @@ function ModalTicketAtencion({
           <Form.Item label="F. Cardiaca" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="FC"
-                value={datosEnviar.FC} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.FC}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> X'.</span>
@@ -481,11 +506,11 @@ function ModalTicketAtencion({
           <Form.Item label="Temperatura" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="TEMP"
-                value={datosEnviar.TEMP} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.TEMP}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> °C.</span>
@@ -493,11 +518,11 @@ function ModalTicketAtencion({
           <Form.Item label="Peso" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="PESO"
-                value={datosEnviar.PESO} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.PESO}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> Kg.</span>
@@ -505,11 +530,11 @@ function ModalTicketAtencion({
           <Form.Item label="Talla" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="TALLA"
-                value={datosEnviar.TALLA} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.TALLA}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> cms.</span>
@@ -517,11 +542,11 @@ function ModalTicketAtencion({
           <Form.Item label="Saturación O2" style={{ textAlign: 'left' }}>
             <Form.Item noStyle>
               <Input
-                type='number' 
+                type='number'
                 name="SATURACION"
-                value={datosEnviar.SATURACION} 
-                onChange={handleChangeInputs} 
-                min={0} 
+                value={datosEnviar.SATURACION}
+                onChange={handleChangeInputs}
+                min={0}
                 style={{ width: '95px' }} />
             </Form.Item>
             <span style={{ marginLeft: 10 }} className="ant-form-text"> %</span>
@@ -658,10 +683,10 @@ function ModalTicketAtencion({
       )
     }
   ];
-  
+
   return (
     <>
-      <Modal 
+      <Modal
         width="600px"
         closable={false}
         centered
@@ -697,22 +722,40 @@ function ModalTicketAtencion({
             </Button>
           ),
           current < steps.length - 1 && (
-            <Button disabled={message.type !== 'success'} type="primary" onClick={() => next()}>
+            <Button
+              disabled={message.type !== 'success'}
+              style={{
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
+              onClick={() => next()}
+            >
               Siguiente
             </Button>
           ),
           current === steps.length - 1 && (
-            <Button type="primary" onClick={() => fetchData()} loading={loadingFetch}>
+            <Button
+              style={{
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
+              onClick={() => fetchData()}
+              loading={loadingFetch}
+            >
               Generar
             </Button>
           )
         ]}
         visible={abrirModal}
         onOk={async () => {
-          
+
+        }}
+        okType='default'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
         }}
       >
-        <div style={{ 
+        <div style={{
           // minHeight: '200px',
           // paddingTop: '40px',
           textAlign: 'center',

@@ -1,7 +1,7 @@
 import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { Card, Table, Row, Col, Button, Tag, Input, Space, Modal } from 'antd';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setVisualizarOn } from '../../appRedux/actions/menu/helpers';
 import ModalVisualizar from './visualizar';
 export const ListaPaciente = ({
@@ -16,6 +16,7 @@ export const ListaPaciente = ({
 }) => {
 	//Filtro para buscar por columna
 	const [state, setState] = useState();
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [botonModal, setBotonModal] = useState(true);
 	const [visualizar, setVisualizar] = useState(false);
 	const [itemSeleccionado, setItemSeleccionado] = useState(null);
@@ -37,11 +38,14 @@ export const ListaPaciente = ({
 				/>
 				<Space>
 					<Button
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
 					>
 						Buscar
 					</Button>
@@ -268,7 +272,10 @@ export const ListaPaciente = ({
 
 					}}
 					size="large"
-					type="primary"
+          style={{
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
 				>
 					Visualizar
 				</Button>
@@ -286,9 +293,14 @@ export const ListaPaciente = ({
 					? <Modal
 						title="Mensaje del Sistema"
 						visible={mostrarAlerta}
-						okButtonProps={{ hidden: true }}
+						okButtonProps={{
+              hidden: true,
+              style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+            }}
+            okType='default'
 						onCancel={() => setMostrarAlerta(false)}
-						cancelText="Aceptar">
+						cancelText="Aceptar"
+          >
 						<div style={{ display: 'flex', width: '100%' }}>
 							<ExclamationCircleOutlined style={{ color: 'orange', fontSize: '30px', marginRight: '6px' }} />
 							<h4> Solo se muestra de las consultas médicas que ya fueron atendidas.</h4>

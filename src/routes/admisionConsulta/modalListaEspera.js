@@ -14,6 +14,7 @@ import {
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
 import ModalTriaje from './modalTriaje';
+import { useSelector } from 'react-redux';
 
 function ModalListaEspera({
   visible,
@@ -28,11 +29,11 @@ function ModalListaEspera({
   const [dataListaEspera, setDataListaEspera] = useState([]);
   const [abrirModalTriaje, setAbrirModalTriaje] = useState(false);
   const [dataSend, setDataSend] = useState({
-    // codMedico: JSON.parse(localStorage.getItem('token')).cod_medico,
     codEstado: '1',
     consultorio: '1',
     bus: ''
   });
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [numHCSelection, setNumHCSelection] = useState([]);
   const [atender, setAtender] = useState('');
 
@@ -167,19 +168,31 @@ function ModalListaEspera({
             loading={loadingAnular}
             onClick={() => anularAtencionMedica()}
             disabled={!numHCSelection || numHCSelection.length <= 0}
-            type='primary'>
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
               Anular
           </Button>,
           <Button
             onClick={() => traerListaEspera()}
-            type='primary'>
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
               Actualizar
           </Button>,
           <Button
             loading={loadingActualizar}
             disabled={!numHCSelection || numHCSelection.length <= 0}
             onClick={() => establecerAtender()}
-            type='primary'>
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
               Atender
           </Button>
         ]}

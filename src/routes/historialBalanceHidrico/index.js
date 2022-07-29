@@ -6,10 +6,11 @@ import Moment from 'moment';
 import axios from 'axios';
 import { SearchOutlined } from '@ant-design/icons';
 import { ModalBalanceHidrico } from './modalBalance';
+import { useSelector } from 'react-redux';
 
 const HistorialBalanceHidrico = () => {
 	const [state, setState] = useState();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [valueCOD, setValueCOD] = useState('');
 	const [optionsCOD, setOptionsCOD] = useState([]);
 	const [valueNOM, setValueNOM] = useState('');
@@ -76,7 +77,7 @@ const HistorialBalanceHidrico = () => {
 				{ cancelToken: cancelSource.token }
 			);
 			var array2 = respuesta.data.data;
-			
+
 			for (let i = 0; i < array2.length; i++) {
 				if (array2[i].asignado === '0') {
 					delete array2[i];
@@ -189,11 +190,14 @@ const HistorialBalanceHidrico = () => {
 				/>
 				<Space>
 					<Button
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
 					>
 						Buscar
 					</Button>
@@ -203,7 +207,7 @@ const HistorialBalanceHidrico = () => {
 				</Space>
 			</div>
 		),
-		filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+		filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
 		onFilter: (value, record) =>
 			record[dataIndex]
 				? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
@@ -358,8 +362,8 @@ const HistorialBalanceHidrico = () => {
 									display: 'flex',
 									alignItems: 'center',
 									justifyContent: 'center',
-									backgroundColor: '#04B0AD',
-									color: 'white',
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
 								}}
 								onClick={() => BuscarBalance()}
 							>

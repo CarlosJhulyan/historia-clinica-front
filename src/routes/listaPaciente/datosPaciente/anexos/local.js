@@ -15,7 +15,7 @@ const AnexosLocal = ({ datosModal }) => {
 
 	const anexos = useSelector((estado) => estado.anexo);
 	const { historiaClinica, visualizar } = useSelector(state => state.helpers);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [imagenActual, setImagenActual] = useState('');
 	const [modalVideo, setModalVideo] = useState(null);
 	const [modalBuscar, setModalBuscar] = useState(false);
@@ -262,7 +262,6 @@ const AnexosLocal = ({ datosModal }) => {
 					>
 						<Button
 							className="gx-mb-0"
-							type="primary"
 							htmlType="submit"
 							style={{
 								height: 'auto',
@@ -272,6 +271,8 @@ const AnexosLocal = ({ datosModal }) => {
 								whiteSpace: 'break-spaces',
 								padding: '10px',
 								marginTop: '10px',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={confirmAdd}
 							disabled={btnGuardar}
@@ -290,7 +291,6 @@ const AnexosLocal = ({ datosModal }) => {
 						<Button
 							disabled={visualizar}
 							className="gx-mb-0"
-							type="primary"
 							htmlType="submit"
 							style={{
 								height: 'auto',
@@ -300,6 +300,8 @@ const AnexosLocal = ({ datosModal }) => {
 								whiteSpace: 'break-spaces',
 								padding: '10px',
 								marginTop: '10px',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => setModalBuscar(true)}
 						>

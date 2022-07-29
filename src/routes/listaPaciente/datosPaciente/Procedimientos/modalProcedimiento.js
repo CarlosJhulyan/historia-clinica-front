@@ -2,6 +2,7 @@ import React, { createRef, useEffect, useState } from 'react';
 import { Col, Button, Form, Input, Modal, Row, Space, Spin, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { actualizarProcedimientos } from '../apis';
+import { useSelector } from 'react-redux';
 
 const ModalProcedimiento = ({
 	abrirModal,
@@ -16,7 +17,7 @@ const ModalProcedimiento = ({
 		codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
 		codLocal: datosModal.estado.COD_LOCAL_ANTECENDENTE,
 	};
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [estado, setEstado] = useState();
 	const [medicamentos, setMedicamentos] = useState();
 	const [botonModal, setBotonModal] = useState(true);
@@ -56,12 +57,14 @@ const ModalProcedimiento = ({
 				/>
 				<Space>
 					<Button
-
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+          }}
 					>
 						Buscar
 					</Button>
@@ -71,7 +74,7 @@ const ModalProcedimiento = ({
 				</Space>
 			</div>
 		),
-		filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+		filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
 		onFilter: (value, record) =>
 			record[dataIndex] ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()) : '',
 	});
@@ -169,7 +172,14 @@ const ModalProcedimiento = ({
 								style={{ alignItems: 'flex-end', display: 'flex', justifyContent: 'flex-end' }}
 							>
 								{usuario.des_especialidad !== null ? (
-									<Button type="primary" disabled={btnActualizar} onClick={() => onClickActualizarModal()}>
+									<Button
+                    style={{
+                      background: themeSettingsGlobal.COD_COLOR_1,
+                      color: '#fff'
+                    }}
+                    disabled={btnActualizar}
+                    onClick={() => onClickActualizarModal()}
+                  >
 										Actualizar Procedimientos
 									</Button>
 								) : null}

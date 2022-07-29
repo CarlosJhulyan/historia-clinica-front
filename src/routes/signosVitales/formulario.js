@@ -15,19 +15,13 @@ import { notificaciones } from '../../util/util';
 import { httpClient } from '../../util/Api';
 import Moment from 'moment';
 import axios from 'axios';
-import { datosEnviar, funn } from '../../constants/datosEnviar';
-
-import { useIdleTimer } from 'react-idle-timer';
-import { useAuth } from '../../authentication';
-import { useHistory } from 'react-router';
-import { ToastContainer } from 'react-toastify';
-import { ArrowLeftOutlined, SearchOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 const date = Moment().locale('es');
 
 const Formulario = ({ setSwitcher }) => {
 	const token = JSON.parse(localStorage.getItem('token'));
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [loading, setLoading] = useState(false);
 	const [editar, setEditar] = useState();
 	const [paciente, setPaciente] = useState({
@@ -426,8 +420,8 @@ const Formulario = ({ setSwitcher }) => {
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
-								backgroundColor: '#04B0AD',
-								color: 'white',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => guardarSignosVitales()}
 						>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { 
+import {
   Button,
   Col,
   Form,
@@ -10,6 +10,7 @@ import {
 } from 'antd';
 
 import FormatoViejo from '../../assets/images/formato_viejo.jpg';
+import { useSelector } from 'react-redux';
 
 function ModalBusquedaPedido({
   abrirModalPedido,
@@ -19,7 +20,7 @@ function ModalBusquedaPedido({
   traerPedido,
   loadingData
 }) {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   return (
     <Modal
       footer={false}
@@ -29,7 +30,12 @@ function ModalBusquedaPedido({
       cancelText='Salir'
       centered
       onCancel={() => setAbrirModalPedido(false)}
-      visible={abrirModalPedido}>
+      visible={abrirModalPedido}
+      okType='default'
+      okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+      }}
+    >
       <Form>
         <Row>
           <Col span={12}>
@@ -42,7 +48,7 @@ function ModalBusquedaPedido({
             <Form.Item>
               <Button
                 htmlType='submit'
-                loading={loadingData} 
+                loading={loadingData}
                 onClick={() => traerPedido()}>
                   Buscar Pedido
               </Button>

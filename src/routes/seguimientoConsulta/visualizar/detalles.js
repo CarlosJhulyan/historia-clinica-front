@@ -75,7 +75,7 @@ const DetallesPaciente = ({ datosModal }) => {
 	const [opcion, setOpcion] = useState();
 	const [state, setState] = useState();
 	const [abrirModal, setAbrirModal] = useState(false);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [abrirModalHc, setAbrirModalHc] = useState(false);
 	const [abrirModalHA, setAbrirModalHA] = useState(false);
 	const [abrirResultadoLab, setAbrirResultadoLab] = useState(false);
@@ -704,7 +704,6 @@ const DetallesPaciente = ({ datosModal }) => {
 					<Button
 						disabled={historiaClinica}
 						className="gx-mb-0"
-						type="primary"
 						style={{
 							maxWidth: 256,
 							height: 'auto',
@@ -714,6 +713,8 @@ const DetallesPaciente = ({ datosModal }) => {
 							whiteSpace: 'break-spaces',
 							padding: '10px',
 							marginTop: '10px',
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
 						}}
 						onClick={() => {
 							setAbrirModalOpciones(true);
@@ -733,7 +734,6 @@ const DetallesPaciente = ({ datosModal }) => {
 					<Button
 						disabled={historiaClinica}
 						className="gx-mb-0"
-						type="primary"
 						style={{
 							maxWidth: 256,
 							height: 'auto',
@@ -743,6 +743,8 @@ const DetallesPaciente = ({ datosModal }) => {
 							whiteSpace: 'break-spaces',
 							padding: '10px',
 							marginTop: '10px',
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
 						}}
 						onClick={() => {
 							setAbrirModal(true);
@@ -761,7 +763,6 @@ const DetallesPaciente = ({ datosModal }) => {
 				>
 					<Button
 						className="gx-mb-0"
-						type="primary"
 						style={{
 							maxWidth: 256,
 							height: 'auto',
@@ -771,6 +772,8 @@ const DetallesPaciente = ({ datosModal }) => {
 							whiteSpace: 'break-spaces',
 							padding: '10px',
 							marginTop: '10px',
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
 						}}
 						onClick={() => {
 							setModalImpresion(true);
@@ -893,8 +896,11 @@ const DetallesPaciente = ({ datosModal }) => {
 								<Col lg={8} style={{ textAlign: 'start' }}>
 									<Button
 										disabled={visualizar}
-										type="primary"
 										onClick={() => setAbrirModalHA(true)}
+                    style={{
+                      background: themeSettingsGlobal.COD_COLOR_1,
+                      color: '#fff'
+                    }}
 									>
 										Ver Historial
 									</Button>
@@ -926,8 +932,11 @@ const DetallesPaciente = ({ datosModal }) => {
 										</Button>
 										<Button
 											disabled={historiaAntecedentes}
-											type="primary"
 											onClick={() => confirmAdd()}
+                      style={{
+                        background: themeSettingsGlobal.COD_COLOR_1,
+                        color: '#fff'
+                      }}
 										>
 											Guardar
 										</Button>
@@ -958,9 +967,12 @@ const DetallesPaciente = ({ datosModal }) => {
 				maskClosable={false}
 				okText="Aceptar"
 				cancelText="Cancelar"
-				width="30%"
 				title={<div style={{ fontSize: '22px' }}>Opciones</div>}
 				visible={abrirModalOpciones}
+        okType='default'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+        }}
 				onOk={() => {
 					confirmarOpcion();
 					setAbrirModalOpciones(false);
@@ -990,9 +1002,13 @@ const DetallesPaciente = ({ datosModal }) => {
 				<Modal
 					title="Recetas"
 					visible={modalImpresion}
-					okButtonProps={{ hidden: true }}
 					cancelText="Salir"
 					onCancel={() => setModalImpresion(false)}
+          okType='default'
+          okButtonProps={{
+            style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'},
+            hidden: true
+          }}
 				>
 					<Row style={{ flexDirection: 'row' }}>
 						<Col lg={24} style={{ marginBottom: '10px' }}>

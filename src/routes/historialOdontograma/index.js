@@ -5,11 +5,12 @@ import { httpClient } from '../../util/Api';
 import { DatePicker } from 'antd';
 import 'moment/locale/es';
 import locale from 'antd/es/date-picker/locale/es_ES';
+import { useSelector } from 'react-redux';
 
 const { RangePicker } = DatePicker;
 
 export const ListaOdontograma = ({ datosModal, estadosOdontograma, obtenerOdontoHistorial, estado: estadoOdonto, cargando, verHistorial, setVerHistorial }) => {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
     const [dataHistorial, setDataHistorial] = useState([]);
     const [loading, setLoading] = useState(true);
     const { Title } = Typography;
@@ -116,7 +117,10 @@ export const ListaOdontograma = ({ datosModal, estadosOdontograma, obtenerOdonto
                 onCancel={() => setVerHistorial(false)}
                 cancelText="Cerrar"
                 okText="Aceptar"
-
+                okType='default'
+                okButtonProps={{
+                  style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+                }}
             >
                 <div style={{ marginBottom: '40px' }}>
                     <h4>Seleccione un rango de fechas:

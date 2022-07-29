@@ -12,9 +12,10 @@ import { notificaciones } from '../../../../util/util';
 import { httpClient } from '../../../../util/Api';
 import { traerAnexo, traerAnexoBusqueda } from '../apis';
 import { urlImagen } from '../../../../config/backend';
+import { useSelector } from 'react-redux';
 
 export const ModalBusqueda = ({ modalBuscar, setModalBuscar, datosModal }) => {
-
+    const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
     const [fecha, setFecha] = useState({
         fechaInicio: '',
         fechaFin: ''
@@ -210,7 +211,19 @@ export const ModalBusqueda = ({ modalBuscar, setModalBuscar, datosModal }) => {
                     <span>Fechas de Búsqueda </span>
                     <DatePicker format="DD/MM/YYYY" locale={locale} style={{ width: '230px', marginLeft: '10px' }} placeholder="Selecciona fecha de inicio" onChange={onChangeFechaInicial} />
                     <DatePicker format="DD/MM/YYYY" locale={locale} style={{ width: '230px', marginLeft: '10px' }} placeholder="Selecciona fecha de fin" onChange={onChangeFechaFinal} />
-                    <Button loading={loading} disabled={btnBuscar} type="primary" className="gx-mt-md-1 gx-mb-1" style={{ marginLeft: '10px' }} onClick={() => buscarHistoria()}>Buscar</Button>
+                    <Button
+                      loading={loading}
+                      disabled={btnBuscar}
+                      className="gx-mt-md-1 gx-mb-1"
+                      style={{
+                        marginLeft: '10px',
+                        background: themeSettingsGlobal.COD_COLOR_1,
+                        color: '#fff'
+                      }}
+                      onClick={() => buscarHistoria()}
+                    >
+                      Buscar
+                    </Button>
                 </div>
 
                 <Table

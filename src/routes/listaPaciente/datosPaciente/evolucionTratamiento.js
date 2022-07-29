@@ -14,7 +14,7 @@ const EvolucionTratamiento = ({ datosModal }) => {
 	const registrosEvolucion = useSelector((state) => state.registrosEvolucion);
 	const [btnLoading, setBtnLoading] = useState(true);
 	const [dataLoading, setDataLoading] = useState(true);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const { historiaClinica, visualizar } = useSelector(state => state.helpers);
 
 	const [datos, setDatos] = useState({
@@ -256,7 +256,14 @@ const EvolucionTratamiento = ({ datosModal }) => {
 						paddingBottom: 15,
 					}}
 				>
-					<Button type="primary" disabled={btnLoading} onClick={confirmAdd}>
+					<Button
+            disabled={btnLoading}
+            onClick={confirmAdd}
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
+          >
 						Guardar registro
 					</Button>
 				</div>

@@ -13,7 +13,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const AnexosFirestore = ({ datosModal }) => {
 	// const data = useSelector((state) => state.anexo);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	//*Estado de la tabla
 	const [estado, setEstado] = useState({
 		observaciones: '',
@@ -269,7 +269,6 @@ const AnexosFirestore = ({ datosModal }) => {
 				>
 					<Button
 						className="gx-mb-0"
-						type="primary"
 						htmlType="submit"
 						style={{
 							height: 'auto',
@@ -279,6 +278,8 @@ const AnexosFirestore = ({ datosModal }) => {
 							whiteSpace: 'break-spaces',
 							padding: '10px',
 							marginTop: '10px',
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
 						}}
 						onClick={guardarAnexo}
 						disabled={btnGuardar}

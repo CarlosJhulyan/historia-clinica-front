@@ -10,7 +10,7 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const TablaInterconsulta = ({ historia, editar, TraerDatos }) => {
   const dataInterconsulta = useSelector(state => state.kardexInterconsulta);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const token = JSON.parse(localStorage.getItem('token'));
 
   const [data, setData] = useState([]);
@@ -169,7 +169,7 @@ const TablaInterconsulta = ({ historia, editar, TraerDatos }) => {
 
 
         <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-          <Button type='primary' onClick={showConfirm}>Guardar</Button>
+          <Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}} onClick={showConfirm}>Guardar</Button>
         </div>
         <ToastContainer pauseOnHover={false} />
       </div>

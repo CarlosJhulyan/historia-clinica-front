@@ -6,12 +6,13 @@ import { notificaciones } from '../../util/util';
 import Moment from 'moment';
 import axios from 'axios';
 import './formulario.css';
+import { useSelector } from 'react-redux';
 
 const date = Moment().locale('es');
 
 const BalanceHidrico = () => {
 	const token = JSON.parse(localStorage.getItem('token'));
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [editar, setEditar] = useState();
 	const [historia, setHistoria] = useState();
 
@@ -716,8 +717,8 @@ const BalanceHidrico = () => {
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
-								backgroundColor: '#04B0AD',
-								color: 'white',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => GuardarBalance()}
 						>

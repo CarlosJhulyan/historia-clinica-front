@@ -1,13 +1,13 @@
 import { Modal } from 'antd';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { httpClient } from '../../../util/Api';
 import { onClickRetroceder } from '../../../util/util';
 import DetallesPaciente from './detalles';
-import ModalLoading from '../../../util/modalLoading';
+import { useSelector } from 'react-redux';
 
 const ModalVisualizar = ({ visualizar, setVisualizar, data, setBtnVisualizar }) => {
 	const [datosModalVisualizar, setDatosModalVisualizar] = useState(null);
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
 	const traerDatosModal = async () => {
 		setBtnVisualizar(true);
@@ -15,8 +15,6 @@ const ModalVisualizar = ({ visualizar, setVisualizar, data, setBtnVisualizar }) 
 			codGrupoCia: data.COD_GRUPO_CIA,
 			codPaciente: data.COD_PACIENTE,
 		});
-
-		console.log("GET PACIENTEEEEEEEE: ", resp);
 
 		const getAlergia = await httpClient.post(`/pacientes/getAlergias`, {
 			codGrupoCia: data.COD_GRUPO_CIA,
@@ -59,11 +57,12 @@ const ModalVisualizar = ({ visualizar, setVisualizar, data, setBtnVisualizar }) 
 		return (
 			<>
         <Modal
-          width="80%"
+          width={1100}
           visible={visualizar}
           cancelText="Salir"
           cancelButtonProps={{
-            type: "primary"
+            type: "default",
+            style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
           }}
           onCancel={() => {
             setVisualizar(false);

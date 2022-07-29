@@ -44,7 +44,7 @@ export const ModalImpresionA4 = ({
 	const imagenes = useSelector(state => state.imagenes);
 	const laboratorio = useSelector(state => state.laboratorio);
 	const tratamientoDetalle = useSelector(state => state.tratamientoDetalle);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [modalHC, setModalHC] = useState(false);
 	const [modalRecetas, setModalRecetas] = useState(false);
 	const [modalLaboratorio, setModalLaboratorio] = useState(false);
@@ -153,7 +153,7 @@ export const ModalImpresionA4 = ({
 					footer={[
 						<ReactToPrint
 							pageStyle={pageStyle}
-							trigger={() => <Button type="primary">Imprimir</Button>}
+							trigger={() => <Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}}>Imprimir</Button>}
 							content={() => impresionRef.current}
 						/>,
 					]}
@@ -173,7 +173,7 @@ export const ModalImpresionA4 = ({
 					footer={[
 						<ReactToPrint
 							pageStyle={pageStyle}
-							trigger={() => <Button type="primary">Imprimir</Button>}
+							trigger={() => <Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}}>Imprimir</Button>}
 							content={() => impresionRef.current}
 						/>,
 					]}
@@ -193,7 +193,7 @@ export const ModalImpresionA4 = ({
 					footer={[
 						<ReactToPrint
 							pageStyle={pageStyle}
-							trigger={() => <Button type="primary">Imprimir</Button>}
+							trigger={() => <Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}}>Imprimir</Button>}
 							content={() => impresionRef.current}
 						/>,
 					]}
@@ -213,7 +213,7 @@ export const ModalImpresionA4 = ({
 					footer={[
 						<ReactToPrint
 							pageStyle={pageStyle}
-							trigger={() => <Button type="primary">Imprimir</Button>}
+							trigger={() => <Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}}>Imprimir</Button>}
 							content={() => impresionRef.current}
 						/>,
 					]}

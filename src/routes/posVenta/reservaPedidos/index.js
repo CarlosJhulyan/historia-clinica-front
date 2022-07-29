@@ -1140,7 +1140,6 @@ function ReservaPedidos() {
         medicoCurrent={medicoCurrent}
         user={user}
         tipoVenta={tipoVenta}
-        detallesPedido={data}
       />
     </>
   );

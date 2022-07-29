@@ -11,6 +11,7 @@ import {
 import { httpClient } from '../../util/Api';
 import { openNotification } from '../../util/util';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 function ModalTriaje({
   setAbrirModal,
@@ -33,7 +34,7 @@ function ModalTriaje({
   });
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -128,8 +129,11 @@ function ModalTriaje({
             Cargar Pre Triaje
           </Button>,
           <Button
-            type='primary'
-            style={{ margin: '0 8px' }}
+            style={{
+              margin: '0 8px',
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+          }}
             loading={loading}
             onClick={() => insertarTriaje()}>
             Insertar

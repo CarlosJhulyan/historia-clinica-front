@@ -4,11 +4,12 @@ import 'moment/locale/es';
 import locale from 'antd/es/date-picker/locale/es_ES';
 import { Card, Form, Modal, Row, Col, Button, DatePicker, Select, Table, Tag, Input, Space } from 'antd';
 import { httpClient } from '../../util/Api';
+import { useSelector } from 'react-redux';
 
 export const ModalLiberado = ({ abrirModalL, setAbrirModalL, comboEspecialidad, mapCodEstado }) => {
 	const [dataPaciente, setDataPaciente] = useState([]);
 	const [dataSource, setDataSource] = useState([]);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [data, setData] = useState({ fechaInicio: '', fechaFin: '', especialidad: '' });
 	const [btnBuscar, setBtnBuscar] = useState(true);
 	const [loading, setLoading] = useState(false);
@@ -115,11 +116,14 @@ export const ModalLiberado = ({ abrirModalL, setAbrirModalL, comboEspecialidad, 
 				/>
 				<Space>
 					<Button
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+          }}
 					>
 						Buscar
 					</Button>
@@ -129,7 +133,7 @@ export const ModalLiberado = ({ abrirModalL, setAbrirModalL, comboEspecialidad, 
 				</Space>
 			</div>
 		),
-		filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+		filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
 		onFilter: (value, record) =>
 			record[dataIndex]
 				? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
@@ -253,10 +257,14 @@ export const ModalLiberado = ({ abrirModalL, setAbrirModalL, comboEspecialidad, 
 			okText="Salir"
 			cancelButtonProps={{ style: { display: 'none' } }}
 			onOk={() => setAbrirModalL(false)}
-			width="70%"
+			width={1000}
 			title={<div style={{ fontSize: '22px' }}>Listado de Atenciones Liberadas</div>}
 			visible={abrirModalL}
 			onCancel={() => setAbrirModalL(false)}
+      okType='default'
+      okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+      }}
 		>
 			<Form layout="vertical" ref={formRef}>
 				<Row style={{ flexDirection: 'row', paddingLeft: '30px', paddingRight: '30px' }}>
@@ -307,9 +315,13 @@ export const ModalLiberado = ({ abrirModalL, setAbrirModalL, comboEspecialidad, 
 						<Button
 							loading={loading}
 							disabled={btnBuscar}
-							type="primary"
 							onClick={() => onClickBuscar()}
-							style={{ width: '100%', marginTop: '25px' }}
+							style={{
+                width: '100%',
+                marginTop: '25px',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+            }}
 						>
 							Buscar
 						</Button>

@@ -10,7 +10,7 @@ import confirm from 'antd/lib/modal/confirm';
 
 const TablaEspeciales = ({ historia, editar, data, setData, TraerDatos, setAbrirModalImagenes, setAbrirModalLaboratorio }) => {
   const dataEspecial = useSelector(state => state.kardexEspeciales);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const token = JSON.parse(localStorage.getItem('token'));
 
   useEffect(() => {
@@ -118,8 +118,8 @@ const TablaEspeciales = ({ historia, editar, data, setData, TraerDatos, setAbrir
       <div style={{ width: '100%' }}>
         <div style={{ marginBottom: '20px' }}>
           <div style={{ display: 'flex', flexDirection: 'row-reverse', gap: '20px' }}>
-            <Button type='primary' onClick={() => { setAbrirModalImagenes(true); }}>Agregar Imagenes</Button>
-            <Button type='primary' onClick={() => { setAbrirModalLaboratorio(true); }}>Agregar Laboratorios</Button>
+            <Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}} onClick={() => { setAbrirModalImagenes(true); }}>Agregar Imagenes</Button>
+            <Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}} onClick={() => { setAbrirModalLaboratorio(true); }}>Agregar Laboratorios</Button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', backgroundColor: '#FAFAFA', padding: '20px', fontSize: '14px', borderBottom: '1px solid #E8E8E8', fontWeight: '500' }}>
             <div style={{ width: '30%', textAlign: 'left' }}>Descripción</div>
@@ -165,7 +165,7 @@ const TablaEspeciales = ({ historia, editar, data, setData, TraerDatos, setAbrir
           }
         </div>
         <div style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-          <Button type='primary' onClick={showConfirm} disabled={!data.length > 0}>Guardar</Button>
+          <Button style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}} onClick={showConfirm} disabled={!data.length > 0}>Guardar</Button>
         </div>
         <ToastContainer pauseOnHover={false} />
       </div >

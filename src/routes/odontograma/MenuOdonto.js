@@ -63,7 +63,7 @@ const MenuOdonto = (props) => {
     /* FUNCIONES DE REDUX */
     const estado = useSelector(state => state.menu);
     const dispatch = useDispatch();
-
+    const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
     //ESTADO MODAL CAPTURAR
     const [modalCapturar, setModalCapturar] = useState(false);
 
@@ -670,7 +670,10 @@ const MenuOdonto = (props) => {
                 <Form.Item>
                     <Button
                         className="gx-btn-success"
-                        type="primary"
+                        style={{
+                          background: themeSettingsGlobal.COD_COLOR_1,
+                          color: '#fff'
+                        }}
                     >
                         Guardar Detalle
                     </Button>
@@ -689,7 +692,10 @@ const MenuOdonto = (props) => {
                                 fff();
                             }}
                             className="gx-btn-success"
-                            type="primary"
+                            style={{
+                              background: themeSettingsGlobal.COD_COLOR_1,
+                              color: '#fff'
+                            }}
                             size="large"
                             block
                         >
@@ -718,7 +724,10 @@ const MenuOdonto = (props) => {
                                             <Button
                                                 icon={<DeleteOutlined />}
                                                 className="gx-btn-danger"
-                                                type="primary"
+                                                style={{
+                                                  background: themeSettingsGlobal.COD_COLOR_1,
+                                                  color: '#fff'
+                                                }}
                                                 block
                                                 onClick={() => dispatch(quitar_seleccion())}
                                             >
@@ -737,14 +746,14 @@ const MenuOdonto = (props) => {
 
                     <Card
                         tabProps={{
-                            tabBarStyle: {/* 
+                            tabBarStyle: {/*
                                 backgroundColor: 'blue', */
                                 marginLeft: 'auto',
                                 marginRight: 'auto'
                             },
 
                         }}
-                        headStyle={{/* 
+                        headStyle={{/*
                             backgroundColor: 'red', */
                             width: '100%'
                         }}

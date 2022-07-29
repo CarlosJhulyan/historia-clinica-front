@@ -2,14 +2,14 @@ import React, { createRef, useEffect, useState } from 'react';
 import { Col, Button, Form, Input, Modal, Row, Space, Spin, Table } from "antd";
 import { SearchOutlined } from '@ant-design/icons';
 import { actualizarImagenes } from '../apis';
+import { useSelector } from 'react-redux';
 
 const ModalImagenes = ({ datosModal, abrirModal, setAbrirModal, handleDatos, dataImagenes, dataSource }) => {
-
     const dataGlobal = {
         codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
         codLocal: datosModal.estado.COD_LOCAL_ANTECENDENTE,
     }
-
+    const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
     const [estado, setEstado] = useState();
     const [imagenes, setImagenes] = useState();
     const [botonModal, setBotonModal] = useState(true);
@@ -49,11 +49,14 @@ const ModalImagenes = ({ datosModal, abrirModal, setAbrirModal, handleDatos, dat
                 />
                 <Space>
                     <Button
-                        type="primary"
                         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
                         icon={<SearchOutlined />}
                         size="small"
-                        style={{ width: 90 }}
+                        style={{
+                          width: 90,
+                          background: themeSettingsGlobal.COD_COLOR_1,
+                          color: '#fff'
+                        }}
                     >
                         Buscar
                     </Button>
@@ -63,7 +66,7 @@ const ModalImagenes = ({ datosModal, abrirModal, setAbrirModal, handleDatos, dat
                 </Space>
             </div>
         ),
-        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
         onFilter: (value, record) =>
             record[dataIndex]
                 ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
@@ -146,7 +149,16 @@ const ModalImagenes = ({ datosModal, abrirModal, setAbrirModal, handleDatos, dat
                                 />
                             </Col>
                             <Col lg={24} md={24} sm={24} xs={24} style={{ alignItems: 'flex-end', display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button type="primary" disabled={btnActualizar} onClick={() => onClickActualizarModal()}>Actualizar Imagenes</Button>
+                                <Button
+                                  disabled={btnActualizar} 
+                                  onClick={() => onClickActualizarModal()}
+                                  style={{
+                                    background: themeSettingsGlobal.COD_COLOR_1,
+                                    color: '#fff'
+                                  }}
+                                >
+                                  Actualizar Imagenes
+                                </Button>
                             </Col>
                         </Row>
                     </Form>

@@ -5,14 +5,13 @@ import { httpClient } from '../../util/Api';
 import moment from 'moment';
 import { datosEnviar, funn } from '../../constants/datosEnviar';
 
-import { useAuth } from '../../authentication';
-import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
 import ModalTicketAtencion from './modalTicketAtencion';
 import ModalDetalles from '../listaPaciente/modalDetalles';
 import DatosPaciente from '../listaPaciente/datosPaciente';
 import ModalDetallesTriaje from './modalDetallesTriaje';
+import { useSelector } from 'react-redux';
 
 const ListaHospitalizar = () => {
   const [abrirModal, setAbrirModal] = useState(false);
@@ -26,7 +25,7 @@ const ListaHospitalizar = () => {
   const [dataInicialCargada, setDataInicialCargada] = useState(false);
   const [mostrarListaPaciente, setMostrarListaPaciente] = useState(true);
   const [tableLoading, setTableLoading] = useState(false);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [state, setState] = useState();
 
   const datos = useMemo(() => {
@@ -46,7 +45,7 @@ const ListaHospitalizar = () => {
       const { data } = await httpClient.post(`/triaje/getTriajeLista`, datos);
       // for (let i = 0; i < data.data.length; i++) {
       //   // if (data.data[i].asignado !== '1') {
-          
+
       //   // }
       //   array.push(data.data[i]);
       //   data.data[i].EDAD = moment(data.data[i].FECHA_NAC, "MM/DD/YYYY").month(0).from(moment().month(0));
@@ -105,11 +104,14 @@ const ListaHospitalizar = () => {
         />
         <Space>
           <Button
-            type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size="small"
-            style={{ width: 90 }}
+            style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
           >
             Buscar
           </Button>
@@ -119,7 +121,7 @@ const ListaHospitalizar = () => {
         </Space>
       </div>
     ),
-    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+    filterIcon: filtered => <SearchOutlined style={{ color: filtered ? themeSettingsGlobal.COD_COLOR_1 : undefined }} />,
     onFilter: (value, record) =>
       record[dataIndex]
         ? record[dataIndex].toString().toLowerCase().includes(value.toLowerCase())
@@ -258,7 +260,7 @@ const ListaHospitalizar = () => {
 
   return (
     <>
-      {mostrarListaPaciente ? 
+      {mostrarListaPaciente ?
         <Card
           title={
             <div
@@ -291,12 +293,13 @@ const ListaHospitalizar = () => {
                   Actualizar
                 </Button>
                 <Button
-                  type='primary'
                   onClick={() => setAbrirModalTicket(true)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
                   }}
                 >
                   Generar Ticket
@@ -341,7 +344,7 @@ const ListaHospitalizar = () => {
       ) : null}
 
       {modalDetallesTriaje ? (
-        <ModalDetallesTriaje 
+        <ModalDetallesTriaje
           setVisible={setModalDetallesTriaje}
           visible={modalDetallesTriaje}
           filaActual={filaActual}

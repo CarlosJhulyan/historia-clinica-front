@@ -14,9 +14,10 @@ import UCI_M from '../../assets/camas/UCI_M.png';
 import UCIM_V from '../../assets/camas/UCIM_V.png';
 import UCIM_F from '../../assets/camas/UCIM_F.png';
 import UCIM_M from '../../assets/camas/UCIM_M.png';
+import { useSelector } from 'react-redux';
 
 const ModalAsignacion = ({ abrirModal, setAbrirModal, traerData, dataModal, hospitalizacion }) => {
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const formRef = createRef();
 
   const [loading, setLoading] = useState(false);
@@ -149,6 +150,10 @@ const ModalAsignacion = ({ abrirModal, setAbrirModal, traerData, dataModal, hosp
       okText="Aceptar"
       cancelText="Cancelar"
       confirmLoading={loading}
+      okType='default'
+      okButtonProps={{
+        style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+      }}
       title={
         <div
           style={{

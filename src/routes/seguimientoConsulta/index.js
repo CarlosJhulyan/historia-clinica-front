@@ -6,10 +6,11 @@ import { httpClient } from '../../util/Api';
 import { getComboEspecialidades } from '../listaPaciente/datosPaciente/apis';
 import { ModalLiberado } from './modalLiberado';
 import { ListaPaciente } from './listaPaciente';
+import { useSelector } from 'react-redux';
 
 export const SeguimientoConsulta = () => {
     const token = JSON.parse(localStorage.getItem('token'));
-
+    const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
     const [dataPaciente, setDataPaciente] = useState([]);
     const [dataSource, setDataSource] = useState([]);
     const [comboEspecialidad, setComboEspecialidad] = useState([]);
@@ -166,7 +167,15 @@ export const SeguimientoConsulta = () => {
                 <Form layout="vertical" ref={formRef}>
                     <Row style={{ flexDirection: 'row', paddingLeft: '30px', paddingRight: '30px' }}>
                         <Col lg={4} md={8} sm={12} xs={24}>
-                            <Button type="primary" style={{ width: '100%', marginTop: '25px' }} onClick={() => setAbrirModalL(true)}>
+                            <Button
+                                style={{
+                                    width: '100%',
+                                    marginTop: '25px',
+                                    background: themeSettingsGlobal.COD_COLOR_1,
+                                    color: '#fff'
+                                }}
+                                onClick={() => setAbrirModalL(true)}
+                            >
                                 Ver Liberación
                             </Button>
                         </Col>
@@ -199,9 +208,13 @@ export const SeguimientoConsulta = () => {
                             <Button
                                 loading={loading}
                                 disabled={btnBuscar}
-                                type="primary"
                                 onClick={() => onClickBuscar()}
-                                style={{ width: '100%', marginTop: '25px' }}
+                                style={{
+                                    width: '100%',
+                                    marginTop: '25px',
+                                    background: themeSettingsGlobal.COD_COLOR_1,
+                                    color: '#fff'
+                                }}
                             >
                                 Buscar
                             </Button>

@@ -1,15 +1,15 @@
-import React, { 
-	useCallback, 
-	useEffect, 
-	useMemo, 
-	useState 
+import React, {
+	useCallback,
+	useEffect,
+	useMemo,
+	useState
 } from 'react';
-import { 
-	Button, 
-	Card, 
-	Table, 
-	Modal, 
-	Input, 
+import {
+	Button,
+	Card,
+	Table,
+	Modal,
+	Input,
 	Space,
 	Radio,
 	Form
@@ -26,8 +26,10 @@ import { useHistory } from 'react-router';
 import { ToastContainer } from 'react-toastify';
 import { SearchOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const ListaPaciente = () => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [abrirModal, setAbrirModal] = useState(false);
 	const [filaActual, setFilaActual] = useState({});
 	const [data, setData] = useState();
@@ -75,7 +77,7 @@ const ListaPaciente = () => {
 
 	useEffect(() => {
 		traerDatos();
-	
+
 		const fechaActual = moment().format('YYYY-MM-DD');
 		datosEnviar.evolucionTratamiento['FECHA'] = fechaActual;
 
@@ -94,11 +96,14 @@ const ListaPaciente = () => {
 				/>
 				<Space>
 					<Button
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
 					>
 						Buscar
 					</Button>
@@ -263,8 +268,8 @@ const ListaPaciente = () => {
 								>
 									Actualizar
 								</Button>
-								<Form.Item 
-										style={{ width: '430px' }} 
+								<Form.Item
+										style={{ width: '430px' }}
 										label='Filtrar por'>
 									<Radio.Group
 										value={codEstado}
@@ -281,10 +286,10 @@ const ListaPaciente = () => {
 						</div>
 					}
 				>
-					<Table 
-						className="gx-table-responsive" 
-						columns={columns} 
-						dataSource={data} 
+					<Table
+						className="gx-table-responsive"
+						columns={columns}
+						dataSource={data}
 						loading={dataLoading} />
 				</Card>
 			) : (

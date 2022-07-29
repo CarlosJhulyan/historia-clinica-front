@@ -8,10 +8,11 @@ import moment from 'moment';
 import { httpClient } from '../../../util/Api';
 import { set } from 'nprogress';
 import { PlusOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 
 const Invasivo = ({ historia }) => {
-	console.log(historia, 'invasivos cod paciente');
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [btnDisable, setBtnDisable] = useState(false)
 	const [items, setItems] = useState(['Obstruccion', 'Necesita']);
 	const [name, setName] = useState('');
@@ -61,14 +62,14 @@ const Invasivo = ({ historia }) => {
 				wrapperCol={{ span: 21 }}
 			>
 				<Row style={{ padding: '20px' }}>
-					
+
 					<Card style={{ width: '100%' }} title={<h3 style={{paddingLeft:'15px'}}>C.V.C</h3>} >
 						<Col lg={24} md={24} sm={24} xs={24}>
 							<Form.Item label="C.V.C" name="FECHA_CVC">
 								<DatePicker placeholder='fecha Colocacion' style={{ width: '100%' }} />
 							</Form.Item>
 						</Col>
-						
+
 						<Col lg={24} md={24} sm={24} xs={24}>
 							<Form.Item label="Motivo C.V.C" name="MOTIVO_CVC">
 								<Input placeholder='Motivo C.V.C' style={{ width: '100%' }} />
@@ -162,7 +163,7 @@ const Invasivo = ({ historia }) => {
 					</Card>
 					<Col lg={24} md={24} sm={24} xs={24} >
 						<Form.Item >
-							<Button disabled={btnDisable} type="primary" htmlType="submit">
+							<Button disabled={btnDisable} style={{background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}} htmlType="submit">
 								Guardar
 							</Button>
 						</Form.Item>

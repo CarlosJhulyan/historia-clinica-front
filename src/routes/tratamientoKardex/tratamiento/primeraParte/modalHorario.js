@@ -5,6 +5,7 @@ import { httpClient } from '../../../../util/Api';
 import { notificaciones } from '../../../../util/util';
 import confirm from 'antd/lib/modal/confirm';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 
 export const ModalHorario = ({
 	abrir,
@@ -17,7 +18,7 @@ export const ModalHorario = ({
 	tratamientos,
 }) => {
 	const formRef = createRef();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const token = JSON.parse(localStorage.getItem('token'));
 
 	const [horario, setHorario] = useState([]);
@@ -173,6 +174,10 @@ export const ModalHorario = ({
 				okText="Confirmar"
 				cancelText="Cancelar"
 				width={400}
+        okType='default'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+        }}
 			>
 				<Form ref={formRef} layout="vertical">
 					<Row style={{ flexDirection: 'row' }}>

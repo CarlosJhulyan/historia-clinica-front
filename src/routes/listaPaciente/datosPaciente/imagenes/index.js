@@ -7,20 +7,14 @@ import { setImagenesAction } from '../../../../appRedux/actions/menu/imagenes';
 
 
 export const Imagenes = ({ datosModal }) => {
-
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const dispatch = useDispatch();
 	const formRef = createRef();
-
 	const imagenes = useSelector(state => state.imagenes);
 	const obsImagen = imagenes.recomendacion;
 	const dataImagenes = useSelector(state => state.combosReducer.dataImagenes);
-
 	const [abrirModal, setAbrirModal] = useState(false);
-
 	const { historiaClinica , visualizar } = useSelector(state => state.helpers)
-
-
 
 	const dataImganesSource = imagenes.dataProcedimiento;
 
@@ -144,8 +138,11 @@ export const Imagenes = ({ datosModal }) => {
 						<Button
 							disabled={historiaClinica | visualizar}
 							className="gx-mb-0"
-							type="primary"
-							style={{ width: '100% ' }}
+							style={{
+                width: '100% ',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
 							icon={<SearchOutlined />}
 							onClick={() => buscarImagenes()}
 						>

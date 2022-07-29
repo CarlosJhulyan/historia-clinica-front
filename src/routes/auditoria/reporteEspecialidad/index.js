@@ -1,11 +1,11 @@
 import React, { createRef, useEffect, useMemo, useRef, useState } from 'react';
-import { 
-	Button, 
-	Card, 
-	Form, 
-	AutoComplete, 
-	DatePicker, 
-	Table, 
+import {
+	Button,
+	Card,
+	Form,
+	AutoComplete,
+	DatePicker,
+	Table,
 	Input,
 	Col,
 	Row,
@@ -13,9 +13,9 @@ import {
 	Checkbox,
 	Modal
 } from 'antd';
-import { 
+import {
 	getColumnSearchProps,
-	notificaciones 
+	notificaciones
 } from '../../../util/util';
 import { httpClient } from '../../../util/Api';
 import Moment from 'moment';
@@ -28,10 +28,12 @@ import LegendRanking from './LegendRanking';
 import LegendSpecialtyWeight from './LegendSpecialtyWeight';
 import { ExportReactCSV } from '../../../util/ExportReactCSV';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 
 const { RangePicker } = DatePicker;
 
 const ReporteEspecialidad = () => {
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [loading, setLoading] = useState(false);
 	const [btnBuscar, setBtnBuscar] = useState(true);
 	const [visibleModalLegend, setVisibleModalLegend] = useState(false);
@@ -96,7 +98,7 @@ const ReporteEspecialidad = () => {
 			body.TODOS = false;
 		}
 		if (validator) {
-			
+
 			const { data: { data = [] }, message } = await httpClient.post('auditoria/getAuditoriaxEspecialidad', body);
 			const arreglo = [];
 			const keys = Object.keys(data);
@@ -149,15 +151,15 @@ const ReporteEspecialidad = () => {
 					promedio: promedio / cantidad,
 					cantidad: cantidad,
 					estrellas: estrellas,
-					select: 
+					select:
 						body.TODOS ? body.COD_MEDICO === data[keys[index]][0].cod_medico : null,
 					key: data[keys[index]][0].cod_medico
 				});
 				arrayCsv = arreglo.map(item => {
 					return [
 						item.fecha,
-						item.especialidad, 
-						item.cod_medico, 
+						item.especialidad,
+						item.cod_medico,
 						item.nom_medico,
 						item.mayor,
 						item.menor,
@@ -260,7 +262,7 @@ const ReporteEspecialidad = () => {
 				},
 				{ cancelToken: cancelSource.token }
 			);
-			
+
 			for (let i = 0; i < data.length; i++) {
 				if (data[i].asignado === '0') {
 					delete data[i];
@@ -518,7 +520,7 @@ const ReporteEspecialidad = () => {
 												Todas las
 										</Checkbox>
 									</Form.Item>
-									
+
 									<Form.Item name="ESPECIALIDAD" style={{ width: '150px', margin: 0 }}>
 										<Select
 											disabled={allEspecialidades || loadingEspecialidades}
@@ -589,8 +591,8 @@ const ReporteEspecialidad = () => {
 							<Button
 								loading={loading}
 								style={{
-									backgroundColor: '#04B0AD',
-									color: 'white',
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
 								}}
 								onClick={() => buscarHistorial()}
 								disabled={btnBuscar}
@@ -603,8 +605,8 @@ const ReporteEspecialidad = () => {
 									<Button
 									title='PDF'
 										style={{
-											backgroundColor: '#04B0AD',
-											color: 'white'
+                      background: themeSettingsGlobal.COD_COLOR_1,
+                      color: '#fff'
 										}}
 										disabled={!(data.length > 0)}
 									>
@@ -613,13 +615,13 @@ const ReporteEspecialidad = () => {
 								)}
 								content={() => impresionRef.current}
 							/>
-							<ExportReactCSV 
+							<ExportReactCSV
 								title='Excel'
 								csvData={csvData}
 								fileName={`Auditoria_especialidad_${Date.now()}`}
 								style={{
-									backgroundColor: '#04B0AD',
-									color: 'white',
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
 								}}
 								disabled={!(data.length > 0)} />
 						</div>

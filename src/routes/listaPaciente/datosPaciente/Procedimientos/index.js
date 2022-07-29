@@ -8,7 +8,7 @@ import { setConsultasProcedimientos } from '../../../../appRedux/actions/menu/pr
 export const Procedemientos = ({ datosModal }) => {
 	const dispatch = useDispatch();
 	const formRef = createRef();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const procedimientoReducer = useSelector(state => state.procedimientoReducer);
 	const obsProcedimiento = procedimientoReducer.recomendacion;
 	const proc = useSelector(state => state.combosReducer.dataProcedimiento);
@@ -29,7 +29,7 @@ export const Procedemientos = ({ datosModal }) => {
 	};
 
 	const especialidad = JSON.parse(localStorage.getItem('token'));
-	//Agregar vcalidacion colum : tip_proceso = P 
+	//Agregar vcalidacion colum : tip_proceso = P
 	const procedimiento = proc?.filter(procedimiento => procedimiento.TIP_PROCESO === 'P');
 	console.log("PROCEDIMIENTO FILTRADO: ", procedimiento)
 
@@ -139,8 +139,11 @@ export const Procedemientos = ({ datosModal }) => {
 						<Button
 							disabled={historiaClinica | visualizar}
 							className="gx-mb-0"
-							type="primary"
-							style={{ width: '100% ' }}
+							style={{
+                width: '100%',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
 							onClick={() => buscarLab()}
 							icon={<SearchOutlined />}
 						>

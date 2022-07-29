@@ -39,7 +39,7 @@ const ModalComprobante = ({
   medicoCurrent,
   pacienteCurrent
 }) => {
-  const { logosImpresion } = useSelector(({ settings }) => settings);
+  const { logosImpresion, themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [dataImprimir, setDataImprimir] = useState([]);
 	const [dataEmpresa, setDataEmpresa] = useState();
 	const [dataDetalle, setDataDetalle] = useState([]);
@@ -463,7 +463,10 @@ const ModalComprobante = ({
 			<div style={{ margin: 10, display: 'flex', justifyContent: 'center' }}>
 				<Button
 					disabled={iniciando}
-					type="primary"
+					style={{
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
 					onClick={() => {
 						setVisible(false);
 						handlePrint();

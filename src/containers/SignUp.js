@@ -62,7 +62,7 @@ const SignUp = () => {
                   password</Link>
               </FormItem>
               <FormItem>
-                <Button type="primary" className="gx-mb-0" htmlType="submit">
+                <Button className="gx-mb-0" htmlType="submit">
                   <IntlMessages id="app.userAuth.signUp"/>
                 </Button>
                 <span><IntlMessages id="app.userAuth.or"/></span> <Link to="/signin"><IntlMessages

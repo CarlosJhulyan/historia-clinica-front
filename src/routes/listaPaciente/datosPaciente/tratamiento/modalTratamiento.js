@@ -2,6 +2,7 @@ import { Col, Button, Form, Input, Modal, Row, Space, Checkbox, Table } from "an
 import React, { createRef, useEffect, useState, } from "react";
 import { SearchOutlined } from '@ant-design/icons';
 import { actualizarTratamientos } from "../apis";
+import { useSelector } from 'react-redux';
 const CheckboxGroup = Checkbox.Group;
 const ModalTratamiento = ({ datosModal, abrirModal, setAbrirModal, handleDatos, dataTratamiento }) => {
 
@@ -9,7 +10,7 @@ const ModalTratamiento = ({ datosModal, abrirModal, setAbrirModal, handleDatos, 
         codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
         codLocal: datosModal.estado.COD_LOCAL_ANTECENDENTE,
     }
-
+    const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
     const [cargando, setCargando] = useState(true);
     const [estado, setEstado] = useState({ a: 'a' });
     const [medicamentos, setMedicamentos] = useState();
@@ -71,11 +72,14 @@ const ModalTratamiento = ({ datosModal, abrirModal, setAbrirModal, handleDatos, 
                 />
                 <Space>
                     <Button
-                        type="primary"
                         onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
                         icon={<SearchOutlined />}
                         size="small"
-                        style={{ width: 90 }}
+                        style={{
+                            width: 90,
+                            background: themeSettingsGlobal.COD_COLOR_1,
+                            color: '#fff'
+                        }}
                     >
                         Buscar
                     </Button>
@@ -215,7 +219,7 @@ const ModalTratamiento = ({ datosModal, abrirModal, setAbrirModal, handleDatos, 
 
     useEffect(() => {
         console.log('medicamentos: ', medicamentos)
-        
+
     }, [medicamentos])
     return (
         <>
@@ -252,7 +256,15 @@ const ModalTratamiento = ({ datosModal, abrirModal, setAbrirModal, handleDatos, 
                             <Button key="back" onClick={() => setAbrirModal(false)}>
                                 Cancelar
                             </Button>
-                            <Button disabled={botonModal} key="submit" type="primary" onClick={() => handleDatos({ estado })}>
+                            <Button
+                              disabled={botonModal}
+                              key="submit"
+                              style={{
+                                background: themeSettingsGlobal.COD_COLOR_1,
+                                color: '#fff'
+                              }}
+                              onClick={() => handleDatos({ estado })}
+                            >
                                 Agregar
                             </Button>
                         </Col>
@@ -300,7 +312,16 @@ const ModalTratamiento = ({ datosModal, abrirModal, setAbrirModal, handleDatos, 
                                 </Form.Item>
                             </Col>
                             <Col lg={12} md={24} sm={24} xs={24} style={{ alignItems: 'flex-end', display: 'flex', justifyContent: 'flex-end' }}>
-                                <Button type="primary" disabled={btnActualizar} onClick={() => onClickActualizarModal()}>Actualizar Medicamentos</Button>
+                                <Button
+                                  style={{
+                                    background: themeSettingsGlobal.COD_COLOR_1,
+                                    color: '#fff'
+                                  }}
+                                  disabled={btnActualizar}
+                                  onClick={() => onClickActualizarModal()}
+                                >
+                                  Actualizar Medicamentos
+                                </Button>
                             </Col>
                         </Row>
                     </Form>

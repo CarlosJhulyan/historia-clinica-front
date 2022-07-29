@@ -27,11 +27,14 @@ const ConfiguracionFirmas = () => {
         />
         <Space>
           <Button
-            type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
             icon={<SearchOutlined />}
             size="small"
-            style={{ width: 90 }}
+            style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
           >
             Buscar
           </Button>

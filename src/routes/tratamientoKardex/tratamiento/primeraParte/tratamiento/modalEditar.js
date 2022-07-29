@@ -6,11 +6,7 @@ import { useSelector } from 'react-redux';
 const ModalEditarTratamiento = ({ modalEditar, setDataActualizada, dataTratamiento, setModalEditar, dataEditar }) => {
 
 	//filtrar codigo del dataEditar con el codigo del dataTratamiento si el IND_CALCULO_TRAT_HC es igual a S entonces multiplicar el valor de frecuencia por duracion
-
-
-
-
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const formRef = createRef();
 
 	const viaAdministracion = useSelector((state) => state.combosReducer.viaAdministracion);
@@ -21,7 +17,7 @@ const ModalEditarTratamiento = ({ modalEditar, setDataActualizada, dataTratamien
 
 	const [data, setData] = useState(dataEditar);
 
-	/* 
+	/*
 		useEffect(() => {
 			if (dataEditar) {
 				if (dataEditar.etiquetaVia === 'VIA ORAL' || dataEditar.etiquetaVia === 'VIA OPTICA') {
@@ -78,7 +74,7 @@ const ModalEditarTratamiento = ({ modalEditar, setDataActualizada, dataTratamien
 		/* setEstadoVia(false); */
 		const result = viaAdministracion.filter((via) => via.CODIGO === value);
 		const etiquetaVia = result[0].ETIQUETA;
-		/* 
+		/*
 				if (etiquetaVia === 'VIA ORAL' || etiquetaVia === 'VIA OPTICA') {
 					setEstadoVia(true);
 				} else {
@@ -140,7 +136,7 @@ const ModalEditarTratamiento = ({ modalEditar, setDataActualizada, dataTratamien
 			data.calculo = filtro;
 
 		}
-		
+
 	}, [data, dataEditar])
 
 	return (
@@ -152,6 +148,10 @@ const ModalEditarTratamiento = ({ modalEditar, setDataActualizada, dataTratamien
 				okText="Guardar"
 				cancelText="Cancelar"
 				onCancel={() => setModalEditar(false)}
+        okType='default'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'}
+        }}
 			>
 				<Form ref={formRef} layout="vertical" initialValues={dataEditar}>
 					<Row style={{ flexDirection: 'row' }}>

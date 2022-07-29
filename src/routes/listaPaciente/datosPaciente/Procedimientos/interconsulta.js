@@ -10,7 +10,7 @@ import { httpClient } from '../../../../util/Api';
 export const Interconsultas = ({ datosModal }) => {
 	const dispatch = useDispatch();
 	const formRef = createRef();
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const procedimientoReducer = useSelector(state => state.procedimientoInterconsulta);
 	const obsProcedimiento = procedimientoReducer.recomendacion;
 	const proc = useSelector(state => state.combosReducer.dataProcedimiento);
@@ -142,8 +142,11 @@ export const Interconsultas = ({ datosModal }) => {
 						<Button
 							disabled={historiaClinica | visualizar}
 							className="gx-mb-0"
-							type="primary"
-							style={{ width: '100% ' }}
+							style={{
+                width: '100% ',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+            }}
 							onClick={() => buscarLab()}
 							icon={<SearchOutlined />}
 						>

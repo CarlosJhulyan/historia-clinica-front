@@ -1,6 +1,7 @@
 import { Col, Button, Form, Input, Modal, Row, Space, Checkbox, Table } from 'antd';
 import React, { createRef, useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
 // import { actualizarTratamientos } from "../apis";
 const CheckboxGroup = Checkbox.Group;
 const ModalTratamiento = ({
@@ -14,7 +15,7 @@ const ModalTratamiento = ({
         codGrupoCia: datosModal.estado.COD_GRUPO_CIA,
         codLocal: datosModal.estado.COD_LOCAL_ANTECENDENTE,
     } */
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [cargando, setCargando] = useState(true);
 	const [estado, setEstado] = useState({ a: 'a' });
 	const [medicamentos, setMedicamentos] = useState();
@@ -79,11 +80,14 @@ const ModalTratamiento = ({
 				/>
 				<Space>
 					<Button
-						type="primary"
 						onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
 						icon={<SearchOutlined />}
 						size="small"
-						style={{ width: 90 }}
+						style={{
+              width: 90,
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
 					>
 						Buscar
 					</Button>
@@ -316,7 +320,10 @@ const ModalTratamiento = ({
 							<Button
 								disabled={botonModal}
 								key="submit"
-								type="primary"
+								style={{
+                  background: themeSettingsGlobal.COD_COLOR_1,
+                  color: '#fff'
+                }}
 								onClick={() => handleDatos({ estado })}
 							>
 								Agregar
@@ -376,7 +383,10 @@ const ModalTratamiento = ({
 								style={{ alignItems: 'flex-end', display: 'flex', justifyContent: 'flex-end' }}
 							>
 								<Button
-									type="primary"
+									style={{
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
+                  }}
 									disabled={btnActualizar}
 									onClick={() => onClickActualizarModal()}
 								>

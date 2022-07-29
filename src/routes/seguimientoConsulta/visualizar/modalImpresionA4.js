@@ -44,7 +44,7 @@ export const ModalImpresionA4 = ({
 	const imagenes = useSelector(state => state.imagenes);
 	const laboratorio = useSelector(state => state.laboratorio);
 	const tratamientoDetalle = useSelector(state => state.tratamientoDetalle);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [modalHC, setModalHC] = useState(false);
 	const [modalRecetas, setModalRecetas] = useState(false);
 	const [modalLaboratorio, setModalLaboratorio] = useState(false);
@@ -64,11 +64,15 @@ export const ModalImpresionA4 = ({
 			<Modal
 				title="Imprimir A4"
 				cancelButtonProps={{ hidden: true }}
-				okButtonProps={{ hidden: true }}
 				width={305}
 				visible={modalImpresionA4}
 				maskClosable={false}
 				onCancel={() => setModalImpresionA4(false)}
+        okType='default'
+        okButtonProps={{
+          style: {background:themeSettingsGlobal.COD_COLOR_1, color: '#fff', border:'none'},
+          hidden: true
+        }}
 			>
 				<div
 					style={{
@@ -153,7 +157,8 @@ export const ModalImpresionA4 = ({
 					footer={[
 						<ReactToPrint
 							pageStyle={pageStyle}
-							trigger={() => <Button type="primary">Imprimir</Button>}
+							trigger={() =>
+                <Button style={{ background: themeSettingsGlobal.COD_COLOR_1, color: '#fff' }}>Imprimir</Button>}
 							content={() => impresionRef.current}
 						/>,
 					]}
@@ -173,7 +178,7 @@ export const ModalImpresionA4 = ({
 					footer={[
 						<ReactToPrint
 							pageStyle={pageStyle}
-							trigger={() => <Button type="primary">Imprimir</Button>}
+							trigger={() => <Button style={{	background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}}>Imprimir</Button>}
 							content={() => impresionRef.current}
 						/>,
 					]}
@@ -193,7 +198,7 @@ export const ModalImpresionA4 = ({
 					footer={[
 						<ReactToPrint
 							pageStyle={pageStyle}
-							trigger={() => <Button type="primary">Imprimir</Button>}
+							trigger={() => <Button style={{	background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}}>Imprimir</Button>}
 							content={() => impresionRef.current}
 						/>,
 					]}
@@ -213,7 +218,7 @@ export const ModalImpresionA4 = ({
 					footer={[
 						<ReactToPrint
 							pageStyle={pageStyle}
-							trigger={() => <Button type="primary">Imprimir</Button>}
+							trigger={() => <Button style={{	background: themeSettingsGlobal.COD_COLOR_1, color: '#fff'}}>Imprimir</Button>}
 							content={() => impresionRef.current}
 						/>,
 					]}

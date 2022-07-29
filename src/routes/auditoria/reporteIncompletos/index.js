@@ -1,17 +1,17 @@
-import React, { 
-	createRef, 
-	useMemo, 
-	useRef, 
+import React, {
+	createRef,
+	useMemo,
+	useRef,
 	useState,
 	useEffect
 } from 'react';
-import { 
-	Button, 
-	Card, 
-	Form, 
-	AutoComplete, 
-	DatePicker, 
-	Table, 
+import {
+	Button,
+	Card,
+	Form,
+	AutoComplete,
+	DatePicker,
+	Table,
 	Input,
 	Select
 } from 'antd';
@@ -23,6 +23,7 @@ import axios from 'axios';
 import locale from 'antd/es/date-picker/locale/es_ES';
 import { ToastContainer } from 'react-toastify';
 import ReactToPrint from 'react-to-print';
+import { useSelector } from 'react-redux';
 
 const { RangePicker } = DatePicker;
 
@@ -30,7 +31,7 @@ const ReporteIncompletos = () => {
 	const { Option } = Select;
 	const [loading, setLoading] = useState(false);
 	const [btnBuscar, setBtnBuscar] = useState(true);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [peticion, setPeticion] = useState(false);
 	const [cancelSource, setCancelSource] = useState(axios.CancelToken.source());
 	const [valueEspecialidad, setValueEspecialidad] = useState('');
@@ -329,7 +330,7 @@ const ReporteIncompletos = () => {
 						incompletos.push(palabra.join(' '));
 					}
 				}
-				
+
 				return (
 					<div
 						style={{
@@ -488,8 +489,8 @@ const ReporteIncompletos = () => {
 										display: 'flex',
 										alignItems: 'center',
 										justifyContent: 'center',
-										backgroundColor: '#04B0AD',
-										color: 'white',
+                    background: themeSettingsGlobal.COD_COLOR_1,
+                    color: '#fff'
 									}}
 									disabled={!(data.length > 0)}
 								>
@@ -504,8 +505,8 @@ const ReporteIncompletos = () => {
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
-								backgroundColor: '#04B0AD',
-								color: 'white',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => buscarHistorial()}
 							disabled={btnBuscar}

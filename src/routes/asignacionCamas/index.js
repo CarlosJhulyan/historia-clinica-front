@@ -19,6 +19,7 @@ import UCI_M from '../../assets/camas/UCI_M.png';
 import UCIM_V from '../../assets/camas/UCIM_V.png';
 import UCIM_F from '../../assets/camas/UCIM_F.png';
 import UCIM_M from '../../assets/camas/UCIM_M.png';
+import { useSelector } from 'react-redux';
 
 const { TabPane } = Tabs;
 
@@ -37,7 +38,7 @@ const AsignacionCamas = () => {
   const [editar, setEditar] = useState(null);
   const [especialidades, setEspecialidades] = useState();
   const [dataModal, setDataModal] = useState(null);
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
   const [motivo, setMotivo] = useState();
   const [motivos, setMotivos] = useState();
   const [modalMotivo, setModalMotivo] = useState(false);
@@ -343,8 +344,8 @@ const AsignacionCamas = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#04B0AD',
-                color: 'white',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
               }}
               onClick={() => traerData('', '')}
             >
@@ -383,7 +384,7 @@ const AsignacionCamas = () => {
                                   flexDirection: 'column',
                                   borderRadius: '5px',
                                   paddingBottom: '10px',
-                                  backgroundColor: cama.active ? '#04B0AD' : 'white',
+                                  backgroundColor: cama.active ? themeSettingsGlobal.COD_COLOR_1 : 'white',
                                   color: cama.active ? 'white' : 'black',
                                   width: '100px'
                                 }}
@@ -686,7 +687,10 @@ const AsignacionCamas = () => {
 
           <Button
             key="submit"
-            type="primary"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
             onClick={() => {
               setModalTransferir(false);
               setAbrirModalTransferir(true);
@@ -696,7 +700,10 @@ const AsignacionCamas = () => {
           </Button>,
           <Button
             key="link"
-            type="primary"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
             loading={loading}
             onClick={() => {
               setModalTransferir(false);
@@ -726,7 +733,10 @@ const AsignacionCamas = () => {
           </Button>,
           <Button
             key="link"
-            type="primary"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
             loading={loading}
             onClick={() => {
               setModalTransferidoLleno(false);
@@ -756,7 +766,10 @@ const AsignacionCamas = () => {
           </Button>,
           <Button
             key="submit"
-            type="primary"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
             loading={loading}
             onClick={async () => {
               setLoading(true);
@@ -781,7 +794,10 @@ const AsignacionCamas = () => {
           </Button>,
           <Button
             key="link"
-            type="primary"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
             onClick={() => {
               setEditar(null);
               setDataModal(dataModalTransferir);
@@ -812,7 +828,10 @@ const AsignacionCamas = () => {
           </Button>,
           <Button
             key="link"
-            type="primary"
+            style={{
+              background: themeSettingsGlobal.COD_COLOR_1,
+              color: '#fff'
+            }}
             loading={loading}
             onClick={async () => {
               setLoading(true);

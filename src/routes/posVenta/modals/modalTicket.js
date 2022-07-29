@@ -6,6 +6,7 @@ import ReactToPrint, { useReactToPrint } from 'react-to-print';
 import Barcode from 'react-barcode';
 
 import { openNotification } from '../../../util/util';
+import { useSelector } from 'react-redux';
 
 const pageStyle = `
 @page {
@@ -46,6 +47,7 @@ const ModalTicket = ({
 		content: () => impresionRef.current,
 		pageStyle: pageStyle,
 	});
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 
 	//const df = new DecimalFormat('#,##0.00');
 
@@ -364,7 +366,10 @@ const ModalTicket = ({
 			<div style={{ margin: 10, display: 'flex', justifyContent: 'center' }}>
 				<Button
 					disabled={iniciando}
-					type="primary"
+					style={{
+            background: themeSettingsGlobal.COD_COLOR_1,
+            color: '#fff'
+          }}
 					onClick={() => {
 						setVisible(false);
 						handlePrint();

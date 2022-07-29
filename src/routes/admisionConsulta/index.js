@@ -302,25 +302,8 @@ function AdmisionConsulta() {
                     type='default'>
                       Confirmar recepción
                   </Button>
-                  // :
-                  // <Popconfirm
-                  // placement="bottomRight"
-                  // title='¿Está seguro de confirmar recepción?'
-                  // // onConfirm={() => confirmarRecepcion()}
-                  // okText="De acuerdo"
-                  // cancelText="No"
-                  // >
-                  //   <Button type='primary' loading={loadingConfirmar}>
-                  //       Confirmar recepción
-                  //   </Button>
-                  // </Popconfirm>
                 )
               }
-              {/* <Button
-                onClick={() => setAbrirModalListaEspera(true)}
-                type='default'>
-                  Lista de espera
-              </Button> */}
             </div>
           </div>
         }

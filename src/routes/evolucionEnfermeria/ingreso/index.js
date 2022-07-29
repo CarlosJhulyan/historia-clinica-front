@@ -4,7 +4,7 @@ import React, {
 	useState,
 	useEffect
 } from 'react'
-import { 
+import {
   Card,
   AutoComplete,
   Form,
@@ -21,13 +21,14 @@ import './styles.css';
 
 import { httpClient } from '../../../util/Api';
 import { urlImagen } from '../../../config/backend';
+import { useSelector } from 'react-redux';
 
 function Ingreso() {
   const formSearch = useMemo(() => createRef(), []);
 	const formContent = useMemo(() => createRef(), []);
 	const [peticion, setPeticion] = useState(false);
 	const date = moment().locale('es');
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [codPaciente, setCodigoPaciente] = useState('');
 	const [valueCOD, setValueCOD] = useState('');
 	const [optionsCOD, setOptionsCOD] = useState([]);
@@ -279,10 +280,10 @@ function Ingreso() {
 			}
 		}, 1000);
 		return () => clearInterval(timer);
-	}, []);	
+	}, []);
 
   return (
-    <Card 
+    <Card
       title={
         <div
           style={{
@@ -320,7 +321,7 @@ function Ingreso() {
 											message: 'Complete la historia clinica del paciente.',
 										}
 									]}
-									name="NRO_HC" 
+									name="NRO_HC"
 									style={{ width: '200px', margin: 0 }}>
 										<AutoComplete
 											value={valueCOD}
@@ -339,7 +340,7 @@ function Ingreso() {
 											message: 'Complete el nombre del paciente.',
 										}
 									]}
-									name="NOM_PACIENTE" 
+									name="NOM_PACIENTE"
 									style={{ width: '300px', margin: 0 }}>
 										<AutoComplete
 											value={valueNOM}
@@ -368,8 +369,8 @@ function Ingreso() {
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
-								backgroundColor: '#04B0AD',
-								color: 'white',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
 							}}
 							onClick={() => insertarEvolucionEnfermeria()}
 						>
@@ -379,14 +380,14 @@ function Ingreso() {
         </div>
       }>
 				<Form ref={formContent} layout='vertical'>
-					<Form.Item 
+					<Form.Item
 						rules={[
 							{
 								required: true,
 								message: 'Complete la narración del estado de paciente.',
 							}
 						]}
-						name='NARRACION_ESTADO' 
+						name='NARRACION_ESTADO'
 						label='Narración del Estado de Paciente'>
 						<Input.TextArea
 							rows={10}

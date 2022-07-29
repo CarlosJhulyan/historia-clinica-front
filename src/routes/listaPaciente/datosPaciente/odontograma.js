@@ -9,7 +9,7 @@ import { ModalGuardar } from '../../../components/modal/ModalGuardar';
 
 const Odonto = (props) => {
 	const { datosModal, valorScala, setValorScala, setEstadosOdontograma, estadosOdontograma } = props;
-
+  const { themeSettingsGlobal } = useSelector(({ settings }) => settings);
 	const [estado, setEstado] = useState({ especificaciones: '', observaciones: '' });
 	const [modalGuardar, setModalGuardar] = useState(false);
 
@@ -93,8 +93,13 @@ const Odonto = (props) => {
 					<Col lg={24} md={24} sm={24} xs={24} style={{ marginTop: 30 }}>
 						<Button
 							size="large"
-							type="primary"
-							style={{ width: '100%', height: '50px', fontSize: '23px' }}
+							style={{
+                width: '100%',
+                height: '50px',
+                fontSize: '23px',
+                background: themeSettingsGlobal.COD_COLOR_1,
+                color: '#fff'
+              }}
 							onClick={() => setModalGuardar(true)}
 							icon={<SaveOutlined />}
 						>
